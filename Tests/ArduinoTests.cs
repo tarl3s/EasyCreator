@@ -7,7 +7,7 @@ using EasyCreator.CInterp;
 namespace EasyCreator.Tests;
 
 /// <summary>Headless tests for the C interpreter, the Arduino simulator and the robotics lessons.</summary>
-public static class ArduinoTests
+public static partial class ArduinoTests
 {
     sealed record CCase(string Name, string Code, string Stdin, string? Expected, string? ErrorContains = null);
 
@@ -29,6 +29,7 @@ public static class ArduinoTests
                 RunSimulatorTests();
                 RunLessonTests();
                 RunSessionTests();
+                RunHardwareModelTests();
                 return 0;
             });
         }

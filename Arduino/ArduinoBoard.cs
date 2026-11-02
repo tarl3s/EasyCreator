@@ -260,11 +260,24 @@ public sealed class ArduinoBoard
     {
         long p = v.AsLong;
         if (p < 0 || p >= PinCount)
-            throw Ip!.RtErr(fn + "(): o pino " + p + " não existe no Arduino Uno (use 0–13 ou A0–A5)");
+            throw Ip!.RtErr(L.F("{0}(): o pino {1} não existe no Arduino Uno (use 0–13 ou A0–A5)", fn, p));
         return (int)p;
     }
 
-    public int DigitalLevel(int pin)
+    /// <summary>A floating input (nothing pulling it up or down) picks up noise: a reading that changes with time
+    /// (deterministic, so grading is repeatable and UI snapshots don't disturb the sketch).</summary>
+    int FloatingLevel(int pin)
+    {
+        uint h = (uint)(TimeUs / 997) * 2654435761u ^ (uint)pin * 40503u;
+        h ^= h >> 13; h *= 0x5bd1e995; h ^= h >> 15;
+        return (int)(h & 1);
+    }
+
+    /// <summary>The level the pin reads. Buttons are wired between the pin and GND (as the lessons teach): pressed
+    /// = LOW; released = HIGH with INPUT_PULLUP, or floating (noise) with plain INPUT.</summary>
+    public int DigitalLevel(int pin) => DigitalLevel(pin, false);
+
+    int DigitalLevel(int pin, bool sketchRead)
     {
         var ps = Pins[pin];
         if (_byPin.TryGetValue(pin, out var comps))
@@ -275,8 +288,11 @@ public sealed class ArduinoBoard
                 {
                     case "button":
                         if (ps.Mode == PinMode.Output) break;
-                        if (ps.Mode == PinMode.InputPullup) return c.Pressed ? 0 : 1;
-                        return c.Pressed ? 1 : 0;
+                        if (c.Pressed) return 0;
+                        if (ps.Mode == PinMode.InputPullup) return 1;
+                        if (sketchRead)
+                            Warn(L.F("O botão do pino {0} está ligado ao GND, mas o pino está como INPUT sem pull-up: solto, ele fica \"flutuando\" e lê valores aleatórios. Use pinMode({0}, INPUT_PULLUP).", PinName(pin)));
+                        return FloatingLevel(pin);
                     case "robot":
                         if (Robot != null && (pin == c.AnalogPin("lineL") || pin == c.AnalogPin("lineR")))
                             return Robot.LineSensor(pin == c.AnalogPin("lineL")) > 512 ? 1 : 0;
@@ -292,7 +308,9 @@ public sealed class ArduinoBoard
         return 0;
     }
 
-    public int AnalogLevel(int pin)
+    public int AnalogLevel(int pin) => AnalogLevel(pin, false);
+
+    int AnalogLevel(int pin, bool sketchRead)
     {
         if (_byPin.TryGetValue(pin, out var comps))
         {
@@ -308,11 +326,11 @@ public sealed class ArduinoBoard
                             return Robot.LineSensor(pin == c.AnalogPin("lineL"));
                         break;
                     case "button":
-                        return DigitalLevel(pin) == 1 ? 1023 : 0;
+                        return DigitalLevel(pin, sketchRead) == 1 ? 1023 : 0;
                 }
             }
         }
-        return DigitalLevel(pin) == 1 && Pins[pin].Mode != PinMode.Input ? 1023 : 0;
+        return DigitalLevel(pin, sketchRead) == 1 && Pins[pin].Mode != PinMode.Input ? 1023 : 0;
     }
 
     // ===================== registration =====================
@@ -345,7 +363,7 @@ public sealed class ArduinoBoard
                 0 => PinMode.Input,
                 1 => PinMode.Output,
                 2 => PinMode.InputPullup,
-                _ => throw ip.RtErr("pinMode(): modo inválido " + m + " (use INPUT, OUTPUT ou INPUT_PULLUP)")
+                _ => throw ip.RtErr(L.F("pinMode(): modo inválido {0} (use INPUT, OUTPUT ou INPUT_PULLUP)", m))
             };
             if (ps.Mode != PinMode.Output) { ps.Value = 0; ps.Pwm = false; }
             return CVal.VoidV;
@@ -358,7 +376,7 @@ public sealed class ArduinoBoard
             bool high = a[1].IsTrue;
             if (ps.Mode != PinMode.Output)
             {
-                Warn("digitalWrite(" + PinName(p) + ", ...) sem pinMode(" + PinName(p) + ", OUTPUT): no Arduino real a saída fica muito fraca. Use pinMode no setup().");
+                Warn(L.F("digitalWrite({0}, ...) sem pinMode({0}, OUTPUT): no Arduino real a saída fica muito fraca. Use pinMode no setup().", PinName(p)));
                 ps.Mode = high ? PinMode.InputPullup : PinMode.Input;
             }
             ps.Value = high ? 255 : 0;
@@ -372,37 +390,47 @@ public sealed class ArduinoBoard
             Need(a, 1, "digitalRead");
             int p = CheckPin(a[0], "digitalRead");
             Advance(4);
-            return CVal.Int(DigitalLevel(p));
+            return CVal.Int(DigitalLevel(p, true));
         });
         ip.AddNative("analogRead", (ip, a) =>
         {
             Need(a, 1, "analogRead");
             long p = a[0].AsLong;
             if (p >= 0 && p < 6) p += 14;
-            if (p < 14 || p > 19) throw ip.RtErr("analogRead(): só funciona nos pinos analógicos A0 a A5 (recebeu " + a[0].AsLong + ")");
+            if (p < 14 || p > 19) throw ip.RtErr(L.F("analogRead(): só funciona nos pinos analógicos A0 a A5 (recebeu {0})", a[0].AsLong));
             Advance(100);
-            return CVal.Int(AnalogLevel((int)p));
+            return CVal.Int(AnalogLevel((int)p, true));
         });
         ip.AddNative("analogWrite", (ip, a) =>
         {
             Need(a, 2, "analogWrite");
             int p = CheckPin(a[0], "analogWrite");
             long v = a[1].AsLong;
-            if (v < 0 || v > 255) Warn("analogWrite(" + PinName(p) + ", " + v + "): o valor deve ficar entre 0 e 255.");
-            int val = (int)Math.Clamp(v, 0, 255);
             var ps = Pins[p];
             ps.Mode = PinMode.Output;
+            int val;
             if (Array.IndexOf(PwmPins, p) < 0)
             {
-                Warn("analogWrite no pino " + PinName(p) + ": esse pino não tem PWM (use 3, 5, 6, 9, 10 ou 11). Ele só liga (≥128) ou desliga.");
-                ps.Value = val >= 128 ? 255 : 0;
+                Warn(L.F("analogWrite no pino {0}: esse pino não tem PWM (use 3, 5, 6, 9, 10 ou 11). Ele só liga (≥128) ou desliga.", PinName(p)));
+                // the Arduino core does digitalWrite(pin, val < 128 ? LOW : HIGH) here
+                val = v < 128 ? 0 : 255;
                 ps.Pwm = false;
             }
             else
             {
-                ps.Value = val;
+                val = (int)v;
+                if (v < 0 || v > 255)
+                {
+                    // pins 3, 5, 6, 11 use 8-bit timer registers: the value wraps (256 → 0, 300 → 44);
+                    // pins 9, 10 use Timer1's 16-bit register: past the top the output stays fully on
+                    val = p is 9 or 10 ? 255 : (int)(v & 0xFF);
+                    Warn(L.F("analogWrite no pino {0} com valor fora de 0 a 255: no Arduino real o resultado sai errado (nos pinos 3, 5, 6 e 11 o valor \"dá a volta\": 256 vira 0, 300 vira 44; nos pinos 9 e 10 fica no máximo).", PinName(p)));
+                }
+                if (p is 9 or 10 && Servos.Any(s => s.Attached))
+                    Warn(L.F("analogWrite no pino {0} com um servo ligado: a biblioteca Servo usa o Timer1 e, no Arduino Uno real, desliga o PWM dos pinos 9 e 10.", PinName(p)));
                 ps.Pwm = val != 0 && val != 255;
             }
+            ps.Value = val;
             if (val > 0) ps.TrigPulsed = true;
             Advance(4);
             return CVal.VoidV;
@@ -445,17 +473,21 @@ public sealed class ArduinoBoard
             }
             if (trig < 0 || trig >= PinCount || !Pins[trig].TrigPulsed)
             {
-                Warn("pulseIn sem pulso no pino TRIG: antes faça digitalWrite(TRIG, HIGH); delayMicroseconds(10); digitalWrite(TRIG, LOW);");
+                Warn(L.T("pulseIn sem pulso no pino TRIG: antes faça digitalWrite(TRIG, HIGH); delayMicroseconds(10); digitalWrite(TRIG, LOW);"));
                 Advance(timeout);
                 return CVal.Of(CType.ULong, 0);
             }
             Pins[trig].TrigPulsed = false;
             double d = dist.Value;
-            if (d < 2 || d >= 400)
+            if (d >= 400)
             {
-                Advance(Math.Min(timeout, 38000));
-                return CVal.Of(CType.ULong, d < 2 ? 116 : 0);
+                // HC-SR04 with no echo in range: ECHO stays HIGH for ~38 ms, so pulseIn returns ~38000 µs
+                // (≈ 650 cm, an "impossible" distance) unless its timeout is shorter, in which case it returns 0
+                if (timeout <= 38000) { Advance(timeout); return CVal.Of(CType.ULong, 0); }
+                Advance(38000 + 400);
+                return CVal.Of(CType.ULong, 38000);
             }
+            if (d < 2) d = 2; // closer than its minimum range the sensor still reports ~2 cm
             double dur = Math.Round(d * 58.0);
             if (dur > timeout) { Advance(timeout); return CVal.Of(CType.ULong, 0); }
             Advance(dur + 400);
@@ -485,7 +517,7 @@ public sealed class ArduinoBoard
         {
             Need(a, 5, "map");
             long x = a[0].AsLong, inMin = a[1].AsLong, inMax = a[2].AsLong, outMin = a[3].AsLong, outMax = a[4].AsLong;
-            if (inMax == inMin) throw ip.RtErr("map(): o início e o fim do intervalo de entrada não podem ser iguais");
+            if (inMax == inMin) throw ip.RtErr(L.T("map(): o início e o fim do intervalo de entrada não podem ser iguais"));
             return CVal.LongV((x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin);
         });
         ip.AddNative("constrain", (ip, a) =>
@@ -535,7 +567,7 @@ public sealed class ArduinoBoard
 
     void Need(CVal[] a, int n, string fn)
     {
-        if (a.Length < n) throw Ip!.RtErr(fn + "() precisa de " + n + " argumento(s), mas recebeu " + a.Length);
+        if (a.Length < n) throw Ip!.RtErr(L.F("{0}() precisa de {1} argumento(s), mas recebeu {2}", fn, n, a.Length));
     }
 
     public static string PinName(int p) => p >= 14 && p <= 19 ? "A" + (p - 14) : p.ToString(Inv);
@@ -566,14 +598,14 @@ public sealed class ArduinoBoard
                 default: return x.ToString(Inv);
             }
         }
-        throw ip.RtErr("Serial.print não sabe imprimir um valor do tipo " + v.T);
+        throw ip.RtErr(L.F("Serial.print não sabe imprimir um valor do tipo {0}", v.T));
     }
 
     void SerialWrite(string s)
     {
         if (!SerialBegun)
         {
-            Warn("Serial.print usado sem Serial.begin(9600) no setup(): nada aparece no Monitor Serial.");
+            Warn(L.T("Serial.print usado sem Serial.begin(9600) no setup(): nada aparece no Monitor Serial."));
             return;
         }
         SerialOut.Append(s);
@@ -624,7 +656,7 @@ public sealed class ArduinoBoard
             s.Attached = true;
             Pins[s.Pin].Mode = PinMode.Output;
             if (!Comps.Any(c => c.Type == "servo" && c.Pin("pin", c.Pin("signal")) == s.Pin))
-                Warn("servo.attach(" + s.Pin + "): não há servo ligado no pino " + s.Pin + " no circuito.");
+                Warn(L.F("servo.attach({0}): não há servo ligado no pino {0} no circuito.", s.Pin));
             return CVal.Of(CType.UChar, 1);
         };
         cls.Methods["detach"] = (ip, h, a) => { S(h).Attached = false; return CVal.VoidV; };
@@ -635,9 +667,9 @@ public sealed class ArduinoBoard
             var s = S(h);
             long v = a[0].AsLong;
             if (v >= 544) v = (v - 544) * 180 / (2400 - 544);
-            if (v < 0 || v > 180) Warn("servo.write(" + a[0].AsLong + "): o ângulo vai de 0 a 180 graus.");
+            if (v < 0 || v > 180) Warn(L.T("servo.write: o ângulo vai de 0 a 180 graus (valores fora disso param no limite)."));
             s.Angle = (int)Math.Clamp(v, 0, 180);
-            if (!s.Attached) Warn("servo.write sem servo.attach(pino) antes: o servo não se mexe.");
+            if (!s.Attached) Warn(L.T("servo.write sem servo.attach(pino) antes: o servo não se mexe."));
             return CVal.VoidV;
         };
         cls.Methods["writeMicroseconds"] = (ip, h, a) =>
@@ -662,46 +694,46 @@ public sealed class ArduinoBoard
             var comp = Comps.FirstOrDefault(c => c.Type == "lcd" && c.Lcd == null && lcd.RsPin >= 0 && c.Pin("rs") == lcd.RsPin)
                        ?? Comps.FirstOrDefault(c => c.Type == "lcd" && c.Lcd == null);
             if (comp != null) comp.Lcd = lcd;
-            else Warn("Há um LCD no código, mas nenhum LCD no circuito.");
+            else Warn(L.T("Há um LCD no código, mas nenhum LCD no circuito."));
             return Lcds.Count;
         }
         var cls = ip.AddClass("LiquidCrystal", (_, a) => Create(a, false));
         var cls2 = ip.AddClass("LiquidCrystal_I2C", (_, a) => Create(a, true));
-        LcdObj L(long h) => Lcds[(int)h - 1];
+        LcdObj LcdOf(long h) => Lcds[(int)h - 1];
         foreach (var c in new[] { cls, cls2 })
         {
             c.Methods["begin"] = (ip, h, a) =>
             {
-                var l = L(h);
+                var l = LcdOf(h);
                 if (a.Length >= 2) l.Resize((int)a[0].AsLong, (int)a[1].AsLong);
                 l.Begun = true;
                 return CVal.VoidV;
             };
-            c.Methods["init"] = (ip, h, a) => { L(h).Begun = true; return CVal.VoidV; };
-            c.Methods["clear"] = (ip, h, a) => { var l = L(h); l.Text = LcdObj.Blank(l.Rows, l.Cols); l.Col = l.Row = 0; Advance(1500); return CVal.VoidV; };
-            c.Methods["home"] = (ip, h, a) => { var l = L(h); l.Col = l.Row = 0; return CVal.VoidV; };
+            c.Methods["init"] = (ip, h, a) => { LcdOf(h).Begun = true; return CVal.VoidV; };
+            c.Methods["clear"] = (ip, h, a) => { var l = LcdOf(h); l.Text = LcdObj.Blank(l.Rows, l.Cols); l.Col = l.Row = 0; Advance(1500); return CVal.VoidV; };
+            c.Methods["home"] = (ip, h, a) => { var l = LcdOf(h); l.Col = l.Row = 0; return CVal.VoidV; };
             c.Methods["setCursor"] = (ip, h, a) =>
             {
                 Need(a, 2, "setCursor");
-                var l = L(h);
+                var l = LcdOf(h);
                 l.Col = (int)Math.Clamp(a[0].AsLong, 0, 40);
                 l.Row = (int)Math.Clamp(a[1].AsLong, 0, l.Rows - 1);
                 return CVal.VoidV;
             };
             c.Methods["print"] = (ip, h, a) =>
             {
-                var l = L(h);
-                if (!l.Begun) Warn("lcd.print antes de lcd.begin(16, 2): chame lcd.begin no setup().");
+                var l = LcdOf(h);
+                if (!l.Begun) Warn(L.T("lcd.print antes de lcd.begin(16, 2): chame lcd.begin no setup()."));
                 var s = PrintText(ip, a);
                 l.Write(s);
                 Advance(40 * s.Length);
                 return CVal.Of(CType.ULong, s.Length);
             };
-            c.Methods["write"] = (ip, h, a) => { Need(a, 1, "write"); L(h).Write(((char)(byte)a[0].AsLong).ToString()); return CVal.Of(CType.ULong, 1); };
-            c.Methods["backlight"] = (ip, h, a) => { L(h).Backlight = true; return CVal.VoidV; };
-            c.Methods["noBacklight"] = (ip, h, a) => { L(h).Backlight = false; return CVal.VoidV; };
-            c.Methods["display"] = (ip, h, a) => { L(h).Visible = true; return CVal.VoidV; };
-            c.Methods["noDisplay"] = (ip, h, a) => { L(h).Visible = false; return CVal.VoidV; };
+            c.Methods["write"] = (ip, h, a) => { Need(a, 1, "write"); LcdOf(h).Write(((char)(byte)a[0].AsLong).ToString()); return CVal.Of(CType.ULong, 1); };
+            c.Methods["backlight"] = (ip, h, a) => { LcdOf(h).Backlight = true; return CVal.VoidV; };
+            c.Methods["noBacklight"] = (ip, h, a) => { LcdOf(h).Backlight = false; return CVal.VoidV; };
+            c.Methods["display"] = (ip, h, a) => { LcdOf(h).Visible = true; return CVal.VoidV; };
+            c.Methods["noDisplay"] = (ip, h, a) => { LcdOf(h).Visible = false; return CVal.VoidV; };
             foreach (var noop in new[] { "cursor", "noCursor", "blink", "noBlink", "scrollDisplayLeft", "scrollDisplayRight", "autoscroll", "noAutoscroll", "leftToRight", "rightToLeft", "createChar" })
                 c.Methods[noop] = (ip, h, a) => CVal.VoidV;
         }
@@ -757,25 +789,25 @@ public sealed class ArduinoBoard
                 {
                     string v = value.Trim().ToLowerInvariant();
                     bool pressed = v is "pressed" or "1" or "true" or "down" or "on" or "pressionado";
-                    return SetButton(id, pressed) ? null : "botão '" + id + "' não existe";
+                    return SetButton(id, pressed) ? null : L.F("botão '{0}' não existe", id);
                 }
             case "pot":
             case "ldr":
             case "analog":
-                return int.TryParse(value, NumberStyles.Integer, Inv, out var a) && SetAnalog(id, a) ? null : "estímulo analógico inválido para '" + id + "'";
+                return int.TryParse(value, NumberStyles.Integer, Inv, out var a) && SetAnalog(id, a) ? null : L.F("estímulo analógico inválido para '{0}'", id);
             case "ultrasonic":
             case "distance":
-                return double.TryParse(value, NumberStyles.Float, Inv, out var d) && SetDistance(id, d) ? null : "estímulo de distância inválido para '" + id + "'";
+                return double.TryParse(value, NumberStyles.Float, Inv, out var d) && SetDistance(id, d) ? null : L.F("estímulo de distância inválido para '{0}'", id);
             case "obstacle":
                 if (value.Trim().ToLowerInvariant() is "none" or "remove" or "clear") { ClearObstacles(); return null; }
-                return double.TryParse(value, NumberStyles.Float, Inv, out var o) && PlaceObstacle(o) ? null : "estímulo de obstáculo inválido";
+                return double.TryParse(value, NumberStyles.Float, Inv, out var o) && PlaceObstacle(o) ? null : L.T("estímulo de obstáculo inválido");
             case "serial":
                 SendSerial(value.Replace("\\n", "\n"));
                 return null;
             case "arena":
                 return null; // handled when the board is created
             default:
-                return "tipo de estímulo desconhecido '" + kind + "'";
+                return L.F("tipo de estímulo desconhecido '{0}'", kind);
         }
     }
 
@@ -818,7 +850,7 @@ public sealed class ArduinoBoard
             case "led":
                 s.Brightness = EffOut(c.Pin("pin", c.Pin("anode")));
                 s.On = s.Brightness > 0;
-                s.Text = s.On ? (s.Brightness < 255 ? "aceso (" + s.Brightness + ")" : "aceso") : "apagado";
+                s.Text = s.On ? (s.Brightness < 255 ? L.F("aceso ({0})", s.Brightness) : L.T("aceso")) : L.T("apagado");
                 break;
             case "rgbled":
                 s.R = EffOut(c.Pin("r")); s.G = EffOut(c.Pin("g")); s.B = EffOut(c.Pin("b"));
@@ -829,7 +861,7 @@ public sealed class ArduinoBoard
             case "button":
                 s.Pressed = c.Pressed;
                 s.On = c.Pressed;
-                s.Text = c.Pressed ? "pressionado" : "solto";
+                s.Text = c.Pressed ? L.T("pressionado") : L.T("solto");
                 break;
             case "pot":
             case "ldr":
@@ -845,7 +877,7 @@ public sealed class ArduinoBoard
             case "buzzer":
                 s.Frequency = c.ToneFreq;
                 s.On = c.ToneFreq > 0 || EffOut(c.Pin("pin")) > 0;
-                s.Text = s.On ? (c.ToneFreq > 0 ? c.ToneFreq + " Hz" : "tocando") : "silencioso";
+                s.Text = s.On ? (c.ToneFreq > 0 ? c.ToneFreq + " Hz" : L.T("tocando")) : L.T("silencioso");
                 break;
             case "ultrasonic":
                 s.DistanceCm = c.DistanceCm;
@@ -854,7 +886,7 @@ public sealed class ArduinoBoard
             case "motor":
                 s.Speed = MotorCommand(c, "in1", "in2", "en");
                 s.On = s.Speed != 0;
-                s.Text = s.Speed == 0 ? "parado" : (s.Speed > 0 ? "frente " : "ré ") + Math.Abs(s.Speed);
+                s.Text = s.Speed == 0 ? L.T("parado") : L.F(s.Speed > 0 ? "frente {0}" : "ré {0}", Math.Abs(s.Speed));
                 break;
             case "lcd":
                 s.LcdLines = c.Lcd?.Visible == true ? c.Lcd.Lines : LcdObj.Blank(2, 16).Select(r => new string(r)).ToArray();
@@ -866,7 +898,7 @@ public sealed class ArduinoBoard
                 {
                     s.Speed = (int)Math.Round(Robot.Speed);
                     s.On = Robot.LeftCmd != 0 || Robot.RightCmd != 0;
-                    s.Text = "x=" + Robot.X.ToString("0", Inv) + " y=" + Robot.Y.ToString("0", Inv) + " ângulo=" + Robot.AngleDeg.ToString("0", Inv);
+                    s.Text = L.F("x={0} y={1} ângulo={2}", Robot.X.ToString("0", Inv), Robot.Y.ToString("0", Inv), Robot.AngleDeg.ToString("0", Inv));
                 }
                 break;
         }
@@ -907,7 +939,7 @@ public sealed class ComponentSnapshot
     public double DistanceCm;         // ultrasonic
     public int Speed;                 // motor (-255..255), robot (cm/s)
     public string[] LcdLines = Array.Empty<string>();
-    /// <summary>Short human description in Portuguese ("aceso", "90°", "frente 200"…).</summary>
+    /// <summary>Short human description in the chosen language ("aceso", "90°", "frente 200"…); display only, never compared.</summary>
     public string Text = "";
 }
 

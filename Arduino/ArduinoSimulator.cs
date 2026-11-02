@@ -29,7 +29,7 @@ public sealed class ArduinoSimulator : IArduinoSimulator
         var th = new Thread(() =>
         {
             try { tcs.TrySetResult(Grade(lesson.Components, lesson.Checks, sketch, ct)); }
-            catch (Exception e) { tcs.TrySetResult(lesson.Checks.Select(c => new CheckOutcome(false, Describe(c), "Erro interno do simulador: " + e.Message)).ToList()); }
+            catch (Exception e) { tcs.TrySetResult(lesson.Checks.Select(c => new CheckOutcome(false, Describe(c), L.F("Erro interno do simulador: {0}", e.Message))).ToList()); }
         }, 256 * 1024 * 1024) { IsBackground = true, Name = "Arduino grader" };
         th.Start();
         return tcs.Task;
@@ -50,10 +50,10 @@ public sealed class ArduinoSimulator : IArduinoSimulator
             {
                 probe.Compile(sketch);
                 if (!probe.HasFunction("setup") || !probe.HasFunction("loop"))
-                    err = "O sketch precisa ter as duas funções: void setup() { } e void loop() { }.";
+                    err = L.T("O sketch precisa ter as duas funções: void setup() { } e void loop() { }.");
             }
             catch (CError e) { err = e.Friendly; }
-            catch (Exception e) { err = "Erro ao ler o código: " + e.Message; }
+            catch (Exception e) { err = L.F("Erro ao ler o código: {0}", e.Message); }
             if (err != null) return checks.Select(c => new CheckOutcome(false, Describe(c), err)).ToList();
         }
 
@@ -65,7 +65,7 @@ public sealed class ArduinoSimulator : IArduinoSimulator
             var idx = g.ToList();
             RunGroup(components, checks, idx, sketch, results, ct);
         }
-        return results.Select((r, i) => r ?? new CheckOutcome(false, Describe(checks[i]), "A verificação não foi avaliada.")).ToList();
+        return results.Select((r, i) => r ?? new CheckOutcome(false, Describe(checks[i]), L.T("A verificação não foi avaliada."))).ToList();
     }
 
     void RunGroup(IList<ComponentSpec> components, IList<SimCheck> checks, List<int> idx, string sketch, CheckOutcome?[] results, CancellationToken ct)
@@ -84,7 +84,7 @@ public sealed class ArduinoSimulator : IArduinoSimulator
         string? stimErr = null;
         foreach (var s in stimuli)
         {
-            if (!ArduinoBoard.TryParseStimulus(s, out var kind, out var id, out var value, out var at)) { stimErr = "estímulo mal escrito: " + s; continue; }
+            if (!ArduinoBoard.TryParseStimulus(s, out var kind, out var id, out var value, out var at)) { stimErr = L.F("estímulo mal escrito: {0}", s); continue; }
             board.Schedule(at * 1000, () => { var e = board.ApplyStimulus(kind, id, value); if (e != null) stimErr = e; });
         }
         double end = 0;
@@ -118,42 +118,45 @@ public sealed class ArduinoSimulator : IArduinoSimulator
         }
         catch (CError e)
         {
-            runError = e.Message.Contains("demorou demais")
-                ? "A simulação demorou demais para chegar aos " + (end / 1000).ToString("0", Inv) + " ms (o código é pesado demais ou travou)."
+            // the interpreter's wall-clock limit (decided by time, not by its message, which may be translated)
+            bool timedOut = !ct.IsCancellationRequested && sw.Elapsed.TotalSeconds >= WallLimit.TotalSeconds * 0.9;
+            runError = timedOut
+                ? L.F("A simulação demorou demais para chegar aos {0} ms (o código é pesado demais ou travou).", (end / 1000).ToString("0", Inv))
                 : e.Friendly;
         }
-        catch (InsufficientExecutionStackException) { runError = "Erro de execução: recursão profunda demais."; }
-        catch (Exception e) { runError = "Erro interno do simulador perto da linha " + ip.Line + ": " + e.Message; }
+        catch (InsufficientExecutionStackException) { runError = L.T("Erro de execução: recursão profunda demais."); }
+        catch (Exception e) { runError = L.F("Erro interno do simulador perto da linha {0}: {1}", ip.Line, e.Message); }
 
         foreach (var i in idx)
         {
             if (results[i] != null && runError == null) continue;
             if (results[i] != null && runError != null) continue; // evaluated before the error happened
-            results[i] = new CheckOutcome(false, Describe(checks[i]), runError ?? "A simulação terminou antes do tempo da verificação.");
+            results[i] = new CheckOutcome(false, Describe(checks[i]), runError ?? L.T("A simulação terminou antes do tempo da verificação."));
         }
         if (stimErr != null)
             foreach (var i in idx)
-                if (results[i]!.Passed) results[i] = new CheckOutcome(false, Describe(checks[i]), "Problema no estímulo da lição: " + stimErr);
+                if (results[i]!.Passed) results[i] = new CheckOutcome(false, Describe(checks[i]), L.F("Problema no estímulo da lição: {0}", stimErr));
     }
 
     // ======================= evaluation =======================
     public static CheckOutcome Evaluate(ArduinoBoard board, SimCheck c)
     {
         string desc = Describe(c);
-        string when = " (aos " + c.AtMs.ToString(Inv) + " ms)";
+        string when = L.F(" (aos {0} ms)", c.AtMs.ToString(Inv));
         switch ((c.Kind ?? "").ToLowerInvariant())
         {
             case "pin":
                 {
                     int pin = ParsePin(c.Target);
-                    if (pin < 0) return new CheckOutcome(false, desc, "Pino inválido na lição: " + c.Target);
+                    if (pin < 0) return new CheckOutcome(false, desc, L.F("Pino inválido na lição: {0}", c.Target));
                     var ps = board.Pins[pin];
                     int v = ps.Mode == PinMode.Output ? ps.Value : board.DigitalLevel(pin) * 255;
                     string text = v == 0 ? "LOW" : v == 255 ? "HIGH" : "PWM " + v;
-                    if (ps.Mode != PinMode.Output && ps.Value > 0) text += " (sem pinMode OUTPUT)";
+                    string shown = ps.Mode != PinMode.Output && ps.Value > 0 ? text + L.T(" (sem pinMode OUTPUT)") : text;
                     bool ok = Match(c.Value, text, v, c.Tolerance, false, out _);
-                    return new CheckOutcome(ok, desc, ok ? "OK: pino " + ArduinoBoard.PinName(pin) + " = " + text + when
-                        : "Esperado " + c.Value + ", mas o pino " + ArduinoBoard.PinName(pin) + " estava " + text + when + ".");
+                    string name = ArduinoBoard.PinName(pin);
+                    return new CheckOutcome(ok, desc, ok ? L.F("OK: pino {0} = {1}{2}", name, shown, when)
+                        : L.F("Esperado {0}, mas o pino {1} estava {2}{3}.", c.Value, name, shown, when));
                 }
             case "serial":
                 {
@@ -161,12 +164,13 @@ public sealed class ArduinoSimulator : IArduinoSimulator
                     string exp = c.Value ?? "";
                     bool ok;
                     if (exp.StartsWith("re:")) { try { ok = Regex.IsMatch(all, exp[3..], RegexOptions.None, TimeSpan.FromSeconds(1)); } catch { ok = false; } }
-                    else if (exp.StartsWith("!")) ok = !all.Contains(exp[1..].Replace("\\n", "\n"), StringComparison.Ordinal);
-                    else ok = all.Contains(exp.Replace("\\n", "\n"), StringComparison.Ordinal);
+                    else if (exp.StartsWith("!")) ok = !all.Contains(exp[1..].Replace("\n", "\n"), StringComparison.Ordinal);
+                    else ok = all.Contains(exp.Replace("\n", "\n"), StringComparison.Ordinal);
                     string tail = all.Length > 160 ? "…" + all[^160..] : all;
                     return new CheckOutcome(ok, desc, ok ? "OK" + when
-                        : (all.Length == 0 ? "O Monitor Serial está vazio" + when + (board.SerialBegun ? "." : " — faltou Serial.begin(9600)?")
-                                           : "O Monitor Serial mostrou: \"" + tail.Replace("\n", "⏎") + "\"" + when + "."));
+                        : (all.Length == 0
+                            ? (board.SerialBegun ? L.F("O Monitor Serial está vazio{0}.", when) : L.F("O Monitor Serial está vazio{0} — faltou Serial.begin(9600)?", when))
+                            : L.F("O Monitor Serial mostrou: \"{0}\"{1}.", tail.Replace("\n", "⏎"), when)));
                 }
             case "component":
                 {
@@ -174,17 +178,17 @@ public sealed class ArduinoSimulator : IArduinoSimulator
                     int dot = c.Target.IndexOf('.');
                     if (dot > 0) { id = c.Target[..dot]; prop = c.Target[(dot + 1)..].ToLowerInvariant(); }
                     var comp = board.FindComp(id);
-                    if (comp == null) return new CheckOutcome(false, desc, "Componente '" + id + "' não existe no circuito da lição.");
+                    if (comp == null) return new CheckOutcome(false, desc, L.F("Componente '{0}' não existe no circuito da lição.", id));
                     if (comp.Type == "robot") return EvalRobot(board, c, prop.Length > 0 ? prop : "goal", desc, when);
                     var (text, num, contains) = ComponentValue(board, comp, prop);
                     bool ok = Match(c.Value, text, num, c.Tolerance, contains, out _, comp.Type == "rgbled" && prop.Length == 0);
-                    return new CheckOutcome(ok, desc, ok ? "OK: " + id + " = " + Show(text) + when
-                        : "Esperado " + c.Value + ", mas " + id + " estava " + Show(text) + when + ".");
+                    return new CheckOutcome(ok, desc, ok ? L.F("OK: {0} = {1}{2}", id, Show(text), when)
+                        : L.F("Esperado {0}, mas {1} estava {2}{3}.", c.Value, id, Show(text), when));
                 }
             case "robot":
                 return EvalRobot(board, c, c.Target.ToLowerInvariant(), desc, when);
             default:
-                return new CheckOutcome(false, desc, "Tipo de verificação desconhecido: " + c.Kind);
+                return new CheckOutcome(false, desc, L.F("Tipo de verificação desconhecido: {0}", c.Kind));
         }
     }
 
@@ -193,7 +197,7 @@ public sealed class ArduinoSimulator : IArduinoSimulator
     static CheckOutcome EvalRobot(ArduinoBoard board, SimCheck c, string target, string desc, string when)
     {
         var r = board.Robot;
-        if (r == null) return new CheckOutcome(false, desc, "Não há robô no circuito da lição.");
+        if (r == null) return new CheckOutcome(false, desc, L.T("Não há robô no circuito da lição."));
         string text;
         double? num;
         switch (target)
@@ -204,25 +208,26 @@ public sealed class ArduinoSimulator : IArduinoSimulator
             case "goal": num = r.ReachedGoal ? 1 : 0; text = r.ReachedGoal ? "true" : "false"; break;
             case "collisions": num = r.Collisions; text = r.Collisions.ToString(Inv); break;
             case "distance": case "travelled": num = r.Travelled; text = r.Travelled.ToString("0", Inv) + " cm"; break;
-            case "lineratio": num = r.LineRatio; text = (r.LineRatio * 100).ToString("0", Inv) + "% do tempo na linha"; break;
+            case "lineratio": num = r.LineRatio; text = L.F("{0}% do tempo na linha", (r.LineRatio * 100).ToString("0", Inv)); break;
             case "sonar": num = r.Sonar(); text = num.Value.ToString("0", Inv) + " cm"; break;
             case "speed": num = Math.Abs(r.Speed); text = Math.Abs(r.Speed).ToString("0.0", Inv) + " cm/s"; break;
-            case "stopped": num = Math.Abs(r.Speed) < 1 ? 1 : 0; text = Math.Abs(r.Speed) < 1 ? "true" : "false"; break;
-            default: return new CheckOutcome(false, desc, "Alvo de robô desconhecido: " + target);
+            // both wheels still: a robot spinning in place (average speed 0) is not stopped
+            case "stopped": num = r.IsStopped ? 1 : 0; text = r.IsStopped ? "true" : "false"; break;
+            default: return new CheckOutcome(false, desc, L.F("Alvo de robô desconhecido: {0}", target));
         }
         bool ok = Match(c.Value, text, num, c.Tolerance, false, out _);
         string label = target switch
         {
-            "goal" => r.ReachedGoal ? "o robô chegou ao objetivo" : "o robô não chegou ao objetivo",
-            "collisions" => "o robô bateu " + r.Collisions + " vez(es)",
-            "stopped" => Math.Abs(r.Speed) < 1 ? "o robô estava parado" : "o robô estava andando",
-            "lineratio" => "o robô ficou sobre a linha " + text,
-            "distance" or "travelled" => "o robô andou " + text,
-            "sonar" => "o ultrassom media " + text,
-            "speed" => "a velocidade era " + text,
+            "goal" => r.ReachedGoal ? L.T("o robô chegou ao objetivo") : L.T("o robô não chegou ao objetivo"),
+            "collisions" => L.F("o robô bateu {0} vez(es)", r.Collisions),
+            "stopped" => r.IsStopped ? L.T("o robô estava parado") : L.T("o robô estava andando"),
+            "lineratio" => L.F("o robô ficou sobre a linha {0}", text),
+            "distance" or "travelled" => L.F("o robô andou {0}", text),
+            "sonar" => L.F("o ultrassom media {0}", text),
+            "speed" => L.F("a velocidade era {0}", text),
             _ => target + " = " + text
         };
-        return new CheckOutcome(ok, desc, (ok ? "OK: " : "Esperado " + c.Value + ", mas ") + label + when + ".");
+        return new CheckOutcome(ok, desc, ok ? L.F("OK: {0}{1}.", label, when) : L.F("Esperado {0}, mas {1}{2}.", c.Value, label, when));
     }
 
     internal static (string text, double? num, bool contains) ComponentValue(ArduinoBoard b, Comp c, string prop)
@@ -346,13 +351,13 @@ public sealed class ArduinoSimulator : IArduinoSimulator
     public static string Describe(SimCheck c)
     {
         if (!string.IsNullOrWhiteSpace(c.Description)) return c.Description;
-        string at = " aos " + c.AtMs.ToString(Inv) + " ms";
+        string at = c.AtMs.ToString(Inv);
         return (c.Kind ?? "").ToLowerInvariant() switch
         {
-            "pin" => "Pino " + c.Target + " deve estar " + c.Value + at,
-            "serial" => "O Monitor Serial deve mostrar \"" + c.Value + "\" até " + c.AtMs.ToString(Inv) + " ms",
-            "component" => c.Target + " deve estar " + c.Value + at,
-            "robot" => "Robô: " + c.Target + " deve ser " + c.Value + at,
+            "pin" => L.F("Pino {0} deve estar {1} aos {2} ms", c.Target, c.Value, at),
+            "serial" => L.F("O Monitor Serial deve mostrar \"{0}\" até {1} ms", c.Value, at),
+            "component" => L.F("{0} deve estar {1} aos {2} ms", c.Target, c.Value, at),
+            "robot" => L.F("Robô: {0} deve ser {1} aos {2} ms", c.Target, c.Value, at),
             _ => c.Kind + " " + c.Target + " = " + c.Value
         };
     }
