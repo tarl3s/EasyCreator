@@ -8,6 +8,15 @@ public static partial class TestEntry
 {
     public static bool TryRun(string[] args)
     {
+        if (args.Contains("--snap"))
+        {
+            Progress.ReadOnly = true;
+            var w = new MainWindow();
+            Application.Current.MainWindow = w;
+            w.Show();
+            Snapshots(w);
+            return true;
+        }
         if (!args.Contains("--test")) return false;
         var log = new StringWriter();
         int failures = 0;

@@ -23,8 +23,12 @@ public sealed class Progress
         return new();
     }
 
+    /// <summary>Set by --snap so the visual review never writes into the real progress file.</summary>
+    public static bool ReadOnly { get; set; }
+
     public void Save()
     {
+        if (ReadOnly) return;
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
