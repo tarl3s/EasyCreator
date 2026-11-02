@@ -119,8 +119,8 @@
       "questions": [
         {
           "prompt": "Asa com AR = **8**, e = **0,8**, voando com CL = **0,5**. Qual o coeficiente de arrasto **induzido**?",
-          "kind": "number", "answer": "0.00995", "tolerance": 3,
-          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,00995."
+          "kind": "number", "answer": "0.0124", "tolerance": 3,
+          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,0124."
         },
         {
           "prompt": "Um planador com **L/D = 15** está a **1000 m** de altura, sem vento. Quantos km ele consegue planar?",

@@ -94,7 +94,7 @@
       "questions": [
         {
           "prompt": "A wing with AR = **8**, e = **0.8**, flying at CL = **0.5**. What is the **induced** drag coefficient?",
-          "explanation": "CDi = CL²/(π·e·AR) = 0.25 / (π × 0.8 × 8) = 0.25 / 20.11 ≈ 0.00995."
+          "explanation": "CDi = CL²/(π·e·AR) = 0.25 / (π × 0.8 × 8) = 0.25 / 20.11 ≈ 0.0124."
         },
         {
           "prompt": "A glider with **L/D = 15** is at a height of **1000 m**, with no wind. How many km can it glide?",

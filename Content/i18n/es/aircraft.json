@@ -94,7 +94,7 @@
       "questions": [
         {
           "prompt": "Ala con AR = **8**, e = **0,8**, volando con CL = **0,5**. ¿Cuál es el coeficiente de arrastre **inducido**?",
-          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,00995."
+          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,0124."
         },
         {
           "prompt": "Un planeador con **L/D = 15** está a **1000 m** de altura, sin viento. ¿Cuántos km puede planear?",
