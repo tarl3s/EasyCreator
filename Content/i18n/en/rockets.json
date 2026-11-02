@@ -1,0 +1,395 @@
+{
+  "title": "Rockets: from the soda-bottle rocket to orbit",
+  "description": "Action and reaction, thrust and impulse, motor classes, stability, drag, parachutes, staging, the Tsiolkovsky equation and orbits — designing and launching rockets in a flight simulator.",
+  "lessons": {
+    "rkt-01-garrafa-pet": {
+      "title": "Action and reaction: the soda-bottle rocket",
+      "theory": "# Every rocket works the same way\n\nA rocket **pushes mass backwards** and, in return, is pushed forwards. This is **Newton's third law**: \"for every action there is an equal and opposite reaction\".\n\nIn the soda-bottle rocket the \"pushed mass\" is the **water**. The compressed air inside the bottle pushes the water out of the nozzle (the neck) downwards; the water pushes the bottle upwards. It is not the water \"hitting the ground\" that makes the rocket rise — in space, with no ground at all, a rocket works the same way.\n\n## Momentum\n\nThe reaction force (the **thrust**) depends on **how much mass** leaves per second and **how fast** it leaves:\n\n```\nthrust = (mass expelled per second) × (exit velocity)\nF = ṁ × v\n```\n\nExpelling 0.5 kg of water at 20 m/s in 0.1 s gives: F = (0.5 / 0.1) × 20 = 100 N — the weight of a 10 kg object!\n\n## Why water and not just air?\n\nAir is light: even leaving fast, it carries little **momentum**. Water is ~800 times denser, so it carries much more \"push\". But too much water also hurts: it is heavy, and little air is left to push it (the air loses pressure as it expands). There is an **ideal amount of water**, around **1/3 of the bottle's volume**.\n\n## Pressure\n\n**Pressure** is force per area: 1 bar = 100 000 Pa = 100 000 N/m², roughly the pressure of the atmosphere at sea level. A bicycle pump shows **gauge** pressure (above the atmosphere). On a 22 mm nozzle, each bar of pressure pushes the water with about 76 N — which is why the rocket takes off with accelerations of tens of g.\n\n## The simulator model\n\n- 2 L bottle, 22 mm nozzle, empty bottle + fins + nose = 150 g, plus 40 g of modelling clay in the nose (so the rocket flies straight — we will see why in the stability lesson).\n- The air expands without exchanging heat (adiabatic expansion: P × V^1.4 = constant).\n- The water speed at the nozzle comes from Bernoulli: v = √(2 × ΔP / ρ). Thrust = 2 × nozzle area × ΔP.\n- The final pulse of air (after the water is gone) is ignored; the flight is vertical, with no wind, with air drag.",
+      "task": "Your bottle rocket only climbs about 6 metres. Adjust the **pressure** (6 bar at most — the bottle has a limit!) and the **amount of water** to pass **35 metres** of apogee. Try different amounts of water at the same pressure: there is an ideal point.",
+      "safety": "- Use **only fizzy-drink PET bottles** (they are made to withstand pressure). **Never** use glass, metal or still-water bottles.\n- **Do not go above 5 to 6 bar** and discard bottles that are scratched, dented, old or have been left in the sun.\n- Use a **launch base with a remote trigger** (a string several metres long). Nobody leans over the pressurised bottle.\n- **Safety glasses** for whoever pumps and launches; everyone **at least 10 m** away and out of the flight line.\n- Launch in an **open field**, away from people, animals, cars, trees and power lines, and never towards anyone.",
+      "hints": [
+        "More pressure = more thrust, but the bottle has a limit. Start by testing 4 to 5 bar.",
+        "With little water the thrust ends quickly; with too much water the rocket gets heavy and the air loses strength. Try something between 0.5 and 0.7 L."
+      ],
+      "questions": [
+        {
+          "prompt": "Why does the bottle rocket rise?",
+          "options": [
+            "Because the water hits the ground and pushes it",
+            "Because the bottle pushes the water down and the water pushes the bottle up",
+            "Because the hot air inside the bottle is lighter than the air outside",
+            "Because the air pressure pulls the bottle upwards"
+          ],
+          "explanation": "Action and reaction (Newton's 3rd law): the force pushing the water down has an equal partner pushing the bottle up. It works even in a vacuum."
+        },
+        {
+          "prompt": "A rocket expels **0.6 kg** of water at **25 m/s** in **0.08 s**. What is the average thrust?",
+          "explanation": "Flow rate = 0.6 / 0.08 = 7.5 kg/s. Thrust = 7.5 × 25 = 187.5 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Why use water instead of just compressed air?",
+          "options": [
+            "Water is denser: it expels much more mass and gives much more thrust",
+            "Water makes the bottle lighter",
+            "Water cools the air and increases the pressure",
+            "Only for safety; the thrust is the same"
+          ],
+          "explanation": "Thrust is mass per second × velocity. Water has ~800× the density of air, so it carries much more momentum."
+        }
+      ],
+      "goals": [
+        "Apogee of at least 35 m"
+      ]
+    },
+    "rkt-02-empuxo-impulso": {
+      "title": "Thrust, impulse and the rocket motor",
+      "theory": "# The motor of a model rocket\n\nA model rocket motor is a cardboard tube with **solid propellant** (black powder or composite), a ceramic **nozzle**, a **delay charge** and an **ejection charge** that opens the parachute. It comes ready-made and certified: you only fit it in and connect the electric igniter.\n\n## Thrust\n\n**Thrust** is the force the motor makes, in **newtons (N)**. It changes during the burn: black-powder motors give a **peak** right at ignition (to get the rocket off the pad) and then hold a lower **plateau**. This graph is the **thrust curve**.\n\n## Total impulse\n\nWhat really tells \"how much the motor pushes\" is the **total impulse**:\n\n```\nimpulse (N·s) = average thrust (N) × burn time (s)\n```\n\nIt is the **area under the thrust curve**. A 5 N motor for 2 s and a 10 N motor for 1 s have the same impulse: 10 N·s.\n\nBy the impulse theorem, impulse = change in momentum (m × Δv). More impulse, more speed — and more height.\n\n## The code printed on the motor\n\nA **C6-5** motor means:\n\n- **C** — the total impulse class (5 to 10 N·s);\n- **6** — average thrust of 6 N;\n- **5** — 5 seconds of delay between the end of the burn and the parachute ejection.\n\n## The simulator model\n\nThe catalogue motors use approximate manufacturer values (impulse, burn time, peak, propellant mass). The curve is a peak followed by a plateau, tuned to give exactly the catalogue impulse. The propellant is consumed in proportion to the impulse already delivered.",
+      "task": "Your club only allows flights that stay **between 300 and 450 m** high (the field's ceiling). With the B6 the rocket climbs too little. Choose a motor that takes the same rocket into that range.",
+      "safety": "- Use **only certified commercial motors** and **never** make, open, modify or \"reload\" motors or propellant at home — that is how serious burns and explosions happen.\n- Follow a **model rocketry safety code** (such as NAR/Tripoli or a local club's) and the **laws of your region**; larger motors usually require certification and authorisation.\n- **Electric** ignition, with a removable **safety key** and a countdown said out loud. Minimum distance of **5 m** for small motors (A–D) and more for larger ones.\n- Open field, no strong wind, away from buildings, wires and dry brush. Never try to retrieve a rocket stuck in a tree or on a wire.",
+      "hints": [
+        "Each letter has up to double the impulse of the previous one. Go up one letter and see the apogee.",
+        "Motors that are too big go past the field's ceiling — and that is forbidden."
+      ],
+      "questions": [
+        {
+          "prompt": "A motor makes an average thrust of **4.5 N** for **1.1 s**. What is the total impulse?",
+          "explanation": "Impulse = 4.5 N × 1.1 s = 4.95 N·s (a class B motor).",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "In the code **D12-5**, what does the **5** mean?",
+          "options": [
+            "5 N of average thrust",
+            "5 seconds of burn",
+            "5 seconds of delay between the end of the burn and the parachute ejection",
+            "Impulse class 5"
+          ],
+          "explanation": "Letter = impulse class, first number = average thrust (N), last number = delay until ejection (s)."
+        },
+        {
+          "prompt": "Two motors: one makes 5 N for 2 s; the other makes 10 N for 1 s. What can you say?",
+          "options": [
+            "The 10 N one takes the rocket twice as high",
+            "Both have the same total impulse (10 N·s)",
+            "The 2 s one has double the impulse",
+            "They cannot be compared"
+          ],
+          "explanation": "Impulse = thrust × time: 5 × 2 = 10 × 1 = 10 N·s. The apogee may still vary a little (drag, weight), but the \"total push\" is the same."
+        }
+      ],
+      "goals": [
+        "Apogee between 300 and 450 m"
+      ]
+    },
+    "rkt-03-classes-empuxo-peso": {
+      "title": "Motor classes and the thrust-to-weight ratio",
+      "theory": "# Each letter doubles\n\nThe total impulse classes follow a scale in which **each letter has up to double the previous one**:\n\n- **A**: up to 2.5 N·s\n- **B**: up to 5 N·s\n- **C**: up to 10 N·s\n- **D**: up to 20 N·s\n- **E**: up to 40 N·s\n- **F**: up to 80 N·s\n- **G**: up to 160 N·s\n\nUp to class G (inclusive) is usually \"model rocketry\"; from H onwards it is **high-power rocketry**, which requires certification.\n\n## Thrust-to-weight: leaving the pad with force\n\nThe **thrust-to-weight ratio** (T/W) compares the average thrust with the weight of the ready rocket (with motor):\n\n```\nT/W = average thrust / (mass × 9.81)\n```\n\n- T/W < 1: the rocket **does not even leave the ground**.\n- T/W between 1 and 5: it leaves slowly; at the end of the rod it is still slow and the wind bends its path.\n- **T/W ≥ 5** is the rule of thumb for a straight, safe flight.\n\nThat is why each motor has a **maximum lift-off mass**: maximum mass = average thrust / (5 × 9.81).\n\n## Mass: the silent enemy\n\nA lighter rocket accelerates more with the same thrust (a = F/m). But too light is not ideal either: with little inertia, drag slows it down right after the burn. For small rockets, however, **removing weight** almost always helps.",
+      "task": "Your rocket has **150 g** without a motor and the C6 barely lifts it off the ground. Choose the motor and, if needed, reduce the mass to get **thrust/weight ≥ 5** and an apogee **between 300 and 600 m**.",
+      "safety": "- Respect the **maximum lift-off mass** given by each motor's manufacturer.\n- A rocket too heavy for its motor leaves the pad **slowly and crooked** and may fly towards the audience. When in doubt, use a larger **certified** motor or make the rocket lighter — never \"boost\" a motor.\n- Use a **launch rod or rail** long enough for the rocket to gain speed before it is released.",
+      "hints": [
+        "See the thrust/weight in the text below the graph: it changes the moment you change the motor or the mass.",
+        "A D12 has an average thrust of ~10 N. With it, how much can the rocket weigh to have T/W ≥ 5?"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **maximum total impulse** of a class **E** motor?",
+          "explanation": "A = 2.5; B = 5; C = 10; D = 20; E = 40 N·s. Each letter doubles.",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "A motor has an average thrust of **10 N**. By the T/W ≥ 5 rule, what is the **maximum lift-off mass** of the rocket (with motor)?",
+          "explanation": "Maximum weight = 10 / 5 = 2 N. Mass = 2 / 9.81 = 0.2039 kg ≈ 204 g.",
+          "unit": "g"
+        },
+        {
+          "prompt": "What happens to a rocket with T/W = 1.5?",
+          "options": [
+            "It climbs fast and straight",
+            "It does not even leave the pad",
+            "It leaves slowly; at the end of the rod it is slow and the wind may deflect it",
+            "It explodes"
+          ],
+          "explanation": "With a low T/W the acceleration is small (a = (T − W)/m), the rocket leaves the rod slowly and the fins cannot yet keep it straight."
+        }
+      ],
+      "goals": [
+        "Thrust/weight of at least 5",
+        "Apogee between 300 and 600 m"
+      ]
+    },
+    "rkt-04-estabilidade": {
+      "title": "Stability: the CG ahead of the CP",
+      "theory": "# Two centres that decide everything\n\n- **Centre of gravity (CG)**: the point where the rocket balances on your finger. It is where the weight \"acts\".\n- **Centre of pressure (CP)**: the point where the air forces \"act\" when the rocket tilts a little.\n\nIf the rocket tilts in flight, the air hits it from the side. If the **CP is behind the CG**, that force pushes the **tail** back into the line of flight: the rocket straightens itself, like an arrow or a weathervane. If the CP is **ahead of** the CG, the force increases the tilt: the rocket **tumbles**.\n\n## The stability margin\n\n```\nmargin (calibres) = (CP position − CG position) / diameter\n```\n\n(positions measured from the tip of the nose)\n\n- **below 0**: unstable — dangerous;\n- **0 to 1**: barely stable, it wobbles;\n- **1 to 2**: the ideal for most rockets;\n- **above 3**: too stable — it turns into the wind (\"weathercocking\") and flies crooked on windy days.\n\n## How to move the CP and the CG\n\n- **Larger fins** move the CP **backwards** (more area at the back).\n- **Weight in the nose** (modelling clay) moves the CG **forwards**.\n- **A longer rocket** moves the fins away from the nose: the CP moves backwards.\n- A heavy motor in the tail moves the CG backwards: a rocket that is stable with a small motor can become unstable with a big one.\n\n## The Barrowman method (simplified)\n\nThe simulator computes the CP with the **Barrowman method** (1966), still used by programs like OpenRocket: it adds the \"force\" of the nose (always 2, at a point that depends on its shape) and that of the fins (which grows with the square of the span divided by the diameter), and finds the weighted mean point. The body tube does not count at small angles. The CG takes into account the body (centre in the middle), the motor (in the tail) and the nose weight.\n\nIn the simulated flight, a rocket with a negative margin tumbles: it loses almost all useful thrust and the drag triples.",
+      "task": "This rocket has tiny fins and **tumbles**. Get the **stability margin between 1 and 2.5 calibres** and make it climb at least **150 m** with the B6 motor. Watch the CG (blue) and the CP (red) in the drawing of the rocket.",
+      "safety": "- **Never launch an unstable rocket.** It tumbles and may fly in any direction, including towards the audience.\n- Before flying, do the **string test**: tie the rocket (with motor) at the balance point (CG) and swing it in circles. If it flies nose first, it is stable.",
+      "hints": [
+        "Increase the fin span and watch the CP (red dot) move backwards.",
+        "Weight in the nose also helps, but makes the rocket heavier (less height)."
+      ],
+      "questions": [
+        {
+          "prompt": "For a rocket to be stable, where must the CG be?",
+          "options": [
+            "Behind the CP (closer to the tail)",
+            "Ahead of the CP (closer to the nose)",
+            "Exactly at the CP",
+            "It does not matter, what matters is the motor"
+          ],
+          "explanation": "With the CG ahead of the CP, any tilt creates an air force that pushes the tail back: the rocket straightens itself."
+        },
+        {
+          "prompt": "A rocket with a diameter of **25 mm** has its CP at **320 mm** and its CG at **270 mm** from the tip. What is the stability margin, in calibres?",
+          "explanation": "(320 − 270) / 25 = 50 / 25 = 2 calibres.",
+          "unit": "calibres"
+        },
+        {
+          "prompt": "What happens when you put modelling clay inside the nose?",
+          "options": [
+            "The CP moves forwards and stability drops",
+            "The CG moves forwards and stability increases",
+            "The CG moves backwards and stability increases",
+            "Nothing changes in the stability"
+          ],
+          "explanation": "Weight at the front pulls the CG towards the nose, increasing the distance to the CP. In return, the rocket gets heavier."
+        }
+      ],
+      "goals": [
+        "Stability margin between 1 and 2.5 calibres",
+        "Apogee of at least 150 m"
+      ]
+    },
+    "rkt-05-arrasto": {
+      "title": "Aerodynamics: drag and the shape of the nose",
+      "theory": "# The force of the air\n\nAir slows down everything that moves through it. This force is **drag**:\n\n```\nF_drag = ½ × ρ × v² × Cd × A\n```\n\n- **ρ** (rho): air density — 1.225 kg/m³ at sea level, halving at about 6 km of altitude;\n- **v**: speed — it enters **squared**: double the speed gives **4×** the drag;\n- **A**: frontal area (π × d² / 4) — doubling the diameter gives **4×** the area;\n- **Cd**: drag coefficient — \"how aerodynamic\" the shape is.\n\n## Where a rocket's Cd comes from\n\n- **Nose**: an ogive or a cone lets the air slide by; a blunt (flat) nose hits the air head-on.\n- **Base**: behind the rocket a low-pressure wake forms and \"sucks\" backwards.\n- **Friction**: the air scrapes along the whole surface of the body and fins. The larger the wetted area, the more friction.\n\nTypical model rockets have a Cd between **0.4 and 0.75**.\n\n## Is thinner better?\n\nFor the same motor, a **thin** rocket has much less frontal area. But be careful: making it thin also changes the **stability** (the diameter enters the CP and margin calculation). Designing is balancing.\n\n## The simulator model\n\nCd = nose (ogive 0.10; cone 0.15; rounded 0.25; blunt 0.55) + base 0.12 + friction of the body and fins. The air density drops with altitude (ρ = 1.225 × e^(−h/8500)). Near the speed of sound (340 m/s) the drag grows up to double.",
+      "task": "With a C6, this fat, blunt-nosed rocket only climbs ~160 m. Change the **nose**, the **diameter** and the **fins** to pass **330 m**, keeping the stability margin **≥ 1 calibre**.",
+      "hints": [
+        "An ogive nose has a much lower Cd than a blunt one.",
+        "The diameter enters squared in the frontal area. A 25 mm tube has less than half the area of a 41 mm one.",
+        "When you make the rocket thinner, check the margin: the fins may need to change."
+      ],
+      "questions": [
+        {
+          "prompt": "Calculate the drag of a rocket at **50 m/s**, with **Cd = 0.5** and a frontal area of **0.0005 m²**, at sea level (ρ = 1.225 kg/m³).",
+          "explanation": "½ × 1.225 × 50² × 0.5 × 0.0005 = 0.5 × 1.225 × 2500 × 0.5 × 0.0005 ≈ 0.383 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "If the rocket's speed doubles, the drag…",
+          "options": [
+            "also doubles",
+            "becomes 4 times larger",
+            "becomes 8 times larger",
+            "does not change"
+          ],
+          "explanation": "Drag depends on v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "Why does a rocket slow down less up high (at 10 km altitude)?",
+          "options": [
+            "Because gravity disappears",
+            "Because the air is less dense: smaller ρ, smaller drag",
+            "Because it is colder and the Cd drops",
+            "Because the frontal area decreases"
+          ],
+          "explanation": "The air density roughly halves every 6 km; at 10 km it is only ~1/3 of the sea-level value."
+        }
+      ],
+      "goals": [
+        "Apogee of at least 330 m",
+        "Stability margin of at least 1 calibre"
+      ]
+    },
+    "rkt-06-recuperacao": {
+      "title": "Recovery: parachutes and ejection delay",
+      "theory": "# Going up is half the flight\n\nA rocket has to come back in one piece (and without hurting anyone). That is why it has a **recovery system**, almost always a **parachute**.\n\n## The right moment to open\n\nThe ideal is to open the parachute **at apogee**, when the speed is almost zero.\n\n- **Too early**: the rocket is still climbing fast; the parachute opens with a huge jerk and may tear or come off.\n- **Too late**: the rocket is already falling fast; same jerk — or it hits the ground first.\n\nIn model rocket motors, the **delay** is the last number of the code (C6-**5**): the seconds between the **end of the burn** and the **ejection**. The right value is:\n\n```\nideal delay ≈ (time to apogee) − (burn time)\n```\n\n## Landing speed\n\nDescending under a parachute, the rocket soon reaches **terminal velocity**: the parachute drag equals the weight.\n\n```\nm × g = ½ × ρ × v² × Cd × A   →   v = √( 2 × m × g / (ρ × Cd × A) )\n```\n\nWith a round parachute (Cd ≈ 0.8), we want to land at **3.5 to 5 m/s** — like jumping from a height of 60 cm to 1.3 m. Faster breaks fins; slower and the wind carries the rocket far away.\n\n## The simulator model\n\nThe parachute opens at the instant \"end of burn + delay\" and inflates in 0.4 s. Parachute Cd = 0.8 over the area of the circle.",
+      "task": "This rocket's parachute opens at over 70 m/s (it would tear!) and is too small. Choose the **parachute diameter** and the **ejection delay** so that it opens at **15 m/s at most** and the rocket lands at **5 m/s at most**.",
+      "safety": "- Use **fire-resistant wadding** between the motor and the parachute: the ejection charge is hot and melts nylon.\n- If the parachute does not open, the rocket falls like an arrow: **stay alert and shout \"heads up!\"** — that is why everyone stands back and watches the flight.\n- Never try to recover a rocket from **power lines**, high roofs or tall trees.",
+      "hints": [
+        "Run once and see the apogee time and the burn time in the text. The ideal delay is the difference.",
+        "The landing speed drops with the square root of the parachute area: doubling the diameter quadruples the area and halves the speed."
+      ],
+      "questions": [
+        {
+          "prompt": "A **0.1 kg** rocket descends under a parachute with **Cd = 0.8** and an area of **0.1257 m²** (40 cm diameter). What is the terminal velocity at sea level (ρ = 1.225 kg/m³, g = 9.81 m/s²)?",
+          "explanation": "v = √(2 × 0.1 × 9.81 / (1.225 × 0.8 × 0.1257)) = √(1.962 / 0.1232) ≈ 3.99 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "The rocket reaches apogee **7.5 s** after ignition and the motor burns for **1.9 s**. What is the best ejection delay?",
+          "explanation": "7.5 − 1.9 = 5.6 s. In practice we choose the motor with the closest delay (C6-5 or C6-7).",
+          "unit": "s"
+        },
+        {
+          "prompt": "Why **not** open the parachute right at the end of the burn?",
+          "options": [
+            "Because the motor is still hot",
+            "Because the rocket is still fast: the jerk may tear the parachute",
+            "Because the parachute would make the rocket climb higher",
+            "There is no problem at all"
+          ],
+          "explanation": "At the end of the burn the rocket is near its maximum speed; the opening force grows with v²."
+        }
+      ],
+      "goals": [
+        "Parachute opens at 15 m/s at most",
+        "Landing at 5 m/s at most"
+      ]
+    },
+    "rkt-07-estagios": {
+      "title": "Multi-stage rockets",
+      "theory": "# Why throw part of the rocket away?\n\nWhen a rocket's motor runs out, the empty tube, the fins and the spent motor are still there — **dead mass** that the rest of the flight has to carry. The idea of the **stage** is: when a motor runs out, we **drop the part that became useless** and light the next motor on a lighter rocket.\n\n## How it works in a model rocket\n\n- The **lower stage** (booster) uses a **zero-delay** motor (e.g. B6-**0**).\n- When it finishes, its ejection charge — instead of opening a parachute — **ignites the upper motor** and pushes the booster away.\n- The **upper stage** (sustainer) continues with its normal motor (e.g. C6-7), already moving and lighter.\n\n## Why does it go higher than just adding the motors?\n\nThe upper motor starts burning **already at high speed**, at a greater height and **without carrying the booster**. Each newton-second of the second motor yields more.\n\nIn real rockets (space launchers) stages are even more important: a single stage that reached orbit would have to be almost all tank — we will see why with the Tsiolkovsky equation.\n\n## The simulator model\n\nThe second motor ignites the instant the first one ends. The dropped booster (structure + spent motor) stops counting. The stability shown is that of the upper stage (the booster has its own fins).",
+      "task": "The competition rules allow **15 N·s of total impulse at most**, and the goal is to pass **480 m**. A single C6 does not get there. Build a **2-stage** rocket that wins.",
+      "safety": "- Multi-stage rockets are for those who have mastered single-stage ones: the lower stage falls **without a parachute** (it must be light, with large fins, to fall \"gliding\" slowly) and the upper one climbs much higher.\n- Use only motors made for the lower stage (**zero** delay, such as the B6-0) and check the clear area — it needs to be larger.",
+      "hints": [
+        "Switch to 2 stages and combine motors: the total impulse is the sum of the two.",
+        "B6 (5 N·s) + C6 (10 N·s) = 15 N·s, within the rules."
+      ],
+      "questions": [
+        {
+          "prompt": "A booster with **B6-0** (5 N·s) and a sustainer with **C6-7** (10 N·s). What is the rocket's total impulse?",
+          "explanation": "The impulses add up: 5 + 10 = 15 N·s.",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "What is the main advantage of a multi-stage rocket?",
+          "options": [
+            "Motors get more powerful when stacked",
+            "You drop the mass that is no longer useful (spent motor, tube, fins), and the rest accelerates more",
+            "The rocket becomes more stable",
+            "The drag disappears"
+          ],
+          "explanation": "Less dead mass = more acceleration with the same thrust, and the 2nd motor already starts fast and high."
+        },
+        {
+          "prompt": "Why must the lower stage's motor have **zero** delay?",
+          "options": [
+            "To ignite the upper motor as soon as it ends, without losing speed",
+            "To open the booster's parachute",
+            "To save propellant",
+            "Because it is cheaper"
+          ],
+          "explanation": "Any wait would make the rocket lose speed (gravity and drag) before the 2nd motor ignites."
+        }
+      ],
+      "goals": [
+        "Apogee of at least 480 m",
+        "Total impulse of at most 15 N·s"
+      ]
+    },
+    "rkt-08-tsiolkovsky": {
+      "title": "The Tsiolkovsky equation and delta-v",
+      "theory": "# The rocket equation\n\nIn 1903, the Russian teacher **Konstantin Tsiolkovsky** wrote the equation that rules all of astronautics:\n\n```\nΔv = ve × ln( m0 / mf )\n```\n\n- **Δv** (delta-v): how much the rocket can change its speed, if there were no gravity or air;\n- **ve**: exhaust gas velocity (ve = Isp × g0, with g0 = 9.81 m/s²);\n- **m0**: initial mass (full); **mf**: final mass (without propellant);\n- **ln**: natural logarithm (the \"ln\" key on the calculator).\n\n## Isp: the motor's \"efficiency\"\n\nThe **specific impulse** (Isp, in seconds) says how much impulse each kilogram of propellant gives: Isp = impulse / (propellant mass × g0).\n\n- black powder (model rocket): ~80 s\n- composite solid propellant: 200–270 s\n- kerosene + liquid oxygen: 300–350 s\n- hydrogen + liquid oxygen: ~450 s\n\n## The tyranny of the logarithm\n\nBecause Δv grows with the **logarithm** of the mass ratio, doubling the propellant does **not** double the Δv. To always gain the same 2 900 m/s with Isp 300 s, the mass ratio has to **multiply** by e (2.72) each time. That is why rockets are almost all tank — and why stages are used.\n\n## Real vs ideal delta-v\n\nThe real flight loses Δv to **gravity** (each second climbing vertically costs 9.81 m/s) and to **drag**. Motors that burn too slowly lose more to gravity; those that burn too fast suffer huge accelerations.\n\n## The simulator model\n\nIn the \"custom\" motor, thrust = Isp × g0 × mass flow rate, constant until the propellant runs out. The simulator shows the ideal Δv (Tsiolkovsky) and flies the rocket for real, with gravity that decreases with altitude and a thinning atmosphere: compare the two!",
+      "task": "This sounding rocket (60 kg without propellant) only has an ideal Δv of ~1.9 km/s and climbs 17 km. Adjust **Isp**, **propellant mass**, **flow rate** and **dry mass** to get **ideal Δv ≥ 3 000 m/s** and pass **80 km** of apogee.",
+      "hints": [
+        "A better composite propellant (Isp 250 s) already helps a lot: Δv is proportional to Isp.",
+        "More propellant increases m0/mf — but remember the logarithm. More flow rate shortens the burn and reduces gravity losses."
+      ],
+      "questions": [
+        {
+          "prompt": "A rocket with **Isp = 300 s** has an initial mass of **100 t** and a final mass of **25 t**. What is the ideal Δv? (g0 = 9.81 m/s²)",
+          "explanation": "ve = 300 × 9.81 = 2 943 m/s; ln(100/25) = ln 4 = 1.386; Δv = 2 943 × 1.386 ≈ 4 080 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "A C6 motor delivers **10 N·s** burning **12.3 g** of black powder. What is the approximate Isp?",
+          "explanation": "Isp = 10 / (0.0123 × 9.81) ≈ 82.9 s — typical of black powder.",
+          "unit": "s"
+        },
+        {
+          "prompt": "If you **double** the mass ratio m0/mf, the Δv…",
+          "options": [
+            "doubles",
+            "increases by ve × ln 2 (≈ 0.69 × ve), no matter what it started from",
+            "quadruples",
+            "does not change"
+          ],
+          "explanation": "ln(2R) = ln R + ln 2: each doubling adds the same fixed amount to Δv. That is why getting to space is so hard."
+        }
+      ],
+      "goals": [
+        "Ideal Δv of at least 3 000 m/s",
+        "Apogee of at least 80 km"
+      ]
+    },
+    "rkt-09-orbita": {
+      "title": "Orbit: orbital velocity and the Hohmann transfer",
+      "theory": "# Being in orbit is falling without ever arriving\n\nImagine a cannon on top of a mountain (the idea is Newton's own). The faster the ball leaves, the farther it falls. At a certain speed, the Earth \"curves\" away beneath the ball as fast as it falls: the ball **never reaches the ground**. That is an **orbit**.\n\n## Orbital velocity\n\nIn a circular orbit, gravity plays the role of the centripetal force:\n\n```\nv = √( G × M / r )\n```\n\n- G × M (Earth) = 3.986 × 10^14 m³/s²\n- r = Earth's radius (6 371 km) + altitude\n\nAt 400 km (the Space Station) this gives ~7.7 km/s: one lap around the Earth every 92 minutes. **Going high is easy; going fast sideways is what is hard.** A sounding rocket climbs 100 km, but falls back because it has no horizontal speed.\n\n## The Δv budget to orbit\n\nTo reach a low orbit a launcher needs **~9.4 km/s** of Δv: ~7.8 km/s of orbital velocity + ~1.5–2 km/s lost to gravity, drag and manoeuvres. With an Isp of 300–450 s, Tsiolkovsky demands mass ratios of 10 to 20 — impossible with a single stage and a real structure. That is why launchers have **2 or 3 stages**.\n\n## Thrust-to-weight at lift-off\n\nFirst of all, the rocket has to **leave the ground**: T/W > 1 (in practice 1.2 to 1.5). Large launchers do not use fins: they swivel the engine (**thrust vectoring**) to stay pointed.\n\n## Hohmann transfer\n\nTo go from a low circular orbit to a higher one (for example, a geostationary satellite), the most economical way is the **Hohmann transfer** (1925):\n\n- **1st burn**: accelerate **forwards** in the low orbit. The orbit becomes an **ellipse** whose highest point (apogee) touches the desired orbit.\n- Half a lap later, at apogee, the spacecraft is **slower** than needed for the circular orbit there.\n- **2nd burn**: accelerate again **forwards** at apogee, and the orbit becomes circular.\n\nCuriously: the higher orbit is **slower**, even though you accelerated twice — the energy went into height.\n\n## The simulator model\n\nHere the simulator flies **vertically** (it does not enter orbit): use it for the mass, Isp and thrust budget. Δv is the ideal Tsiolkovsky value summed over the two stages; the launcher is guided by thrust vectoring.",
+      "task": "A 2-stage launcher takes 1 t to space. Right now it **does not even leave the ground** (thrust/weight < 1) and has a Δv of only ~8.9 km/s. Adjust the 1st stage's **Isp** and **flow rate** and the 2nd stage's **Isp** and **propellant** to get **T/W ≥ 1.2** and **Δv ≥ 9 400 m/s**.",
+      "hints": [
+        "Thrust = Isp × 9.81 × flow rate. With ~50 t the rocket weighs ~490 kN; for T/W ≥ 1.2 the 1st stage needs about 600 kN (more, if you put more propellant on top).",
+        "In the upper stage Isp is worth gold: vacuum engines reach 340–450 s. More propellant in the 2nd stage also helps a lot."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the speed of a circular orbit at **400 km** altitude? Use G·M = 3.986 × 10^14 m³/s² and an Earth radius of 6 371 km.",
+          "explanation": "r = 6 771 000 m; v = √(3.986e14 / 6.771e6) = √(5.887e7) ≈ 7 673 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "In a Hohmann transfer to a **higher** orbit, the two burns are…",
+          "options": [
+            "backwards (braking), so the spacecraft \"falls upwards\"",
+            "forwards in both: at the low point of the ellipse and then at the high point",
+            "upwards (in the radial direction), pointing away from the Earth",
+            "one forwards and the other backwards"
+          ],
+          "explanation": "The 1st burn (prograde) creates the transfer ellipse; the 2nd, at apogee, circularises the orbit."
+        },
+        {
+          "prompt": "If low orbit asks for ~7.8 km/s, why does the launcher need ~9.4 km/s of Δv?",
+          "options": [
+            "Because the fuel evaporates",
+            "Because of the losses to gravity and drag during the climb",
+            "Because the Earth rotates the wrong way",
+            "The engineers' safety margin"
+          ],
+          "explanation": "While climbing, the rocket spends thrust just to avoid falling (gravity loss) and to overcome the air (drag loss)."
+        }
+      ],
+      "goals": [
+        "Lift-off thrust/weight of at least 1.2",
+        "Ideal Δv of at least 9 400 m/s (low orbit)"
+      ]
+    },
+    "rkt-10-missao-sondagem": {
+      "title": "Full project: sounding mission to space",
+      "theory": "# From the blank page to the mission\n\nReal engineering means meeting **several requirements at the same time**. A university team has to take a 10 kg scientific payload (the rocket weighs 60 kg without propellant) beyond the **Kármán line (100 km)**, where we conventionally say space begins, and bring it back in one piece.\n\n## The mission requirements\n\n- **Apogee ≥ 100 km**.\n- **Maximum acceleration ≤ 15 g** — the payload and the electronics have a limit.\n- **Stability margin between 1.5 and 4 calibres** — the rocket climbs through dense air at over 1 km/s.\n- **Parachute opening at ≤ 50 m/s** and **landing at ≤ 10 m/s**.\n\n## The design budget\n\nStart with the **Δv**. Without air and with constant gravity, reaching a height h would require v = √(2 × g × h) ≈ 1.4 km/s for 100 km. Adding the losses to gravity during the burn and to drag, we need **~3 km/s or more**.\n\nThen the **acceleration**: the peak is at the end of the burn, when the rocket is lightest (a = F/m_final − g). More mass flow = shorter burn, less gravity loss — but more g's. Balancing this is the art.\n\nFinally, **stability** (fins compatible with the CG full of propellant) and **recovery** (a parachute big enough and a delay that opens it near apogee).\n\n## Mind the delay\n\nIn a flight of almost 4 minutes to apogee, the ejection delay is not a matter of seconds: it is the difference between the apogee time and the end of the burn. In the simulator, the parachute opens at that instant and the rocket descends with it open (the model does not compute the heating or loads of re-entry).\n\n## Design cycle\n\n1. Estimate (Δv, T/W, accelerations).\n2. Simulate.\n3. See which requirement failed and why.\n4. Change **one thing at a time** and simulate again.",
+      "task": "Design the mission: adjust **propellant**, **flow rate**, **Isp**, **fins**, **parachute** and **delay** to meet **all** the requirements. Engineer's tip: first reach 100 km with ≤ 15 g; then get the stability right; recovery last.",
+      "safety": "Rockets like this are projects of **universities, agencies and licensed teams**, with controlled launch areas (such as the Barreira do Inferno or Alcântara Launch Centres) and authorisation from the aviation authorities. Here it is **simulation only**: never try to build motors or propellants.",
+      "hints": [
+        "With Isp 250 s and ~170 kg of propellant the Δv exceeds 3.2 km/s. A flow rate of ~3 kg/s keeps the acceleration below 15 g.",
+        "Run it, note the apogee time and the end of the burn, and use the difference as the delay.",
+        "A parachute of ~5 m diameter holds 60 kg at under 10 m/s."
+      ],
+      "questions": [
+        {
+          "prompt": "A flight reaches apogee **218 s** after ignition and the burn ends at **57 s**. What delay makes the parachute open at apogee?",
+          "explanation": "218 − 57 = 161 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "What mass ratio m0/mf does a rocket with **Isp 250 s** need for **Δv = 3 300 m/s**?",
+          "explanation": "m0/mf = e^(Δv / (Isp × g0)) = e^(3300 / 2452) = e^1.346 ≈ 3.84."
+        },
+        {
+          "prompt": "Why does the maximum acceleration happen at the **end** of the burn, and not at the start?",
+          "options": [
+            "Because the thrust increases with altitude",
+            "Because the rocket is lighter: with the same thrust, a = F/m grows",
+            "Because the drag pushes the rocket upwards",
+            "Because gravity disappears in space"
+          ],
+          "explanation": "With constant thrust, the mass drops as the propellant burns; at the end only ~60 kg remain for the same thrust."
+        }
+      ],
+      "goals": [
+        "Apogee of at least 100 km (Kármán line)",
+        "Maximum acceleration of 15 g",
+        "Stability margin between 1.5 and 4 calibres",
+        "Parachute opens at 50 m/s at most",
+        "Landing at 10 m/s at most"
+      ]
+    }
+  }
+}

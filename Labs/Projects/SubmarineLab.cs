@@ -12,7 +12,7 @@ public sealed class SubmarineLab : ProjectLab
     readonly SceneCanvas _scene;
     protected override FrameworkElement Scene => _scene;
     protected override string[] DefaultControls => new[] { "hullVolume", "hullMass", "ballastVolume", "fill", "water" };
-    protected override string RunLabel => "▶ Mergulhar";
+    protected override string RunLabel => L.T("▶ Mergulhar");
 
     static readonly Brush WaterTop = Ui.Make("#1B4F72"), WaterDeep = Ui.Make("#0B1B2E"), SkyB = Ui.Make("#20283A"),
         Sand = Ui.Make("#5D4E37"), Hull = Ui.Make("#F2C14E"), HullDark = Ui.Make("#B8892C"), CbB = Ui.Make("#4FC3F7"),
@@ -28,7 +28,7 @@ public sealed class SubmarineLab : ProjectLab
         AddChoice("water", "Água", new[] { ("fresh", "Doce · 1000 kg/m³"), ("salt", "Salgada · 1025 kg/m³") }, "fresh");
         AddNum("trim", "Chumbo no centro", "g", 0, 5000, 10, 0, tip: "Lastro fixo de ajuste fino, na altura do centro do casco.");
         AddNum("keel", "Chumbo na quilha", "g", 0, 5000, 10, 0, tip: "Lastro fixo no fundo do casco: abaixa o centro de gravidade.");
-        AddNum("blowAt", "Esvaziar lastro aos", "s", 0, 300, 1, 0, v => v <= 0 ? "nunca" : Fmt.F(v, 0) + " s", "Ar comprimido expulsa a água do tanque (leva ~4 s). 0 = nunca.");
+        AddNum("blowAt", "Esvaziar lastro aos", "s", 0, 300, 1, 0, v => v <= 0 ? L.T("nunca") : Fmt.F(v, 0) + " s", "Ar comprimido expulsa a água do tanque (leva ~4 s). 0 = nunca.");
         AddChoice("controller", "Controle vertical", new[] { ("manual", "Manual (força fixa)"), ("pid", "PID de profundidade") }, "manual");
         AddNum("thrust", "Propulsor vertical", "N", -50, 50, 0.5, 0, tip: "Manual: força fixa (+ empurra para baixo). PID: força máxima do propulsor.");
         AddNum("target", "Profundidade-alvo", "m", 0, 100, 0.5, 10);
@@ -82,15 +82,17 @@ public sealed class SubmarineLab : ProjectLab
     protected override string Readout()
     {
         var s = _sim;
-        string dir = Math.Abs(s.NetBuoyancy) < 0.5 ? "quase neutro" : s.NetBuoyancy > 0 ? "sobe" : "afunda";
-        string setup = $"Empuxo {Fmt.F(s.Buoyancy, 1)} N · peso {Fmt.F(s.Weight, 1)} N · saldo {Fmt.F(s.NetBuoyancy, 2)} N ({dir}) · densidade média {Fmt.F(s.MeanDensity, 0)} kg/m³\n" +
-                       $"Casco colapsa a {Fmt.F(s.CrushDepth, 1)} m · CG {Fmt.F(Math.Abs(s.BgCm), 1)} cm {(s.BgCm >= 0 ? "abaixo" : "acima")} do centro de empuxo" +
-                       (P("forwardThrust").Visible ? $" · velocidade de cruzeiro {Fmt.F(s.CruiseSpeed, 2)} m/s com {Fmt.F(s.PropPower, 0)} W" : "");
+        string dir = L.T(Math.Abs(s.NetBuoyancy) < 0.5 ? "quase neutro" : s.NetBuoyancy > 0 ? "sobe" : "afunda");
+        string setup = L.F("Empuxo {0} N · peso {1} N · saldo {2} N ({3}) · densidade média {4} kg/m³", Fmt.F(s.Buoyancy, 1), Fmt.F(s.Weight, 1), Fmt.F(s.NetBuoyancy, 2), dir, Fmt.F(s.MeanDensity, 0)) + "\n" +
+            (s.BgCm >= 0
+                ? L.F("Casco colapsa a {0} m · CG {1} cm abaixo do centro de empuxo", Fmt.F(s.CrushDepth, 1), Fmt.F(Math.Abs(s.BgCm), 1))
+                : L.F("Casco colapsa a {0} m · CG {1} cm acima do centro de empuxo", Fmt.F(s.CrushDepth, 1), Fmt.F(Math.Abs(s.BgCm), 1))) +
+            (P("forwardThrust").Visible ? L.F(" · velocidade de cruzeiro {0} m/s com {1} W", Fmt.F(s.CruiseSpeed, 2), Fmt.F(s.PropPower, 0)) : "");
         if (!ShowResults) return setup;
-        string res = s.Crushed ? $"💥 O casco implodiu a {Fmt.F(s.MaxDepth, 1)} m ({Fmt.F(s.PressureBar, 2)} bar)!"
-            : $"Profundidade final {Fmt.F(s.FinalDepth, 2)} m · máxima {Fmt.F(s.MaxDepth, 2)} m ({Fmt.F(s.PressureBar, 2)} bar abs) · " +
-              (!s.Pid ? $"velocidade vertical máx {Fmt.F(s.MaxSpeed, 2)} m/s"
-                  : (s.SettlingTime >= 999 ? "não se acomodou" : $"acomoda em {Fmt.F(s.SettlingTime, 1)} s") + $" · sobressinal {Fmt.F(s.Overshoot, 1)} %");
+        string res = s.Crushed ? L.F("💥 O casco implodiu a {0} m ({1} bar)!", Fmt.F(s.MaxDepth, 1), Fmt.F(s.PressureBar, 2))
+            : L.F("Profundidade final {0} m · máxima {1} m ({2} bar abs) · ", Fmt.F(s.FinalDepth, 2), Fmt.F(s.MaxDepth, 2), Fmt.F(s.PressureBar, 2)) +
+              (!s.Pid ? L.F("velocidade vertical máx {0} m/s", Fmt.F(s.MaxSpeed, 2))
+                  : (s.SettlingTime >= 999 ? L.T("não se acomodou") : L.F("acomoda em {0} s", Fmt.F(s.SettlingTime, 1))) + L.F(" · sobressinal {0} %", Fmt.F(s.Overshoot, 1)));
         return setup + "\n" + res;
     }
 
@@ -112,7 +114,7 @@ public sealed class SubmarineLab : ProjectLab
         water.Freeze();
         dc.DrawRectangle(water, null, new Rect(0, surface, sideW, bottom - surface));
         dc.DrawRectangle(Sand, null, new Rect(0, bottom, sideW, h - bottom));
-        Text(dc, c, s.Salt ? "mar (água salgada)" : "lago (água doce)", 6, 5, 11, Ui.TextDim);
+        Text(dc, c, L.T(s.Salt ? "mar (água salgada)" : "lago (água doce)"), 6, 5, 11, Ui.TextDim);
 
         // depth gauge with ticks
         double gx = sideW - 34;
@@ -128,7 +130,7 @@ public sealed class SubmarineLab : ProjectLab
             var dash = new Pen(Crush, 1.5) { DashStyle = DashStyles.Dash };
             dash.Freeze();
             dc.DrawLine(dash, new Point(0, Y(s.CrushDepth)), new Point(gx, Y(s.CrushDepth)));
-            Text(dc, c, "limite do casco", 6, Y(s.CrushDepth) - 15, 10.5, Crush);
+            Text(dc, c, L.T("limite do casco"), 6, Y(s.CrushDepth) - 15, 10.5, Crush);
         }
         if (s.Pid) dc.DrawLine(PenOf(Target, 1), new Point(gx - 10, Y(s.TargetM)), new Point(gx, Y(s.TargetM)));
 
@@ -169,7 +171,7 @@ public sealed class SubmarineLab : ProjectLab
             }
         Text(dc, c, $"{Fmt.F(Math.Max(depth, 0), 1)} m · {Fmt.F((SubmarineSim.P0 + s.Rho * SubmarineSim.G * Math.Max(depth, 0)) / 1e5, 2)} bar",
             cx, cy + ht / 2 + 20 < bottom ? cy + ht / 2 + 6 : cy - ht / 2 - 28, 11, Ui.Text, true, TextAlignment.Center);
-        if (crushedNow) Text(dc, c, "💥 implodiu!", cx, cy - 34, 13, Crush, true, TextAlignment.Center);
+        if (crushedNow) Text(dc, c, L.T("💥 implodiu!"), cx, cy - 34, 13, Crush, true, TextAlignment.Center);
         Text(dc, c, "CB", 15, h - 15, 10, Ui.TextDim);
         Text(dc, c, "CG", 48, h - 15, 10, Ui.TextDim);
         dc.DrawEllipse(CbB, null, new Point(9, h - 7.5), 3.5, 3.5);
@@ -186,8 +188,8 @@ public sealed class SubmarineLab : ProjectLab
             dash.Freeze();
             double ty = plot.Top + s.TargetM / yMax * plot.Height;
             dc.DrawLine(dash, new Point(plot.Left, ty), new Point(plot.Right, ty));
-            Text(dc, c, "alvo", plot.Right - 4, ty + 2, 10.5, Target, align: TextAlignment.Right);
+            Text(dc, c, L.T("alvo"), plot.Right - 4, ty + 2, 10.5, Target, align: TextAlignment.Right);
         }
-        if (!run) Text(dc, c, "Ajuste e aperte ▶ Mergulhar", plot.Left + plot.Width / 2, plot.Top + plot.Height / 2, 12.5, Ui.TextDim, align: TextAlignment.Center);
+        if (!run) Text(dc, c, L.T("Ajuste e aperte ▶ Mergulhar"), plot.Left + plot.Width / 2, plot.Top + plot.Height / 2, 12.5, Ui.TextDim, align: TextAlignment.Center);
     }
 }

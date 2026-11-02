@@ -1,0 +1,423 @@
+{
+  "title": "Submarines and underwater vehicles",
+  "description": "Density and Archimedes, neutral buoyancy, ballast tanks, pressure, hulls, propulsion, stability, sensors and depth control with PID — up to the full budget of an ROV.",
+  "lessons": {
+    "sub-01-arquimedes": {
+      "title": "Density and Archimedes' principle",
+      "theory": "# Why does a steel ship float?\n\nA steel bolt sinks; a 100 000-tonne steel ship floats. The difference is the **average density**:\n\n```\ndensity = mass / volume      (kg/m³)\n```\n\n- fresh water: **1 000 kg/m³** (1 litre = 1 kg)\n- sea water: **~1 025 kg/m³**\n- steel: ~7 850 kg/m³; wood: 500–800 kg/m³\n\nThe ship is steel **plus a lot of air** inside: the total mass divided by the total volume gives less than that of water.\n\n## Archimedes' principle\n\nEvery body immersed in a liquid receives an upward force, the **buoyancy**, equal to the **weight of the liquid it displaces**:\n\n```\nbuoyancy = ρ_water × g × V_displaced\n```\n\nA 20 L hull fully submerged in fresh water displaces 20 kg of water: buoyancy = 1 000 × 9.81 × 0.020 = **196.2 N**.\n\n## Does it sink, float or stay put?\n\nCompare the buoyancy with the **weight** (m × g):\n\n- **buoyancy > weight** → the net force is upwards: the body **rises** and floats with part of it out of the water (displacing only what is needed);\n- **buoyancy < weight** → it **sinks**;\n- **buoyancy = weight** → **neutral buoyancy**: it stays where it is placed.\n\nOr, the quick way: if the **average density** is less than that of water, it floats.\n\n## The simulator model\n\nThe hull is a horizontal cylinder (length = 6 diameters). The simulator adds up weight, buoyancy (which decreases as the hull leaves the water), water drag and the \"added mass\" of water the hull has to push in order to move.",
+      "task": "This 20 L hull has 21 kg and **sinks**. Change the hull's **volume** or **mass** so that it **floats** (positive buoyancy balance and ending at the surface).",
+      "hints": [
+        "Calculate the average density: 21 kg / 20 L = 1.05 kg/L. Greater than fresh water (1 kg/L)…",
+        "A larger hull displaces more water; a lighter one weighs less. Either one solves it."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the buoyancy on a **20 L** hull fully submerged in **fresh water**? (g = 9.81 m/s²)",
+          "explanation": "20 L = 0.020 m³. Buoyancy = 1 000 × 9.81 × 0.020 = 196.2 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "What is the average density of a **21 kg** ROV with a volume of **20 L**?",
+          "explanation": "21 kg / 0.020 m³ = 1 050 kg/m³ — denser than fresh water, so it sinks.",
+          "unit": "kg/m³"
+        },
+        {
+          "prompt": "Why does a steel ship float, if steel is ~8 times denser than water?",
+          "options": [
+            "Because the hull paint is waterproof",
+            "Because, counting the air inside, the ship's average density is less than that of water",
+            "Because the engine pushes it up",
+            "Because salt water is denser than steel"
+          ],
+          "explanation": "The hull displaces an enormous volume of water; the total mass (steel + air + cargo) divided by that volume gives less than 1 025 kg/m³."
+        }
+      ],
+      "goals": [
+        "Positive buoyancy balance (buoyancy greater than weight)",
+        "Ends up floating at the surface"
+      ]
+    },
+    "sub-02-flutuabilidade-neutra": {
+      "title": "Neutral buoyancy: neither rising nor sinking",
+      "theory": "# The ideal state of a submarine\n\nA submarine that **rises** by itself has to spend energy to stay down; one that **sinks** by itself spends energy not to go under. The ideal is **neutral buoyancy**: buoyancy = weight, and the vehicle stays still at the depth where it is, like a fish.\n\n## Fine tuning with fixed ballast\n\nIn practice the hull is designed **a little light** and then small lead weights (**fixed ballast** or **trim**) are added until the balance is close to zero. Lead is good for this: very dense (11 340 kg/m³), it gives a lot of mass in a small space.\n\n```\nmissing mass = ρ_water × V − current mass\n```\n\nA 10 L, 9.6 kg ROV in fresh water needs 10 − 9.6 = **0.4 kg** of ballast.\n\n## Fresh vs salt\n\nSea water is ~2.5% denser: the same hull receives **more buoyancy** in the sea. A submarine that is neutral in a river **rises** when it enters the sea, and needs more ballast. (Ships too: there are marks on the hull — the \"Plimsoll line\" — for each type of water.)\n\n## In the simulator\n\nThe vehicle starts at a depth of **5 m**. If it is neutral, it stays there. The trim lead sits inside the hull (it adds mass, not volume).",
+      "task": "This ROV will work **in the sea**. With 19.5 kg in 20 L it rises to the surface. Choose the right **water** and add **lead** until it is **neutral** (balance between −0.3 and +0.3 N), staying near 5 m.",
+      "safety": "To test a model submarine or a real ROV, use a **swimming pool or shallow tank**, never rivers or the sea alone, and always with an adult nearby. Batteries and electronics stay **sealed**; nothing plugged into the mains near the water.",
+      "hints": [
+        "In the sea, 20 L of water weigh 20 × 1.025 = 20.5 kg.",
+        "How much is missing from 19.5 kg to 20.5 kg? Convert to grams."
+      ],
+      "questions": [
+        {
+          "prompt": "A **10 L** ROV with **9.6 kg** will dive in **fresh water**. How many grams of lead make it neutral (ignoring the volume of the lead)?",
+          "explanation": "It displaces 10 kg of fresh water; 10 − 9.6 = 0.4 kg = 400 g are missing.",
+          "unit": "g"
+        },
+        {
+          "prompt": "A neutral submarine in a river moves into the sea. What happens?",
+          "options": [
+            "It sinks, because salt water is heavier",
+            "It rises, because sea water is denser and gives more buoyancy",
+            "Nothing changes",
+            "It becomes unstable and flips"
+          ],
+          "explanation": "Same displaced volume, denser water: the buoyancy increases ~2.5% and the balance becomes positive."
+        },
+        {
+          "prompt": "Why is neutral buoyancy desirable in an underwater vehicle?",
+          "options": [
+            "Because it gets faster",
+            "Because it does not need to spend energy just to hold its depth",
+            "Because the pressure decreases",
+            "Because the sonar works better"
+          ],
+          "explanation": "With buoyancy = weight, the thrusters only work to move the vehicle, and the batteries last longer."
+        }
+      ],
+      "goals": [
+        "Neutral buoyancy (balance between −0.3 and +0.3 N)",
+        "Stays between 4 and 6 m of depth"
+      ]
+    },
+    "sub-03-lastro": {
+      "title": "Ballast tanks: diving and coming back",
+      "theory": "# Changing weight without changing size\n\nA submarine has to **go down** and then **come up**. Since the hull volume does not change, it changes its **mass**: it fills **ballast tanks** with sea water to sink and empties them to rise.\n\n- **Flood** (open the top and bottom valves): water comes in, the submarine gets heavier → it **descends**.\n- **Blow** (send compressed air into the tank): the air pushes the water out through the bottom, the submarine gets lighter → it **rises**.\n\nThe tanks' volume is **inside the hull envelope**, so it does not change the buoyancy, only the weight.\n\n## How much to flood?\n\n```\nbalance = ρ × g × V_hull − (m_hull + ρ × V_tank × fill) × g\n```\n\nTo be neutral, the tank water must make up exactly what is missing. A 20 L, 19 kg hull in fresh water needs 1 kg of water: in a 3 L tank, that is **1/3 full (33%)**.\n\n## Real submarines\n\nLarge submarines have **main tanks** (only completely full or empty, to submerge and surface) and smaller **compensating and trim tanks**, pumped little by little for fine adjustment. In an emergency, the main tanks are blown all at once: the submarine rises very fast (\"emergency blow\").\n\n## In the simulator\n\nThe tank starts with the chosen fill level; at the moment \"empty ballast at\" the compressed air expels the water in ~4 s. The bottom is at 20 m.",
+      "task": "Make the submarine **go down to at least 15 m** and then **come back to the surface by itself** before the 120 s run out. Choose how much to **flood the ballast** and **when to blow it**.",
+      "hints": [
+        "With 20% ballast it still floats. To sink fast, flood a lot more.",
+        "It takes some time to go down and as much to come up. Blow the ballast roughly halfway through the time."
+      ],
+      "questions": [
+        {
+          "prompt": "**20 L** hull, **19 kg** mass, **3 L** ballast tank, in fresh water. What percentage of the tank must be full for the submarine to be **neutral**?",
+          "explanation": "20 − 19 = 1 kg = 1 L of water is missing. 1 L / 3 L = 33.3%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "To rise, the submarine…",
+          "options": [
+            "opens the tanks to let more water in",
+            "blows compressed air into the tanks, expelling the water",
+            "increases the size of the hull",
+            "heats the water in the tanks"
+          ],
+          "explanation": "The compressed air pushes the water out: less mass with the same volume = positive balance."
+        },
+        {
+          "prompt": "Why does flooding the ballast tank **not** change the buoyancy?",
+          "options": [
+            "Because the tank is already inside the hull volume: the displaced volume is the same",
+            "Because the water in the tank has no weight",
+            "Because buoyancy only depends on depth",
+            "It does change, the buoyancy doubles"
+          ],
+          "explanation": "Buoyancy depends on the external displaced volume. The water only replaces the air inside the tank: it increases the weight, not the volume."
+        }
+      ],
+      "goals": [
+        "Reaches at least 15 m of depth",
+        "Returns to the surface at the end"
+      ]
+    },
+    "sub-04-pressao": {
+      "title": "Pressure and depth",
+      "theory": "# Every 10 m, 1 more bar\n\nThe pressure underwater is the weight of the column of water above each square metre, **plus** the pressure of the atmosphere:\n\n```\nP = P0 + ρ × g × h\n```\n\n- P0 = 101 325 Pa ≈ 1 bar (the air above the water)\n- ρ × g × h: the water pressure (\"gauge\")\n\nIn fresh water, ρ × g = 9 810 Pa per metre: every **~10 m** the pressure increases by **~1 bar**. At 30 m in the sea the absolute pressure is already **~4 bar** — four times that at the surface.\n\n## The hull withstands the difference\n\nInside the hull the air is at ~1 atm. The hull has to resist the **difference** between outside and inside: the gauge pressure. If it exceeds the hull's limit, it **collapses** (implodes) — all at once, in milliseconds.\n\n```\ncollapse depth = strength / (ρ × g)\n```\n\nA 5 bar hull in fresh water withstands down to 5 × 10^5 / 9 810 ≈ **51 m**.\n\n## Safety factor\n\nEngineers never design at the limit: they use a **safety factor** (SF):\n\n```\nSF = hull strength / maximum working pressure\n```\n\nToo low an SF is dangerous (defective material, fatigue, calculation error); too high an SF makes the hull heavy and expensive. For underwater equipment something between 1.25 and 2 is common (crewed submarines use more).\n\n## In the simulator\n\nThe ballast is full: the vehicle sinks to the bottom, at 40 m, in the sea. The dashed red line shows where the hull collapses.",
+      "task": "This hull only withstands 3 bar and **implodes** before reaching the bottom, at 40 m in the sea. Choose the **hull strength** to reach the bottom intact, with a **safety factor between 1.25 and 2** (safe, but without overdoing weight and cost).",
+      "safety": "Pressure hulls store a lot of energy. Test hulls and vessels with **water** (hydrostatic test), never with compressed air: water barely compresses, so if something gives way there is no explosion. Never take a camera or equipment deeper than the depth indicated by the manufacturer.",
+      "hints": [
+        "Calculate the gauge pressure at the bottom: 1 025 × 9.81 × 40 ≈ 4 bar.",
+        "SF = strength / pressure at the bottom. For an SF between 1.25 and 2, the strength is between ~5 and ~8 bar."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **absolute** pressure at **30 m** depth in the sea? (ρ = 1 025 kg/m³, g = 9.81 m/s², P0 = 101 325 Pa) Answer in bar.",
+          "explanation": "P = 101 325 + 1 025 × 9.81 × 30 = 101 325 + 301 658 ≈ 402 983 Pa ≈ 4.03 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "A hull that resists a **5 bar** pressure difference can go down to what depth in **fresh water**?",
+          "explanation": "h = 500 000 / (1 000 × 9.81) ≈ 51 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "What does a submarine's hull have to withstand?",
+          "options": [
+            "Only the absolute pressure of the water",
+            "The difference between the water pressure outside and the air pressure inside",
+            "Only the weight of the water above the submarine",
+            "Nothing, the water pushes equally in all directions"
+          ],
+          "explanation": "Inside there is ~1 atm; outside, P0 + ρgh. The hull holds the difference, ρgh (the gauge pressure)."
+        }
+      ],
+      "goals": [
+        "The hull does not implode",
+        "Reaches the bottom (39 m or more)",
+        "Safety factor between 1.25 and 2"
+      ]
+    },
+    "sub-05-casco-materiais": {
+      "title": "Hull design and materials",
+      "theory": "# The shape that withstands pressure\n\nPressure pushes **equally in all directions**. The shape that best resists this is the **sphere**: the whole wall works under equal compression. That is why bathyscaphes and deep submersibles have a **spherical** cabin. The **cylinder** with rounded end caps is the best compromise for a long vehicle (room for motor, battery, crew).\n\n## Wall stress\n\nFor a thin-walled cylinder (radius r, thickness t) under pressure P, the wall stress (\"hoop\" stress) is:\n\n```\nσ = P × r / t\n```\n\nWith P = 3 MPa (~300 m), r = 0.1 m and t = 5 mm: σ = 3 × 0.1 / 0.005 = **60 MPa** — easy for aluminium (it resists ~250 MPa), but be careful with the next item.\n\n## Buckling: the danger of thin hulls\n\nUnder **external** pressure, a thin hull does not fail because the material \"bursts\": it **buckles** — it loses its round shape and crumples suddenly, long before the breaking stress. The solution is to use **stiffening rings** (frames) inside or thicker walls. Any ovalisation (a dented hull) greatly worsens the strength.\n\n## Materials\n\n- **Acrylic (PMMA)**: transparent, great for camera domes and shallow ROVs; fragile against impacts and scratches.\n- **Aluminium (6061-T6)**: light, easy to machine; needs corrosion protection in the sea (anodising, sacrificial anodes).\n- **High-strength steel (HY-80/HY-100)**: military submarines; heavy, but tough and weldable.\n- **Titanium**: very high strength per weight and does not corrode; expensive. Used in deep-sea vehicles.\n- **Carbon-fibre composites**: light, but hard to inspect; internal damage and fatigue under pressure cycles have caused catastrophic failures.\n- **Syntactic foam**: hollow glass microspheres in resin; gives **buoyancy** at great depths without being crushed (ordinary foam gets crushed).\n\n## Sealing\n\nHulls open and close with **O-rings** in grooves; cables pass through **watertight connectors** (penetrators). Most leaks in amateur projects come from poor sealing, not a weak hull.",
+      "questions": [
+        {
+          "prompt": "Why do deep submersibles have a **spherical** cabin?",
+          "options": [
+            "Because it looks nicer",
+            "Because the sphere distributes the pressure equally over the whole wall, resisting better with less material",
+            "Because the sphere is more hydrodynamic",
+            "Because more people fit"
+          ],
+          "explanation": "In a sphere the whole wall is compressed equally; there are no weak points of shape."
+        },
+        {
+          "prompt": "Calculate the wall stress of a cylinder with **P = 3 MPa**, radius **0.1 m** and thickness **5 mm** (σ = P × r / t). Answer in MPa.",
+          "explanation": "σ = 3 × 0.1 / 0.005 = 60 MPa.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "A thin cylindrical hull under **external** pressure usually fails by…",
+          "options": [
+            "instant rust",
+            "buckling: it loses its round shape and crumples suddenly, before the breaking stress",
+            "melting",
+            "excess buoyancy"
+          ],
+          "explanation": "Under compression, thin structures are unstable. Stiffening rings and thicker walls prevent buckling."
+        },
+        {
+          "prompt": "To provide buoyancy to an ROV working at **3 000 m**, you use…",
+          "options": [
+            "ordinary polystyrene foam",
+            "PET bottles full of air",
+            "syntactic foam (hollow glass microspheres in resin)",
+            "lead"
+          ],
+          "explanation": "Ordinary foams and bottles are crushed by the pressure; syntactic foam resists and stays light."
+        },
+        {
+          "prompt": "Why are hulls and tanks tested with **water** (hydrostatic test) and not with air?",
+          "options": [
+            "Because water is cheaper",
+            "Because water barely compresses: it stores little energy and, if something gives way, there is no explosion",
+            "Because air does not make pressure",
+            "Because water lubricates the O-rings"
+          ],
+          "explanation": "Compressed gas stores a lot of energy and releases it all at once in a failure; water practically does not."
+        }
+      ]
+    },
+    "sub-06-propulsao-arrasto": {
+      "title": "Propulsion and drag",
+      "theory": "# Pushing water is expensive\n\nWater is ~800 times denser than air, so the drag underwater is enormous. The formula is the same as for air:\n\n```\nF_drag = ½ × ρ × v² × Cd × A\n```\n\nAt **cruising speed** the thruster pushes exactly the drag:\n\n```\nv = √( 2 × F / (ρ × Cd × A) )\n```\n\n## Shape: Cd\n\n- **Torpedo** (rounded nose and tapering tail): Cd ≈ 0.1 — the water slides by and closes behind.\n- **Flat-ended cylinder**: Cd ≈ 0.85 — the front hits the water and a swirl forms behind.\n- **Open box** (frame ROV): Cd ≈ 1.05 — practical for carrying cameras, arms and lights, but slow.\n\n## Power goes with the cube\n\nUseful power = force × speed. Since force grows with v², power grows with **v³**: doubling the speed costs **8 times** more power. That is why submarines move slowly (and ROVs even more so).\n\n```\nP_useful = F × v\nP_battery ≈ P_useful / η     (η ≈ 0.4 combining motor and propeller)\n```\n\n## In the simulator\n\nThe forward thruster pushes with the chosen force; the frontal area is that of the hull's circle (a 20 L cylinder has a diameter of 16 cm). The power shown is what leaves the battery, at 40% efficiency.",
+      "task": "This box-shaped ROV moves at under 1 m/s. Choose the **shape** and the **thruster force** to cruise at **at least 1.5 m/s** using **at most 40 W** from the battery.",
+      "safety": "Propellers and thrusters have sharp blades that spin fast: use **guards** (\"kort nozzle\" or mesh) and never power the motors with someone holding the vehicle near the propellers. Switch off the power before touching anything.",
+      "hints": [
+        "With the box, to reach 1.5 m/s you would need ~24 N and ~90 W. Change the shape.",
+        "With the torpedo, a few newtons are enough."
+      ],
+      "questions": [
+        {
+          "prompt": "An ROV cruises at **2 m/s** with **20 N** of drag. What is the thruster's useful power?",
+          "explanation": "P = F × v = 20 × 2 = 40 W (more would leave the battery, because of the efficiency).",
+          "unit": "W"
+        },
+        {
+          "prompt": "If the submarine doubles its speed, the required power…",
+          "options": [
+            "doubles",
+            "quadruples",
+            "becomes 8 times greater",
+            "does not change"
+          ],
+          "explanation": "F grows with v² and P = F × v, so P grows with v³: 2³ = 8."
+        },
+        {
+          "prompt": "Why does the torpedo shape have so much less drag than a box?",
+          "options": [
+            "Because it is lighter",
+            "Because the water slides along the rounded front and closes behind the tapered tail, without big swirls",
+            "Because it has less volume",
+            "Because it floats better"
+          ],
+          "explanation": "Almost all the drag of blunt shapes comes from the low-pressure wake behind them; the tapered tail avoids the wake."
+        }
+      ],
+      "goals": [
+        "Cruising speed of at least 1.5 m/s",
+        "Battery power of at most 40 W"
+      ]
+    },
+    "sub-07-estabilidade": {
+      "title": "Stability: centre of gravity vs centre of buoyancy",
+      "theory": "# Two points again\n\nAs with rockets, a submarine's stability depends on two points:\n\n- **Centre of gravity (CG)**: where the weight acts.\n- **Centre of buoyancy (CB)**: the centre of the displaced volume, where the buoyancy acts.\n\nSubmerged, the CB stays put (it is the geometric centre of the hull). If the vehicle tilts and the **CG is below the CB**, weight and buoyancy form a **couple that rights it**, like a **roly-poly toy**. If the CG is **above**, the couple makes it **flip upside down**.\n\n## The BG distance\n\n```\nrighting moment = weight × BG × sin(angle)\n```\n\nBG is the vertical distance between the CB and the CG. More BG = it returns faster and rocks less. In small ROVs, a BG of 1 to 5 cm is common.\n\n## How to lower the CG\n\n- Put what is **heavy at the bottom**: batteries, lead in the **keel**.\n- Put what is **light (floats, foam) on top**.\n- Moving lead from the centre to the keel **does not change the buoyancy balance**, only the stability.\n\n## What about ships?\n\nAt the surface it is different: when the ship heels, the shape of the submerged volume changes and the CB **shifts sideways**. The point that matters is the **metacentre (M)**: the ship is stable if the CG is below M — even if it is above the CB. Submerged, this \"help\" disappears: only CG below CB counts.\n\n## In the simulator\n\nThe hull's centre of mass (structure, electronics) is 0.5 cm **above** the centre. The lead \"in the centre\" is at the height of the CB; the one \"in the keel\" is at the bottom of the hull. In the drawing: blue dot = CB, orange = CG (displacement exaggerated 3×).",
+      "task": "This ROV is neutral, but it **flips over**: the CG is above the CB. Redistribute the **lead** to put the CG **at least 1 cm below** the CB, keeping **neutral buoyancy**.",
+      "hints": [
+        "Lead in the centre does not help stability. Move it to the keel.",
+        "If the total amount of lead does not change, the buoyancy balance stays at zero."
+      ],
+      "questions": [
+        {
+          "prompt": "An ROV weighing **200 N** has **BG = 2 cm**. What is the righting moment when it tilts **30°**? (sin 30° = 0.5)",
+          "explanation": "200 × 0.02 × 0.5 = 2 N·m.",
+          "unit": "N·m"
+        },
+        {
+          "prompt": "For a **submerged** vehicle to be stable, the CG must be…",
+          "options": [
+            "above the centre of buoyancy",
+            "below the centre of buoyancy",
+            "exactly at the centre of buoyancy",
+            "ahead of the centre of buoyancy"
+          ],
+          "explanation": "With the CG at the bottom, weight and buoyancy form a couple that rights the vehicle (roly-poly effect)."
+        },
+        {
+          "prompt": "Why can a ship at the surface be stable even with the CG **above** the CB?",
+          "options": [
+            "Because sea water is denser",
+            "Because, when it heels, the submerged part changes shape and the CB shifts sideways (what counts is the metacentre)",
+            "Because the wind holds it",
+            "It cannot; every ship has its CG below the CB"
+          ],
+          "explanation": "The sideways shift of the CB creates a righting couple as long as the CG is below the metacentre M."
+        }
+      ],
+      "goals": [
+        "CG at least 1 cm below the centre of buoyancy",
+        "Stays neutral (balance between −0.3 and +0.3 N)"
+      ]
+    },
+    "sub-08-sensores-navegacao": {
+      "title": "Sensors and navigation: sonar, pressure and IMU",
+      "theory": "# Navigating in the dark\n\nUnderwater there is **no GPS**: radio waves (and light) are absorbed within a few metres. An underwater vehicle combines several sensors to know where it is.\n\n## Pressure sensor: the depth\n\nSince P = P0 + ρ × g × h, measuring the pressure is enough to know the depth:\n\n```\nh = (P − P0) / (ρ × g)\n```\n\nIt is the most precise and cheapest sensor on the vehicle (some measure centimetres). It is what feeds the depth control.\n\n## Sonar: seeing with sound\n\nSound travels well in water, at **~1 500 m/s** (4.4× faster than in air). A **sonar** emits a pulse and measures the time until the echo returns:\n\n```\ndistance = speed of sound × time / 2\n```\n\n(divided by 2 because the sound goes **and comes back**). Echo sounders measure the distance to the bottom; side-scan sonars draw images of the seabed; imaging sonars show obstacles ahead.\n\n## IMU: accelerometers and gyroscopes\n\nThe **IMU** (inertial measurement unit) measures accelerations and rotations. Integrating the acceleration once gives velocity; integrating again, position — this is **dead reckoning**. The problem: any small acceleration error is integrated **twice**, and the position error grows with the **square of time**. On its own, a cheap IMU gets lost within minutes.\n\n## Putting it all together\n\n- **DVL** (Doppler Velocity Log): measures the speed relative to the bottom by the Doppler effect of sound — much better than integrating accelerations.\n- **Compass/magnetometer**: heading (disturbed by motors and metals).\n- **Acoustic beacons (USBL/LBL)**: a ship at the surface (which has GPS) measures the vehicle's position by sound.\n- **Kalman filter**: an algorithm that fuses all the sensors, trusting more whichever is most accurate at each moment.",
+      "safety": "Powerful sonars can disturb and harm marine animals. In real projects, follow the environmental rules of the region and prefer low-power sensors.",
+      "questions": [
+        {
+          "prompt": "An echo sounder hears the echo from the bottom **0.04 s** after emitting the pulse. With sound at **1 500 m/s**, what is the distance to the bottom?",
+          "explanation": "1 500 × 0.04 / 2 = 30 m (the sound goes and comes back).",
+          "unit": "m"
+        },
+        {
+          "prompt": "The pressure sensor of an ROV in **fresh water** reads **2.5 bar absolute**. What is the depth? (P0 = 101 325 Pa, g = 9.81 m/s²)",
+          "explanation": "h = (250 000 − 101 325) / (1 000 × 9.81) ≈ 15.16 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Why does GPS not work underwater?",
+          "options": [
+            "Because the satellites do not pass over the sea",
+            "Because water absorbs radio waves within a few centimetres to metres",
+            "Because the pressure breaks the antenna",
+            "It works, just slower"
+          ],
+          "explanation": "Water (especially salt water, which is conductive) absorbs radio waves. That is why sound is used to communicate and position."
+        },
+        {
+          "prompt": "Navigating with the IMU alone (integrating the acceleration twice), the position error…",
+          "options": [
+            "stays constant",
+            "decreases with time",
+            "grows with the square of time",
+            "only appears at the surface"
+          ],
+          "explanation": "A constant acceleration error becomes a position error of ½·a·t²: it grows with t². That is why the IMU is combined with DVL, beacons and Kalman."
+        },
+        {
+          "prompt": "Why do submarines use **sound** (sonar) instead of light or radar to \"see\"?",
+          "options": [
+            "Because sound travels far in water, while light and radio are absorbed quickly",
+            "Because sound is faster than light in water",
+            "Because it is cheaper",
+            "Because radar scares the fish"
+          ],
+          "explanation": "Light reaches tens of metres in clear water; sound, kilometres."
+        }
+      ]
+    },
+    "sub-09-controle-pid": {
+      "title": "Depth control with PID",
+      "theory": "# Holding the depth by itself\n\nNo vehicle is perfectly neutral: the water changes density, the load changes, the batteries heat up. A **controller** reads the pressure sensor (the depth) and commands the **vertical thruster** to hold the **target depth**.\n\n## The error\n\n```\nerror = target depth − measured depth\n```\n\nPositive error: it is too shallow, it needs to push down.\n\n## P, I and D\n\nThe **PID** controller adds up three terms:\n\n```\nforce = Kp × error + Ki × (sum of the error over time) − Kd × vertical velocity\n```\n\n- **P (proportional)**: pushes more the greater the error. On its own, it leaves a **steady-state error** when there is a constant force (the vehicle a bit light, for example): the equilibrium is where Kp × error = buoyancy balance.\n- **I (integral)**: accumulates the error; while it exists, the force grows, until it **zeroes the steady-state error**. Too much integral causes oscillation.\n- **D (derivative)**: reacts to the **velocity**: it brakes the vehicle when it approaches the target too fast, avoiding **overshoot**.\n\n## Measuring quality\n\n- **Overshoot**: how far it passed the target, as a % of the target.\n- **Settling time**: from when it stays within ±2% of the target forever.\n- **Steady-state error**: the difference left at the end.\n\n## How to tune (practical recipe)\n\n1. Start with **P** only and increase it until it responds quickly (it will oscillate or leave an error).\n2. Add **D** until the oscillations disappear.\n3. Add a little **I** to zero the final error; if it oscillates, reduce it.\n\n## In the simulator\n\nThe ROV is **2 N lighter** than neutral (it tends to rise). The vertical thruster makes at most 20 N; the integral stops accumulating while the thruster is at its limit (anti-windup). Target: 10 m.",
+      "task": "With just a little P, the ROV stays still at ~9 m (steady-state error). Adjust **Kp**, **Ki** and **Kd** to reach **10 m ± 0.2 m**, with **overshoot ≤ 10%** and **settling within 60 s**.",
+      "hints": [
+        "Increase Kp to respond faster, and Kd so it does not pass the target.",
+        "Without Ki the steady-state error never goes away: the 2 N balance has to be compensated by the integral.",
+        "Try something like Kp 20, Ki 1, Kd 80 and adjust from there."
+      ],
+      "questions": [
+        {
+          "prompt": "An ROV is **2 N** lighter than neutral and uses only **P** control with **Kp = 4 N/m**. How many metres above the target does it stay still?",
+          "explanation": "At equilibrium Kp × error = 2 N → error = 2 / 4 = 0.5 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Which PID term eliminates the steady-state error?",
+          "options": [
+            "P (proportional)",
+            "I (integral)",
+            "D (derivative)",
+            "None"
+          ],
+          "explanation": "The integral grows as long as there is error, until the force compensates the imbalance."
+        },
+        {
+          "prompt": "The ROV overshoots the target and keeps swinging. Which adjustment usually helps first?",
+          "options": [
+            "Increase Kd (more \"brake\" proportional to velocity)",
+            "Increase Ki a lot",
+            "Remove the pressure sensor",
+            "Increase Kp"
+          ],
+          "explanation": "The D term reacts to velocity and damps the approach; more Ki or Kp usually make the oscillation worse."
+        }
+      ],
+      "goals": [
+        "Ends at 10 m ± 0.2 m",
+        "Overshoot of at most 10%",
+        "Settles within 60 s"
+      ]
+    },
+    "sub-10-projeto-rov": {
+      "title": "Full project: the budget of an inspection ROV",
+      "theory": "# What is an ROV\n\nAn **ROV** (Remotely Operated Vehicle) is an underwater vehicle **piloted from the surface** through an **umbilical cable** (the tether), which carries power and data (video, commands). They are used to inspect oil platforms, ship hulls, dams, subsea cables, and for research.\n\n## The design budget\n\nAs with rockets, engineering means closing several accounts at the same time:\n\n- **Volume × mass** (buoyancy): the hull volume has to offset structure, electronics and payload (camera, lights, arm). Fine tuning with lead.\n- **Stability**: lead in the keel, floats on top: positive BG.\n- **Depth**: a hull with a safety factor ≥ 1.5 at the working depth.\n- **Control**: a depth PID that is fast and without large overshoot (the pilot needs a stable image).\n- **Power**: the thrusters have to overcome drag, and energy is limited.\n\n## The cable is drag too\n\nIn a real ROV, the **cable** often has **more drag than the vehicle itself** in a current: hundreds of metres of 1 cm diameter cable have a lot of area. That is why thin, neutrally buoyant cables are used, and sometimes a \"garage\" (TMS) that descends close to the ROV.\n\n## Energy\n\n```\nendurance (h) = battery energy (Wh) / average power (W)\n```\n\nAn ROV powered through the cable does not have this limit, but the cable has to carry the power without heating up (that is why a higher voltage is used on the cable and converters in the vehicle).\n\n## The mission\n\nInspect a pier at **40 m**, in the sea. The ROV has 18 kg of structure and electronics + 2.5 kg of camera and lights; the electronics sit a little above the centre of the hull. Define:\n\n- the hull **volume** and **lead** (centre and keel) to be neutral and stable;\n- the **hull strength** with a safety factor ≥ 1.5;\n- the **vertical thruster and PID gains** to reach 40 m quickly and without overshooting much;\n- the **shape and forward thruster** to go to and from the pier at ≥ 0.8 m/s using ≤ 40 W.",
+      "task": "Close the inspection ROV's budget by meeting **all** the goals. Work in order: first buoyancy and stability, then the hull, then control, and finally propulsion.",
+      "safety": "- **Water and electricity**: use **low voltage** (12–48 V DC) in the vehicle and the cable; anything plugged into the mains stays away from the water and protected by a **residual-current device (RCD)**.\n- Lithium batteries inside a hull need **protection (BMS)** and a relief valve: a battery that heats up in a sealed hull can generate gas and pressure.\n- Never dive together with an ROV under test, and never operate near divers without coordination.",
+      "hints": [
+        "In the sea, each litre of hull displaces 1.025 kg. To carry lead in the keel (stability), the hull needs extra volume: with ~24 L about ~4 kg of lead fit.",
+        "At 40 m in the sea the gauge pressure is ~4 bar. SF ≥ 1.5 → a hull of at least ~6 bar.",
+        "More force on the vertical thruster (30 N) makes the PID faster; use a high Kd so it does not pass the target."
+      ],
+      "questions": [
+        {
+          "prompt": "A **200 Wh** battery powers an ROV that consumes **80 W** on average. What is the endurance?",
+          "explanation": "200 Wh / 80 W = 2.5 h.",
+          "unit": "h"
+        },
+        {
+          "prompt": "In a current, what usually has **more drag** on a deep inspection ROV?",
+          "options": [
+            "The camera",
+            "The umbilical cable (hundreds of metres of area exposed to the current)",
+            "The floats",
+            "The keel lead"
+          ],
+          "explanation": "Even thin, a long cable has an enormous area; that is why thin, neutrally buoyant cables and garages (TMS) are used."
+        },
+        {
+          "prompt": "The ROV will work at **40 m in the sea** (gauge pressure ≈ 4.02 bar). What is the **minimum** hull strength for a safety factor of 1.5?",
+          "explanation": "1 025 × 9.81 × 40 = 402 210 Pa ≈ 4.02 bar; × 1.5 ≈ 6.03 bar.",
+          "unit": "bar"
+        }
+      ],
+      "goals": [
+        "Nearly neutral (balance between −1 and +1 N)",
+        "CG at least 1 cm below the centre of buoyancy",
+        "The hull does not implode",
+        "Hull safety factor ≥ 1.5",
+        "Settles at 40 m within 100 s",
+        "Overshoot of at most 10%",
+        "Cruising at at least 0.8 m/s",
+        "Propulsion using at most 40 W"
+      ]
+    }
+  }
+}

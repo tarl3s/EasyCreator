@@ -90,14 +90,16 @@ public sealed class RocketLab : ProjectLab
     protected override string Readout()
     {
         var s = _sim;
-        string setup = $"Massa na decolagem {Fmt.Mass(s.LiftoffKg)} · empuxo médio {Fmt.F(s.AvgThrust, s.AvgThrust < 100 ? 1 : 0)} N" +
-                       (s.IsWater ? " (inicial)" : "") + $" · empuxo/peso {Fmt.F(s.ThrustToWeight, 1)} · Cd ≈ {Fmt.F(s.Cd, 2)}\n" +
-                       $"Margem de estabilidade {Fmt.F(s.Margin, 2)} calibres ({s.Stability})";
+        string avg = Fmt.F(s.AvgThrust, s.AvgThrust < 100 ? 1 : 0);
+        string setup = (s.IsWater
+                ? L.F("Massa na decolagem {0} · empuxo médio {1} N (inicial) · empuxo/peso {2} · Cd ≈ {3}", Fmt.Mass(s.LiftoffKg), avg, Fmt.F(s.ThrustToWeight, 1), Fmt.F(s.Cd, 2))
+                : L.F("Massa na decolagem {0} · empuxo médio {1} N · empuxo/peso {2} · Cd ≈ {3}", Fmt.Mass(s.LiftoffKg), avg, Fmt.F(s.ThrustToWeight, 1), Fmt.F(s.Cd, 2))) + "\n" +
+            L.F("Margem de estabilidade {0} calibres ({1})", Fmt.F(s.Margin, 2), L.T(s.Stability));
         if (!ShowResults) return setup;
-        string res = s.NeverLifted ? "O foguete não saiu da base: o empuxo é menor que o peso."
-            : $"Apogeu {Fmt.Dist(s.Apogee)} aos {Fmt.F(s.ApogeeTime, 1)} s · v máx {Fmt.F(s.MaxSpeed, 1)} m/s · a máx {Fmt.F(s.MaxAccelG, 1)} g · queima {Fmt.F(s.BurnoutTime, 2)} s · Δv ideal {Fmt.F(s.DeltaV, 0)} m/s\n" +
-              (double.IsNaN(s.DeployTime) ? "Sem paraquedas" : $"Paraquedas abre a {Fmt.F(s.DeploySpeed, 1)} m/s") +
-              (s.Escaped ? " · escapou da gravidade da Terra!" : $" · pouso a {Fmt.F(s.LandingSpeed, 1)} m/s · voo de {Fmt.F(s.FlightTime, 1)} s");
+        string res = s.NeverLifted ? L.T("O foguete não saiu da base: o empuxo é menor que o peso.")
+            : L.F("Apogeu {0} aos {1} s · v máx {2} m/s · a máx {3} g · queima {4} s · Δv ideal {5} m/s", Fmt.Dist(s.Apogee), Fmt.F(s.ApogeeTime, 1), Fmt.F(s.MaxSpeed, 1), Fmt.F(s.MaxAccelG, 1), Fmt.F(s.BurnoutTime, 2), Fmt.F(s.DeltaV, 0)) + "\n" +
+              (double.IsNaN(s.DeployTime) ? L.T("Sem paraquedas") : L.F("Paraquedas abre a {0} m/s", Fmt.F(s.DeploySpeed, 1))) +
+              (s.Escaped ? L.T(" · escapou da gravidade da Terra!") : L.F(" · pouso a {0} m/s · voo de {1} s", Fmt.F(s.LandingSpeed, 1), Fmt.F(s.FlightTime, 1)));
         return setup + "\n" + res;
     }
 
@@ -177,13 +179,13 @@ public sealed class RocketLab : ProjectLab
         Text(dc, c, "CG", X(cg), r.Top + 2, 11, CgB, true, TextAlignment.Center);
         if (s.Guided)
         {
-            Text(dc, c, "sem aletas: guiado por empuxo vetorado", r.Left + 8, r.Top + 60, 11.5, Ui.TextDim, true);
+            Text(dc, c, global::EasyCreator.L.T("sem aletas: guiado por empuxo vetorado"), r.Left + 8, r.Top + 60, 11.5, Ui.TextDim, true);
             return;
         }
         dc.DrawEllipse(CpB, thin, new Point(X(cp), cy), 4.5, 4.5);
         Text(dc, c, "CP", X(cp), r.Top + 58, 11, CpB, true, TextAlignment.Center);
         var col = s.Margin < 0 ? Ui.Bad : s.Margin < 1 || s.Margin > 3 ? Flame : Ui.Good;
-        Text(dc, c, $"margem {Fmt.F(s.Margin, 2)} cal · {s.Stability}", r.Left + 8, r.Top + 2, 11.5, col, true);
+        Text(dc, c, global::EasyCreator.L.F("margem {0} cal · {1}", Fmt.F(s.Margin, 2), global::EasyCreator.L.T(s.Stability)), r.Left + 8, r.Top + 2, 11.5, col, true);
     }
 
     void DrawFlight(DrawingContext dc, SceneCanvas c, Rect r)
@@ -203,14 +205,14 @@ public sealed class RocketLab : ProjectLab
 
         Plot(dc, c, plot, run ? s.Altitude : Array.Empty<(double, double)>(), tMax, 0, hMax, tNow, Ui.Accent, "altitude",
             v => Fmt.Dist(v));
-        if (!run) Text(dc, c, "Ajuste o foguete e aperte ▶ Lançar", plot.Left + plot.Width / 2, plot.Top + plot.Height / 2 - 8, 13, Ui.TextDim, align: TextAlignment.Center);
+        if (!run) Text(dc, c, L.T("Ajuste o foguete e aperte ▶ Lançar"), plot.Left + plot.Width / 2, plot.Top + plot.Height / 2 - 8, 13, Ui.TextDim, align: TextAlignment.Center);
         else if (s.Apogee > 0)
         {
             double ax = plot.Left + s.ApogeeTime / tMax * plot.Width, ay = plot.Bottom - s.Apogee / hMax * plot.Height;
             if (tNow >= s.ApogeeTime)
             {
                 dc.DrawEllipse(Ui.Text, null, new Point(ax, ay), 3, 3);
-                Text(dc, c, "apogeu " + Fmt.Dist(s.Apogee), Math.Min(ax + 6, plot.Right - 90), Math.Max(ay - 4, plot.Top + 14), 11, Ui.Text);
+                Text(dc, c, L.F("apogeu {0}", Fmt.Dist(s.Apogee)), Math.Min(ax + 6, plot.Right - 90), Math.Max(ay - 4, plot.Top + 14), 11, Ui.Text);
             }
         }
 
