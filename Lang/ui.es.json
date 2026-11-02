@@ -39,6 +39,7 @@
   "{0}  · offline": "{0}  · sin conexión",
   "Nenhum executor disponível para esta linguagem.": "No hay ningún ejecutor disponible para este lenguaje.",
   "Rodando…": "Ejecutando…",
+  "A caixa \"Entrada (stdin)\" está vazia: escreva nela os dados que o programa lê, um por linha.": "La caja \"Entrada (stdin)\" está vacía: escribe en ella los datos que lee el programa, uno por línea.",
   "— terminou em {0:0} ms": "— terminó en {0:0} ms",
   "Corrigindo…": "Corrigiendo…",
   "{0} de {1} testes passaram": "{0} de {1} pruebas superadas",

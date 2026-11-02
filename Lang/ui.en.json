@@ -39,6 +39,7 @@
   "{0}  · offline": "{0}  · offline",
   "Nenhum executor disponível para esta linguagem.": "No runner is available for this language.",
   "Rodando…": "Running…",
+  "A caixa \"Entrada (stdin)\" está vazia: escreva nela os dados que o programa lê, um por linha.": "The \"Input (stdin)\" box is empty: type the data the program reads there, one per line.",
   "— terminou em {0:0} ms": "— finished in {0:0} ms",
   "Corrigindo…": "Checking…",
   "{0} de {1} testes passaram": "{0} of {1} tests passed",

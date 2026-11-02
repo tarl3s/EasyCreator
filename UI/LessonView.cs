@@ -70,6 +70,8 @@ public sealed partial class LessonView : Grid, IDisposable
         bottom.Children.Add(tabs);
         UIElement side = _sandbox ? (IsRobotics ? new Border() : Titled(L.T("Entrada (stdin)"), _stdin))
             : IsRobotics ? Titled(L.T("Correção"), resultsScroll) : Stacked(Titled(L.T("Entrada (stdin)"), _stdin), Titled(L.T("Correção"), resultsScroll));
+        // ▶ Run reads this box: start it with the first visible test's input so a lesson that reads input runs as is.
+        if (!_sandbox && !IsRobotics) _stdin.Text = _lesson.Tests.FirstOrDefault(t => !t.Hidden)?.Input ?? "";
         Grid.SetColumn(side, 2);
         bottom.Children.Add(side);
         Grid.SetRow(bottom, 3);

@@ -94,6 +94,8 @@ public sealed partial class LessonView
         {
             var r = await runner.RunAsync(_code.Text, _stdin.Text, TimeSpan.FromSeconds(5), _cts.Token);
             _output.Foreground = r.Ok ? Ui.Text : Ui.Bad;
+            if (!r.Ok && _stdin.Text.Trim().Length == 0)
+                r = r with { Error = r.Error + "\n" + L.T("A caixa \"Entrada (stdin)\" está vazia: escreva nela os dados que o programa lê, um por linha.") };
             _output.Text = r.Stdout + (r.Error.Length > 0 ? (r.Stdout.Length > 0 ? "\n" : "") + r.Error : "")
                            + "\n\n" + L.F("— terminou em {0:0} ms", r.Elapsed.TotalMilliseconds);
         }
@@ -132,6 +134,15 @@ public sealed partial class LessonView
             if (all) Finished();
         }
         finally { Busy(false); }
+    }
+
+    /// <summary>Snapshot hook: checks the lesson's own solution through the real UI path and returns the result text.</summary>
+    internal async Task<string> SnapCheckSolution()
+    {
+        _code.Text = _lesson.Solution;
+        await Check();
+        return string.Join("\n", _results.Children.OfType<StackPanel>().SelectMany(p => p.Children.OfType<TextBlock>()).Select(t => t.Text)
+            .Prepend((_results.Children[0] as TextBlock)?.Text ?? ""));
     }
 
     static TextBlock Mono(string s) => new()
