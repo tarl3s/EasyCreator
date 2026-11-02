@@ -35,6 +35,14 @@ public static class Pages
     public static UIElement Home(MainWindow w)
     {
         var body = new StackPanel();
+        var langRow = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 0, 0, 12) };
+        langRow.Children.Add(new TextBlock { Text = "🌐", FontSize = 16, Foreground = Ui.TextDim, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 8, 0) });
+        var langPick = new ComboBox { Width = 140, FontSize = 14 };
+        foreach (var (code, name) in L.Languages) langPick.Items.Add(new ComboBoxItem { Content = name, Tag = code });
+        langPick.SelectedIndex = Array.FindIndex(L.Languages, l => l.Code == L.Lang);
+        langPick.SelectionChanged += (_, _) => { if (langPick.SelectedItem is ComboBoxItem { Tag: string c } && c != L.Lang) L.Set(c); };
+        langRow.Children.Add(langPick);
+        body.Children.Add(langRow);
         var sandbox = new DockPanel();
         var open = Ui.Button("🧪 Abrir Sandbox", Ui.Accent);
         open.Click += (_, _) => w.Go(() => Sandbox.Page(w));

@@ -19,6 +19,7 @@ public sealed class MainWindow : Window
         Background = Ui.Bg0; Foreground = Ui.Text;
         Content = _host;
         KeyDown += (_, e) => { if (e.Key == Key.Escape && Keyboard.FocusedElement is not TextBox) Back(); };
+        L.Changed += () => { _history.Clear(); Go(() => Pages.Home(this)); };
         Go(() => Pages.Home(this));
     }
 

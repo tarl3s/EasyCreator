@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <None Include="Content/**/*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Lang/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

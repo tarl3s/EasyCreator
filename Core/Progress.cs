@@ -9,6 +9,7 @@ public sealed class Progress
     public HashSet<string> Done { get; set; } = new();
     public Dictionary<string, string> Code { get; set; } = new();
     public Dictionary<string, string> Runner { get; set; } = new(); // language id -> preferred runner display name
+    public string Language { get; set; } = "";
 
     static Progress? _current;
     public static string FilePath => Path.Combine(

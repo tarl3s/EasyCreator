@@ -67,6 +67,8 @@ public static partial class TestEntry
             }
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_snap_error.txt"), ex.ToString()); }
+        if (L.Lang != "pt")
+            File.WriteAllLines(Path.Combine(Path.GetTempPath(), $"easycreator_missing_{L.Lang}.txt"), L.Missing.OrderBy(s => s));
         Application.Current.Shutdown();
     }
 }
