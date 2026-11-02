@@ -18,7 +18,7 @@ public sealed class TensileLab : ILab
     {
         new("aco1020", "Aço SAE 1020 (laminado)", 210, 380, 200, 25, 0.62, true, false),
         new("aco1045", "Aço SAE 1045 (laminado)", 310, 565, 205, 16, 0.6, true, false),
-        new("aco4140", "Aço 4140 temperado e revenido", 1100, 1250, 205, 12, 0.5, false, false),
+        new("aco4140", "Aço SAE 4140 temperado e revenido (~425 °C)", 1100, 1250, 205, 12, 0.5, false, false),
         new("inox304", "Aço inox 304 (recozido)", 205, 515, 193, 40, 0.8, false, false),
         new("al6061", "Alumínio 6061-T6", 276, 310, 69, 12, 0.6, false, false),
         new("cobre", "Cobre recozido", 69, 220, 115, 45, 0.75, false, false),
@@ -58,16 +58,16 @@ public sealed class TensileLab : ILab
         _d = Math.Clamp(Num(p, "diameter", 10), 4, 20);
         _l0 = Math.Clamp(Num(p, "gaugeLength", 50), 20, 100);
         _root.Children.Clear();
-        var (bar, run, _) = Header("🔧 Ensaio de tração · corpo de prova cilíndrico", "▶ Tracionar");
+        var (bar, run, _) = Header(L.T("🔧 Ensaio de tração · corpo de prova cilíndrico"), L.T("▶ Tracionar"));
         _run = run;
         run.Click += (_, _) => { if (_running) StopRun(); else StartRun(); };
         _root.Children.Add(bar);
         _root.Children.Add(new Border { Child = _canvas, CornerRadius = new CornerRadius(8), Background = Ui.Code, ClipToBounds = true });
         _root.Children.Add(_out);
         var form = new Form();
-        _mat = new ChoiceRow("Material", Materials.Select(m => (m.Id, m.Name)), _m.Id, 80);
-        _dia = new SliderRow("Diâmetro", 4, 20, 0.5, _d, v => $"{F(v, "0.0")} mm (A₀ = {F(Math.PI * v * v / 4, "0.0")} mm²)", 80, 150);
-        _len = new SliderRow("Comprimento útil", 20, 100, 5, _l0, v => $"L₀ = {v:0} mm", 110, 80);
+        _mat = new ChoiceRow(L.T("Material"), Materials.Select(m => (m.Id, L.T(m.Name))), _m.Id, 80);
+        _dia = new SliderRow(L.T("Diâmetro"), 4, 20, 0.5, _d, v => $"{F(v, "0.0")} mm (A₀ = {F(Math.PI * v * v / 4, "0.0")} mm²)", 80, 150);
+        _len = new SliderRow(L.T("Comprimento útil"), 20, 100, 5, _l0, v => $"L₀ = {v:0} mm", 110, 80);
         _mat.Changed += Changed; _dia.Changed += Changed; _len.Changed += Changed;
         form.Add(_mat.Row);
         form.Add(_dia.Row);
@@ -149,7 +149,7 @@ public sealed class TensileLab : ILab
     {
         Read();
         _phase = 0; _running = true;
-        if (_run != null) _run.Content = "■ Parar";
+        if (_run != null) _run.Content = L.T("■ Parar");
         ShowText();
         _clock.Restart();
         _timer.Start();
@@ -158,7 +158,7 @@ public sealed class TensileLab : ILab
     void StopRun()
     {
         _timer.Stop(); _running = false; _phase = -1;
-        if (_run != null) _run.Content = "▶ Tracionar";
+        if (_run != null) _run.Content = L.T("▶ Tracionar");
         ShowText();
         _canvas.InvalidateVisual();
     }
@@ -169,7 +169,7 @@ public sealed class TensileLab : ILab
         _canvas.InvalidateVisual();
         if (_phase < 1) { ShowLive(); return; }
         _timer.Stop(); _running = false;
-        if (_run != null) _run.Content = "▶ Tracionar";
+        if (_run != null) _run.Content = L.T("▶ Tracionar");
         _metrics = Compute();
         ShowText();
         Finished?.Invoke();
@@ -181,7 +181,7 @@ public sealed class TensileLab : ILab
         Read();
         _phase = 1;
         _metrics = Compute();
-        if (_run != null) _run.Content = "▶ Tracionar";
+        if (_run != null) _run.Content = L.T("▶ Tracionar");
         ShowText();
         _canvas.InvalidateVisual();
     }
@@ -198,20 +198,28 @@ public sealed class TensileLab : ILab
     void ShowLive()
     {
         double e = StrainAt(_phase), s = Stress(e), area = Math.PI * _d * _d / 4;
-        _out.Text = $"Tracionando… ε = {F(e * 100, "0.00")}% · σ = {s:0} MPa · F = {F(s * area / 1000, "0.0")} kN";
+        _out.Text = L.F("Tracionando… ε = {0}% · σ = {1:0} MPa · F = {2} kN", F(e * 100, "0.00"), s, F(s * area / 1000, "0.0"));
     }
 
     void ShowText()
     {
         if (_phase < 1)
         {
-            _out.Text = _running ? "Tracionando…" : $"{_m.Name}: clique em ▶ Tracionar para puxar o corpo de prova até romper.";
+            _out.Text = _running ? L.T("Tracionando…") : L.F("{0}: clique em ▶ Tracionar para puxar o corpo de prova até romper.", L.T(_m.Name));
             return;
         }
         var m = _metrics;
-        _out.Text = $"E = {m["youngModulus"]:0} GPa · " + (_m.Brittle ? "sem escoamento definido (frágil)" : $"escoamento σe = {m["yield"]:0} MPa") +
-                    $" · resistência σr = {m["uts"]:0} MPa · alongamento {F(m["elongation"], "0.#")}% · força máxima {F(m["maxForce"], "0.0")} kN · " +
-                    $"L final {F(m["finalLength"], "0.0")} mm" + (_m.Brittle ? " — rompeu sem avisar!" : $" · estricção {m["reductionArea"]:0}%");
+        var parts = new List<string>
+        {
+            $"E = {m["youngModulus"]:0} GPa",
+            _m.Brittle ? L.T("sem escoamento definido (frágil)") : L.F("escoamento σe = {0:0} MPa", m["yield"]),
+            L.F("resistência σr = {0:0} MPa", m["uts"]),
+            L.F("alongamento {0}%", F(m["elongation"], "0.#")),
+            L.F("força máxima {0} kN", F(m["maxForce"], "0.0")),
+            L.F("L final {0} mm", F(m["finalLength"], "0.0")),
+        };
+        if (!_m.Brittle) parts.Add(L.F("estricção {0:0}%", m["reductionArea"]));
+        _out.Text = string.Join(" · ", parts) + (_m.Brittle ? " — " + L.T("rompeu sem avisar!") : "");
     }
 
     // ---------------- drawing ----------------
@@ -230,7 +238,7 @@ public sealed class TensileLab : ILab
 
     void DrawSpecimen(DrawingContext dc, Rect a)
     {
-        dc.DrawText(Text("Corpo de prova", 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Corpo de prova"), 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
         double e = _phase >= 0 ? StrainAt(Math.Min(_phase, 1)) : 0;
         bool broken = _phase >= 1;
         double cx = a.X + a.Width / 2, top = a.Y + 22, bottom = a.Bottom - 10;
@@ -272,12 +280,12 @@ public sealed class TensileLab : ILab
         double area = Math.PI * _d * _d / 4, f = _phase >= 0 ? Stress(e) * area / 1000 : 0;
         if (broken) f = 0;
         dc.DrawText(Text($"F = {F(f, "0.0")} kN ↕", 11, Ui.Text, _canvas, true), new Point(a.X + 8, a.Bottom - 20));
-        if (broken) dc.DrawText(Text("rompeu!", 11, Red, _canvas, true), new Point(cx + wBody / 2 + 4, mid - 7));
+        if (broken) dc.DrawText(Text(L.T("rompeu!"), 11, Red, _canvas, true), new Point(cx + wBody / 2 + 4, mid - 7));
     }
 
     void DrawPlot(DrawingContext dc, Rect a)
     {
-        dc.DrawText(Text("Tensão × deformação (curva de engenharia)", 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Tensão × deformação (curva de engenharia)"), 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
         var plot = new Rect(a.X + 48, a.Y + 36, a.Width - 64, a.Height - 62);
         double eMax = Math.Max(0.004, Ef * 1.1), sMax = Math.Ceiling(_m.Uts * 1.18 / 100) * 100;
         Point P(double e, double s) => new(plot.X + plot.Width * e / eMax, plot.Bottom - plot.Height * s / sMax);
@@ -312,13 +320,13 @@ public sealed class TensileLab : ILab
                 double ey = m["yield"] / (_m.E * 1000) + 0.002;
                 dc.DrawLine(DashPen, P(0.002, 0), P(0.002 + 1.05 * m["yield"] / (_m.E * 1000), m["yield"] * 1.05));
                 dc.DrawEllipse(Mark, null, P(ey, m["yield"]), 3.5, 3.5);
-                dc.DrawText(Text($"σe = {m["yield"]:0} MPa", 10.5, Mark, _canvas, true), new Point(P(ey, 0).X + 8, P(0, m["yield"]).Y + 2));
+                dc.DrawText(Text(L.F("σe = {0:0} MPa", m["yield"]), 10.5, Mark, _canvas, true), new Point(P(ey, 0).X + 8, P(0, m["yield"]).Y + 2));
             }
             var pu = P(EpsU, _m.Uts);
             dc.DrawEllipse(Ui.Accent, null, pu, 3.5, 3.5);
-            dc.DrawText(Text($"σr = {_m.Uts:0} MPa", 10.5, Ui.Accent, _canvas, true), new Point(Math.Min(pu.X - 30, plot.Right - 100), pu.Y - 18));
+            dc.DrawText(Text(L.F("σr = {0:0} MPa", _m.Uts), 10.5, Ui.Accent, _canvas, true), new Point(Math.Min(pu.X - 30, plot.Right - 100), pu.Y - 18));
             var pf = P(Ef, Stress(Ef));
-            dc.DrawText(Text("✕ ruptura", 10.5, Red, _canvas), new Point(Math.Min(pf.X - 4, plot.Right - 58), pf.Y + 4));
+            dc.DrawText(Text(L.T("✕ ruptura"), 10.5, Red, _canvas), new Point(Math.Min(pf.X - 4, plot.Right - 58), pf.Y + 4));
         }
     }
 }

@@ -37,19 +37,19 @@ public static class HeatTreatModel
     /// <summary>Equilibrium at temperature T: fraction of austenite and its carbon content.</summary>
     public static (double fGamma, double cGamma, string phases) AtTemperature(double c, double T)
     {
-        if (T >= Solidus(c)) return (1, c, "líquido + austenita (γ): o aço começou a fundir!");
-        if (T < A1) return (0, 0, c < Eutectoid ? "ferrita (α) + perlita" : c > Eutectoid ? "perlita + cementita (Fe₃C)" : "perlita");
+        if (T >= Solidus(c)) return (1, c, L.T("líquido + austenita (γ): o aço começou a fundir!"));
+        if (T < A1) return (0, 0, c < Eutectoid ? L.T("ferrita (α) + perlita") : c > Eutectoid ? L.T("perlita + cementita (Fe₃C)") : L.T("perlita"));
         if (c <= Eutectoid)
         {
-            if (T >= A3(c)) return (1, c, "austenita (γ)");
+            if (T >= A3(c)) return (1, c, L.T("austenita (γ)"));
             double cg = Eutectoid * (A3Pure - T) / (A3Pure - A1);
             double f = Math.Clamp((c - CFerrite) / Math.Max(1e-6, cg - CFerrite), 0, 1);
-            return (f, cg, "ferrita (α) + austenita (γ)");
+            return (f, cg, L.T("ferrita (α) + austenita (γ)"));
         }
-        if (T >= Acm(c)) return (1, c, "austenita (γ)");
+        if (T >= Acm(c)) return (1, c, L.T("austenita (γ)"));
         double cg2 = Eutectoid + (T - A1) / (Eutectic - A1) * (MaxCSteel - Eutectoid);
         double f2 = Math.Clamp((CCementite - c) / (CCementite - cg2), 0, 1);
-        return (f2, cg2, "austenita (γ) + cementita (Fe₃C)");
+        return (f2, cg2, L.T("austenita (γ) + cementita (Fe₃C)"));
     }
 
     public static double MartensiteHV(double c) => 884 * c * (1 - 0.3 * c * c) + 294;
@@ -130,7 +130,7 @@ public static class HeatTreatModel
         if (r.QuenchCrack <= 0) r.QuenchCrack = 0; // no "-0" in the goals panel
 
         var parts = new List<string>();
-        void P(double f, string name) { if (f >= 0.01) parts.Add($"{name} {f * 100:0}%"); }
+        void P(double f, string name) { if (f >= 0.01) parts.Add($"{L.T(name)} {f * 100:0}%"); }
         P(r.Ferrite, "ferrita");
         P(r.Pearlite, r.FinePearlite ? "perlita fina" : "perlita");
         P(r.Cementite, "cementita");
@@ -139,13 +139,13 @@ public static class HeatTreatModel
         P(r.RetainedAustenite, "austenita retida");
         r.Structure = string.Join(" + ", parts);
 
-        r.Tip = r.Melted ? "Passou da linha solidus: o aço começou a fundir (queimou). Fique abaixo de ~1100 °C."
-            : r.Overheated ? "Temperatura alta demais: o grão cresce muito e o aço fica frágil. Use ≈ 30–50 °C acima de A3."
-            : fg <= 0 ? $"Abaixo de A1 ({A1:0} °C) nada vira austenita, então o resfriamento não muda quase nada."
-            : fg < 0.999 && c <= Eutectoid && fM > 0 ? $"Só {fg * 100:0}% virou austenita (está entre A1 e A3 = {A3(c):0} °C): sobra ferrita mole no aço temperado."
-            : mart > 0.5 && !r.Tempered ? "Martensita sem revenimento: muito dura mas frágil como vidro. Faça um revenimento."
-            : r.QuenchCrack > 0.5 ? "Água num aço com tanto carbono pode trincar a peça: prefira óleo."
-            : "Veja no diagrama onde o ponto ficou e compare a microestrutura.";
+        r.Tip = r.Melted ? L.T("Passou da linha solidus: o aço começou a fundir (queimou). Fique abaixo de ~1100 °C.")
+            : r.Overheated ? L.T("Temperatura alta demais: o grão cresce muito e o aço fica frágil. Use ≈ 30–50 °C acima de A3 (ou de A1 nos aços hipereutetoides).")
+            : fg <= 0 ? L.F("Abaixo de A1 ({0:0} °C) nada vira austenita, então o resfriamento não muda quase nada.", A1)
+            : fg < 0.999 && c <= Eutectoid && fM > 0 ? L.F("Só {0:0}% virou austenita (está entre A1 e A3 = {1:0} °C): sobra ferrita mole no aço temperado.", fg * 100, A3(c))
+            : mart > 0.5 && !r.Tempered ? L.T("Martensita sem revenimento: muito dura mas frágil como vidro. Faça um revenimento.")
+            : r.QuenchCrack > 0.5 ? L.T("Água num aço com tanto carbono pode trincar a peça: prefira óleo.")
+            : L.T("Veja no diagrama onde o ponto ficou e compare a microestrutura.");
 
         r.Metrics = new()
         {

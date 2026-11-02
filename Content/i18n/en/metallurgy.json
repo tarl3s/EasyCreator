@@ -1,0 +1,309 @@
+{
+  "title": "Metallurgy and Welding: from the atom to the weld bead",
+  "description": "Why steel hardens in water, what happens inside the metal when you weld and how to choose current, voltage and travel speed — from crystals and grains to heat input, carbon equivalent and welding procedures (WPS). The simulators teach the parameters, but real welding is learned with your hands: take a hands-on course with a qualified instructor (for example at SENAI in Brazil, or a technical school or welding program in your country) and always wear full PPE.",
+  "lessons": {
+    "met-01-estrutura": {
+      "title": "Inside the metal: atoms, crystals and grains",
+      "theory": "# Welcome to metallurgy!\n\nMetallurgy is the science and craft of **extracting, shaping and using metals**. Welding, hardening a knife, choosing the steel for a bridge or the aluminum for an airplane: it all depends on understanding what happens **inside** the metal.\n\n**Important:** this course teaches the theory and lets you practice the **parameters** in simulators. Welding is a hands-on skill with real hazards (radiation, electric shock, fumes, fire). To weld for real, take a **hands-on course with a qualified instructor** — for example the welder courses of **SENAI** (Brazil's national industrial training service) or a technical school or welding program in your country — and always wear full PPE.\n\n# The metallic bond\n\nIn a metal the atoms are arranged in order and \"lend\" their outermost electrons to an **electron cloud** that moves freely between them. That is why metals:\n\n- **conduct electricity and heat** (the electrons move easily);\n- are **shiny** (the electrons reflect light);\n- are **ductile**: they can be bent, drawn into wire and hammered without breaking, because the layers of atoms slide over each other without breaking the bond.\n\n# Atoms form crystals\n\nIn the solid state the atoms of a metal arrange themselves in a repeating pattern — a **crystal**. The smallest \"box\" that repeats is the **unit cell**. Three arrangements appear in almost every engineering metal:\n\n- **BCC — body-centered cubic**: one atom at each corner of the cube and one in the center. That is **2 atoms per cell** and 68% of the space filled. Examples: **α iron (ferrite)** at room temperature, chromium, tungsten, molybdenum.\n- **FCC — face-centered cubic**: one atom at each corner and one in the center of each face. That is **4 atoms per cell** and 74% of the space filled (the maximum possible). Examples: **aluminum, copper, nickel, gold, γ iron (austenite)** and austenitic stainless steel (304).\n- **HCP — hexagonal close-packed**: titanium, zinc, magnesium.\n\n**FCC** metals have many planes on which layers can slide, so they are **very ductile** and stay tough even in the cold (aluminum and 304 stainless do not become brittle in cryogenic tanks). **BCC** metals are stronger but can become brittle at low temperature.\n\n## Iron changes its crystal (allotropy)\n\nPure iron changes structure as it is heated:\n\n```\nRoom temperature up to 912 °C  ->  α iron  (BCC)\n912 °C up to 1394 °C           ->  γ iron  (FCC)\n1394 °C up to 1538 °C          ->  δ iron  (BCC)\nabove 1538 °C                  ->  liquid\n```\n\nThis change from BCC to FCC is the basis of **every heat treatment of steel** — and FCC (austenite) can dissolve much more carbon than BCC. Keep this in mind for the next lessons.\n\n# Grains and grain boundaries\n\nWhen liquid metal solidifies, crystals start growing at many points at once, each with its own orientation. Where they meet they form **grains**, separated by **grain boundaries**. A steel part has millions of grains, visible under the microscope after polishing and etching with acid.\n\n- **Fine grain** = **stronger and tougher** metal (the boundaries hinder the movement of defects). This is the **Hall-Petch** relation: σy = σ0 + k / √d, where d is the grain size.\n- **Coarse grain** (overheated metal, or the region next to a weld) = more brittle.\n\n# Defects explain deformation\n\nReal crystals have defects: **vacancies** (a missing atom), **foreign atoms** and **dislocations** (a \"line\" of misplaced atoms). Permanent (plastic) deformation happens when **dislocations move**. Anything that hinders that movement **strengthens** the metal:\n\n- **work hardening**: cold working creates more dislocations, which tangle (bend a wire several times and it gets hard);\n- **grain refinement**;\n- **solid solution**: atoms of another element distort the crystal;\n- **precipitates** and **hard phases** (like the cementite and martensite of steel).\n\n# Alloys: solid solution\n\n- **Substitutional**: the alloying atom takes the place of a metal atom (nickel in copper, chromium in the iron of stainless steel).\n- **Interstitial**: a small atom fits into the gaps between the metal atoms. That is the case of **carbon in iron** — the \"secret\" of steel.",
+      "questions": [
+        {
+          "prompt": "What is the crystal structure of iron at room temperature (ferrite, α iron)?",
+          "options": ["FCC — face-centered cubic", "BCC — body-centered cubic", "HCP — hexagonal close-packed", "Amorphous, no crystal"],
+          "explanation": "α iron is BCC up to 912 °C; above that it turns into γ (austenite), which is FCC."
+        },
+        {
+          "prompt": "How many atoms are there, effectively, inside one **FCC** unit cell?",
+          "unit": "atoms",
+          "explanation": "8 corners × 1/8 = 1 atom, plus 6 faces × 1/2 = 3 atoms: 4 in total."
+        },
+        {
+          "prompt": "Why are aluminum and copper so easy to bend and stretch?",
+          "options": ["Because they are FCC and have many slip planes", "Because they have no grains", "Because they are liquid at room temperature", "Because they have no free electrons"],
+          "explanation": "The FCC structure has many slip systems for dislocations to move: the metal deforms a lot before it breaks."
+        },
+        {
+          "prompt": "According to the Hall-Petch relation, what happens to the strength when the grain gets **smaller**?",
+          "options": ["It decreases", "It increases", "It does not change", "The metal melts"],
+          "explanation": "More grain boundaries block the dislocations: fine grain = more strength (and more toughness)."
+        },
+        {
+          "prompt": "What kind of solid solution does carbon dissolved in iron form?",
+          "options": ["Substitutional", "Interstitial", "None: carbon does not dissolve in iron", "Eutectic"],
+          "explanation": "The carbon atom is small and fits into the interstices (gaps) between the iron atoms."
+        }
+      ]
+    },
+    "met-02-tracao": {
+      "title": "Mechanical properties and the tensile test",
+      "theory": "# How do you measure the strength of a metal?\n\nIn the **tensile test**, a standard specimen is clamped in two grips and pulled slowly until it breaks. The machine records the **force** and the **elongation**. Dividing by the initial geometry gives the **stress–strain curve**, the mechanical \"fingerprint\" of the material.\n\n## Stress and strain\n\n```\nstress       σ = F / A0     (N/mm² = MPa)\nstrain       ε = ΔL / L0    (dimensionless, or in %)\narea         A0 = π · d² / 4\n```\n\nExample: a bar 10 mm in diameter has A0 = π·10²/4 = 78.5 mm². With 20 kN (20 000 N), σ = 20 000 / 78.5 ≈ **255 MPa**.\n\n# Reading the curve\n\n- **Elastic region**: a straight line. Remove the load and the metal returns to its original size. The slope is the **modulus of elasticity (Young's modulus)**: σ = E · ε (**Hooke's law**). Steel ≈ **200 GPa**, aluminum ≈ 70 GPa, copper ≈ 115 GPa. The modulus barely changes with heat treatment: a soft steel and a hardened steel have the same stiffness!\n- **Yield strength (σy)**: where permanent deformation begins. Since the transition is gradual in many metals, we use the **0.2% offset** method: a line parallel to the elastic part, shifted by 0.2% — where it crosses the curve is σy. Low-carbon steels show a clear yield \"plateau\".\n- **Strain hardening**: after yielding, the metal gets stronger as it deforms.\n- **Ultimate tensile strength (σu)**: the highest stress on the curve. The **maximum force** the part can take is F = σu · A0.\n- **Necking**: after the maximum, deformation concentrates at one spot, the diameter shrinks and the engineering curve drops until **fracture**.\n- **Elongation**: how much the specimen grew after breaking (in % of L0). It measures **ductility**.\n- **Toughness**: the energy absorbed until fracture — the area under the curve.\n\n## Ductile × brittle\n\nA **ductile** material (low-carbon steel, copper, aluminum, stainless) yields, stretches and \"warns\" before breaking. A **brittle** material (gray cast iron, glass, untempered hardened steel) breaks with almost no deformation — suddenly. In structures we always prefer materials that give warning.\n\n# Hardness\n\nHardness is the resistance to indentation. The most common tests:\n\n- **Brinell (HB)**: a hard-metal ball (HBW); you measure the diameter of the dent.\n- **Vickers (HV)**: a diamond pyramid; it works for everything, including hardness near a weld.\n- **Rockwell C (HRC)**: a diamond cone, direct reading; used on hardened steels (20 to 70 HRC).\n\nFor steels, Brinell hardness relates to strength: σu (MPa) ≈ 3.4 × HB.",
+      "task": "Choose the **material** and the **diameter** of the specimen so that it carries a **maximum force between 40 and 55 kN** and has an **elongation of at least 20%** (a ductile material that warns before breaking).",
+      "hints": [
+        "Maximum force = σu × A0. For 40–55 kN with a material of σu ≈ 400 MPa, the area must be between 100 and 137 mm².",
+        "6061-T6 aluminum only elongates about 12%. Low-carbon steels and 304 stainless stretch much more.",
+        "1020 steel (σu = 380 MPa) with a 12 mm diameter: A0 = 113 mm² → F ≈ 43 kN."
+      ],
+      "goals": ["Maximum force between 40 and 55 kN", "Elongation of at least 20%"],
+      "questions": [
+        {
+          "prompt": "A steel bar **10 mm** in diameter is pulled with **20 kN**. What is the stress, in MPa?",
+          "unit": "MPa",
+          "explanation": "A0 = π·10²/4 = 78.54 mm²; σ = 20 000 N / 78.54 mm² ≈ 254.6 MPa."
+        },
+        {
+          "prompt": "In the simulator, which material broke **without yielding and without necking**?",
+          "options": ["Annealed copper", "304 stainless steel", "Gray cast iron", "SAE 1020 steel"],
+          "explanation": "Gray cast iron is brittle: its graphite flakes act like cracks and it breaks at less than 1% strain."
+        },
+        {
+          "prompt": "The modulus of elasticity of a hardened steel compared with the same steel annealed (soft) is…",
+          "options": ["Much higher", "Practically the same (≈ 200 GPa)", "Much lower", "Zero"],
+          "explanation": "The modulus depends on the bond between the atoms, not on the microstructure: heat treatment changes σy and σu, not the stiffness E."
+        }
+      ]
+    },
+    "met-03-ferro-carbono": {
+      "title": "The iron–carbon diagram and steels",
+      "theory": "# Steel = iron + carbon\n\n- **Steel**: iron with up to **2.11% carbon** (in practice, almost always less than 1%).\n- **Cast iron**: from 2.11% to 6.67% carbon.\n\nIn the SAE/AISI system, the last two digits give the carbon in hundredths of a percent: **SAE 1020 = 0.20% C**, **SAE 1045 = 0.45% C**, **SAE 1080 = 0.80% C**.\n\n# The phases of steel\n\n- **Ferrite (α)**: BCC iron. Dissolves at most 0.022% C. **Soft and ductile** (≈ 90 HV).\n- **Austenite (γ)**: FCC iron. Dissolves up to 2.11% C, but in carbon steels it only exists **hot** (above 727 °C). It is the starting point of every heat treatment.\n- **Cementite (Fe₃C)**: a carbide with 6.67% C. **Very hard and brittle**.\n- **Pearlite**: not a phase but a **layered mixture** of ferrite + cementite that forms when austenite with 0.76% C cools slowly. Under the microscope it looks like a fingerprint.\n\n# The Fe–Fe₃C diagram (the steel part)\n\nThe diagram shows which phases exist in **equilibrium** (very slow cooling) for each carbon content (horizontal axis) and temperature (vertical axis). The important lines:\n\n- **A1 = 727 °C**: below it there is no austenite. Above it, austenite starts to form.\n- **A3**: from 912 °C (pure iron) down to 727 °C (0.76% C). Above A3 a **hypoeutectoid** steel is 100% austenite.\n- **Acm**: from 727 °C (0.76% C) up to 1148 °C (2.11% C). Above it a **hypereutectoid** steel is 100% austenite.\n- **Eutectoid point: 0.76% C and 727 °C** — the austenite turns into **100% pearlite** all at once.\n\n## Three kinds of steel\n\n- **Hypoeutectoid** (C < 0.76%): ferrite + pearlite. E.g. 1020, 1045.\n- **Eutectoid** (C ≈ 0.76%): pearlite only. E.g. 1080, rails and springs.\n- **Hypereutectoid** (C > 0.76%): pearlite + a network of cementite at the grain boundaries. E.g. tools, files, bearings.\n\n# The lever rule\n\nTo know **how much** of each constituent there is, we use the **lever rule**. In a slowly cooled hypoeutectoid steel:\n\n```\npearlite fraction = (C - 0.022) / (0.76 - 0.022)\n\n1040 steel: (0.40 - 0.022) / 0.738 = 0.51  ->  51% pearlite and 49% ferrite\n```\n\nThe more carbon, the more pearlite: **harder and stronger**, less **ductile and weldable**.\n\n# Using the simulator\n\nChoose the **carbon**, the **temperature** and the **cooling medium**. The green dot shows where the steel sits on the diagram. Heating above A3/Acm turns everything into austenite (**austenitizing**); slow cooling in the **furnace** (annealing) brings back the equilibrium structure. Do not go much above ~1100 °C: the grains grow and, near the solidus line, the steel starts to **melt** (\"burn\").",
+      "task": "Find the **eutectoid steel**: heat a steel until it is **100% austenite** (without burning it) and cool it in the **furnace**, getting **at least 95% pearlite**.",
+      "hints": [
+        "Pearlite alone (with no ferrite or cementite left over) only appears with 0.76% carbon.",
+        "For a steel with 0.76% C, any temperature a little above 727 °C already makes it all austenite — for example 780 °C.",
+        "If the dot stayed below the A1 line (727 °C), nothing turned into austenite."
+      ],
+      "goals": ["Heated to 100% austenite", "At least 95% pearlite at the end", "Without overheating or burning the steel"],
+      "questions": [
+        {
+          "prompt": "What is the temperature of the **A1** (eutectoid) line of the iron–carbon diagram?",
+          "unit": "°C",
+          "explanation": "At 727 °C the austenite with 0.76% C transforms into pearlite (ferrite + cementite)."
+        },
+        {
+          "prompt": "By the lever rule, what **%** of pearlite does a slowly cooled **SAE 1040** steel have?",
+          "unit": "%",
+          "explanation": "(0.40 − 0.022) / (0.76 − 0.022) = 0.512 → about 51% pearlite; the rest (49%) is ferrite."
+        },
+        {
+          "prompt": "Which of these phases has an **FCC** structure and only exists hot in carbon steels?",
+          "options": ["Ferrite", "Cementite", "Austenite", "Pearlite"],
+          "explanation": "Austenite (γ iron) is FCC and dissolves up to 2.11% carbon; below 727 °C it transforms."
+        }
+      ]
+    },
+    "met-04-tratamentos": {
+      "title": "Heat treatments: quenching, tempering, annealing and normalizing",
+      "safety": "Heat treatment is hot work: below ~500 °C steel stops glowing, so a part that looks cold may still be hundreds of degrees hot. Wear **heat-resistant/leather gloves**, a **face shield**, an apron and use **tongs** — never your hands. **Quenching oil** can catch fire: dip the whole part at once, use a tank with a lid and keep a **class B extinguisher** nearby; never throw water on hot oil. Do this only in a prepared workshop, guided by a **qualified instructor**.",
+      "theory": "# Changing steel without changing its composition\n\nWith the **same steel** you can get a soft part to machine or a hard tool that cuts other steel. The difference is in the **temperature cycle**: heat it to austenite and choose **how fast** it cools.\n\n# The four main treatments\n\n## Annealing (full)\n\nHeat to ≈ **A3 + 30 to 50 °C** and cool **inside the furnace**, very slowly. Result: ferrite + coarse pearlite, **soft, ductile**, stress-free. Used before machining or stamping.\n\n## Normalizing\n\nSame temperature, cooling in **still air**. Result: **fine pearlite and refined grain** — a little harder and tougher than annealed. It corrects the coarse grain of forged or welded parts.\n\n## Quenching (hardening)\n\nHeat to ≈ **A3 + 30 to 50 °C** (for 1045: A3 ≈ 800 °C → 830–850 °C), hold until uniform and cool **very fast** in **water** or **oil**. The austenite has no time to expel the carbon and becomes **martensite**: a tetragonal structure supersaturated with carbon, needle-shaped, **very hard and very brittle**.\n\n- The hardness of martensite depends on the **carbon**: with 0.2% C it reaches ~47 HRC; with 0.45% ~58 HRC; above 0.6% it passes 64 HRC.\n- If the temperature was **between A1 and A3**, only part turns into austenite: **soft ferrite** remains among the martensite (incomplete hardening).\n- **Hardenability**: low-carbon (unalloyed) steels need water; with more carbon or alloying elements (Cr, Mo, Ni, Mn) oil is enough. Water on a high-carbon steel can **crack** the part.\n\n## Tempering\n\nFresh martensite is as brittle as glass. So, right after quenching, we reheat the part to **150–650 °C** (below A1). Part of the carbon precipitates as fine carbides and the stresses relax: the part loses some hardness and gains a lot of **toughness**.\n\n```\n1045 water quenched ............... ~57 HRC (brittle)\ntempered at 200 °C ................ ~54 HRC (tools)\ntempered at 400 °C ................ ~45 HRC (springs, shafts)\ntempered at 600 °C ................ ~28 HRC (tough structural parts)\n```\n\n**Quench + temper** is the treatment for parts that must be strong **and** tough: shafts, gears, high-strength bolts, knives.\n\n# Cooling rate\n\nIn the simulator's temperature × time chart, watch how the curve drops: **furnace** (hours), **air** (minutes), **oil** (seconds), **water** (even faster). TTT/CCT diagrams show, for each steel, which structure each cooling rate produces: coarse pearlite, fine pearlite, bainite or martensite.",
+      "task": "With **SAE 1045** steel, make a part with **hardness between 45 and 52 HRC**, at least **90% martensite** (tempered) and **toughness ≥ 35/100**: austenitize completely, quench and temper.",
+      "hints": [
+        "First make sure you get 100% austenite: the A3 of 1045 is ≈ 800 °C. Use 830–850 °C.",
+        "Oil is not fast enough for a plain carbon steel with 0.45% C: use water.",
+        "Quenching alone gives ~57 HRC and low toughness. Tempering between 350 and 425 °C brings it into the requested range."
+      ],
+      "goals": ["Hardness between 45 and 52 HRC", "At least 90% martensite", "Toughness of at least 35/100"],
+      "questions": [
+        {
+          "prompt": "Which treatment makes the steel **as soft as possible** for machining?",
+          "options": ["Water quenching", "Annealing (cooling in the furnace)", "Tempering at 200 °C", "Normalizing (cooling in air)"],
+          "explanation": "In annealing, slow cooling forms ferrite + coarse pearlite, the softest structure of the steel."
+        },
+        {
+          "prompt": "Why is tempering **always** done after quenching?",
+          "options": ["To make the steel even harder", "To trade a little hardness for toughness and relieve stresses", "To turn martensite into austenite", "To clean off the scale"],
+          "explanation": "As-quenched martensite is brittle and full of stresses; tempering precipitates carbides and relieves the stresses, gaining toughness."
+        },
+        {
+          "prompt": "A 1045 steel heated to **760 °C** (between A1 and A3) and water quenched ends up…",
+          "options": ["100% martensite", "With martensite and soft ferrite mixed (incomplete hardening)", "100% pearlite", "Completely melted"],
+          "explanation": "Between A1 and A3 part of the ferrite has not turned into austenite yet; it stays ferrite after quenching and leaves soft spots."
+        }
+      ]
+    },
+    "met-05-seguranca": {
+      "title": "Welding safety: what must never be missing",
+      "safety": "**Never weld without training and without PPE.** The minimum: a **welding helmet with the right shade filter** (auto-darkening or fixed; DIN 10–13 depending on process and current) with **safety glasses** underneath; **leather welding gloves**; **leather apron**, sleeves/leggings; **leather boots with toe caps**; **cotton** clothing (never synthetic). Weld with **ventilation or local exhaust**, an **extinguisher** within reach, flammables removed and **screens** protecting people nearby. Learn hands-on with a **qualified instructor** (e.g. SENAI courses in Brazil, or a technical school in your country).",
+      "theory": "# The hazards of welding\n\nWelding is safe **when** you know the risks and protect yourself from each one. This simulator has none of them — the workshop has them all.\n\n## 1. Arc radiation (UV and infrared)\n\nThe electric arc emits intense **ultraviolet** and **infrared** light.\n\n- Looking at the arc without a filter, even for seconds, causes **photokeratitis** (\"arc eye\" / \"welder's flash\"): sand in the eyes, strong pain and tearing hours later. Repeated exposure damages the **retina** and causes cataracts.\n- UV **burns the skin** like strong sun, within minutes (neck and wrists are hit most).\n- **Filter shade (DIN)**, as a reference: stick electrode up to ~150 A → **10–11**; above → **12–13**; MIG/MAG → **10–14**; TIG → **9–14**; oxy-fuel cutting → **4–6** (tables of ISO 4850 / EN 169 and ANSI Z49.1). When in doubt start dark and go lighter until you can see the pool well.\n- An **auto-darkening helmet** darkens in a fraction of a millisecond; check the battery and sensors. Always wear **safety glasses** underneath (spatter and slag when chipping the bead).\n- Protect others: welding **screens/curtains** and a warning before striking the arc.\n\n## 2. Fumes and gases\n\nWelding smoke is made of particles of oxidized metal. It contains **manganese** (affects the nervous system), **hexavalent chromium and nickel** (from stainless: carcinogens), **zinc** (galvanized steel: causes **metal fume fever**), plus **ozone** (TIG and MIG on aluminum) and **CO**.\n\n- Use **local exhaust** (a hood close to the arc) or strong ventilation; keep your head **out of the plume**.\n- In enclosed spaces or with stainless/galvanized steel, use a suitable **respirator** (FFP2/N95 class or a supplied-air mask).\n- **Never** weld painted, galvanized or oily parts without removing the coating and without exhaust.\n- **Shielding gases** (argon, CO₂) have no smell and **displace oxygen**: in a confined space they can kill by asphyxiation.\n\n## 3. Electric shock\n\n- Work **dry**: dry gloves and clothes, no wet floors.\n- Cables and electrode holder **without splices or damaged insulation**.\n- **Work clamp (ground) attached close to the weld**, on clean metal.\n- Never wrap the cable around your body and never change the electrode with a bare hand.\n- If someone is being shocked: **switch off the power before touching** the person.\n\n## 4. Fire and explosion\n\n- Spatter flies **more than 10 m** and falls into cracks. Move flammables away (≈ **11 m**) or cover them with a **fire blanket**.\n- Keep an **extinguisher** (ABC powder or CO₂) within reach and, during hot work, a **fire watch** who keeps an eye out for at least 30 min after the end (some standards require 1 h).\n- **Never** weld or cut drums or tanks that once held fuel, even \"empty\": the vapors explode.\n\n## 5. Burns\n\nSlag, spatter and the hot part burn. Wear a **leather apron**, sleeves, leggings, **leather gloves**, **leather boots** with toe caps and trousers over the boots. Thick **cotton** clothing, no open pockets — synthetic fabric melts and sticks to the skin. Mark hot parts with chalk (\"HOT\").\n\n## 6. Gas cylinders\n\n- Always **upright and chained**, with the **cap** on when not in use.\n- Open the valve slowly, without standing in front of the regulator.\n- With oxy-acetylene: **flashback arrestors / check valves**, acetylene never above 1 bar (15 psi), and no oil or grease on oxygen equipment.\n\n## 7. Noise, ergonomics and confined spaces\n\nGouging and grinding exceed 100 dB: wear **hearing protection**. Confined spaces (tanks, ship holds) require an **entry permit**, gas testing and an attendant (in Brazil, NR-33).\n\n# Brazilian standards\n\nThe NRs below are Brazilian regulations; in other countries, follow your country's occupational safety rules. In Brazil, PPE is governed by **NR-6** (with a Certificate of Approval — CA), electrical safety by **NR-10**, confined spaces by **NR-33** and work in shipbuilding and ship repair — including **hot work** — by **NR-34**. Outside Brazil, a widely used reference is the American standard **ANSI Z49.1** (*Safety in Welding, Cutting and Allied Processes*).",
+      "questions": [
+        {
+          "prompt": "You will stick weld at **120 A**. Which filter shade range is the reference?",
+          "options": ["DIN 3 (sunglasses)", "DIN 5 (oxy-fuel cutting)", "DIN 10–11", "Any, as long as it is dark"],
+          "explanation": "For SMAW up to ~150 A the reference is DIN 10–11; above that, 12–13. Oxy-fuel cutting filters (4–6) do not protect against the electric arc."
+        },
+        {
+          "prompt": "Welding **galvanized steel** without exhaust usually causes…",
+          "options": ["Metal fume fever (because of the zinc)", "Nothing, zinc is harmless", "Only arc eye", "Electric shock"],
+          "explanation": "Zinc vaporizes and forms zinc oxide; inhaled, it causes fever, chills and malaise — metal fume fever."
+        },
+        {
+          "prompt": "What clothing is right under the leather apron?",
+          "options": ["Polyester T-shirt", "Thick cotton clothing, long sleeves, trousers over the boots", "Shorts and flip-flops, because it is hot", "Nylon jacket"],
+          "explanation": "Synthetic fabrics melt and stick to the skin with one spatter; thick cotton and leather protect."
+        },
+        {
+          "prompt": "A coworker is being shocked, stuck to a welding cable. What do you do **first**?",
+          "options": ["Pull him by the arm", "Throw water", "Switch off the machine/power before touching him", "Wait for it to stop"],
+          "explanation": "Touching an energized victim puts you in the circuit. Switch off the power and only then help (and call for help)."
+        },
+        {
+          "prompt": "How should gas cylinders be kept in the workshop?",
+          "options": ["Lying on the floor", "Upright, chained, with the cap on when not in use", "Next to the welding bench, unsecured", "Inside the flammables cabinet together with paints"],
+          "explanation": "A cylinder that falls can break its valve and become a projectile; that is why they stand upright and secured."
+        },
+        {
+          "prompt": "Why should you **never** weld a drum that once held fuel, even if empty?",
+          "options": ["Because the metal is too thin", "Because the remaining vapors can explode with the heat", "Because the drum is aluminum", "There is no problem if it is empty"],
+          "explanation": "Residues evaporate with the heat and form an explosive mixture inside the drum."
+        }
+      ]
+    },
+    "met-06-eletrodo": {
+      "title": "Stick welding (SMAW): current, arc and travel speed",
+      "safety": "The simulator has no hazards; the workshop does. Use a **helmet with a DIN 10–11 filter** (up to ~150 A), safety glasses underneath, **leather gloves and apron**, sleeves, **leather boots**, cotton clothing. Weld with **exhaust/ventilation**, an **extinguisher** nearby and flammables removed. When you chip the slag it flies off hot: glasses always. Train with a **qualified instructor** before welding on your own.",
+      "theory": "# How stick welding works\n\nIn **SMAW** (*Shielded Metal Arc Welding*), a metal rod with a **coating** (the electrode) is connected to one pole of the machine, and the work to the other (work clamp). Touching and lifting the electrode strikes an **electric arc** of more than 5000 °C that melts the tip of the electrode and the work, forming the **weld pool**.\n\nThe **coating** melts along with it and:\n\n- produces **gases** that shield the pool from the air (oxygen and nitrogen make the weld porous and brittle);\n- forms the **slag**, a crust that covers the bead and is removed afterwards (chip and brush);\n- **stabilizes the arc** and can add alloying elements.\n\nIt is the simplest and most portable process: it works outdoors, in the wind, with a small machine.\n\n# The AWS classification: E6013, E7018…\n\n```\nE 60 1 3\n|  |  | +-- coating type and current (3 = rutile, AC or DC)\n|  |  +---- positions (1 = all)\n|  +------- minimum tensile strength: 60 ksi (≈ 420 MPa)\n+---------- electrode\n```\n\n- **E6013** (rutile): easy to strike and keep the arc, self-releasing slag, nice-looking bead; **shallow** penetration. Great for light fabrication and thin plate.\n- **E7018** (basic, **low hydrogen**): stronger, tougher weld, for structures and crack-sensitive steels. Needs a **short arc** and a **dry** electrode (kept in a holding oven at ~100–150 °C, re-baked at ~300–350 °C).\n- **E6010** (cellulosic): deep penetration, used for root passes on pipelines.\n\n**Polarity**: E6013 runs on AC or DC (either polarity); E7018 on **DCEP** (electrode positive) or AC; E6010 **only on DCEP**. Always check the manufacturer's package.\n\n# The parameters\n\n## Current (A)\n\nSets how much metal melts and how deep it **penetrates**. Each diameter has a range (approx., flat position):\n\n```\nE6013   2.5 mm: 60-90 A    3.25 mm: 90-130 A    4.0 mm: 130-180 A\nE7018   2.5 mm: 70-100 A   3.25 mm: 100-145 A   4.0 mm: 140-190 A\n```\n\n- **Low** current: the arc goes out or sticks, tall narrow bead, **lack of fusion** and **trapped slag**.\n- **High** current: lots of **spatter**, **undercut** at the edges, red-hot electrode, risk of **burning through**.\n\n## Arc length (≈ voltage)\n\nIn SMAW the machine controls the current; the **voltage** depends on **how far** you hold the electrode. Rule: **arc length ≈ electrode diameter**. Long arc = high voltage, unstable arc, **porosity** (the gas does not shield), spatter and undercut. Arc too short = the electrode sticks.\n\n## Travel speed\n\nTypically **2 to 5 mm/s** (12 to 30 cm/min). Too slow: fat bead, cold metal falling ahead of the pool (overlap). Too fast: thin bead, undercut, lack of fusion.\n\n## Angle\n\nTilt the electrode **10–20°** backwards (**drag** technique) and, in a fillet, at ~45° between the two plates. An upright electrode lets the slag run ahead of the arc.\n\n# Heat input\n\nThe energy per millimeter of bead is the **heat input**:\n\n```\nQ (kJ/mm) = η · U (V) · I (A) / v (mm/s) / 1000\nη ≈ 0.8 for stick and MIG/MAG; ≈ 0.6 for TIG\n```\n\nExample: 22 V, 120 A, 3 mm/s → Q = 0.8 × 22 × 120 / 3 / 1000 ≈ **0.70 kJ/mm**.\n\n# In the simulator\n\nThe bead appears in the top view; after the arc passes line **A**, **section A–A** shows the **fusion zone (FZ)**, the **heat-affected zone (HAZ)** and the defects. The indicators give the likelihood of each defect, and the tip explains the main cause.",
+      "task": "Weld a **T-joint fillet** on a **6 mm** plate with a **3.25 mm E6013** electrode: get **quality ≥ 80**, **lack of fusion ≤ 15%** and **porosity ≤ 15%**.",
+      "hints": [
+        "Start with the current: the range of the 3.25 mm E6013 is 90–130 A. Stay in the middle of it.",
+        "Arc length ≈ electrode diameter (≈ 3.25 mm). A long arc gives porosity and spatter.",
+        "Travel speed of 2.5 to 4 mm/s and the electrode tilted 10–20°."
+      ],
+      "goals": ["Bead quality ≥ 80", "Lack of fusion ≤ 15%", "Porosity ≤ 15%"],
+      "questions": [
+        {
+          "prompt": "Compute the heat input: **U = 22 V**, **I = 120 A**, **v = 3 mm/s**, **η = 0.8**.",
+          "unit": "kJ/mm",
+          "explanation": "Q = 0.8 × 22 × 120 / 3 / 1000 = 0.704 kJ/mm."
+        },
+        {
+          "prompt": "What does the **60** in **E6013** mean?",
+          "options": ["6.0 mm diameter", "Minimum tensile strength of 60 ksi (≈ 420 MPa)", "60 A current", "60% iron in the coating"],
+          "explanation": "The first two (or three) digits give the minimum strength of the deposited metal in ksi."
+        },
+        {
+          "prompt": "Holding **too long an arc** in stick welding mainly causes…",
+          "options": ["Excessive penetration", "Porosity, spatter and undercut", "The electrode sticking", "A narrower, taller bead"],
+          "explanation": "Long arc = high voltage and poor shielding: air gets into the pool (pores), the arc scatters metal (spatter) and digs into the edges (undercut)."
+        }
+      ]
+    },
+    "met-07-mig": {
+      "title": "MIG/MAG (GMAW): wire, voltage and gas",
+      "safety": "MIG/MAG produces **more radiation and more fumes** than stick welding: use a **DIN 11–13 filter**, local exhaust and cover all your skin (UV burns within minutes). The wire leaves the torch energized: **never point the torch at your body** or pull the trigger while looking at the contact tip. The **cylinder** stands upright and chained; CO₂ and argon in enclosed spaces displace the oxygen. Leather gloves and apron, leather boots, an **extinguisher** nearby, and practice with an **instructor**.",
+      "theory": "# How MIG/MAG works\n\nIn **GMAW** (*Gas Metal Arc Welding*) a continuous **wire** comes off a spool, runs through the torch and is itself the electrode; a **gas** flows out of the nozzle and shields the pool. There is no slag to chip and productivity is high — it is the most used process in industry (cars, structures, machinery).\n\n- **MAG** (*Metal Active Gas*): **active** gas (CO₂ or Ar + CO₂) — for **carbon steel**.\n- **MIG** (*Metal Inert Gas*): **inert** gas (argon, Ar + helium) — for **aluminum** and other non-ferrous metals.\n\n# The constant-voltage machine\n\nHere the welder **does not set the current directly**:\n\n- The **wire feed speed** (m/min) sets the **current**: more wire coming in, more current to melt it. For 1.0 mm wire, roughly: 3 m/min ≈ 100 A, 5 m/min ≈ 145 A, 8 m/min ≈ 210 A.\n- The **voltage** (V) sets the **arc length**. A reference for steel wire: **U ≈ 14 + 0.05 × I**. Voltage too low: the wire \"stubs\" into the work, crackles and spatters. Too high: long arc, big droplets, wide bead and undercut.\n- The **stick-out** (wire beyond the contact tip) is **10–20 mm**. Too long: the current drops, the gas does not reach and the arc becomes unstable.\n\n# Transfer modes\n\n- **Short-circuit**: low current and voltage; the droplet touches the pool ~100 times per second. Little heat: thin plate and out-of-position work.\n- **Globular**: big, irregular droplets; lots of spatter (avoid).\n- **Spray**: high current and voltage with argon-rich gas; a fine stream of droplets, lots of heat and penetration — thick plate in the flat position.\n- **Pulsed**: the machine alternates pulses; spray with little average heat.\n\n# Gases\n\n```\nPure CO2 ........... carbon steel: penetrates well, cheap, more spatter\nAr + 15-25% CO2 .... carbon steel: smooth arc, little spatter (the most common)\nAr + 2% O2 / CO2 ... stainless steel (little carbon in the weld)\nArgon / Ar + He .... aluminum, copper (MIG)\n```\n\nTypical flow: **12–18 L/min**. Too little gas = **porosity**; too much creates turbulence and pulls in air. Wind also blows the gas away: MIG is not good outdoors.\n\n# Technique\n\n- Torch **pushing** (5–15°) gives a flatter bead; dragging gives more penetration.\n- Typical travel speed: 4–9 mm/s.\n- In a square **butt joint**, thin plate (up to ~4 mm, with a small root gap) can be welded with **full penetration** in one pass — without burning through.",
+      "task": "Weld a **butt joint** in **4 mm** plate with **full penetration (≥ 3.2 mm)** without burning through, with **spatter ≤ 20%**, **porosity ≤ 10%** and **quality ≥ 80**.",
+      "hints": [
+        "The current comes from the wire: to penetrate 3.2 mm you need something close to 190–200 A (≈ 7–7.5 m/min with 1.0 mm wire).",
+        "Set the voltage by the rule U ≈ 14 + 0.05 × I. With ~200 A, something between 22 and 24 V.",
+        "Ar + CO₂ gas at 12–18 L/min, stick-out of 10–20 mm and the torch at 5–15°."
+      ],
+      "goals": ["Penetration ≥ 3.2 mm (full)", "No burn-through (≤ 10%)", "Spatter ≤ 20%", "Porosity ≤ 10%", "Quality ≥ 80"],
+      "questions": [
+        {
+          "prompt": "On a constant-voltage MIG/MAG machine, what **raises the current**?",
+          "options": ["Raising the voltage", "Raising the wire feed speed", "Raising the gas flow", "Raising the stick-out"],
+          "explanation": "More wire coming in per second needs more current to melt it. (Raising the stick-out, on the contrary, lowers the current.)"
+        },
+        {
+          "prompt": "Which gas would you use to MIG weld **aluminum**?",
+          "options": ["Pure CO₂", "Ar + 20% CO₂", "Pure argon", "Oxygen"],
+          "explanation": "Aluminum needs an inert gas (argon or Ar + He); gases with CO₂/O₂ oxidize the pool."
+        },
+        {
+          "prompt": "By the rule U ≈ 14 + 0.05 × I, what voltage should you use with **180 A**?",
+          "unit": "V",
+          "explanation": "14 + 0.05 × 180 = 14 + 9 = 23 V."
+        }
+      ]
+    },
+    "met-08-tig": {
+      "title": "TIG (GTAW): aluminum and stainless",
+      "safety": "TIG emits **very strong UV** and produces **ozone** (worse on aluminum, which reflects the light): **DIN 10–13** filter, all skin covered and exhaust. When grinding the tungsten, use a dedicated grinder, glasses and **avoid thoriated tungsten** (red tip, slightly radioactive) — prefer lanthanated or ceriated. **Stainless fumes** contain hexavalent chromium: local exhaust is mandatory. **High-frequency** arc starting can interfere with pacemakers. Thin TIG gloves are only for TIG; practice with an **instructor**.",
+      "theory": "# How TIG works\n\nIn **GTAW** (*Gas Tungsten Arc Welding*) the arc comes from a **non-consumable tungsten** electrode (it melts at 3422 °C). The filler metal, when needed, is a rod added **by hand** into the pool. The gas is **inert** (argon). Result: the **cleanest and most precise** process, with no spatter or slag — used on stainless, aluminum, titanium, piping and thin parts. It is also the slowest and the one that demands the most coordination (both hands and sometimes a foot on the pedal).\n\n# Polarity: DCEN or AC?\n\n- **DCEN (electrode negative)**: ~70% of the heat goes into the work. Good penetration and a cool tungsten. It is the choice for **carbon steel, stainless, copper and titanium**.\n- **DCEP (electrode positive)**: ~70% of the heat goes into the tungsten, which melts and contaminates the pool. Hardly ever used.\n- **AC (alternating current)**: the standard choice for **aluminum** (and magnesium). Aluminum is covered by an **oxide layer (Al₂O₃) that melts at ≈ 2070 °C**, while the metal melts at **660 °C**. In the positive half-cycle the arc **strips the oxide** (cathodic cleaning action); in the negative one it heats the work. Without AC the oxide stays and the metal does not fuse.\n\n# Parameters\n\n- **Current**: a reference of ~**1 A per 0.025 mm** (0.001 in) of thickness (≈ 40 A per mm) on steel; aluminum, which spreads the heat, needs a bit more on AC. E.g. 3 mm aluminum ≈ 120–150 A.\n- **Arc length**: short, **≈ 1.5–3 mm** (about the tungsten diameter). A long arc spreads the heat and reduces penetration; touching the tungsten to the pool contaminates everything.\n- **Gas**: **pure argon**, 7–12 L/min (Ar + helium gives more heat for thick aluminum/copper). Never gas with CO₂ or O₂: it burns the tungsten.\n- **Travel speed**: slow, 1–4 mm/s.\n\n# Particulars\n\n## Aluminum\n\n- **Clean** it with a dedicated stainless steel brush and solvent: oil and moisture turn into **hydrogen** in the pool → **porosity**.\n- It conducts heat 3× better than steel: at the start of the bead it needs more current (the pedal helps).\n- It does not change color before melting: the pool appears suddenly.\n\n## Austenitic stainless steel (304, 316)\n\n- It conducts little heat and expands a lot: it **distorts** easily. Use **low heat input**.\n- Between ~450 and 850 °C chromium forms carbides at the grain boundaries (**sensitization**) and the stainless loses its corrosion resistance in that region. That is why we use \"L\" filler metal (**308L, 316L**, low carbon) and little heat.\n- In pipes, the inside is **purged** with argon so the root does not oxidize.",
+      "task": "Weld **3 mm aluminum** in a **butt joint** with full penetration and without burning through: **quality ≥ 80**, **lack of fusion ≤ 10%**, **porosity ≤ 10%** and **burn-through ≤ 10%**.",
+      "hints": [
+        "Polarity first: aluminum only works well on AC (alternating current).",
+        "Pure argon gas, 7–12 L/min. Short arc: 2–3 mm.",
+        "Current close to 130–140 A with a travel speed of ~2.5 mm/s and the torch at 10–20°."
+      ],
+      "goals": ["Quality ≥ 80", "Lack of fusion ≤ 10%", "Porosity ≤ 10%", "Burn-through ≤ 10%"],
+      "questions": [
+        {
+          "prompt": "Why does TIG on aluminum use **alternating current**?",
+          "options": ["Because it is cheaper", "Because the positive half-cycle breaks up the aluminum oxide layer", "Because aluminum does not conduct direct current", "To make the tungsten last longer"],
+          "explanation": "Al₂O₃ melts at ≈ 2070 °C and aluminum at 660 °C; the cathodic cleaning of the positive half-cycle removes the oxide so the metal can fuse."
+        },
+        {
+          "prompt": "By the rule of ~1 A per 0.025 mm, what is the approximate current for **2 mm steel** on DCEN?",
+          "unit": "A",
+          "explanation": "2 mm / 0.025 mm = 80 → about 80 A."
+        },
+        {
+          "prompt": "Why is **308L** filler metal (\"L\" = low carbon) used on 304 stainless?",
+          "options": ["To make it harder", "To avoid sensitization (chromium carbides) and keep the corrosion resistance", "Because it is magnetic", "To weld faster"],
+          "explanation": "With little carbon almost no chromium carbides form between 450 and 850 °C, and the chromium keeps protecting against corrosion."
+        }
+      ]
+    },
+    "met-09-defeitos": {
+      "title": "Joints, positions, defects and inspection",
+      "safety": "Welding **out of position** (vertical and overhead) makes spatter and slag fall on you: wear **sleeves, apron, leggings, a leather hood/balaclava** and a closed collar, plus the helmet (DIN 10–11) and glasses. In inspection: **penetrant** and developer liquids are flammable and irritating (ventilation, nitrile gloves); **radiography** only by licensed professionals, with the area cordoned off — never enter an area marked for radiation. Practice out-of-position welding with a **qualified instructor**.",
+      "theory": "# Joint types\n\n- **Butt**: plates side by side, in the same plane.\n- **T-joint**: one plate standing on the other; welded with a **fillet**.\n- **Lap**: one plate over the other; fillet at the edge.\n- **Corner** and **edge**: plates forming a corner or with their edges together.\n\n## Grooves (bevels)\n\nThin plates (up to ~4–6 mm) are butt welded with **square edges**. Above that the joint is **beveled** so the arc can reach the bottom: **V** groove (~60°), **X** (double-sided, thick plate), **U** or **J** (less filler metal). The groove has a **root face** (land, ~1.5 mm) and a **root opening** (~2–3 mm). A thick joint is filled in several passes: **root**, **fill** and **cap**.\n\n# Positions (AWS designation)\n\n```\nGroove (butt)        Fillet\n1G  flat             1F  flat\n2G  horizontal       2F  horizontal\n3G  vertical         3F  vertical\n4G  overhead         4F  overhead\n5G/6G pipes (fixed or at 45°)\n```\n\nThe ISO 6947 standard uses other letters for the same positions: PA (flat), PB (horizontal fillet), PC (horizontal), PF (vertical up), PG (vertical down), PE (overhead).\n\nOut of the flat position **gravity pulls the pool**: use a smaller electrode, **10–15% less current**, a small pool and, in vertical, weld **upwards** (vertical up) with a slight \"weaving\" motion.\n\n# Defects and their causes\n\n- **Porosity**: trapped gas bubbles. Causes: long arc, too little or too much gas, wind, damp electrode, dirty/oily part.\n- **Slag inclusion**: slag trapped between passes. Causes: low current, poor cleaning between passes, wrong angle.\n- **Lack of fusion**: the deposited metal did not fuse the joint wall. Causes: low current, high travel speed, deflected arc.\n- **Incomplete penetration**: the root did not fuse. Causes: low current, small root opening, large root face.\n- **Undercut**: a groove at the edge of the bead. Causes: high current/voltage, high travel speed, wrong angle — very common in vertical.\n- **Overlap**: metal that flowed onto the plate without fusing it (low travel speed, big pool).\n- **Burn-through**: too much heat on thin plate.\n- **Cracks**: the most dangerous. **Hot** (during solidification: sulfur, narrow and deep bead) or **cold** (hours later, in a hard HAZ with hydrogen).\n- **Spatter and distortion**: finish and dimensional problems.\n\n# Inspection\n\n## Non-destructive testing (NDT)\n\n- **Visual (VT)**: the first and cheapest. With gauges you measure fillet leg, reinforcement, undercut and alignment. It finds most problems.\n- **Liquid penetrant (PT)**: clean → apply the penetrant → remove the excess → apply the developer, which \"draws\" the liquid out of the cracks. It only detects discontinuities **open to the surface**, on any non-porous metal.\n- **Magnetic particles (MT)**: magnetizes the part and spreads iron powder, which gathers over cracks **at or just below the surface**. Only on **ferromagnetic** materials (not for aluminum or austenitic stainless).\n- **Ultrasonic (UT)**: a probe sends high-frequency sound; echoes reveal **internal** discontinuities (lack of fusion, cracks). It also measures thickness.\n- **Radiography (RT, X-ray / gamma)**: X or gamma rays pass through the weld and mark a film or detector: **pores** and **inclusions** show up as spots. It requires radiation protection.\n\n## Destructive tests\n\nUsed to **qualify** procedures and welders: **bend** (the bent weld must not open up), **macro etch** (cut, sand and etch with acid to see FZ and HAZ — like the simulator's section A–A), **tensile** and **Charpy impact**.\n\n# In the simulator\n\nNow the weld is a **vertical-up fillet (3F)**. The same parameters as in the flat position cause **undercut** and the pool runs. Compare the current range shown with the one in the stick welding lesson.",
+      "task": "Weld a **vertical-up fillet (3F)** on **8 mm** plate: **undercut ≤ 15%**, **lack of fusion ≤ 15%** and **quality ≥ 80**.",
+      "hints": [
+        "In vertical the current range drops about 10–15%: see the range next to the current control.",
+        "The 3.25 mm E7018 is the classic electrode for structures in vertical.",
+        "Slower travel than in flat (≈ 2 mm/s), short arc (≈ 3 mm) and a small angle (≈ 10°)."
+      ],
+      "goals": ["Undercut ≤ 15%", "Lack of fusion ≤ 15%", "Quality ≥ 80"],
+      "questions": [
+        {
+          "prompt": "Which test detects **only** discontinuities open to the surface, on any non-porous metal?",
+          "options": ["Ultrasonic", "Radiography", "Liquid penetrant", "Magnetic particles"],
+          "explanation": "The penetrant has to get in through the opening of the crack; it sees nothing inside."
+        },
+        {
+          "prompt": "You need to find **internal pores** in a 20 mm aluminum butt weld. Which test is the most suitable?",
+          "options": ["Magnetic particles", "Radiography", "Visual inspection", "Liquid penetrant"],
+          "explanation": "Pores and inclusions are volumetric and show up well on radiography; magnetic particles do not work on aluminum."
+        },
+        {
+          "prompt": "In the position designation, **3F** means…",
+          "options": ["Groove weld in vertical", "Fillet weld in vertical", "Overhead fillet weld", "Three fillet passes"],
+          "explanation": "The number is the position (3 = vertical) and the letter the type of weld (F = fillet, G = groove/butt)."
+        }
+      ]
+    },
+    "met-10-engenharia": {
+      "title": "Welding engineering: heat input, CE, preheat and WPS",
+      "safety": "Preheating thick plates (torch or electric blankets) adds **burn and fire hazards**: measure the temperature with a **temperature-indicating crayon or contact thermometer**, never with your hand; wear leather gloves and keep an **extinguisher** and a **fire watch**. With fuel gas, follow the rules for cylinders and flashback arrestors. Working next to parts at 150 °C for hours requires breaks and hydration. Full welding PPE (DIN 10–13 helmet, apron, gloves, boots, exhaust) is still mandatory, and thick-plate procedures are practiced with a **qualified instructor** and a welding inspector.",
+      "theory": "# From the workshop to engineering\n\nIn the structure of a bridge, a pressure vessel or an offshore platform, a weld cannot just \"look good\": it needs **proven properties**. This lesson puts together what we have seen from an engineering point of view.\n\n# Heat input and cooling rate\n\n```\nQ = η · U · I / v           (kJ/mm)\n```\n\nHeat input sets **how much heat** goes in; the **thickness** and the **initial temperature** set **how fast** it leaves. The most used parameter is **t8/5**: the time for the HAZ to cool from **800 to 500 °C** — the range in which the austenite transforms.\n\n- **Thick plate** (3D heat flow): t8/5 ∝ Q · (1/(500 − T0) − 1/(800 − T0)).\n- **Thin plate** (2D heat flow): t8/5 ∝ Q² / d² · (…), it grows fast with the heat input.\n- **Short** t8/5 (low heat input, thick plate, cold part) → HAZ with **martensite**, **hard and brittle**.\n- **Long** t8/5 → softer HAZ, but with **coarse grain** and lower toughness if overdone.\n\nThe simulator uses the **EN 1011-2** formulas for t8/5 and **Düren's** formula for the maximum HAZ hardness.\n\n# The regions of the HAZ\n\nFrom the bead outwards: **coarse grain** (heated far above A3: the worst spot, where cracks start), **fine grain** (normalized, good), **intercritical** (between A1 and A3) and **subcritical** (below A1, tempered).\n\n# Carbon equivalent (CE)\n\nIt is not only carbon that hardens the HAZ: manganese, chromium, molybdenum, nickel… also raise hardenability. The **IIW** sums this up in the **carbon equivalent**:\n\n```\nCE(IIW) = C + Mn/6 + (Cr + Mo + V)/5 + (Ni + Cu)/15\n```\n\n- **CE < 0.40**: good weldability, usually no preheat (moderate thicknesses).\n- **0.40 to 0.60**: care — **low-hydrogen** consumables and **preheat** according to thickness.\n- **CE > 0.60**: difficult welding; preheat and post-heat, special procedure.\n\n# Cold cracking (hydrogen-induced)\n\nIt needs **three** things at the same time, and appears hours later, below ~200 °C:\n\n- **hydrogen** in the weld (moisture in the coating, oil, rust — cellulosic/rutile electrodes have a lot; a dry **E7018** has little);\n- a **hard microstructure** in the HAZ (high CE + fast cooling);\n- **stresses** (restraint of thick plates).\n\nRemove any one of them and the crack does not happen. That is why the engineer's tools are:\n\n- **low-hydrogen consumables** (dry E7018, MIG, TIG);\n- **preheat** (and **interpass** temperature): it raises t8/5 → softer HAZ, and gives the hydrogen time to escape;\n- enough **heat input**;\n- **post-heat** (~200–250 °C for a few hours) and **post-weld heat treatment / stress relief** (PWHT, ~600 °C) in critical cases.\n\n# WPS, PQR and qualification\n\n- **WPS** (*Welding Procedure Specification*; EPS in Brazil): the document that says **how** to weld: process, base metal, consumable, position, ranges of current, voltage, travel speed, heat input, preheat, interpass, gas…\n- **PQR** (*Procedure Qualification Record*; RQP in Brazil): the **record of the test** that proved the WPS produces a good weld (test coupons welded and tested: tensile, bend, Charpy, macro, hardness).\n- **Welder qualification (WPQ)**: each welder takes a test and is qualified for the processes and positions welded.\n- Common standards: **AWS D1.1** (steel structures), **ASME IX** (vessels and piping), **ISO 15614 / ISO 9606**, **Petrobras N-133** (Brazil).\n\nThe **essential** variables (such as the type of consumable, the thickness range, the minimum preheat) cannot change without requalifying the procedure.\n\n# In the simulator\n\nThe steel in this lesson has **C = 0.22%** and **CE = 0.50**, in **25 mm** plate (V groove, several passes). Watch the **HAZ hardness (HV)**, the **t8/5** and the **cracking** risk as you change the consumable, the heat input and the preheat.",
+      "task": "Set the parameters of a butt weld in **CE = 0.50**, **25 mm** steel: **cracking risk ≤ 20%**, **quality ≥ 80** and **heat input between 0.8 and 2.5 kJ/mm**.",
+      "hints": [
+        "With CE 0.50 and 25 mm, hydrogen is the enemy: swap the E6013 for a basic low-hydrogen electrode.",
+        "A 4.0 mm electrode within its range (140–190 A) at ~3 mm/s gives a heat input close to 1 kJ/mm.",
+        "Still cracking? Preheat: something between 100 and 150 °C. The simulator's tip shows the suggested preheat."
+      ],
+      "goals": ["Cracking risk ≤ 20%", "Quality ≥ 80", "Heat input between 0.8 and 2.5 kJ/mm"],
+      "questions": [
+        {
+          "prompt": "Compute the **CE(IIW)** of a steel with C = 0.20; Mn = 1.40; Cr = 0.20; Mo = 0.10; V = 0; Ni = 0.10; Cu = 0.10 (%).",
+          "unit": "",
+          "explanation": "0.20 + 1.40/6 + (0.20 + 0.10 + 0)/5 + (0.10 + 0.10)/15 = 0.20 + 0.233 + 0.060 + 0.013 ≈ 0.507."
+        },
+        {
+          "prompt": "Compute the heat input of a pass with **U = 24 V**, **I = 160 A**, **v = 3 mm/s** and **η = 0.8**.",
+          "unit": "kJ/mm",
+          "explanation": "Q = 0.8 × 24 × 160 / 3 / 1000 = 1.024 kJ/mm."
+        },
+        {
+          "prompt": "Why does **preheating** reduce the risk of cold cracking?",
+          "options": ["Because it raises the strength of the filler metal", "Because it slows the cooling (a less hard HAZ) and gives the hydrogen time to escape", "Because it removes the need for PPE", "Because it lowers the heat input"],
+          "explanation": "With a higher T0 the t8/5 increases, less martensite forms in the HAZ, and the hydrogen diffuses out while the part is hot."
+        },
+        {
+          "prompt": "Which document **records the test** that proved a welding procedure produces adequate welds?",
+          "options": ["WPS", "PQR", "PPE Certificate of Approval (CA, Brazil)", "The electrode's invoice"],
+          "explanation": "The PQR records the actual parameters used and the test results; the WPS is the instruction based on it."
+        }
+      ]
+    }
+  }
+}
