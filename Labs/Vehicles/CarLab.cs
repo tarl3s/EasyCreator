@@ -22,48 +22,48 @@ public sealed class CarLab : VehicleLab
 
     public CarLab()
     {
-        Num("mass", "Massa", "kg", 200, 2500, 10, 1300);
-        Num("power", "Potência máxima", "kW", 10, 400, 1, 80);
-        Num("peakRpm", "Rpm da potência máx.", "rpm", 3000, 12000, 100, 5800);
-        Num("gears", "Nº de marchas", "", 1, 8, 1, 5);
-        Num("gear1", "Relação da 1ª", "", 1.5, 5.0, 0.05, 3.4);
-        Num("gearTop", "Relação da última", "", 0.5, 1.5, 0.05, 0.85);
-        Num("finalDrive", "Diferencial", "", 2.0, 12.0, 0.05, 4.0);
-        Num("wheelRadius", "Raio da roda", "m", 0.2, 0.4, 0.005, 0.30);
-        Num("cd", "Coef. de arrasto Cd", "", 0.15, 1.2, 0.01, 0.33);
-        Num("area", "Área frontal", "m²", 0.8, 3.0, 0.05, 2.1);
-        Num("crr", "Resist. ao rolamento", "", 0.005, 0.03, 0.001, 0.012);
-        Num("mu", "Atrito do pneu μ", "", 0.3, 1.8, 0.05, 0.9);
-        Choice("drive", "Tração", new[] { "FWD", "RWD", "AWD" }, new[] { "Dianteira (FWD)", "Traseira (RWD)", "Integral (AWD)" });
-        Num("weightFront", "Peso na frente", "%", 30, 70, 1, 60);
-        Num("cgHeight", "Altura do CG", "m", 0.2, 1.2, 0.01, 0.55);
-        Num("wheelbase", "Entre-eixos", "m", 1.5, 3.2, 0.05, 2.6);
-        Num("track", "Bitola", "m", 0.8, 1.9, 0.05, 1.5);
-        Num("brakeForce", "Força de freio", "kN", 2, 30, 0.5, 8);
-        Num("brakeBias", "Freio na dianteira", "%", 30, 95, 1, 70);
-        Choice("abs", "ABS", new[] { "off", "on" }, new[] { "Desligado", "Ligado" });
-        Num("reaction", "Tempo de reação", "s", 0, 2.5, 0.1, 0);
-        Num("speed", "Velocidade", "km/h", 10, 250, 5, 100);
-        Num("cornerRadius", "Raio da curva", "m", 5, 300, 1, 50);
-        Num("downforce", "Asa: ClA (downforce)", "m²", 0, 5, 0.1, 0);
-        Num("engineEff", "Eficiência do motor", "%", 15, 45, 1, 25);
-        Num("tank", "Tanque", "L", 5, 100, 1, 50);
-        Num("battery", "Bateria", "kWh", 5, 120, 1, 40);
-        Num("motorEff", "Eficiência bateria→roda", "%", 60, 97, 1, 85);
-        Num("motorTorque", "Torque do motor elétrico", "N·m", 50, 1000, 10, 250);
-        Num("aux", "Consumo auxiliar", "kW", 0, 5, 0.1, 0.5);
-        Num("straight", "Reta", "m", 20, 400, 5, 75);
+        Num("mass", L.T("Massa"), "kg", 200, 2500, 10, 1300);
+        Num("power", L.T("Potência máxima"), "kW", 10, 400, 1, 80);
+        Num("peakRpm", L.T("Rpm da potência máx."), "rpm", 3000, 12000, 100, 5800);
+        Num("gears", L.T("Nº de marchas"), "", 1, 8, 1, 5);
+        Num("gear1", L.T("Relação da 1ª"), "", 1.5, 5.0, 0.05, 3.4);
+        Num("gearTop", L.T("Relação da última"), "", 0.5, 1.5, 0.05, 0.85);
+        Num("finalDrive", L.T("Diferencial"), "", 2.0, 12.0, 0.05, 4.0);
+        Num("wheelRadius", L.T("Raio da roda"), "m", 0.2, 0.4, 0.005, 0.30);
+        Num("cd", L.T("Coef. de arrasto Cd"), "", 0.15, 1.2, 0.01, 0.33);
+        Num("area", L.T("Área frontal"), "m²", 0.8, 3.0, 0.05, 2.1);
+        Num("crr", L.T("Resist. ao rolamento"), "", 0.005, 0.03, 0.001, 0.012);
+        Num("mu", L.T("Atrito do pneu μ"), "", 0.3, 1.8, 0.05, 0.9);
+        Choice("drive", L.T("Tração"), new[] { "FWD", "RWD", "AWD" }, new[] { L.T("Dianteira (FWD)"), L.T("Traseira (RWD)"), L.T("Integral (AWD)") });
+        Num("weightFront", L.T("Peso na frente"), "%", 30, 70, 1, 60);
+        Num("cgHeight", L.T("Altura do CG"), "m", 0.2, 1.2, 0.01, 0.55);
+        Num("wheelbase", L.T("Entre-eixos"), "m", 1.5, 3.2, 0.05, 2.6);
+        Num("track", L.T("Bitola"), "m", 0.8, 1.9, 0.05, 1.5);
+        Num("brakeForce", L.T("Força de freio"), "kN", 2, 30, 0.5, 8);
+        Num("brakeBias", L.T("Freio na dianteira"), "%", 30, 95, 1, 70);
+        Choice("abs", "ABS", new[] { "off", "on" }, new[] { L.T("Desligado"), L.T("Ligado") });
+        Num("reaction", L.T("Tempo de reação"), "s", 0, 2.5, 0.1, 0);
+        Num("speed", L.T("Velocidade"), "km/h", 10, 250, 5, 100);
+        Num("cornerRadius", L.T("Raio da curva"), "m", 5, 300, 1, 50);
+        Num("downforce", L.T("Asa: ClA (downforce)"), "m²", 0, 5, 0.1, 0);
+        Num("engineEff", L.T("Eficiência do motor"), "%", 15, 45, 1, 25);
+        Num("tank", L.T("Tanque"), "L", 5, 100, 1, 50);
+        Num("battery", L.T("Bateria"), "kWh", 5, 120, 1, 40);
+        Num("motorEff", L.T("Eficiência bateria→roda"), "%", 60, 97, 1, 85);
+        Num("motorTorque", L.T("Torque do motor elétrico"), "N·m", 50, 1000, 10, 250);
+        Num("aux", L.T("Consumo auxiliar"), "kW", 0, 5, 0.1, 0.5);
+        Num("straight", L.T("Reta"), "m", 20, 400, 5, 75);
     }
 
     protected override string Title => Mode switch
     {
-        "topspeed" => "🚗 Velocidade máxima",
-        "brake" => "🚗 Frenagem",
-        "corner" => "🚗 Curva (vista de cima)",
-        "consumption" => "🚗 Consumo na estrada",
-        "ev" => "🔋 Carro elétrico: aceleração e autonomia",
-        "lap" => "🏁 Tempo de volta (pista oval)",
-        _ => "🚗 Aceleração 0–100 km/h",
+        "topspeed" => L.T("🚗 Velocidade máxima"),
+        "brake" => L.T("🚗 Frenagem"),
+        "corner" => L.T("🚗 Curva (vista de cima)"),
+        "consumption" => L.T("🚗 Consumo na estrada"),
+        "ev" => L.T("🔋 Carro elétrico: aceleração e autonomia"),
+        "lap" => L.T("🏁 Tempo de volta (pista oval)"),
+        _ => L.T("🚗 Aceleração 0–100 km/h"),
     };
 
     protected override string[] DefaultShown(string mode) => mode switch
@@ -79,9 +79,9 @@ public sealed class CarLab : VehicleLab
 
     protected override void OnMode()
     {
-        if (Mode == "ev") { P("mass").Label = "Massa sem bateria"; P("power").Label = "Potência do motor"; P("finalDrive").Label = "Redução"; P("finalDrive").Value = 9; }
-        if (Mode == "brake") P("speed").Label = "Velocidade inicial";
-        if (Mode == "consumption") P("speed").Label = "Velocidade de cruzeiro";
+        if (Mode == "ev") { P("mass").Label = L.T("Massa sem bateria"); P("power").Label = L.T("Potência do motor"); P("finalDrive").Label = L.T("Redução"); P("finalDrive").Value = 9; }
+        if (Mode == "brake") P("speed").Label = L.T("Velocidade inicial");
+        if (Mode == "consumption") P("speed").Label = L.T("Velocidade de cruzeiro");
     }
 
     // ---- vehicle state for the current inputs ----------------------------------------------------------------
@@ -510,19 +510,19 @@ public sealed class CarLab : VehicleLab
         Road(dc, s, x, 6, out double roadY);
         CarSide(dc, 40, roadY + 8, x / 0.3, Math.Clamp(st[6] / G * 2.5, 0, 3), st[5] > 0.5 && v < 40, false, false);
         double gx = s.Width - 120;
-        Draw.Gauge(dc, new Point(gx, 50), 32, v * 3.6, Mode == "ev" ? 200 : 240, Draw.N(v * 3.6, "0") + " km/h", "velocidade");
+        Draw.Gauge(dc, new Point(gx, 50), 32, v * 3.6, Mode == "ev" ? 200 : 240, Draw.N(v * 3.6, "0") + " km/h", L.T("velocidade"));
         if (_ev)
         {
-            Draw.Gauge(dc, new Point(gx + 76, 50), 32, rpm, 16000, Draw.N(rpm / 1000, "0.0") + " mil", "rpm motor", Draw.Blue, 15000);
-            Draw.Bar(dc, new Rect(14, 24, 120, 12), 1 - Math.Min(1, x / Math.Max(1, _range * 1000)), "Bateria " + Draw.N(V("battery"), "0") + " kWh");
+            Draw.Gauge(dc, new Point(gx + 76, 50), 32, rpm, 16000, Draw.N(rpm / 1000, "0.0") + " mil", L.T("rpm motor"), Draw.Blue, 15000);
+            Draw.Bar(dc, new Rect(14, 24, 120, 12), 1 - Math.Min(1, x / Math.Max(1, _range * 1000)), L.F("Bateria {0} kWh", Draw.N(V("battery"), "0")));
         }
         else
         {
-            Draw.Gauge(dc, new Point(gx + 76, 50), 32, rpm, _rpk * 1.3, Draw.N(rpm / 1000, "0.0") + " mil", "rpm · " + Draw.N(st[4], "0") + "ª", Draw.Blue, _rpk * 1.15);
+            Draw.Gauge(dc, new Point(gx + 76, 50), 32, rpm, _rpk * 1.3, Draw.N(rpm / 1000, "0.0") + " mil", L.F("rpm · {0}ª", Draw.N(st[4], "0")), Draw.Blue, _rpk * 1.15);
         }
         Draw.Text(dc, $"t = {Draw.N(T, "0.0")} s", 14, 46, 13, Draw.White, 0, true);
-        if (st[5] > 0.5) Draw.Text(dc, "patinando!", 14, 64, 12, Draw.Orange, 0, true);
-        if (Mode == "topspeed") Draw.Text(dc, $"máx. {Draw.N(_top * 3.6, "0")} km/h", 14, 64, 12, Draw.Dim);
+        if (st[5] > 0.5) Draw.Text(dc, L.T("patinando!"), 14, 64, 12, Draw.Orange, 0, true);
+        if (Mode == "topspeed") Draw.Text(dc, L.F("máx. {0} km/h", Draw.N(_top * 3.6, "0")), 14, 64, 12, Draw.Dim);
     }
 
     void DrawBrake(DrawingContext dc, Size s)
@@ -549,12 +549,12 @@ public sealed class CarLab : VehicleLab
         bool lockF = st[3] > 0.5, lockR = st[4] > 0.5;
         if (lockF || lockR) dc.DrawRectangle(Draw.Tire, null, new Rect(130 + react * ppm, roadY + 5, Math.Max(0, st[1] - react) * ppm, 3));
         CarSide(dc, carX, roadY + 8, st[1] / 0.3, T > V("reaction") && st[2] > 0 ? -1.5 : 0, false, lockF, lockR);
-        Draw.Gauge(dc, new Point(s.Width - 48, 50), 32, st[2] * 3.6, Draw.Nice(V("speed")), Draw.N(st[2] * 3.6, "0") + " km/h", "velocidade");
-        Draw.Text(dc, $"t = {Draw.N(T, "0.00")} s   distância = {Draw.N(st[1], "0.0")} m", 12, 10, 12, Draw.White, 0, true);
-        if (T < V("reaction")) Draw.Text(dc, "reagindo…", 12, 28, 12, Draw.Yellow, 0, true);
-        else if (lockR) Draw.Text(dc, "rodas traseiras travadas: o carro pode rodar!", 12, 28, 12, Draw.Red, 0, true);
-        else if (lockF) Draw.Text(dc, "rodas dianteiras travadas: sem direção!", 12, 28, 12, Draw.Orange, 0, true);
-        else if (st[2] > 0 && T > 0) Draw.Text(dc, C("abs") == "on" ? "freando (ABS)" : "freando", 12, 28, 12, Draw.Green, 0, true);
+        Draw.Gauge(dc, new Point(s.Width - 48, 50), 32, st[2] * 3.6, Draw.Nice(V("speed")), Draw.N(st[2] * 3.6, "0") + " km/h", L.T("velocidade"));
+        Draw.Text(dc, L.F("t = {0} s   distância = {1} m", Draw.N(T, "0.00"), Draw.N(st[1], "0.0")), 12, 10, 12, Draw.White, 0, true);
+        if (T < V("reaction")) Draw.Text(dc, L.T("reagindo…"), 12, 28, 12, Draw.Yellow, 0, true);
+        else if (lockR) Draw.Text(dc, L.T("rodas traseiras travadas: o carro pode rodar!"), 12, 28, 12, Draw.Red, 0, true);
+        else if (lockF) Draw.Text(dc, L.T("rodas dianteiras travadas: sem direção!"), 12, 28, 12, Draw.Orange, 0, true);
+        else if (st[2] > 0 && T > 0) Draw.Text(dc, C("abs") == "on" ? L.T("freando (ABS)") : L.T("freando"), 12, 28, 12, Draw.Green, 0, true);
     }
 
     void DrawCruise(DrawingContext dc, Size s)
@@ -562,11 +562,11 @@ public sealed class CarLab : VehicleLab
         var st = At(_cruise, T);
         Road(dc, s, st[1], 6, out double roadY);
         CarSide(dc, 60, roadY + 8, st[1] / 0.3, 0, false, false, false);
-        Draw.Bar(dc, new Rect(14, 24, 130, 12), st[3], "Tanque");
-        Draw.Gauge(dc, new Point(s.Width - 48, 50), 32, st[2] * 3.6, 240, Draw.N(st[2] * 3.6, "0") + " km/h", "velocidade");
-        Draw.Text(dc, $"{Draw.N(st[1] / 1000, "0.0")} km percorridos", 14, 46, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"potência na roda: {Draw.N(CruisePower(V("speed") / 3.6) / 1000, "0.0")} kW", 14, 64, 11, Draw.Dim);
-        if (Calc.TryGetValue("canCruise", out var cc) && cc < 0.5) Draw.Text(dc, "o carro não chega a essa velocidade!", 14, 82, 12, Draw.Red, 0, true);
+        Draw.Bar(dc, new Rect(14, 24, 130, 12), st[3], L.T("Tanque"));
+        Draw.Gauge(dc, new Point(s.Width - 48, 50), 32, st[2] * 3.6, 240, Draw.N(st[2] * 3.6, "0") + " km/h", L.T("velocidade"));
+        Draw.Text(dc, L.F("{0} km percorridos", Draw.N(st[1] / 1000, "0.0")), 14, 46, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("potência na roda: {0} kW", Draw.N(CruisePower(V("speed") / 3.6) / 1000, "0.0")), 14, 64, 11, Draw.Dim);
+        if (Calc.TryGetValue("canCruise", out var cc) && cc < 0.5) Draw.Text(dc, L.T("o carro não chega a essa velocidade!"), 14, 82, 12, Draw.Red, 0, true);
     }
 
     void DrawCorner(DrawingContext dc, Size s)
@@ -604,10 +604,10 @@ public sealed class CarLab : VehicleLab
         dc.Pop();
         double aLat = Calc.TryGetValue("lateralG", out var lg) ? lg : 0;
         bool ok = Calc.TryGetValue("cornerOk", out var co) && co > 0.5;
-        Draw.Text(dc, $"{Draw.N(V("speed"), "0")} km/h · {Draw.N(aLat, "0.00")} g lateral", s.Width - 10, 10, 12, Draw.White, 2, true);
-        Draw.Text(dc, $"limite: {Draw.N(_vmaxCorner * 3.6, "0")} km/h", s.Width - 10, 28, 12, Draw.Dim, 2);
+        Draw.Text(dc, L.F("{0} km/h · {1} g lateral", Draw.N(V("speed"), "0"), Draw.N(aLat, "0.00")), s.Width - 10, 10, 12, Draw.White, 2, true);
+        Draw.Text(dc, L.F("limite: {0} km/h", Draw.N(_vmaxCorner * 3.6, "0")), s.Width - 10, 28, 12, Draw.Dim, 2);
         if (T > 0.5)
-            Draw.Text(dc, st[4] > 0.5 ? "capotou!" : ok ? "fez a curva ✓" : "saiu de frente!", s.Width - 10, 46, 13, ok ? Draw.Green : Draw.Red, 2, true);
+            Draw.Text(dc, st[4] > 0.5 ? L.T("capotou!") : ok ? L.T("fez a curva ✓") : L.T("saiu de frente!"), s.Width - 10, 46, 13, ok ? Draw.Green : Draw.Red, 2, true);
     }
 
     void DrawLap(DrawingContext dc, Size s)
@@ -635,8 +635,8 @@ public sealed class CarLab : VehicleLab
         dc.PushTransform(new RotateTransform(heading, pos.X, pos.Y));
         dc.DrawRoundedRectangle(Draw.Orange, Draw.Pen(Draw.White, 1), new Rect(pos.X - 8, pos.Y - 4, 16, 8), 2, 2);
         dc.Pop();
-        Draw.Text(dc, $"t = {Draw.N(T, "0.00")} s   {Draw.N(st[2] * 3.6, "0")} km/h", 10, 6, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"curvas R = {Draw.N(_lapR, "0")} m · retas {Draw.N(_lapStraight, "0")} m", s.Width - 10, 6, 11, Draw.Dim, 2);
+        Draw.Text(dc, L.F("t = {0} s   {1} km/h", Draw.N(T, "0.00"), Draw.N(st[2] * 3.6, "0")), 10, 6, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("curvas R = {0} m · retas {1} m", Draw.N(_lapR, "0"), Draw.N(_lapStraight, "0")), s.Width - 10, 6, 11, Draw.Dim, 2);
     }
 
     protected override void DrawPlot(DrawingContext dc, Size s)
@@ -646,7 +646,7 @@ public sealed class CarLab : VehicleLab
             case "brake":
             {
                 double vmax = Draw.Nice(V("speed"));
-                var p = new Plot(dc, s, 0, Draw.Nice(Math.Max(10, _stop)), 0, vmax, "distância (m)", "velocidade (km/h)");
+                var p = new Plot(dc, s, 0, Draw.Nice(Math.Max(10, _stop)), 0, vmax, L.T("distância (m)"), L.T("velocidade (km/h)"));
                 p.Line(dc, Pts(_brake, 1, 2, 3.6), Draw.Green);
                 var st = At(_brake, T);
                 p.Dot(dc, st[1], st[2] * 3.6, Draw.Yellow);
@@ -659,9 +659,9 @@ public sealed class CarLab : VehicleLab
                 var curve = new List<Point>();
                 for (double kmh = 0; kmh <= vmax; kmh += vmax / 60) { double v = kmh / 3.6; curve.Add(new Point(kmh, v * v / r / G)); }
                 double gMax = Draw.Nice(Math.Max(_mu * 1.4, Calc.GetValueOrDefault("lateralG") * 1.1));
-                var p = new Plot(dc, s, 0, vmax, 0, gMax, "velocidade (km/h)", "aceleração lateral (g)");
+                var p = new Plot(dc, s, 0, vmax, 0, gMax, L.T("velocidade (km/h)"), L.T("aceleração lateral (g)"));
                 p.Line(dc, curve, Draw.Blue);
-                p.HLine(dc, _mu, Draw.Orange, "limite μ");
+                p.HLine(dc, _mu, Draw.Orange, L.T("limite μ"));
                 if (_rollRisk) p.HLine(dc, V("track") / (2 * _h), Draw.Red, "capota");
                 p.Dot(dc, V("speed"), Calc.GetValueOrDefault("lateralG"), Draw.Yellow);
                 break;
@@ -670,7 +670,7 @@ public sealed class CarLab : VehicleLab
             case "ev":
             {
                 double ymax = Draw.Nice(_curve.Count > 0 ? _curve.Max(c => c.Y) * 1.05 : 1);
-                var p = new Plot(dc, s, 20, 200, 0, ymax, "velocidade (km/h)", _ev ? "autonomia (km)" : "consumo (L/100 km)");
+                var p = new Plot(dc, s, 20, 200, 0, ymax, L.T("velocidade (km/h)"), _ev ? L.T("autonomia (km)") : L.T("consumo (L/100 km)"));
                 p.Line(dc, _curve, Draw.Blue);
                 p.Dot(dc, V("speed"), _ev ? _range : _consumption, Draw.Yellow);
                 break;
@@ -678,7 +678,7 @@ public sealed class CarLab : VehicleLab
             case "lap":
             {
                 double vmax = Draw.Nice(_lapProfile.Count > 0 ? _lapProfile.Max(c => c.Y) * 1.1 : 100);
-                var p = new Plot(dc, s, 0, Math.Max(1, _lapLen), 0, vmax, "distância na volta (m)", "velocidade (km/h)");
+                var p = new Plot(dc, s, 0, Math.Max(1, _lapLen), 0, vmax, L.T("distância na volta (m)"), L.T("velocidade (km/h)"));
                 p.Line(dc, _lapProfile.Where(q => q.X <= At(_lap, T)[1] + 0.01).ToList(), Draw.Green);
                 break;
             }
@@ -686,8 +686,8 @@ public sealed class CarLab : VehicleLab
             {
                 double tEnd = Duration;
                 double vmax = Draw.Nice(Math.Max(110, _accel.Count > 0 ? _accel.Max(r => r[0] <= tEnd ? r[2] : 0) * 3.6 * 1.1 : 110));
-                var p = new Plot(dc, s, 0, Math.Max(1, Math.Ceiling(tEnd)), 0, vmax, "tempo (s)", "velocidade (km/h)");
-                if (Mode == "topspeed") p.HLine(dc, _top * 3.6, Draw.Orange, "máx. " + Draw.N(_top * 3.6, "0"));
+                var p = new Plot(dc, s, 0, Math.Max(1, Math.Ceiling(tEnd)), 0, vmax, L.T("tempo (s)"), L.T("velocidade (km/h)"));
+                if (Mode == "topspeed") p.HLine(dc, _top * 3.6, Draw.Orange, L.F("máx. {0}", Draw.N(_top * 3.6, "0")));
                 else p.HLine(dc, 100, Draw.Orange, "100 km/h");
                 p.Line(dc, Pts(_accel, 0, 2, 3.6, T), Draw.Green);
                 break;
@@ -708,28 +708,44 @@ public sealed class CarLab : VehicleLab
 
     protected override string Summary()
     {
-        string tq = _ev ? $"motor {Draw.N(_tm, "0")} N·m" : $"torque máx. {Draw.N(Calc.GetValueOrDefault("peakTorque"), "0")} N·m a {Draw.N(_rpk / 2, "0")} rpm";
+        string tq = _ev ? L.F("motor {0} N·m", Draw.N(_tm, "0")) : L.F("torque máx. {0} N·m a {1} rpm", Draw.N(Calc.GetValueOrDefault("peakTorque"), "0"), Draw.N(_rpk / 2, "0"));
         switch (Mode)
         {
             case "topspeed":
-                return $"Ar a {Draw.N(_top * 3.6, "0")} km/h: arrasto {Draw.N(0.5 * Rho * _cdA * _top * _top, "0")} N. " +
-                       (Ran ? $"Velocidade máxima: {Draw.N(_top * 3.6, "0")} km/h." : "Clique em ▶ Rodar.");
+            {
+                string kmh = Draw.N(_top * 3.6, "0"), drag = Draw.N(0.5 * Rho * _cdA * _top * _top, "0");
+                return Ran ? L.F("Ar a {0} km/h: arrasto {1} N. Velocidade máxima: {0} km/h.", kmh, drag)
+                           : L.F("Ar a {0} km/h: arrasto {1} N. Clique em ▶ Rodar.", kmh, drag);
+            }
             case "brake":
-                return Ran ? $"Distância de frenagem {Draw.N(Calc["brakingDistance"], "0.0")} m · parada total {Draw.N(Calc["stoppingDistance"], "0.0")} m · desaceleração média {Draw.N(Calc["brakeDecelG"], "0.00")} g"
-                    : $"Limite teórico (μ·g): {Draw.N(Math.Pow(V("speed") / 3.6, 2) / (2 * _mu * G), "0.0")} m de frenagem. Clique em ▶ Rodar.";
+                return Ran ? L.F("Distância de frenagem {0} m · parada total {1} m · desaceleração média {2} g", Draw.N(Calc["brakingDistance"], "0.0"), Draw.N(Calc["stoppingDistance"], "0.0"), Draw.N(Calc["brakeDecelG"], "0.00"))
+                    : L.F("Limite teórico (μ·g): {0} m de frenagem. Clique em ▶ Rodar.", Draw.N(Math.Pow(V("speed") / 3.6, 2) / (2 * _mu * G), "0.0"));
             case "corner":
-                return $"v máx. = √(μ·g·r) = {Draw.N(_vmaxCorner * 3.6, "0")} km/h · capota acima de {Draw.N(V("track") / (2 * _h), "0.00")} g" + (Ran ? "" : ". Clique em ▶ Rodar.");
+            {
+                string kmh = Draw.N(_vmaxCorner * 3.6, "0"), tipG = Draw.N(V("track") / (2 * _h), "0.00");
+                return Ran ? L.F("v máx. = √(μ·g·r) = {0} km/h · capota acima de {1} g", kmh, tipG)
+                           : L.F("v máx. = √(μ·g·r) = {0} km/h · capota acima de {1} g. Clique em ▶ Rodar.", kmh, tipG);
+            }
             case "consumption":
-                return $"Consumo {Draw.N(_consumption, "0.0")} L/100 km ({Draw.N(_consumption > 0 ? 100 / _consumption : 0, "0.0")} km/L) · autonomia {Draw.N(_range, "0")} km";
+                return L.F("Consumo {0} L/100 km ({1} km/L) · autonomia {2} km", Draw.N(_consumption, "0.0"), Draw.N(_consumption > 0 ? 100 / _consumption : 0, "0.0"), Draw.N(_range, "0"));
             case "ev":
-                return $"Massa total {Draw.N(_m, "0")} kg (bateria {Draw.N(V("battery") / PackKWhPerKg, "0")} kg) · {Draw.N(_consumption, "0.0")} kWh/100 km · autonomia {Draw.N(_range, "0")} km" +
-                       (Ran ? $" · 0–100 em {Draw.N(_t100, "0.0")} s" : "");
+            {
+                string mass = Draw.N(_m, "0"), batt = Draw.N(V("battery") / PackKWhPerKg, "0"), cons = Draw.N(_consumption, "0.0"), rng = Draw.N(_range, "0");
+                return Ran ? L.F("Massa total {0} kg (bateria {1} kg) · {2} kWh/100 km · autonomia {3} km · 0–100 em {4} s", mass, batt, cons, rng, Draw.N(_t100, "0.0"))
+                           : L.F("Massa total {0} kg (bateria {1} kg) · {2} kWh/100 km · autonomia {3} km", mass, batt, cons, rng);
+            }
             case "lap":
-                return $"Curva a {Draw.N(Calc.GetValueOrDefault("lapCornerSpeed"), "0")} km/h · máx. na reta {Draw.N(Calc.GetValueOrDefault("lapTopSpeed"), "0")} km/h" +
-                       (Ran ? $" · volta em {Draw.N(_lapTime, "0.00")} s" : ". Clique em ▶ Rodar.");
+            {
+                string cs = Draw.N(Calc.GetValueOrDefault("lapCornerSpeed"), "0"), ts = Draw.N(Calc.GetValueOrDefault("lapTopSpeed"), "0");
+                return Ran ? L.F("Curva a {0} km/h · máx. na reta {1} km/h · volta em {2} s", cs, ts, Draw.N(_lapTime, "0.00"))
+                           : L.F("Curva a {0} km/h · máx. na reta {1} km/h. Clique em ▶ Rodar.", cs, ts);
+            }
             default:
-                return $"{tq} · relações {string.Join(" / ", _ratios.Select(r => Draw.N(r, "0.00")))}" +
-                       (Ran ? $" · 0–100 km/h: {(_t100 < 99 ? Draw.N(_t100, "0.0") + " s" : "não chegou")} · patinou {Draw.N(Calc["wheelspin"], "0.0")} s" : "");
+            {
+                string ratios = string.Join(" / ", _ratios.Select(r => Draw.N(r, "0.00")));
+                return Ran ? L.F("{0} · relações {1} · 0–100 km/h: {2} · patinou {3} s", tq, ratios, _t100 < 99 ? Draw.N(_t100, "0.0") + " s" : L.T("não chegou"), Draw.N(Calc["wheelspin"], "0.0"))
+                           : L.F("{0} · relações {1}", tq, ratios);
+            }
         }
     }
 }

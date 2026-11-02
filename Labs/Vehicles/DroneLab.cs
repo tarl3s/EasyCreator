@@ -18,28 +18,28 @@ public sealed class DroneLab : VehicleLab
 
     public DroneLab()
     {
-        Num("frameMass", "Drone sem bateria", "g", 50, 8000, 10, 600);
-        Choice("motors", "Motores", new[] { "4", "6", "8" }, new[] { "4 (quad)", "6 (hexa)", "8 (octo)" });
-        Num("motorThrust", "Empuxo máx. por motor", "g", 50, 6000, 10, 350);
-        Num("propSize", "Hélice", "pol", 2, 24, 0.5, 5);
-        Num("cells", "Células da bateria", "S", 1, 12, 1, 3);
-        Num("capacity", "Capacidade", "mAh", 200, 30000, 50, 1300);
-        Num("payload", "Carga útil", "g", 0, 10000, 10, 0);
-        Num("kp", "Kp", "", 0, 50, 0.1, 5);
-        Num("ki", "Ki", "", 0, 30, 0.1, 0);
-        Num("kd", "Kd", "", 0, 30, 0.05, 0);
-        Num("target", "Altura alvo", "m", 1, 50, 0.5, 10);
-        Num("angle", "Ângulo alvo", "°", 5, 45, 1, 20);
-        Num("speed", "Velocidade de cruzeiro", "m/s", 1, 30, 0.5, 8);
-        Num("route", "Distância até o ponto", "km", 0.1, 30, 0.1, 2);
+        Num("frameMass", L.T("Drone sem bateria"), "g", 50, 8000, 10, 600);
+        Choice("motors", L.T("Motores"), new[] { "4", "6", "8" }, new[] { L.T("4 (quad)"), L.T("6 (hexa)"), L.T("8 (octo)") });
+        Num("motorThrust", L.T("Empuxo máx. por motor"), "g", 50, 6000, 10, 350);
+        Num("propSize", L.T("Hélice"), "pol", 2, 24, 0.5, 5);
+        Num("cells", L.T("Células da bateria"), "S", 1, 12, 1, 3);
+        Num("capacity", L.T("Capacidade"), "mAh", 200, 30000, 50, 1300);
+        Num("payload", L.T("Carga útil"), "g", 0, 10000, 10, 0);
+        Num("kp", L.T("Kp"), "", 0, 50, 0.1, 5);
+        Num("ki", L.T("Ki"), "", 0, 30, 0.1, 0);
+        Num("kd", L.T("Kd"), "", 0, 30, 0.05, 0);
+        Num("target", L.T("Altura alvo"), "m", 1, 50, 0.5, 10);
+        Num("angle", L.T("Ângulo alvo"), "°", 5, 45, 1, 20);
+        Num("speed", L.T("Velocidade de cruzeiro"), "m/s", 1, 30, 0.5, 8);
+        Num("route", L.T("Distância até o ponto"), "km", 0.1, 30, 0.1, 2);
     }
 
     protected override string Title => Mode switch
     {
-        "altitude" => "🛸 Controle PID de altura",
-        "attitude" => "🛸 Controle PID de atitude (rolagem)",
-        "mission" => "🛸 Missão: ida e volta",
-        _ => "🛸 Empuxo, bateria e tempo de voo",
+        "altitude" => L.T("🛸 Controle PID de altura"),
+        "attitude" => L.T("🛸 Controle PID de atitude (rolagem)"),
+        "mission" => L.T("🛸 Missão: ida e volta"),
+        _ => L.T("🛸 Empuxo, bateria e tempo de voo"),
     };
 
     protected override string[] DefaultShown(string mode) => mode switch
@@ -328,11 +328,11 @@ public sealed class DroneLab : VehicleLab
                 double zp = (gy - 34) / top;
                 dc.DrawRectangle(Draw.Grass, null, new Rect(0, gy, s.Width, s.Height - gy));
                 dc.DrawLine(Draw.Pen(Draw.Orange, 1.2, true), new Point(0, gy - target * zp), new Point(s.Width, gy - target * zp));
-                Draw.Text(dc, $"alvo {Draw.N(target, "0.#")} m", s.Width - 8, gy - target * zp - 15, 10, Draw.Orange, 2);
+                Draw.Text(dc, L.F("alvo {0} m", Draw.N(target, "0.#")), s.Width - 8, gy - target * zp - 15, 10, Draw.Orange, 2);
                 var st = At(_step, T);
                 DroneSide(dc, new Point(s.Width * 0.4, gy - 18 - st[1] * zp), 1, 0, T * 50, st[3] > 0.05);
-                Draw.Text(dc, $"altura {Draw.N(st[1], "0.00")} m · acelerador {Draw.N(st[3] * 100, "0")} %", 10, 8, 12, Draw.White, 0, true);
-                Draw.Text(dc, $"pairar exige {Draw.N(Calc.GetValueOrDefault("hoverThrottle"), "0")} % de acelerador", 10, 26, 11, Draw.Dim);
+                Draw.Text(dc, L.F("altura {0} m · acelerador {1} %", Draw.N(st[1], "0.00"), Draw.N(st[3] * 100, "0")), 10, 8, 12, Draw.White, 0, true);
+                Draw.Text(dc, L.F("pairar exige {0} % de acelerador", Draw.N(Calc.GetValueOrDefault("hoverThrottle"), "0")), 10, 26, 11, Draw.Dim);
                 break;
             }
             case "attitude":
@@ -343,9 +343,9 @@ public sealed class DroneLab : VehicleLab
                 dc.DrawLine(Draw.Pen(Draw.Orange, 1.2, true), new Point(c.X - 90 * Math.Cos(target * Math.PI / 180), c.Y - 90 * Math.Sin(target * Math.PI / 180)),
                     new Point(c.X + 90 * Math.Cos(target * Math.PI / 180), c.Y + 90 * Math.Sin(target * Math.PI / 180)));
                 DroneSide(dc, c, 1.3, st[1], T * 50, false);
-                Draw.Text(dc, $"rolagem {Draw.N(st[1], "0.0")}° (alvo {Draw.N(target, "0")}°)", 10, 8, 12, Draw.White, 0, true);
-                Draw.Text(dc, $"diferença de empuxo {Draw.N(st[3] * 100, "0")} %", 10, 26, 11, Draw.Dim);
-                if (Calc.GetValueOrDefault("flipped") > 0.5 && T > 0.5) Draw.Text(dc, "capotou! ganhos instáveis", s.Width - 10, 8, 13, Draw.Red, 2, true);
+                Draw.Text(dc, L.F("rolagem {0}° (alvo {1}°)", Draw.N(st[1], "0.0"), Draw.N(target, "0")), 10, 8, 12, Draw.White, 0, true);
+                Draw.Text(dc, L.F("diferença de empuxo {0} %", Draw.N(st[3] * 100, "0")), 10, 26, 11, Draw.Dim);
+                if (Calc.GetValueOrDefault("flipped") > 0.5 && T > 0.5) Draw.Text(dc, L.T("capotou! ganhos instáveis"), s.Width - 10, 8, 13, Draw.Red, 2, true);
                 break;
             }
             case "mission":
@@ -357,15 +357,15 @@ public sealed class DroneLab : VehicleLab
                 dc.DrawEllipse(Draw.Blue, null, new Point(x0, y), 6, 6);
                 Draw.Text(dc, "base", x0, y + 10, 10, Draw.Dim, 1);
                 dc.DrawEllipse(Draw.Orange, null, new Point(x1, y), 6, 6);
-                Draw.Text(dc, $"ponto ({Draw.N(V("route"), "0.0")} km)", x1, y + 10, 10, Draw.Dim, 1);
+                Draw.Text(dc, L.F("ponto ({0} km)", Draw.N(V("route"), "0.0")), x1, y + 10, 10, Draw.Dim, 1);
                 double px = x0 + (x1 - x0) * st[1];
                 DroneSide(dc, new Point(px, y - 14 - st[3] * 2.2), 0.55, st[0] > 0 && st[1] > 0 && st[1] < 1 ? 8 : 0, T * 60, false);
-                Draw.Bar(dc, new Rect(14, 26, 140, 12), st[2], $"Bateria ({Draw.N(_e, "0.0")} Wh)");
-                Draw.Text(dc, $"{Draw.N(st[0] / 60, "0.0")} min de voo", s.Width - 10, 8, 12, Draw.White, 2, true);
+                Draw.Bar(dc, new Rect(14, 26, 140, 12), st[2], L.F("Bateria ({0} Wh)", Draw.N(_e, "0.0")));
+                Draw.Text(dc, L.F("{0} min de voo", Draw.N(st[0] / 60, "0.0")), s.Width - 10, 8, 12, Draw.White, 2, true);
                 if (T >= Duration - 1e-6 && T > 0)
                 {
                     bool ok = Calc.GetValueOrDefault("missionOk") > 0.5;
-                    Draw.Text(dc, ok ? "missão cumprida ✓" : st[2] < 0 ? "bateria acabou no caminho!" : "sem reserva de 20 % / voo impossível", s.Width - 10, 26, 12, ok ? Draw.Green : Draw.Red, 2, true);
+                    Draw.Text(dc, ok ? L.T("missão cumprida ✓") : st[2] < 0 ? L.T("bateria acabou no caminho!") : L.T("sem reserva de 20 % / voo impossível"), s.Width - 10, 26, 12, ok ? Draw.Green : Draw.Red, 2, true);
                 }
                 break;
             }
@@ -376,11 +376,11 @@ public sealed class DroneLab : VehicleLab
                 var st = At(_hover, T);
                 double twr = Calc.GetValueOrDefault("thrustToWeight");
                 DroneSide(dc, new Point(s.Width * 0.4, gy - 18 - st[1] * 22), 1.1, 0, T * 60, twr > 1);
-                Draw.Bar(dc, new Rect(14, 26, 140, 12), st[2], $"Bateria {Draw.N(V("cells"), "0")}S {Draw.N(V("capacity"), "0")} mAh");
-                Draw.Text(dc, $"empuxo/peso = {Draw.N(twr, "0.00")}", s.Width - 10, 8, 13, twr >= 2 ? Draw.Green : twr > 1 ? Draw.Orange : Draw.Red, 2, true);
-                Draw.Text(dc, $"massa {Draw.N(_m * 1000, "0")} g · {Draw.N(Calc.GetValueOrDefault("hoverCurrent"), "0.0")} A", s.Width - 10, 26, 11, Draw.Dim, 2);
+                Draw.Bar(dc, new Rect(14, 26, 140, 12), st[2], L.F("Bateria {0}S {1} mAh", Draw.N(V("cells"), "0"), Draw.N(V("capacity"), "0")));
+                Draw.Text(dc, L.F("empuxo/peso = {0}", Draw.N(twr, "0.00")), s.Width - 10, 8, 13, twr >= 2 ? Draw.Green : twr > 1 ? Draw.Orange : Draw.Red, 2, true);
+                Draw.Text(dc, L.F("massa {0} g · {1} A", Draw.N(_m * 1000, "0"), Draw.N(Calc.GetValueOrDefault("hoverCurrent"), "0.0")), s.Width - 10, 26, 11, Draw.Dim, 2);
                 Draw.Text(dc, $"{Draw.N(st[0] / 60, "0.0")} min", s.Width - 10, 44, 11, Draw.Dim, 2);
-                if (twr <= 1 && T > 0.3) Draw.Text(dc, "não decola: empuxo menor que o peso", 14, 48, 12, Draw.Red, 0, true);
+                if (twr <= 1 && T > 0.3) Draw.Text(dc, L.T("não decola: empuxo menor que o peso"), 14, 48, 12, Draw.Red, 0, true);
                 break;
             }
         }
@@ -396,7 +396,7 @@ public sealed class DroneLab : VehicleLab
                 double target = Mode == "attitude" ? V("angle") : V("target");
                 double ymax = Draw.Nice(Math.Max(target * 1.5, _step.Max(r => r[1]) * 1.05));
                 var p = new Plot(dc, s, 0, _step[^1][0], Mode == "attitude" && _step.Min(r => r[1]) < -0.5 ? -Draw.Nice(-_step.Min(r => r[1])) : 0, ymax,
-                    "tempo (s)", Mode == "attitude" ? "rolagem (°)" : "altura (m)");
+                    L.T("tempo (s)"), Mode == "attitude" ? L.T("rolagem (°)") : L.T("altura (m)"));
                 p.HLine(dc, target, Draw.Orange, "alvo");
                 p.HLine(dc, target * 1.05, Draw.GridLine);
                 var pts = _step.Where(r => r[0] <= T).Select(r => new Point(r[0], r[1])).ToList();
@@ -406,7 +406,7 @@ public sealed class DroneLab : VehicleLab
             case "mission":
             {
                 double ymax = Draw.Nice(_curve.Count > 0 ? _curve.Where(c => c.X >= 3).Max(c => c.Y) * 1.1 : 1);
-                var p = new Plot(dc, s, 0, 25, 0, ymax, "velocidade (m/s)", "energia por km (Wh/km)");
+                var p = new Plot(dc, s, 0, 25, 0, ymax, L.T("velocidade (m/s)"), L.T("energia por km (Wh/km)"));
                 p.Line(dc, _curve, Draw.Blue);
                 p.Dot(dc, V("speed"), Calc.GetValueOrDefault("cruisePower") / V("speed") * 1000 / 3600, Draw.Yellow);
                 break;
@@ -416,7 +416,7 @@ public sealed class DroneLab : VehicleLab
                 bool byProp = LP("plot") == "prop";
                 double ymax = Draw.Nice(_curve.Count > 0 ? _curve.Max(c => c.Y) * 1.1 : 1);
                 var p = new Plot(dc, s, _curve.Count > 0 ? _curve[0].X : 0, _curve.Count > 0 ? _curve[^1].X : 1, 0, ymax,
-                    byProp ? "hélice (pol)" : "capacidade (mAh)", "tempo de voo (min)");
+                    byProp ? L.T("hélice (pol)") : L.T("capacidade (mAh)"), L.T("tempo de voo (min)"));
                 p.Line(dc, _curve, Draw.Blue);
                 p.Dot(dc, byProp ? V("propSize") : V("capacity"), _flight, Draw.Yellow);
                 break;
@@ -426,14 +426,14 @@ public sealed class DroneLab : VehicleLab
 
     protected override string Summary()
     {
-        string run = Ran ? "" : " Clique em ▶ Rodar.";
+        string run = Ran ? "" : L.T(" Clique em ▶ Rodar.");
         return Mode switch
         {
             "altitude" or "attitude" => Ran
-                ? $"Sobressinal {Draw.N(_overshoot, "0")} % · acomodação {(_settle < 99 ? Draw.N(_settle, "0.0") + " s" : "não acomodou")} · erro final {Draw.N(Calc.GetValueOrDefault("steadyError"), "0.00")} {(Mode == "attitude" ? "°" : "m")}"
-                : "Ajuste Kp, Ki e Kd e clique em ▶ Rodar para ver a resposta ao degrau.",
-            "mission" => $"Ida e volta de {Draw.N(2 * V("route"), "0.0")} km · {Draw.N(_missionMin, "0.0")} min · usa {Draw.N(_energyPct, "0")} % da bateria (máx. 80 %) · inclinação {Draw.N(Calc.GetValueOrDefault("tiltAngle"), "0")}°.{run}",
-            _ => $"Massa {Draw.N(_m * 1000, "0")} g (bateria {Draw.N(_mBat * 1000, "0")} g) · empuxo/peso {Draw.N(Calc.GetValueOrDefault("thrustToWeight"), "0.00")} · pairar: {Draw.N(Calc.GetValueOrDefault("hoverThrottle"), "0")} % e {Draw.N(_pHover, "0")} W · tempo de voo {Draw.N(_flight, "0.0")} min.{run}",
+                ? L.F("Sobressinal {0} % · acomodação {1} · erro final {2} {3}", Draw.N(_overshoot, "0"), (_settle < 99 ? Draw.N(_settle, "0.0") + " s" : L.T("não acomodou")), Draw.N(Calc.GetValueOrDefault("steadyError"), "0.00"), (Mode == "attitude" ? "°" : "m"))
+                : L.T("Ajuste Kp, Ki e Kd e clique em ▶ Rodar para ver a resposta ao degrau."),
+            "mission" => L.F("Ida e volta de {0} km · {1} min · usa {2} % da bateria (máx. 80 %) · inclinação {3}°.{4}", Draw.N(2 * V("route"), "0.0"), Draw.N(_missionMin, "0.0"), Draw.N(_energyPct, "0"), Draw.N(Calc.GetValueOrDefault("tiltAngle"), "0"), run),
+            _ => L.F("Massa {0} g (bateria {1} g) · empuxo/peso {2} · pairar: {3} % e {4} W · tempo de voo {5} min.{6}", Draw.N(_m * 1000, "0"), Draw.N(_mBat * 1000, "0"), Draw.N(Calc.GetValueOrDefault("thrustToWeight"), "0.00"), Draw.N(Calc.GetValueOrDefault("hoverThrottle"), "0"), Draw.N(_pHover, "0"), Draw.N(_flight, "0.0"), run),
         };
     }
 }

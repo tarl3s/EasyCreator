@@ -17,25 +17,25 @@ public sealed class HelicopterLab : VehicleLab
 
     public HelicopterLab()
     {
-        Num("mass", "Massa", "kg", 100, 6000, 10, 1100);
-        Num("rotorRadius", "Raio do rotor", "m", 2, 10, 0.1, 4.0);
-        Num("blades", "Número de pás", "", 2, 6, 1, 2);
-        Num("chord", "Corda da pá", "m", 0.1, 0.6, 0.01, 0.25);
-        Num("rpm", "Rotação do rotor", "rpm", 150, 700, 5, 400);
-        Num("collective", "Passo coletivo", "°", 0, 16, 0.2, 8);
-        Num("power", "Potência do motor", "kW", 20, 3000, 5, 150);
-        Num("altitude", "Altitude", "m", 0, 6000, 100, 0);
-        Num("fm", "Figura de mérito", "", 0.5, 0.85, 0.01, 0.70);
-        Num("tailArm", "Braço do rotor de cauda", "m", 2, 10, 0.1, 4.5);
-        Num("tailMax", "Empuxo máx. da cauda", "N", 100, 10000, 50, 1000);
+        Num("mass", L.T("Massa"), "kg", 100, 6000, 10, 1100);
+        Num("rotorRadius", L.T("Raio do rotor"), "m", 2, 10, 0.1, 4.0);
+        Num("blades", L.T("Número de pás"), "", 2, 6, 1, 2);
+        Num("chord", L.T("Corda da pá"), "m", 0.1, 0.6, 0.01, 0.25);
+        Num("rpm", L.T("Rotação do rotor"), "rpm", 150, 700, 5, 400);
+        Num("collective", L.T("Passo coletivo"), "°", 0, 16, 0.2, 8);
+        Num("power", L.T("Potência do motor"), "kW", 20, 3000, 5, 150);
+        Num("altitude", L.T("Altitude"), "m", 0, 6000, 100, 0);
+        Num("fm", L.T("Figura de mérito"), "", 0.5, 0.85, 0.01, 0.70);
+        Num("tailArm", L.T("Braço do rotor de cauda"), "m", 2, 10, 0.1, 4.5);
+        Num("tailMax", L.T("Empuxo máx. da cauda"), "N", 100, 10000, 50, 1000);
     }
 
     protected override string Title => Mode switch
     {
-        "climb" => "🚁 Subida vertical",
-        "tail" => "🚁 Torque e rotor de cauda (vista de cima)",
-        "auto" => "🚁 Autorrotação (motor desligado)",
-        _ => "🚁 Pairar: empuxo do rotor",
+        "climb" => L.T("🚁 Subida vertical"),
+        "tail" => L.T("🚁 Torque e rotor de cauda (vista de cima)"),
+        "auto" => L.T("🚁 Autorrotação (motor desligado)"),
+        _ => L.T("🚁 Pairar: empuxo do rotor"),
     };
 
     protected override string[] DefaultShown(string mode) => mode switch
@@ -271,11 +271,11 @@ public sealed class HelicopterLab : VehicleLab
             double zpx = (gy - 50) / 300;
             var c = new Point(s.Width * 0.4, gy - 20 - st[1] * zpx);
             HeliSide(dc, c, 1, rotorPx, T * 18 * st[3], false);
-            Draw.Text(dc, $"altura {Draw.N(st[1], "0")} m · descendo a {Draw.N(-st[2], "0.0")} m/s", 10, 8, 12, Draw.White, 0, true);
-            Draw.Text(dc, $"rotor a {Draw.N(st[3] * 100, "0")} % da rotação", 10, 26, 11, Draw.Dim);
-            if (st[1] <= 20 && st[1] > 0) Draw.Text(dc, "arremetida (flare): a energia do rotor freia a descida", s.Width - 10, 8, 11, Draw.Yellow, 2, true);
+            Draw.Text(dc, L.F("altura {0} m · descendo a {1} m/s", Draw.N(st[1], "0"), Draw.N(-st[2], "0.0")), 10, 8, 12, Draw.White, 0, true);
+            Draw.Text(dc, L.F("rotor a {0} % da rotação", Draw.N(st[3] * 100, "0")), 10, 26, 11, Draw.Dim);
+            if (st[1] <= 20 && st[1] > 0) Draw.Text(dc, L.T("arremetida (flare): a energia do rotor freia a descida"), s.Width - 10, 8, 11, Draw.Yellow, 2, true);
             if (T >= Duration - 1e-6 && T > 0)
-                Draw.Text(dc, _td <= 3 ? $"pouso suave ✓ ({Draw.N(_td, "0.0")} m/s)" : $"pouso duro! {Draw.N(_td, "0.0")} m/s", s.Width - 10, 26, 13, _td <= 3 ? Draw.Green : Draw.Red, 2, true);
+                Draw.Text(dc, _td <= 3 ? L.F("pouso suave ✓ ({0} m/s)", Draw.N(_td, "0.0")) : L.F("pouso duro! {0} m/s", Draw.N(_td, "0.0")), s.Width - 10, 26, 13, _td <= 3 ? Draw.Green : Draw.Red, 2, true);
             return;
         }
         var v = At(_vert, T);
@@ -289,10 +289,10 @@ public sealed class HelicopterLab : VehicleLab
             dc.DrawLine(Draw.Pen(Draw.Axis, 1), new Point(s.Width - 34, y), new Point(s.Width - 26, y));
             Draw.Text(dc, Draw.N(m, "0") + " m", s.Width - 38, y - 7, 9.5, Draw.Dim, 2);
         }
-        Draw.Text(dc, $"empuxo {Draw.N(v[3] / 1000, "0.00")} kN · peso {Draw.N(_w / 1000, "0.00")} kN", 10, 8, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"altura {Draw.N(v[1], "0.0")} m · subida {Draw.N(Math.Abs(v[2]) < 0.05 ? 0 : v[2], "0.0")} m/s", 10, 26, 11, Draw.Dim);
+        Draw.Text(dc, L.F("empuxo {0} kN · peso {1} kN", Draw.N(v[3] / 1000, "0.00"), Draw.N(_w / 1000, "0.00")), 10, 8, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("altura {0} m · subida {1} m/s", Draw.N(v[1], "0.0"), Draw.N(Math.Abs(v[2]) < 0.05 ? 0 : v[2], "0.0")), 10, 26, 11, Draw.Dim);
         if (T > 1 && Calc.GetValueOrDefault("canHover") < 0.5)
-            Draw.Text(dc, _stall ? "as pás estolaram: empuxo insuficiente" : "empuxo menor que o peso: não decola", 10, 44, 12, Draw.Red, 0, true);
+            Draw.Text(dc, _stall ? L.T("as pás estolaram: empuxo insuficiente") : L.T("empuxo menor que o peso: não decola"), 10, 44, 12, Draw.Red, 0, true);
     }
 
     void SceneTail(DrawingContext dc, Size s)
@@ -312,10 +312,10 @@ public sealed class HelicopterLab : VehicleLab
         Draw.Arrow(dc, new Point(c.X - arm, c.Y), new Point(c.X - arm, c.Y + 8 + 30 * Math.Min(1.5, tail / Math.Max(1, _tailNeed))), Draw.Green, 2.5);
         dc.Pop();
         Draw.Arc(dc, c, arm * 0.55, 200, 120, Draw.Pen(Draw.Orange, 2.5));
-        Draw.Text(dc, "torque do rotor", c.X, c.Y - arm * 0.55 - 18, 10, Draw.Orange, 1);
-        Draw.Text(dc, $"torque {Draw.N(_q, "0")} N·m → cauda precisa de {Draw.N(_tailNeed, "0")} N", 10, 8, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"cauda dá até {Draw.N(V("tailMax"), "0")} N · giro {Draw.N(st[2] * 180 / Math.PI, "0")} °/s", 10, 26, 11, Draw.Dim);
-        if (T > 0.5) Draw.Text(dc, _tailNeed <= V("tailMax") ? "proa estável ✓" : "a fuselagem gira!", s.Width - 10, 8, 13, _tailNeed <= V("tailMax") ? Draw.Green : Draw.Red, 2, true);
+        Draw.Text(dc, L.T("torque do rotor"), c.X, c.Y - arm * 0.55 - 18, 10, Draw.Orange, 1);
+        Draw.Text(dc, L.F("torque {0} N·m → cauda precisa de {1} N", Draw.N(_q, "0"), Draw.N(_tailNeed, "0")), 10, 8, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("cauda dá até {0} N · giro {1} °/s", Draw.N(V("tailMax"), "0"), Draw.N(st[2] * 180 / Math.PI, "0")), 10, 26, 11, Draw.Dim);
+        if (T > 0.5) Draw.Text(dc, _tailNeed <= V("tailMax") ? L.T("proa estável ✓") : L.T("a fuselagem gira!"), s.Width - 10, 8, 13, _tailNeed <= V("tailMax") ? Draw.Green : Draw.Red, 2, true);
     }
 
     protected override void DrawPlot(DrawingContext dc, Size s)
@@ -325,22 +325,22 @@ public sealed class HelicopterLab : VehicleLab
             case "tail":
             {
                 var pts = _yaw.Where(r => r[0] <= T).Select(r => new Point(r[0], Math.Abs(r[2]) * 180 / Math.PI)).ToList();
-                var p = new Plot(dc, s, 0, 10, 0, Draw.Nice(Math.Max(30, Math.Abs(_yaw[^1][2]) * 180 / Math.PI)), "tempo (s)", "giro da fuselagem (°/s)");
+                var p = new Plot(dc, s, 0, 10, 0, Draw.Nice(Math.Max(30, Math.Abs(_yaw[^1][2]) * 180 / Math.PI)), L.T("tempo (s)"), L.T("giro da fuselagem (°/s)"));
                 p.Line(dc, pts, Draw.Orange);
                 break;
             }
             case "auto":
             {
                 var pts = _auto.Where(r => r[0] <= T).Select(r => new Point(r[0], -r[2])).ToList();
-                var p = new Plot(dc, s, 0, Math.Ceiling(_auto[^1][0]), 0, Draw.Nice(_vd * 1.2), "tempo (s)", "razão de descida (m/s)");
-                p.HLine(dc, 3, Draw.Green, "pouso seguro");
+                var p = new Plot(dc, s, 0, Math.Ceiling(_auto[^1][0]), 0, Draw.Nice(_vd * 1.2), L.T("tempo (s)"), L.T("razão de descida (m/s)"));
+                p.HLine(dc, 3, Draw.Green, L.T("pouso seguro"));
                 p.Line(dc, pts, Draw.Blue);
                 break;
             }
             case "climb":
             {
                 var pts = _vert.Where(r => r[0] <= T).Select(r => new Point(r[0], r[1])).ToList();
-                var p = new Plot(dc, s, 0, 20, 0, Math.Max(20, Draw.Nice(_vert[^1][1] * 1.1)), "tempo (s)", "altura (m)");
+                var p = new Plot(dc, s, 0, 20, 0, Math.Max(20, Draw.Nice(_vert[^1][1] * 1.1)), L.T("tempo (s)"), L.T("altura (m)"));
                 p.Line(dc, pts, Draw.Green);
                 break;
             }
@@ -355,10 +355,10 @@ public sealed class HelicopterLab : VehicleLab
                     maxT = Math.Max(maxT, t);
                 }
                 double tp = ThrustPower(0) / 1000;
-                var p = new Plot(dc, s, 0, thMax, 0, Draw.Nice(Math.Max(maxT, _w / 1000) * 1.3), "passo coletivo (°)", "empuxo (kN)");
+                var p = new Plot(dc, s, 0, thMax, 0, Draw.Nice(Math.Max(maxT, _w / 1000) * 1.3), L.T("passo coletivo (°)"), L.T("empuxo (kN)"));
                 p.Line(dc, pts, Draw.Blue);
-                p.HLine(dc, _w / 1000, Draw.Red, "peso", labelLeft: true, labelBelow: tp >= _w / 1000);
-                p.HLine(dc, tp, Draw.Orange, "limite do motor", labelBelow: tp < _w / 1000);
+                p.HLine(dc, _w / 1000, Draw.Red, L.T("peso"), labelLeft: true, labelBelow: tp >= _w / 1000);
+                p.HLine(dc, tp, Draw.Orange, L.T("limite do motor"), labelBelow: tp < _w / 1000);
                 p.Dot(dc, V("collective"), _t0 / 1000, Draw.Yellow);
                 break;
             }
@@ -367,13 +367,13 @@ public sealed class HelicopterLab : VehicleLab
 
     protected override string Summary()
     {
-        string run = Ran ? "" : " Clique em ▶ Rodar.";
+        string run = Ran ? "" : L.T(" Clique em ▶ Rodar.");
         return Mode switch
         {
-            "tail" => $"Q = P/Ω = {Draw.N(_q, "0")} N·m · cauda: Q/braço = {Draw.N(_tailNeed, "0")} N (disponível {Draw.N(V("tailMax"), "0")} N).{run}",
-            "auto" => $"Descida em autorrotação ≈ {Draw.N(_vd, "0.0")} m/s · energia no rotor {Draw.N(Calc.GetValueOrDefault("rotorEnergy"), "0")} kJ · toque {Draw.N(_td, "0.0")} m/s.{run}",
-            "climb" => $"Pairar exige {Draw.N(_pHover / 1000, "0")} kW de {Draw.N(_pAvail / 1000, "0")} kW disponíveis · subida {Draw.N(_climb, "0.0")} m/s.{run}",
-            _ => $"Ponta da pá a {Draw.N(_vtip, "0")} m/s (Mach {Draw.N(_vtip / 340, "0.00")}) · empuxo {Draw.N(_t0, "0")} N · pairar exige {Draw.N(_pHover / 1000, "0")} kW (disp. {Draw.N(_pAvail / 1000, "0")} kW) · teto {Draw.N(Calc.GetValueOrDefault("hoverCeiling"), "0")} m.{run}",
+            "tail" => L.F("Q = P/Ω = {0} N·m · cauda: Q/braço = {1} N (disponível {2} N).{3}", Draw.N(_q, "0"), Draw.N(_tailNeed, "0"), Draw.N(V("tailMax"), "0"), run),
+            "auto" => L.F("Descida em autorrotação ≈ {0} m/s · energia no rotor {1} kJ · toque {2} m/s.{3}", Draw.N(_vd, "0.0"), Draw.N(Calc.GetValueOrDefault("rotorEnergy"), "0"), Draw.N(_td, "0.0"), run),
+            "climb" => L.F("Pairar exige {0} kW de {1} kW disponíveis · subida {2} m/s.{3}", Draw.N(_pHover / 1000, "0"), Draw.N(_pAvail / 1000, "0"), Draw.N(_climb, "0.0"), run),
+            _ => L.F("Ponta da pá a {0} m/s (Mach {1}) · empuxo {2} N · pairar exige {3} kW (disp. {4} kW) · teto {5} m.{6}", Draw.N(_vtip, "0"), Draw.N(_vtip / 340, "0.00"), Draw.N(_t0, "0"), Draw.N(_pHover / 1000, "0"), Draw.N(_pAvail / 1000, "0"), Draw.N(Calc.GetValueOrDefault("hoverCeiling"), "0"), run),
         };
     }
 }

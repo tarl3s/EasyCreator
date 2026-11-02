@@ -1,0 +1,373 @@
+{
+  "title": "Aviones y helicópteros",
+  "description": "Cómo un ala sostiene un avión, por qué entra en pérdida, cuánta pista necesita y hasta dónde vuela — y cómo el rotor de un helicóptero se mantiene en el aire, vence el par y aterriza sin motor. Termina con el dimensionamiento de un avión con la ecuación de Breguet.",
+  "lessons": {
+    "aero-01-sustentacao": {
+      "title": "Cómo genera sustentación el ala",
+      "theory": "# Empujando el aire hacia abajo\n\nUn ala está inclinada y curvada de manera que **desvía el aire hacia abajo**. Por la **3.ª ley de Newton**, si el ala empuja el aire hacia abajo, el aire empuja el ala **hacia arriba**. Visto de otro modo (Bernoulli), el aire pasa más rápido por encima del ala y la **presión arriba es menor** que abajo. Las dos explicaciones describen el mismo fenómeno.\n\n## La fórmula de la sustentación\n\n```\nL = ½ · ρ · v² · S · CL\n```\n\n- `L` = sustentación (N)\n- `ρ` = densidad del aire (1,225 kg/m³ a nivel del mar)\n- `v` = velocidad respecto al aire (m/s)\n- `S` = área del ala (m²)\n- `CL` = coeficiente de sustentación: depende del **ángulo de ataque** y del perfil del ala\n\nFíjate en el **v²**: el doble de velocidad da **cuatro veces** la sustentación.\n\n## Vuelo nivelado\n\nPara volar nivelado, la sustentación debe ser **igual al peso** (L = P = m·g). Si L > P el avión sube; si L < P, baja. El piloto ajusta el ángulo de ataque (tirando o empujando la palanca) según la velocidad.\n\nEn el simulador, el avión (estilo Cessna 172: 1100 kg, 16 m² de ala) está a 150 km/h. Las flechas muestran la sustentación (verde) y el peso (rojo).",
+      "task": "Haz que el avión vuele **nivelado**: sustentación entre el **100 % y el 110 % del peso**, sin entrar en pérdida.",
+      "hints": [
+        "Aumenta el ángulo de ataque poco a poco y observa la flecha verde.",
+        "A 150 km/h, un ángulo de ataque de 5,5° deja la sustentación un poco por encima del peso."
+      ],
+      "goals": [
+        "Sustentación entre el 100 % y el 110 % del peso",
+        "Sin pérdida"
+      ],
+      "questions": [
+        {
+          "prompt": "Un ala de **10 m²** vuela a **50 m/s** con CL = **0,5** (ρ = 1,2 kg/m³). ¿Cuál es la sustentación?",
+          "explanation": "L = ½ × 1,2 × 50² × 10 × 0,5 = 0,5 × 1,2 × 2500 × 10 × 0,5 = 7500 N."
+        },
+        {
+          "prompt": "Si la velocidad se **duplica** (mismo ángulo), la sustentación…",
+          "options": [
+            "se duplica",
+            "queda igual",
+            "se cuadruplica",
+            "cae a la mitad"
+          ],
+          "explanation": "L depende de v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "¿Cuál de estas frases describe correctamente cómo el ala sostiene el avión?",
+          "options": [
+            "El aire de arriba y el de abajo deben llegar juntos al final del ala",
+            "El ala desvía el aire hacia abajo, y el aire reacciona empujando el ala hacia arriba; al mismo tiempo la presión arriba es menor",
+            "El motor tira del avión hacia arriba",
+            "El ala es más liviana que el aire"
+          ],
+          "explanation": "Newton (desvío del aire hacia abajo) y Bernoulli (diferencia de presión) son dos caras del mismo fenómeno. La idea de que el aire debe \"llegar junto\" es un mito."
+        }
+      ]
+    },
+    "aero-02-angulo-ataque": {
+      "title": "Perfiles y ángulo de ataque",
+      "theory": "# El ángulo de ataque\n\nEl **ángulo de ataque (α)** es el ángulo entre la **cuerda** del ala (la línea del borde de ataque al borde de fuga) y el **viento relativo** — no es lo mismo que el ángulo de la nariz respecto al horizonte.\n\n## La curva de sustentación\n\nHasta cerca de la pérdida, CL crece en **línea recta** con α:\n\n```\nCL = a · (α − α0)\n```\n\n- Los perfiles con **curvatura** (arqueados) sustentan incluso con α = 0: su α0 es negativo (aquí, −2°).\n- Un ala finita tiene menor pendiente que el perfil 2D: `a = 2π · AR / (AR + 2)` por radián. Para AR = 7,5: 4,96/rad = **0,0866 por grado**.\n- Por encima del **ángulo crítico** (~15°), el flujo **se desprende** del extradós, CL se desploma y el arrastre se dispara: es la **pérdida** (entrada en pérdida).\n\n## Altitud\n\nA 2000 m el aire tiene solo ~82 % de la densidad del nivel del mar (ρ = 1,007 kg/m³). Con la misma velocidad se necesita **más CL** — más ángulo de ataque, más área o **flaps**, que aumentan la curvatura y el CL del ala.\n\nEn este vuelo lento (120 km/h) a 2000 m de altitud, necesitas mucho CL sin pasar el límite.",
+      "task": "A **120 km/h y 2000 m**, haz que el avión vuele **nivelado** (sustentación entre el 100 % y el 110 % del peso) **sin entrar en pérdida**.",
+      "hints": [
+        "Calcula el CL necesario: CL = 2·P / (ρ·v²·S).",
+        "Unos 12,5° de ángulo de ataque dan el CL correcto; por encima de ~15° el ala entra en pérdida."
+      ],
+      "goals": [
+        "Sustentación entre el 100 % y el 110 % del peso",
+        "Sin pérdida"
+      ],
+      "questions": [
+        {
+          "prompt": "Con CL = 0,0866·(α + 2°) y **CL máximo = 1,5**, ¿a partir de qué ángulo de ataque entra el ala en pérdida?",
+          "explanation": "1,5 = 0,0866·(α + 2) → α + 2 = 17,3 → α ≈ 15,3°."
+        },
+        {
+          "prompt": "El ángulo de ataque es el ángulo entre…",
+          "options": [
+            "la nariz del avión y el horizonte",
+            "la cuerda del ala y el viento relativo",
+            "el ala y el fuselaje",
+            "el avión y la pista"
+          ],
+          "explanation": "La nariz puede estar alta y el ángulo de ataque bajo (subiendo) o al revés; lo que importa para el ala es el viento relativo."
+        },
+        {
+          "prompt": "Volando más alto, a la misma velocidad, ¿qué debe hacer el piloto para mantener el vuelo nivelado?",
+          "options": [
+            "Disminuir el ángulo de ataque",
+            "Aumentar el ángulo de ataque (el aire es menos denso)",
+            "Nada cambia",
+            "Recoger los flaps"
+          ],
+          "explanation": "Con ρ menor, L = ½·ρ·v²·S·CL cae; se necesita más CL (o más velocidad) para igualar el peso."
+        }
+      ]
+    },
+    "aero-03-arrasto-polar": {
+      "title": "Arrastre y la polar de arrastre",
+      "theory": "# Dos tipos de arrastre\n\nEl arrastre total de un avión es la suma de:\n\n- **Arrastre parásito** (`CD0`): fricción del aire en la superficie, forma del fuselaje, tren de aterrizaje, antenas. Crece con la velocidad.\n- **Arrastre inducido**: el \"precio\" de generar sustentación. En las puntas del ala el aire de abajo escapa hacia arriba y forma **vórtices**. Es mayor a **baja velocidad** (CL alto).\n\n```\nCD = CD0 + CL² / (π · e · AR)\n```\n\n- `AR` = alargamiento = envergadura² / área. Planeadores: 20–30; cazas: 2–4.\n- `e` = factor de Oswald (0,7–0,9): qué tan cerca está la distribución de sustentación de la ideal (elíptica).\n\n## La polar y el L/D máximo\n\nEl gráfico CL × CD es la **polar de arrastre**. La recta que sale del origen y toca la curva marca el mejor **L/D** (sustentación/arrastre, la \"eficiencia\" del avión):\n\n```\n(L/D)máx = ½ · √(π · e · AR / CD0)      en el punto en que el CD inducido = CD0\n```\n\nCon L/D = 15, el avión **planea 15 m hacia adelante por cada 1 m que desciende**. ¡Los planeadores llegan a 50–60!\n\nHaz clic en ▶ Ejecutar: el ángulo de ataque barre de −4° a 16° y ves el punto moverse por la polar.",
+      "task": "Diseña un ala y un fuselaje con **L/D máximo de al menos 15**.",
+      "hints": [
+        "Un alargamiento mayor reduce el arrastre inducido; un CD0 menor reduce el parásito.",
+        "AR = 12, e = 0,85 y CD0 = 0,025 dan L/D ≈ 18."
+      ],
+      "goals": [
+        "L/D máximo ≥ 15"
+      ],
+      "questions": [
+        {
+          "prompt": "Ala con AR = **8**, e = **0,8**, volando con CL = **0,5**. ¿Cuál es el coeficiente de arrastre **inducido**?",
+          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,00995."
+        },
+        {
+          "prompt": "Un planeador con **L/D = 15** está a **1000 m** de altura, sin viento. ¿Cuántos km puede planear?",
+          "explanation": "Distancia = altura × L/D = 1000 × 15 = 15 000 m = 15 km."
+        },
+        {
+          "prompt": "¿Por qué los planeadores tienen alas largas y finas?",
+          "options": [
+            "Para caber en el hangar",
+            "Un alargamiento alto reduce el arrastre inducido y aumenta el L/D",
+            "Para ser más pesados",
+            "Para volar más rápido que los aviones a reacción"
+          ],
+          "explanation": "El arrastre inducido es CL²/(π·e·AR): cuanto mayor es el AR, menor es."
+        }
+      ]
+    },
+    "aero-04-estol": {
+      "title": "Pérdida y flaps",
+      "theory": "# La velocidad mínima\n\nPara volar nivelado, L = P. Como el CL tiene un máximo, existe una **velocidad mínima**, la **velocidad de pérdida**:\n\n```\nVpérdida = √( 2 · P / (ρ · S · CLmáx) )\n```\n\nPor debajo de ella no hay ángulo de ataque que genere sustentación suficiente: el ala pasa el ángulo crítico, el flujo se desprende, la nariz cae y el avión pierde altura.\n\n**Atención**: la pérdida ocurre por **ángulo de ataque**, no por velocidad. En un viraje cerrado o tirando fuerte de la palanca, el avión entra en pérdida por encima de la Vpérdida nivelada.\n\n## Cómo aterrizar más despacio\n\n- **Ala mayor** (menor carga alar P/S).\n- **Flaps**: superficies en el borde de fuga que aumentan la curvatura y el CLmáx (aquí: +0,25 a 10°, +0,45 a 20°, +0,60 a 30°). También aumentan el arrastre — útil en el aterrizaje.\n- **Slats** en el borde de ataque (aviones grandes) retrasan el desprendimiento.\n\nLos pilotos se aproximan para aterrizar a **1,3 × Vpérdida**, un margen de seguridad. La Vpérdida \"indicada\" en el velocímetro no cambia con la altitud, por eso el simulador muestra el valor a nivel del mar.\n\nHaz clic en ▶ Ejecutar: el avión desacelera hasta la pérdida.",
+      "task": "Haz que la **velocidad de pérdida sea de 85 km/h o menos** para aterrizar en una pista corta (sin cambiar el peso del avión).",
+      "safety": "La pérdida cerca del suelo es una de las principales causas de accidentes en la aviación general. Los pilotos entrenan el reconocimiento y la recuperación de la pérdida con instructor y a una altura segura.",
+      "hints": [
+        "Los flaps aumentan el CLmáx: Vpérdida cae con la raíz de CLmáx.",
+        "Flaps a 30° llevan el CLmáx de 1,5 a 2,1."
+      ],
+      "goals": [
+        "Velocidad de pérdida ≤ 85 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "Avión de peso **10 000 N**, ala de **15 m²**, CLmáx = **1,6**, a nivel del mar (ρ = 1,225). ¿Cuál es la velocidad de pérdida?",
+          "explanation": "Vs = √(2 × 10000 / (1,225 × 15 × 1,6)) = √(20000 / 29,4) = √680,3 ≈ 26,08 m/s (≈ 94 km/h)."
+        },
+        {
+          "prompt": "¿Qué causa la pérdida?",
+          "options": [
+            "Que el motor se pare",
+            "Que la velocidad quede por debajo de un valor fijo, siempre",
+            "Que el ángulo de ataque supere el ángulo crítico, y eso puede pasar a cualquier velocidad",
+            "Volar demasiado alto"
+          ],
+          "explanation": "La pérdida es aerodinámica: el flujo se desprende cuando α pasa el crítico. En un viraje o en una tirada brusca esto ocurre incluso a alta velocidad."
+        },
+        {
+          "prompt": "Con Vpérdida = **80 km/h**, ¿cuál es la velocidad de aproximación recomendada (1,3 × Vs)?",
+          "explanation": "1,3 × 80 = 104 km/h."
+        }
+      ]
+    },
+    "aero-05-decolagem": {
+      "title": "Despegue y ascenso",
+      "theory": "# La carrera de despegue\n\nEn la pista, el avión acelera con:\n\n```\nm · a = Empuje − Arrastre − μr · (Peso − Sustentación)\n```\n\n- μr ≈ 0,03: fricción de rodadura de las ruedas.\n- Despega a ~**1,2 × Vpérdida** (velocidad de rotación/despegue).\n- Una estimación rápida: `s ≈ V² / (2 · a_media)`.\n\nEl **empuje de la hélice** es `T = ηp · P / v` (potencia × eficiencia de la hélice ÷ velocidad); parado está limitado (empuje estático).\n\n## Altitud y calor\n\nEn un aeropuerto **alto** (o en un día **caluroso**) el aire es menos denso:\n\n- El motor pierde potencia (~proporcional a la densidad).\n- El ala necesita **más velocidad** para la misma sustentación.\n\nResultado: la carrera se alarga mucho. Los pilotos usan tablas de rendimiento antes de cada despegue.\n\n## Ascenso\n\nDespués de despegar, la **tasa de ascenso** es la potencia sobrante dividida por el peso:\n\n```\nTA = (P_disponible − P_necesaria) / Peso        (m/s)\n```\n\nEl estándar de certificación mide la distancia hasta superar un obstáculo de **15 m** (50 pies).\n\nEn este problema el aeropuerto está a **2500 m** de altitud y la pista mide solo **350 m**.",
+      "task": "Despega de la pista de 350 m a 2500 m de altitud: **despega dentro de la pista**, supera **15 m de altura en 350 m o menos** y asciende a **al menos 5 m/s**.",
+      "hints": [
+        "Los flaps reducen la velocidad de despegue; más potencia da más empuje y más ascenso.",
+        "Flaps a 20° y un motor de 160 kW lo resuelven."
+      ],
+      "goals": [
+        "Despega dentro de la pista",
+        "Supera 15 m de altura en 350 m o menos",
+        "Tasa de ascenso ≥ 5 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "Según la atmósfera estándar (ISA), ¿cuál es la densidad del aire a **2500 m**? (T = 288,15 − 0,0065·h; ρ = 1,225·(T/288,15)^4,256)",
+          "explanation": "T = 288,15 − 16,25 = 271,9 K; (271,9/288,15)^4,256 = 0,781; ρ = 1,225 × 0,781 ≈ 0,957 kg/m³ (78 % del nivel del mar)."
+        },
+        {
+          "prompt": "En un día muy caluroso, la carrera de despegue…",
+          "options": [
+            "se acorta, porque el aire caliente sube",
+            "se alarga, porque el aire caliente es menos denso",
+            "no cambia",
+            "solo cambia para aviones a reacción"
+          ],
+          "explanation": "El aire caliente es menos denso: el ala necesita más velocidad y el motor rinde menos."
+        },
+        {
+          "prompt": "Un avión despega a **35 m/s** con aceleración media de **2,5 m/s²**. ¿Cuál es la carrera de despegue aproximada?",
+          "explanation": "s = V²/(2a) = 1225 / 5 = 245 m."
+        }
+      ]
+    },
+    "aero-06-estabilidade": {
+      "title": "Estabilidad y superficies de control",
+      "theory": "# Estable es lo que vuelve solo\n\nUn avión es **estáticamente estable en cabeceo** cuando, al levantar la nariz por una ráfaga, aparece un momento que **baja la nariz de nuevo**. Lo que lo garantiza es la combinación del **centro de gravedad (CG)** con el **punto neutro (PN)**.\n\n- El **punto neutro** es el punto donde actúa el aumento de sustentación del avión completo (ala + estabilizador horizontal) cuando cambia el ángulo de ataque.\n- Si el **CG está delante del PN**, un aumento de α genera un momento que baja la nariz: **estable**.\n- Si el **CG está detrás del PN**: el momento aumenta aún más el α — **inestable** (solo vuela con computadora, como los cazas modernos).\n\n```\nMargen estático = (h_PN − h_CG)  en % de la cuerda media aerodinámica (CMA)\n```\n\nLos aviones ligeros usan **5 a 20 %**. Un margen demasiado grande vuelve el avión \"pesado\" y difícil de levantar de nariz.\n\n## El estabilizador horizontal\n\nEl ala sola tiene su centro aerodinámico a ~25 % de la cuerda. La **cola** lleva el punto neutro hacia atrás. Cuanto mayor es el **volumen de cola** `VH = (S_cola · brazo) / (S_ala · cuerda)`, más atrás va el PN (en el simulador: h_PN = 25 % + 40,5 % × VH).\n\n## Superficies de control\n\n- **Timón de profundidad** (en el estabilizador horizontal): cabeceo — nariz arriba/abajo.\n- **Alerones** (en las puntas de las alas, se mueven en sentidos opuestos): alabeo.\n- **Timón de dirección** (en el estabilizador vertical): guiñada — nariz a la izquierda/derecha.",
+      "task": "Este avión se cargó con el CG muy atrás y está **inestable**. Mueve el CG o agranda la cola hasta que el **margen estático quede entre 5 % y 20 %**.",
+      "hints": [
+        "El CG debe quedar delante del punto neutro (un número menor en % de la cuerda).",
+        "Con VH = 0,45 el PN queda en 43 %: un CG en 35 % da ~8 % de margen."
+      ],
+      "goals": [
+        "Margen estático entre 5 % y 20 % de la CMA"
+      ],
+      "questions": [
+        {
+          "prompt": "El punto neutro está a **45 %** de la CMA y el CG a **30 %**. ¿Cuál es el margen estático (en %)?",
+          "explanation": "ME = 45 % − 30 % = 15 % de la CMA — estable."
+        },
+        {
+          "prompt": "¿Qué superficie controla el **alabeo** (inclinar las alas)?",
+          "options": [
+            "Timón de dirección",
+            "Timón de profundidad",
+            "Alerones",
+            "Flaps"
+          ],
+          "explanation": "Los alerones suben de un lado y bajan del otro, creando sustentación distinta en cada ala."
+        },
+        {
+          "prompt": "¿Qué pasa si el CG queda **detrás** del punto neutro?",
+          "options": [
+            "El avión se vuelve más estable",
+            "Cualquier perturbación en cabeceo crece: el avión es inestable",
+            "El avión no puede despegar",
+            "Nada, el CG no importa"
+          ],
+          "explanation": "Con margen estático negativo el momento de cabeceo refuerza la perturbación en vez de corregirla."
+        }
+      ]
+    },
+    "aero-07-propulsao": {
+      "title": "Propulsión: ¿hélice o reactor?",
+      "theory": "# Empuje = acelerar aire hacia atrás\n\nToda propulsión aérea funciona por la **3.ª ley de Newton**: el motor lanza aire (o gas) hacia atrás y el avión es empujado hacia adelante.\n\n```\nEmpuje = ṁ · (Ve − V0)\n```\n\n- `ṁ` = caudal másico de aire (kg/s), `Ve` = velocidad del chorro que sale, `V0` = velocidad del avión.\n\n## Eficiencia propulsiva\n\nEs más eficiente acelerar **mucho aire un poquito** que **poco aire mucho**:\n\n```\nη_propulsiva = 2 / (1 + Ve/V0)\n```\n\n- **Hélice**: mueve una enorme masa de aire despacio → muy eficiente a baja velocidad (hasta ~600 km/h). Empuje ≈ ηp · P / v.\n- **Turborreactor**: chorro rápido y estrecho → eficiente solo a velocidad muy alta (cazas, Concorde).\n- **Turbofán**: un gran ventilador delante desvía la mayor parte del aire **por fuera** del núcleo (relación de derivación 5–12 en los aviones comerciales) — el punto medio que domina la aviación de línea.\n- **Turbohélice**: turbina que mueve una hélice — aviones regionales (ATR, Embraer EMB 120).\n\n## Consumo\n\n- Motores de pistón/turbohélice: consumo específico en kg de combustible por kWh (~0,2–0,3).\n- Reactores: TSFC en g de combustible por kN de empuje por segundo (~15–20 en turbofanes modernos).",
+      "questions": [
+        {
+          "prompt": "Un motor a reacción admite **100 kg/s** de aire y lo expulsa a **400 m/s**; el avión vuela a **200 m/s**. ¿Cuál es el empuje?",
+          "explanation": "T = ṁ·(Ve − V0) = 100 × (400 − 200) = 20 000 N."
+        },
+        {
+          "prompt": "¿Cuál es la eficiencia propulsiva de ese motor (Ve = 400 m/s, V0 = 200 m/s)?",
+          "explanation": "η = 2 / (1 + 400/200) = 2/3 ≈ 0,667."
+        },
+        {
+          "prompt": "Una hélice con eficiencia **0,8** recibe **100 kW** y el avión vuela a **50 m/s**. ¿Cuál es el empuje?",
+          "explanation": "T = η·P/v = 0,8 × 100 000 / 50 = 1600 N."
+        },
+        {
+          "prompt": "¿Por qué los aviones comerciales usan turbofanes de **alta relación de derivación**?",
+          "options": [
+            "Porque hacen más ruido",
+            "Porque aceleran una gran masa de aire con poca variación de velocidad, lo que es más eficiente",
+            "Porque no necesitan combustible",
+            "Porque son más livianos que las hélices"
+          ],
+          "explanation": "η_propulsiva = 2/(1 + Ve/V0): con Ve cercana a V0 la eficiencia sube. La derivación genera empuje con aire \"lento\"."
+        },
+        {
+          "prompt": "Para un avión agrícola que vuela a 200 km/h, ¿qué propulsión tiene más sentido?",
+          "options": [
+            "Turborreactor",
+            "Hélice (pistón o turbohélice)",
+            "Cohete",
+            "Turbofán de caza"
+          ],
+          "explanation": "A baja velocidad la hélice tiene la mejor eficiencia propulsiva y el menor consumo."
+        }
+      ]
+    },
+    "aero-08-helicoptero-pairar": {
+      "title": "Helicóptero: el rotor y el vuelo estacionario",
+      "theory": "# El rotor es un ala que gira\n\nCada pala del rotor principal es un ala. Al girar, encuentra el aire con una velocidad que crece del centro a la punta (`v = Ω · r`). El piloto cambia el **paso colectivo** (el ángulo de todas las palas a la vez) para aumentar o disminuir el empuje.\n\n## Teoría de la cantidad de movimiento\n\nPara mantenerse en el aire, el rotor debe empujar aire hacia abajo con una fuerza igual al peso. La velocidad que da al aire (velocidad inducida) y la potencia ideal son:\n\n```\nv_i = √( T / (2 · ρ · A) )          A = π · R²\nP_ideal = T · v_i = T^1,5 / √(2 · ρ · A)\n```\n\n- **Rotor mayor** (A mayor) → menos potencia para el mismo peso. Por eso los helicópteros tienen rotores enormes y los drones de carga usan hélices grandes.\n- La **figura de mérito** (FM ≈ 0,7) es la razón P_ideal / P_real (pérdidas de perfil, de punta, rotación del aire).\n\n## Límites del rotor\n\n- **Pérdida de las palas**: cada pala tiene un CL máximo; el empuje de un rotor queda limitado a CT/σ ≈ 0,13 (σ = solidez = área de las palas / área del disco). Más palas, palas más anchas, más rpm o un rotor mayor aumentan el límite.\n- **Mach en la punta**: si la punta de la pala se acerca a la velocidad del sonido (Mach 0,9+), aparecen ondas de choque, ruido y pérdida de eficiencia. Las puntas se mantienen en ~200–220 m/s (Mach 0,6–0,65).\n\nEl simulador combina la teoría del elemento de pala (el empuje que genera el colectivo) con la potencia del motor. Empieza con el rotor demasiado pequeño y descubre qué cambiar.",
+      "task": "Este helicóptero de 1100 kg **no se despega del suelo**. Ajusta el rotor para que **se mantenga en el aire**, **sin pérdida de palas** y con la punta de la pala por debajo de **Mach 0,7**.",
+      "hints": [
+        "Un rotor mayor y más rpm aumentan el empuje — pero cuidado con el Mach de la punta.",
+        "Un radio de 5 m y 420 rpm lo resuelven con el mismo motor."
+      ],
+      "goals": [
+        "Logra mantenerse en el aire (empuje ≥ peso)",
+        "Sin pérdida de palas",
+        "Punta de la pala por debajo de Mach 0,7"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la potencia **ideal** para mantenerse en el aire con un empuje de **10 000 N**, rotor de radio **5 m**, ρ = 1,225 kg/m³?",
+          "explanation": "A = π·5² = 78,54 m²; √(2·1,225·78,54) = √192,4 = 13,87; P = 10000^1,5 / 13,87 = 1 000 000 / 13,87 ≈ 72 100 W = 72,1 kW."
+        },
+        {
+          "prompt": "En ese mismo caso, ¿cuál es la velocidad inducida del aire en el rotor?",
+          "explanation": "v_i = √(T/(2ρA)) = √(10000/192,4) = √52,0 ≈ 7,21 m/s."
+        },
+        {
+          "prompt": "¿Por qué un rotor **mayor** necesita **menos** potencia para sostener el mismo peso?",
+          "options": [
+            "Porque gira más despacio y por eso no gasta energía",
+            "Porque empuja más aire a menor velocidad; la potencia ideal es T^1,5/√(2ρA)",
+            "Porque es más liviano",
+            "No es verdad: el rotor mayor gasta más"
+          ],
+          "explanation": "Para el mismo empuje, acelerar una masa mayor de aire a una velocidad menor cuesta menos energía — la misma idea del turbofán."
+        }
+      ]
+    },
+    "aero-09-cauda-autorrotacao": {
+      "title": "Par, rotor de cola y autorrotación",
+      "theory": "# Acción y reacción en el rotor\n\nEl motor aplica un **par** al rotor principal para hacerlo girar contra el arrastre de las palas. Por la 3.ª ley de Newton, el rotor aplica un par igual y **opuesto al fuselaje**: sin nada que lo impida, el helicóptero giraría al revés que el rotor.\n\n```\nPar Q = P_rotor / Ω            (Ω en rad/s)\nEmpuje de cola = Q / brazo      (brazo = distancia del rotor de cola al eje)\n```\n\n- Más potencia → más par → más empuje de cola.\n- **Más rpm** con la misma potencia → menos par.\n- **Brazo más largo** → menos empuje de cola (pero fuselaje más largo).\n\nLos pedales del piloto cambian el paso del rotor de cola y controlan la **guiñada**. El rotor de cola consume ~10 % de la potencia.\n\n## Otras soluciones\n\n- **Rotores coaxiales** o **en tándem** girando en sentidos opuestos (Kamov, Chinook): los pares se cancelan.\n- **Fenestron** (rotor carenado) y **NOTAR** (chorro de aire en la cola).\n\n## Autorrotación: aterrizar sin motor\n\nSi el motor se detiene, el piloto **baja el colectivo**. Al descender, el aire pasa **de abajo hacia arriba** por el rotor y lo mantiene girando, como un molinete. El helicóptero desciende de forma controlada (~10–17 m/s en vertical, menos con velocidad hacia adelante). Cerca del suelo el piloto hace el **flare**: tira del colectivo y usa la **energía cinética del rotor** (½·I·Ω²) para frenar el descenso y aterrizar suave. Los rotores pesados y grandes guardan más energía.",
+      "task": "El rotor de cola de este helicóptero no aguanta el par y el fuselaje gira. Haz que el **rumbo quede estable** con el rotor de cola necesitando **500 N como máximo**.",
+      "safety": "Los rotores de cola giran a miles de rpm y son casi invisibles. En tierra, nunca te acerques por detrás a un helicóptero con los rotores girando; acércate por el frente, a la vista del piloto.",
+      "hints": [
+        "Empuje de cola = par / brazo: un brazo mayor reduce el empuje necesario.",
+        "Un brazo de 5,5 m y una cola de 600 N lo resuelven."
+      ],
+      "goals": [
+        "La cola equilibra el par (rumbo estable)",
+        "Empuje necesario en la cola ≤ 500 N"
+      ],
+      "questions": [
+        {
+          "prompt": "El rotor recibe **150 kW** a **400 rpm** y el brazo de la cola es de **5 m**. ¿Qué empuje se necesita en el rotor de cola?",
+          "explanation": "Ω = 400·2π/60 = 41,89 rad/s; Q = 150 000/41,89 = 3581 N·m; T_cola = 3581/5 ≈ 716 N."
+        },
+        {
+          "prompt": "En la autorrotación, ¿qué mantiene el rotor girando sin motor?",
+          "options": [
+            "Una batería de emergencia",
+            "El aire que atraviesa el rotor de abajo hacia arriba mientras el helicóptero desciende",
+            "El rotor de cola",
+            "La inercia, solo por unos segundos"
+          ],
+          "explanation": "Con el colectivo bajo, el flujo ascendente produce en las palas una fuerza que las empuja en el sentido de rotación, como un molinete."
+        },
+        {
+          "prompt": "¿Por qué los helicópteros con **dos rotores contrarrotativos** (coaxiales o en tándem) no necesitan rotor de cola?",
+          "options": [
+            "Porque son más livianos",
+            "Porque los pares de reacción de los dos rotores tienen sentidos opuestos y se cancelan",
+            "Porque vuelan más despacio",
+            "Porque usan motores eléctricos"
+          ],
+          "explanation": "Cada rotor empuja el fuselaje hacia un lado; al girar en sentidos opuestos, los pares se anulan."
+        }
+      ]
+    },
+    "aero-10-projeto-breguet": {
+      "title": "Proyecto: dimensionar un avión y el alcance de Breguet",
+      "theory": "# ¿Hasta dónde vuela un avión?\n\nA medida que quema combustible, el avión se vuelve más liviano. Integrando esto, Louis Breguet llegó a la **ecuación del alcance** (para hélice):\n\n```\nAlcance = (ηp / (g · c)) · (L/D) · ln(W0 / W1)\n```\n\n- `ηp` = eficiencia de la hélice; `c` = consumo específico (kg de combustible por joule; 0,30 kg/kWh = 8,33·10⁻⁸ kg/J).\n- `L/D` = eficiencia aerodinámica **a la velocidad de crucero** (no necesariamente la máxima).\n- `W0/W1` = peso de despegue / peso sin el combustible.\n\nPara reactor: `Alcance = (V / (g · c_T)) · (L/D) · ln(W0/W1)` — por eso los reactores cruzan rápido y alto.\n\n## Los compromisos del diseño\n\n- **Más combustible** → ln(W0/W1) mayor, pero el avión queda **más pesado**: pérdida a mayor velocidad y despegue más largo.\n- **Ala mayor** → menor velocidad de pérdida, pero más área mojada (más arrastre parásito).\n- **Mayor alargamiento** → L/D mayor (menos inducido), pero ala más pesada y cara (aquí no se modela).\n- **Velocidad y altitud de crucero**: el L/D depende del CL de crucero = 2W/(ρ·V²·S). Volar más alto (aire enrarecido) o más despacio aumenta el CL y acerca el avión al L/D máximo.\n\nUn ingeniero de diseño conceptual hace exactamente esto: barre las opciones y encuentra el punto que cumple **todos** los requisitos. Observa el gráfico de alcance × velocidad.",
+      "task": "Requisitos del cliente: **alcance de 2000 km**, despegar de una pista de **300 m** (a nivel del mar) y **pérdida a 95 km/h o menos** en configuración de aterrizaje.",
+      "hints": [
+        "Más combustible aumenta el alcance pero sube la velocidad de pérdida: compénsalo con ala mayor y flaps.",
+        "Una solución: 220 kg de combustible, AR 11, ala de 18 m², flaps a 10°, crucero a 180 km/h y 3000 m."
+      ],
+      "goals": [
+        "Alcance ≥ 2000 km",
+        "Despega en la pista de 300 m",
+        "Velocidad de pérdida ≤ 95 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "Breguet con ηp = **0,8**, c = **0,30 kg/kWh**, L/D = **12** y W0/W1 = **1,2**. ¿Cuál es el alcance, en km?",
+          "explanation": "c = 0,30/3,6·10⁶ = 8,33·10⁻⁸ kg/J; ηp/(g·c) = 0,8/(9,81 × 8,33·10⁻⁸) ≈ 978 600 m; × 12 × ln(1,2) = 978 600 × 12 × 0,1823 ≈ 2 141 000 m ≈ 2141 km."
+        },
+        {
+          "prompt": "Para el máximo alcance, un avión de hélice debe cruzar…",
+          "options": [
+            "a la velocidad máxima",
+            "cerca de la velocidad de L/D máximo",
+            "a la velocidad de pérdida",
+            "da igual, el alcance solo depende del combustible"
+          ],
+          "explanation": "En la ecuación de Breguet para hélice el alcance es proporcional al L/D; es máximo donde el arrastre inducido iguala al parásito."
+        },
+        {
+          "prompt": "¿Duplicar el combustible de un avión (mismo avión, mismo L/D) duplica el alcance?",
+          "options": [
+            "Sí, exactamente",
+            "No: el alcance crece con ln(W0/W1), y el combustible extra también hay que cargarlo",
+            "No: el alcance cae",
+            "Sí, y además mejora el despegue"
+          ],
+          "explanation": "El logaritmo crece cada vez más despacio; además, el avión más pesado entra en pérdida antes y necesita más pista."
+        }
+      ]
+    }
+  }
+}

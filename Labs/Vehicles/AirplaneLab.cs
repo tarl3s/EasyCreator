@@ -18,37 +18,37 @@ public sealed class AirplaneLab : VehicleLab
 
     public AirplaneLab()
     {
-        Num("mass", "Massa sem combustível", "kg", 150, 3000, 10, 1000);
-        Num("wingArea", "Área da asa", "m²", 4, 60, 0.5, 16);
-        Num("aspectRatio", "Alongamento (AR)", "", 4, 16, 0.1, 7.5);
-        Num("clmax", "CL máximo do perfil", "", 1.0, 2.0, 0.05, 1.5);
-        Choice("flaps", "Flapes", new[] { "0", "10", "20", "30" }, new[] { "0°", "10°", "20°", "30°" });
-        Num("cd0", "Arrasto parasita CD0", "", 0.015, 0.06, 0.001, 0.032);
-        Num("oswald", "Oswald e", "", 0.6, 0.95, 0.01, 0.75);
-        Choice("propulsion", "Propulsão", new[] { "prop", "jet" }, new[] { "Hélice", "Jato" });
-        Num("power", "Potência do motor", "kW", 20, 1000, 5, 120);
-        Num("propEff", "Eficiência da hélice", "", 0.5, 0.9, 0.01, 0.8);
-        Num("thrust", "Empuxo do jato", "kN", 0.5, 300, 0.5, 20);
-        Num("aoa", "Ângulo de ataque", "°", -4, 20, 0.5, 2);
-        Num("speed", "Velocidade", "km/h", 50, 950, 5, 150);
-        Num("altitude", "Altitude", "m", 0, 11000, 100, 0);
-        Num("runway", "Pista", "m", 100, 3000, 10, 400);
-        Num("airportAlt", "Altitude do aeroporto", "m", 0, 4500, 100, 0);
-        Num("cg", "Posição do CG", "% CMA", 5, 70, 1, 45);
-        Num("tailVolume", "Volume de cauda VH", "", 0.2, 1.2, 0.01, 0.45);
-        Num("fuel", "Combustível", "kg", 5, 60000, 5, 100);
-        Num("sfc", "Consumo específico", "kg/kWh", 0.18, 0.45, 0.01, 0.30);
-        Num("tsfc", "TSFC do jato", "g/(kN·s)", 8, 30, 0.5, 18);
+        Num("mass", L.T("Massa sem combustível"), "kg", 150, 3000, 10, 1000);
+        Num("wingArea", L.T("Área da asa"), "m²", 4, 60, 0.5, 16);
+        Num("aspectRatio", L.T("Alongamento (AR)"), "", 4, 16, 0.1, 7.5);
+        Num("clmax", L.T("CL máximo do perfil"), "", 1.0, 2.0, 0.05, 1.5);
+        Choice("flaps", L.T("Flapes"), new[] { "0", "10", "20", "30" }, new[] { "0°", "10°", "20°", "30°" });
+        Num("cd0", L.T("Arrasto parasita CD0"), "", 0.015, 0.06, 0.001, 0.032);
+        Num("oswald", L.T("Oswald e"), "", 0.6, 0.95, 0.01, 0.75);
+        Choice("propulsion", L.T("Propulsão"), new[] { "prop", "jet" }, new[] { L.T("Hélice"), L.T("Jato") });
+        Num("power", L.T("Potência do motor"), "kW", 20, 1000, 5, 120);
+        Num("propEff", L.T("Eficiência da hélice"), "", 0.5, 0.9, 0.01, 0.8);
+        Num("thrust", L.T("Empuxo do jato"), "kN", 0.5, 300, 0.5, 20);
+        Num("aoa", L.T("Ângulo de ataque"), "°", -4, 20, 0.5, 2);
+        Num("speed", L.T("Velocidade"), "km/h", 50, 950, 5, 150);
+        Num("altitude", L.T("Altitude"), "m", 0, 11000, 100, 0);
+        Num("runway", L.T("Pista"), "m", 100, 3000, 10, 400);
+        Num("airportAlt", L.T("Altitude do aeroporto"), "m", 0, 4500, 100, 0);
+        Num("cg", L.T("Posição do CG"), L.T("% CMA"), 5, 70, 1, 45);
+        Num("tailVolume", L.T("Volume de cauda VH"), "", 0.2, 1.2, 0.01, 0.45);
+        Num("fuel", L.T("Combustível"), "kg", 5, 60000, 5, 100);
+        Num("sfc", L.T("Consumo específico"), L.T("kg/kWh"), 0.18, 0.45, 0.01, 0.30);
+        Num("tsfc", L.T("TSFC do jato"), L.T("g/(kN·s)"), 8, 30, 0.5, 18);
     }
 
     protected override string Title => Mode switch
     {
-        "polar" => "✈ Polar de arrasto e L/D",
-        "stall" => "✈ Estol",
-        "takeoff" => "✈ Decolagem e subida",
-        "stability" => "✈ Estabilidade longitudinal",
-        "range" => "✈ Alcance (Breguet)",
-        _ => "✈ Sustentação da asa",
+        "polar" => L.T("✈ Polar de arrasto e L/D"),
+        "stall" => L.T("✈ Estol"),
+        "takeoff" => L.T("✈ Decolagem e subida"),
+        "stability" => L.T("✈ Estabilidade longitudinal"),
+        "range" => L.T("✈ Alcance (Breguet)"),
+        _ => L.T("✈ Sustentação da asa"),
     };
 
     protected override string[] DefaultShown(string mode) => mode switch
@@ -376,11 +376,11 @@ public sealed class AirplaneLab : VehicleLab
         Draw.Arrow(dc, new Point(c.X + 6, c.Y + 4), new Point(c.X + 6, c.Y + 4 + baseLen), Draw.Red, 3);
         Draw.Text(dc, "L", c.X + 6, c.Y - 18 - baseLen * Math.Min(2.5, lw), 12, Draw.Green, 0, true);
         Draw.Text(dc, "P", c.X + 12, c.Y + baseLen - 6, 12, Draw.Red, 0, true);
-        Draw.Text(dc, $"sustentação {Draw.N(Calc.GetValueOrDefault("lift") / 1000, "0.0")} kN", 10, 8, 12, Draw.Green, 0, true);
-        Draw.Text(dc, $"peso {Draw.N(_w / 1000, "0.0")} kN", 10, 26, 12, Draw.Red, 0, true);
-        Draw.Text(dc, $"CL = {Draw.N(Calc.GetValueOrDefault("CL"), "0.00")}  ρ = {Draw.N(_rho, "0.000")} kg/m³", 10, 44, 11, Draw.Dim);
-        if (Calc.GetValueOrDefault("stalled") > 0.5) Draw.Text(dc, "ESTOL! ângulo de ataque alto demais", s.Width - 10, 8, 12, Draw.Red, 2, true);
-        else if (T > 0.5) Draw.Text(dc, lw >= 1 ? "sobe ↑" : "desce ↓", s.Width - 10, 8, 13, lw >= 1 ? Draw.Green : Draw.Orange, 2, true);
+        Draw.Text(dc, L.F("sustentação {0} kN", Draw.N(Calc.GetValueOrDefault("lift") / 1000, "0.0")), 10, 8, 12, Draw.Green, 0, true);
+        Draw.Text(dc, L.F("peso {0} kN", Draw.N(_w / 1000, "0.0")), 10, 26, 12, Draw.Red, 0, true);
+        Draw.Text(dc, L.F("CL = {0}  ρ = {1} kg/m³", Draw.N(Calc.GetValueOrDefault("CL"), "0.00"), Draw.N(_rho, "0.000")), 10, 44, 11, Draw.Dim);
+        if (Calc.GetValueOrDefault("stalled") > 0.5) Draw.Text(dc, L.T("ESTOL! ângulo de ataque alto demais"), s.Width - 10, 8, 12, Draw.Red, 2, true);
+        else if (T > 0.5) Draw.Text(dc, lw >= 1 ? L.T("sobe ↑") : L.T("desce ↓"), s.Width - 10, 8, 13, lw >= 1 ? Draw.Green : Draw.Orange, 2, true);
     }
 
     void ScenePolar(DrawingContext dc, Size s)
@@ -424,10 +424,10 @@ public sealed class AirplaneLab : VehicleLab
         double lpx = 70 * Math.Max(0, cl), dpx = 700 * cd;
         Draw.Arrow(dc, new Point(c.X - 10, c.Y - 6), new Point(c.X - 10, c.Y - 6 - lpx), Draw.Green, 3);
         Draw.Arrow(dc, new Point(c.X - 10, c.Y - 6), new Point(c.X - 10 + dpx, c.Y - 6), Draw.Red, 3);
-        Draw.Text(dc, "sustentação", c.X - 4, c.Y - 18 - lpx, 10, Draw.Green);
-        Draw.Text(dc, "arrasto (×10)", c.X - 4 + dpx, c.Y - 2, 10, Draw.Red);
-        Draw.Text(dc, $"α = {Draw.N(a, "0.0")}°  CL = {Draw.N(cl, "0.00")}  CD = {Draw.N(cd, "0.000")}  L/D = {Draw.N(cl / cd, "0.0")}", 10, 8, 12, Draw.White, 0, true);
-        if (stalled) Draw.Text(dc, "escoamento descolado: ESTOL", 10, 26, 12, Draw.Red, 0, true);
+        Draw.Text(dc, L.T("sustentação"), c.X - 4, c.Y - 18 - lpx, 10, Draw.Green);
+        Draw.Text(dc, L.T("arrasto (×10)"), c.X - 4 + dpx, c.Y - 2, 10, Draw.Red);
+        Draw.Text(dc, L.F("α = {0}°  CL = {1}  CD = {2}  L/D = {3}", Draw.N(a, "0.0"), Draw.N(cl, "0.00"), Draw.N(cd, "0.000"), Draw.N(cl / cd, "0.0")), 10, 8, 12, Draw.White, 0, true);
+        if (stalled) Draw.Text(dc, L.T("escoamento descolado: ESTOL"), 10, 26, 12, Draw.Red, 0, true);
     }
 
     void SceneStall(DrawingContext dc, Size s)
@@ -437,10 +437,10 @@ public sealed class AirplaneLab : VehicleLab
         double y = Math.Clamp(s.Height * 0.4 - st[3] * 3, 25, s.Height - 25);
         var c = new Point(s.Width * 0.45, y);
         PlaneSide(dc, c, 1.4, st[4] > 0.5 ? st[2] - 15 : st[2], _jet, T * 30);
-        Draw.Text(dc, $"velocidade {Draw.N(st[1] * 3.6, "0")} km/h", 10, 8, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"ângulo de ataque {Draw.N(st[2], "0.0")}°", 10, 26, 12, Draw.Dim);
-        Draw.Text(dc, $"estol a {Draw.N(_vs * 3.6, "0")} km/h", s.Width - 10, 8, 12, Draw.Orange, 2, true);
-        if (st[4] > 0.5) Draw.Text(dc, "ESTOL: o nariz cai e o avião perde altura", s.Width - 10, 26, 12, Draw.Red, 2, true);
+        Draw.Text(dc, L.F("velocidade {0} km/h", Draw.N(st[1] * 3.6, "0")), 10, 8, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("ângulo de ataque {0}°", Draw.N(st[2], "0.0")), 10, 26, 12, Draw.Dim);
+        Draw.Text(dc, L.F("estol a {0} km/h", Draw.N(_vs * 3.6, "0")), s.Width - 10, 8, 12, Draw.Orange, 2, true);
+        if (st[4] > 0.5) Draw.Text(dc, L.T("ESTOL: o nariz cai e o avião perde altura"), s.Width - 10, 26, 12, Draw.Red, 2, true);
     }
 
     void SceneTakeoff(DrawingContext dc, Size s)
@@ -453,7 +453,7 @@ public sealed class AirplaneLab : VehicleLab
         dc.DrawRectangle(Draw.Grass, null, new Rect(0, gy, s.Width, s.Height - gy));
         dc.DrawRectangle(Draw.Road, null, new Rect(15, gy, runway * ppm, 6));
         dc.DrawRectangle(Draw.Red, null, new Rect(15 + runway * ppm - 2, gy - 8, 3, 14));
-        Draw.Text(dc, $"fim da pista ({Draw.N(runway, "0")} m)", 15 + runway * ppm, gy + 8, 10, Draw.Red, 2);
+        Draw.Text(dc, L.F("fim da pista ({0} m)", Draw.N(runway, "0")), 15 + runway * ppm, gy + 8, 10, Draw.Red, 2);
         dc.DrawLine(Draw.Pen(Draw.Dim, 1, true), new Point(0, gy - 15 * zpm), new Point(s.Width, gy - 15 * zpm));
         Draw.Text(dc, "15 m", 4, gy - 15 * zpm - 13, 9.5, Draw.Dim);
         var path = new List<Point>();
@@ -461,12 +461,12 @@ public sealed class AirplaneLab : VehicleLab
         for (int i = 1; i < path.Count; i++) dc.DrawLine(Draw.Pen(Draw.Yellow, 1.2), path[i - 1], path[i]);
         var st = At(_takeoff, T);
         PlaneSide(dc, new Point(15 + st[1] * ppm, gy - st[2] * zpm - 8), 0.7, st[4], _jet, T * 40);
-        Draw.Text(dc, $"{Draw.N(st[3] * 3.6, "0")} km/h · {Draw.N(st[1], "0")} m · altura {Draw.N(st[2], "0")} m", 10, 8, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"decola a {Draw.N(Calc.GetValueOrDefault("liftoffSpeed"), "0")} km/h", 10, 26, 11, Draw.Dim);
+        Draw.Text(dc, L.F("{0} km/h · {1} m · altura {2} m", Draw.N(st[3] * 3.6, "0"), Draw.N(st[1], "0"), Draw.N(st[2], "0")), 10, 8, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("decola a {0} km/h", Draw.N(Calc.GetValueOrDefault("liftoffSpeed"), "0")), 10, 26, 11, Draw.Dim);
         if (T >= Duration - 1e-6 && T > 0)
         {
             bool ok = Calc.GetValueOrDefault("tookOff") > 0.5;
-            Draw.Text(dc, ok ? "decolou ✓" : "não decolou dentro da pista!", 10, 44, 13, ok ? Draw.Green : Draw.Red, 0, true);
+            Draw.Text(dc, ok ? L.T("decolou ✓") : L.T("não decolou dentro da pista!"), 10, 44, 13, ok ? Draw.Green : Draw.Red, 0, true);
         }
     }
 
@@ -479,8 +479,8 @@ public sealed class AirplaneLab : VehicleLab
         // chord bar with CG and neutral point
         double x0 = 40, x1 = s.Width - 40, y = s.Height - 34;
         dc.DrawRoundedRectangle(Draw.Metal, null, new Rect(x0, y - 4, x1 - x0, 8), 4, 4);
-        Draw.Text(dc, "bordo de ataque", x0, y + 8, 9.5, Draw.Dim);
-        Draw.Text(dc, "bordo de fuga", x1, y + 8, 9.5, Draw.Dim, 2);
+        Draw.Text(dc, L.T("bordo de ataque"), x0, y + 8, 9.5, Draw.Dim);
+        Draw.Text(dc, L.T("bordo de fuga"), x1, y + 8, 9.5, Draw.Dim, 2);
         double Xp(double pct) => x0 + (x1 - x0) * Math.Clamp(pct, 0, 100) / 100;
         dc.DrawEllipse(Draw.Yellow, Draw.Pen(Ui.Code, 1), new Point(Xp(V("cg")), y), 7, 7);
         Draw.Text(dc, "CG", Xp(V("cg")), y - 22, 11, Draw.Yellow, 1, true);
@@ -490,9 +490,9 @@ public sealed class AirplaneLab : VehicleLab
         tri.Freeze();
         dc.DrawGeometry(Draw.Blue, null, tri);
         Draw.Text(dc, "PN", np.X, y + 8, 11, Draw.Blue, 1, true);
-        Draw.Text(dc, $"arfagem {Draw.N(st[1], "0.0")}°", 10, 8, 12, Draw.White, 0, true);
-        Draw.Text(dc, $"margem estática {Draw.N(_sm, "0.0")} % CMA", 10, 26, 12, _sm > 0 ? Draw.Green : Draw.Red, 0, true);
-        if (T > 1) Draw.Text(dc, _sm > 0 ? "estável: volta sozinho" : "instável: diverge!", s.Width - 10, 8, 13, _sm > 0 ? Draw.Green : Draw.Red, 2, true);
+        Draw.Text(dc, L.F("arfagem {0}°", Draw.N(st[1], "0.0")), 10, 8, 12, Draw.White, 0, true);
+        Draw.Text(dc, L.F("margem estática {0} % CMA", Draw.N(_sm, "0.0")), 10, 26, 12, _sm > 0 ? Draw.Green : Draw.Red, 0, true);
+        if (T > 1) Draw.Text(dc, _sm > 0 ? L.T("estável: volta sozinho") : L.T("instável: diverge!"), s.Width - 10, 8, 13, _sm > 0 ? Draw.Green : Draw.Red, 2, true);
     }
 
     void SceneRange(DrawingContext dc, Size s)
@@ -511,10 +511,10 @@ public sealed class AirplaneLab : VehicleLab
         double xp = x0 + (x1 - x0) * Math.Min(1, st[1] / maxKm);
         dc.DrawLine(Draw.Pen(Draw.Yellow, 2.5), new Point(x0, y), new Point(xp, y));
         PlaneSide(dc, new Point(xp, y - 22), 0.8, 0, _jet, T * 60);
-        Draw.Bar(dc, new Rect(14, 30, 140, 12), st[2], $"Combustível ({Draw.N(Math.Min(V("fuel"), 0.9 * _m), "0")} kg)");
-        Draw.Text(dc, $"{Draw.N(st[1], "0")} km · {Draw.N(st[0], "0.0")} h de voo", s.Width - 10, 8, 12, Draw.White, 2, true);
-        Draw.Text(dc, $"L/D em cruzeiro {Draw.N(_ldCruise, "0.0")} (máx. {Draw.N(LDmax, "0.0")})", s.Width - 10, 26, 11, Draw.Dim, 2);
-        if (Calc.GetValueOrDefault("cruiseOk") < 0.5) Draw.Text(dc, "não sustenta esse voo (CL alto demais ou falta empuxo)", 14, s.Height - 22, 12, Draw.Red, 0, true);
+        Draw.Bar(dc, new Rect(14, 30, 140, 12), st[2], L.F("Combustível ({0} kg)", Draw.N(Math.Min(V("fuel"), 0.9 * _m), "0")));
+        Draw.Text(dc, L.F("{0} km · {1} h de voo", Draw.N(st[1], "0"), Draw.N(st[0], "0.0")), s.Width - 10, 8, 12, Draw.White, 2, true);
+        Draw.Text(dc, L.F("L/D em cruzeiro {0} (máx. {1})", Draw.N(_ldCruise, "0.0"), Draw.N(LDmax, "0.0")), s.Width - 10, 26, 11, Draw.Dim, 2);
+        if (Calc.GetValueOrDefault("cruiseOk") < 0.5) Draw.Text(dc, L.T("não sustenta esse voo (CL alto demais ou falta empuxo)"), 14, s.Height - 22, 12, Draw.Red, 0, true);
     }
 
     protected override void DrawPlot(DrawingContext dc, Size s)
@@ -530,12 +530,12 @@ public sealed class AirplaneLab : VehicleLab
                     pts.Add(new Point(_cd0 + _k * cl * cl, cl));
                 }
                 double cdMax = Draw.Nice(pts.Max(p => p.X) * 1.1);
-                var p = new Plot(dc, s, 0, cdMax, -0.5, 2, "CD", "CL (polar)");
+                var p = new Plot(dc, s, 0, cdMax, -0.5, 2, "CD", L.T("CL (polar)"));
                 p.Line(dc, pts, Draw.Blue);
                 double clStar = Math.Sqrt(_cd0 / _k);
                 p.Line(dc, new List<Point> { new(0, 0), new(cdMax, cdMax * clStar / (2 * _cd0)) }, Draw.Orange, 1.2, true);
                 p.Dot(dc, 2 * _cd0, clStar, Draw.Orange, 3.5);
-                Draw.Text(dc, $"L/D máx = {Draw.N(LDmax, "0.0")}", p.R.Right, p.R.Bottom - 16, 10, Draw.Orange, 2);
+                Draw.Text(dc, L.F("L/D máx = {0}", Draw.N(LDmax, "0.0")), p.R.Right, p.R.Bottom - 16, 10, Draw.Orange, 2);
                 double aNow = T > 0 && T < Duration ? At(_sweep, T)[1] : V("aoa");
                 double c2 = Math.Min(CLofAlpha(aNow, false), V("clmax"));
                 p.Dot(dc, _cd0 + _k * c2 * c2, c2, Draw.Yellow);
@@ -546,10 +546,10 @@ public sealed class AirplaneLab : VehicleLab
                 double vmax = Draw.Nice(_vs * 3.6 * 2);
                 var pts = new List<Point>();
                 for (double kmh = _vs * 3.6 * 0.6; kmh <= vmax; kmh += 2) { double v = kmh / 3.6; pts.Add(new Point(kmh, 2 * _w / (1.225 * v * v * _s))); }
-                var p = new Plot(dc, s, 0, vmax, 0, Draw.Nice(_clmaxT * 1.5), "velocidade (km/h)", "CL necessário");
+                var p = new Plot(dc, s, 0, vmax, 0, Draw.Nice(_clmaxT * 1.5), L.T("velocidade (km/h)"), L.T("CL necessário"));
                 p.Line(dc, pts, Draw.Blue);
-                p.HLine(dc, _clmaxT, Draw.Orange, "CL máx");
-                p.VLine(dc, _vs * 3.6, Draw.Red, "Vestol");
+                p.HLine(dc, _clmaxT, Draw.Orange, L.T("CL máx"));
+                p.VLine(dc, _vs * 3.6, Draw.Red, L.T("Vestol"));
                 var st = At(_stall, T);
                 if (T > 0) p.Dot(dc, st[1] * 3.6, 2 * _w / (1.225 * st[1] * st[1] * _s), Draw.Yellow);
                 break;
@@ -558,8 +558,8 @@ public sealed class AirplaneLab : VehicleLab
             {
                 double maxX = 0;
                 foreach (var r in _takeoff) maxX = Math.Max(maxX, r[1]);
-                var p = new Plot(dc, s, 0, Draw.Nice(Math.Max(V("runway") * 1.2, maxX)), 0, 60, "distância (m)", "altura (m)");
-                p.VLine(dc, V("runway"), Draw.Red, "pista");
+                var p = new Plot(dc, s, 0, Draw.Nice(Math.Max(V("runway") * 1.2, maxX)), 0, 60, L.T("distância (m)"), L.T("altura (m)"));
+                p.VLine(dc, V("runway"), Draw.Red, L.T("pista"));
                 p.HLine(dc, 15, Draw.Dim, "15 m");
                 var pts = new List<Point>();
                 foreach (var r in _takeoff) { if (r[0] > T) break; pts.Add(new Point(r[1], r[2])); }
@@ -568,7 +568,7 @@ public sealed class AirplaneLab : VehicleLab
             }
             case "stability":
             {
-                var p = new Plot(dc, s, 0, 10, -30, 30, "tempo (s)", "arfagem (°)");
+                var p = new Plot(dc, s, 0, 10, -30, 30, L.T("tempo (s)"), L.T("arfagem (°)"));
                 var pts = new List<Point>();
                 foreach (var r in _pitch) { if (r[0] > T) break; pts.Add(new Point(r[0], r[1])); }
                 p.Line(dc, pts, _sm > 0 ? Draw.Green : Draw.Red);
@@ -578,7 +578,7 @@ public sealed class AirplaneLab : VehicleLab
             {
                 double ymax = Draw.Nice(Math.Max(100, _curve.Where(c => !double.IsNaN(c.Y)).Select(c => c.Y).DefaultIfEmpty(0).Max() * 1.1));
                 double xmax = _curve.Count > 0 ? _curve[^1].X : 300;
-                var p = new Plot(dc, s, _curve.Count > 0 ? _curve[0].X : 0, xmax, 0, ymax, "velocidade (km/h)", "alcance (km)");
+                var p = new Plot(dc, s, _curve.Count > 0 ? _curve[0].X : 0, xmax, 0, ymax, L.T("velocidade (km/h)"), L.T("alcance (km)"));
                 p.Line(dc, _curve, Draw.Blue);
                 p.Dot(dc, V("speed"), _rangeKm, Draw.Yellow);
                 break;
@@ -590,9 +590,9 @@ public sealed class AirplaneLab : VehicleLab
                 if (cl > _clmaxT) cl = 0.7 * _clmaxT;
                 var pts = new List<Point>();
                 for (double kmh = 0; kmh <= vmax; kmh += vmax / 60) { double v = kmh / 3.6; pts.Add(new Point(kmh, 0.5 * _rho * v * v * _s * cl / 1000)); }
-                var p = new Plot(dc, s, 0, vmax, 0, Draw.Nice(_w / 1000 * 2), "velocidade (km/h)", "sustentação (kN)");
+                var p = new Plot(dc, s, 0, vmax, 0, Draw.Nice(_w / 1000 * 2), L.T("velocidade (km/h)"), L.T("sustentação (kN)"));
                 p.Line(dc, pts, Draw.Green);
-                p.HLine(dc, _w / 1000, Draw.Red, "peso");
+                p.HLine(dc, _w / 1000, Draw.Red, L.T("peso"));
                 p.Dot(dc, V("speed"), Calc.GetValueOrDefault("lift") / 1000, Draw.Yellow);
                 break;
             }
@@ -601,15 +601,15 @@ public sealed class AirplaneLab : VehicleLab
 
     protected override string Summary()
     {
-        string run = Ran ? "" : " Clique em ▶ Rodar.";
+        string run = Ran ? "" : L.T(" Clique em ▶ Rodar.");
         return Mode switch
         {
-            "polar" => $"L/D máx = ½·√(π·e·AR/CD0) = {Draw.N(LDmax, "0.0")} · a {Draw.N(Calc.GetValueOrDefault("LD"), "0.0")} no ângulo escolhido.{run}",
-            "stall" => $"Vestol = √(2·P/(ρ·S·CLmáx)) = {Draw.N(_vs * 3.6, "0")} km/h · aproximação (1,3·Vs) {Draw.N(1.3 * _vs * 3.6, "0")} km/h.{run}",
-            "takeoff" => $"Corrida no solo {(_groundRoll < 99999 ? Draw.N(_groundRoll, "0") + " m" : "—")} · até 15 m {(_total < 99999 ? Draw.N(_total, "0") + " m" : "—")} · razão de subida {Draw.N(_climb, "0.0")} m/s.{run}",
-            "stability" => $"Ponto neutro em {Draw.N(_hn, "0.0")} % da corda · CG em {Draw.N(V("cg"), "0")} % · margem estática {Draw.N(_sm, "0.0")} %.{run}",
-            "range" => $"Alcance {Draw.N(_rangeKm, "0")} km · L/D {Draw.N(_ldCruise, "0.0")} · {Draw.N(Calc.GetValueOrDefault("endurance"), "0.0")} h · vel. máx. {Draw.N(_vmax * 3.6, "0")} km/h.{run}",
-            _ => $"L = ½·ρ·v²·S·CL = {Draw.N(Calc.GetValueOrDefault("lift"), "0")} N · peso {Draw.N(_w, "0")} N · L/P = {Draw.N(Calc.GetValueOrDefault("liftToWeight"), "0.00")}.{run}",
+            "polar" => L.F("L/D máx = ½·√(π·e·AR/CD0) = {0} · a {1} no ângulo escolhido.{2}", Draw.N(LDmax, "0.0"), Draw.N(Calc.GetValueOrDefault("LD"), "0.0"), run),
+            "stall" => L.F("Vestol = √(2·P/(ρ·S·CLmáx)) = {0} km/h · aproximação (1,3·Vs) {1} km/h.{2}", Draw.N(_vs * 3.6, "0"), Draw.N(1.3 * _vs * 3.6, "0"), run),
+            "takeoff" => L.F("Corrida no solo {0} · até 15 m {1} · razão de subida {2} m/s.{3}", (_groundRoll < 99999 ? Draw.N(_groundRoll, "0") + " m" : "—"), (_total < 99999 ? Draw.N(_total, "0") + " m" : "—"), Draw.N(_climb, "0.0"), run),
+            "stability" => L.F("Ponto neutro em {0} % da corda · CG em {1} % · margem estática {2} %.{3}", Draw.N(_hn, "0.0"), Draw.N(V("cg"), "0"), Draw.N(_sm, "0.0"), run),
+            "range" => L.F("Alcance {0} km · L/D {1} · {2} h · vel. máx. {3} km/h.{4}", Draw.N(_rangeKm, "0"), Draw.N(_ldCruise, "0.0"), Draw.N(Calc.GetValueOrDefault("endurance"), "0.0"), Draw.N(_vmax * 3.6, "0"), run),
+            _ => L.F("L = ½·ρ·v²·S·CL = {0} N · peso {1} N · L/P = {2}.{3}", Draw.N(Calc.GetValueOrDefault("lift"), "0"), Draw.N(_w, "0"), Draw.N(Calc.GetValueOrDefault("liftToWeight"), "0.00"), run),
         };
     }
 }
