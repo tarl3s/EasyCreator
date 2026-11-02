@@ -7,10 +7,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Version>0.1.0</Version>
+    <ApplicationIcon>EasyCreator.ico</ApplicationIcon>
     <RootNamespace>EasyCreator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Include="EasyCreator.ico" />
     <PackageReference Include="IronPython" Version="3.4.2" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.2" />
     <PackageReference Include="Jint" Version="4.17.0" />

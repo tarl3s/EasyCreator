@@ -13,6 +13,7 @@ public sealed class MainWindow : Window
     public MainWindow()
     {
         Title = "EasyCreator";
+        Icon = System.Windows.Media.Imaging.BitmapFrame.Create(new Uri("pack://application:,,,/EasyCreator.ico"));
         Width = 1280; Height = 800; MinWidth = 900; MinHeight = 600;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = Ui.Bg0; Foreground = Ui.Text;
