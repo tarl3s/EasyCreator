@@ -49,8 +49,8 @@ public static class Sandbox
     public static UIElement Page(MainWindow w)
     {
         var p = new StackPanel();
-        p.Children.Add(Ui.Label("Programação livre", 18, bold: true));
-        p.Children.Add(Ui.Label("Escreva qualquer programa e rode na hora, sem desafio nem correção.", 14, Ui.TextDim));
+        p.Children.Add(Ui.Label(L.T("Programação livre"), 18, bold: true));
+        p.Children.Add(Ui.Label(L.T("Escreva qualquer programa e rode na hora, sem desafio nem correção."), 14, Ui.TextDim));
         var langs = new WrapPanel { Margin = new Thickness(0, 10, 0, 24) };
         foreach (var (id, title, _) in Languages)
         {
@@ -60,28 +60,29 @@ public static class Sandbox
             langs.Children.Add(b);
         }
         p.Children.Add(langs);
-        p.Children.Add(Ui.Label("Bancada de robótica", 18, bold: true));
-        p.Children.Add(Ui.Label("Escolha as peças, ligue nos pinos que quiser e programe o Arduino no simulador.", 14, Ui.TextDim));
-        var robo = Ui.Button("🤖 Abrir bancada", Ui.Accent);
+        p.Children.Add(Ui.Label(L.T("Bancada de robótica"), 18, bold: true));
+        p.Children.Add(Ui.Label(L.T("Escolha as peças, ligue nos pinos que quiser e programe o Arduino no simulador."), 14, Ui.TextDim));
+        var robo = Ui.Button(L.T("🤖 Abrir bancada"), Ui.Accent);
         robo.HorizontalAlignment = HorizontalAlignment.Left;
         robo.Margin = new Thickness(0, 10, 0, 0);
         robo.Click += (_, _) => w.Go(() => Robotics(w));
         p.Children.Add(robo);
-        return Pages.Framed(w, "🧪 Sandbox", "Teste o que quiser, do seu jeito.", p);
+        return Pages.Framed(w, "🧪 Sandbox", L.T("Teste o que quiser, do seu jeito."), p);
     }
 
     static UIElement Programming(MainWindow w, string language)
     {
         var (_, title, starter) = Languages.First(l => l.Id == language);
         var track = new Track { Id = "sandbox-" + language, Title = "Sandbox · " + title, Area = "programming", Language = language };
-        track.Lessons.Add(new Lesson { Id = "sandbox", Title = $"{title} livre", Starter = starter });
+        // The starter is example code: its comments and texts follow the language (L.T of the whole snippet).
+        track.Lessons.Add(new Lesson { Id = "sandbox", Title = L.F("{0} livre", title), Starter = L.T(starter) });
         return new LessonView(w, track, 0, sandbox: true);
     }
 
     static UIElement Robotics(MainWindow w)
     {
-        var track = new Track { Id = "sandbox-robotics", Title = "Sandbox · Robótica", Area = "robotics", Language = "c" };
-        track.Lessons.Add(new Lesson { Id = "sandbox", Title = "Bancada livre", Starter = ArduinoStarter, Components = LoadParts() });
+        var track = new Track { Id = "sandbox-robotics", Title = L.T("Sandbox · Robótica"), Area = "robotics", Language = "c" };
+        track.Lessons.Add(new Lesson { Id = "sandbox", Title = L.T("Bancada livre"), Starter = ArduinoStarter, Components = LoadParts() });
         return new LessonView(w, track, 0, sandbox: true);
     }
 
@@ -102,7 +103,7 @@ public static class Sandbox
     public static UIElement Left(MainWindow w, Track track, Lesson lesson)
     {
         var p = new StackPanel { Margin = new Thickness(0, 0, 12, 0) };
-        var back = Ui.Button("← Sandbox");
+        var back = Ui.Button(L.T("← Sandbox"));
         back.HorizontalAlignment = HorizontalAlignment.Left;
         back.Margin = new Thickness(0, 0, 0, 12);
         back.Click += (_, _) => w.Back();
@@ -110,15 +111,15 @@ public static class Sandbox
         p.Children.Add(Ui.Label(track.Title, 24, Ui.Accent, true));
         if (track.Area != "robotics")
         {
-            p.Children.Add(Markdown.Render(
+            p.Children.Add(Markdown.Render(L.T(
                 "Escreva o que quiser e clique em **▶ Rodar**.\n\n- O que o programa lê (input, scanf, Console.ReadLine) vem da caixa **Entrada**, uma linha por leitura.\n" +
                 "- Em **Executar com** você escolhe rodar dentro do app (offline) ou com o programa instalado no seu computador.\n" +
-                "- Seu código fica salvo sozinho."));
+                "- Seu código fica salvo sozinho.")));
             return new ScrollViewer { Content = p, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         }
 
-        p.Children.Add(Markdown.Render(
-            "Monte o circuito aqui, depois programe e clique em **▶ Simular**. Os pinos 14 a 19 são as entradas analógicas **A0 a A5**."));
+        p.Children.Add(Markdown.Render(L.T(
+            "Monte o circuito aqui, depois programe e clique em **▶ Simular**. Os pinos 14 a 19 são as entradas analógicas **A0 a A5**.")));
         var parts = lesson.Components.Select(Clone).ToList();
         var list = new StackPanel();
         void Rebuild()
@@ -131,13 +132,13 @@ public static class Sandbox
 
         var addRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 8, 0, 0) };
         var pick = new ComboBox { MinWidth = 200, FontSize = 14, Margin = new Thickness(0, 0, 8, 0) };
-        foreach (var t in PartTypes) pick.Items.Add(new ComboBoxItem { Content = t.Name, Tag = t.Type });
+        foreach (var t in PartTypes) pick.Items.Add(new ComboBoxItem { Content = L.T(t.Name), Tag = t.Type });
         pick.SelectedIndex = 0;
-        var add = Ui.Button("＋ Adicionar peça");
+        var add = Ui.Button(L.T("＋ Adicionar peça"));
         add.Click += (_, _) =>
         {
             var type = (string)((ComboBoxItem)pick.SelectedItem).Tag;
-            if (type == "robot" && parts.Any(x => x.Type == "robot")) { MessageBox.Show("A bancada aceita um robô só."); return; }
+            if (type == "robot" && parts.Any(x => x.Type == "robot")) { MessageBox.Show(L.T("A bancada aceita um robô só.")); return; }
             int n = 1;
             while (parts.Any(x => x.Id == type + n)) n++;
             var info = PartTypes.First(t => t.Type == type);
@@ -150,7 +151,7 @@ public static class Sandbox
         addRow.Children.Add(add);
         p.Children.Add(addRow);
 
-        var apply = Ui.Button("✔ Aplicar circuito", Ui.Accent);
+        var apply = Ui.Button(L.T("✔ Aplicar circuito"), Ui.Accent);
         apply.HorizontalAlignment = HorizontalAlignment.Left;
         apply.Margin = new Thickness(0, 14, 0, 0);
         apply.Click += (_, _) =>
@@ -161,8 +162,8 @@ public static class Sandbox
             w.Go(() => Robotics(w));
         };
         p.Children.Add(apply);
-        p.Children.Add(Ui.Label("Funções: pinMode, digitalWrite, digitalRead, analogRead, analogWrite, delay, millis, Serial, " +
-                                "Servo, tone/noTone, pulseIn, LiquidCrystal, map, constrain.", 12, Ui.TextDim));
+        p.Children.Add(Ui.Label(L.T("Funções: pinMode, digitalWrite, digitalRead, analogRead, analogWrite, delay, millis, Serial, " +
+                                "Servo, tone/noTone, pulseIn, LiquidCrystal, map, constrain."), 12, Ui.TextDim));
         return new ScrollViewer { Content = p, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     }
 
@@ -179,7 +180,7 @@ public static class Sandbox
         x.Click += (_, _) => remove();
         DockPanel.SetDock(x, Dock.Right);
         head.Children.Add(x);
-        head.Children.Add(Ui.Label($"{info.Name ?? part.Type} · {part.Id}", 14, bold: true));
+        head.Children.Add(Ui.Label($"{(info.Name != null ? L.T(info.Name) : part.Type)} · {part.Id}", 14, bold: true));
         body.Children.Add(head);
 
         var pins = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) };
@@ -205,10 +206,10 @@ public static class Sandbox
                 ? new[] { "vermelho", "verde", "amarelo", "azul", "branco" }
                 : new[] { "pista com linha", "linha em circuito", "sala vazia", "sala com obstáculos" };
             var combo = new ComboBox { Width = 200, FontSize = 13, HorizontalAlignment = HorizontalAlignment.Left };
-            for (int i = 0; i < choices.Length; i++) combo.Items.Add(new ComboBoxItem { Content = names[i], Tag = choices[i] });
+            for (int i = 0; i < choices.Length; i++) combo.Items.Add(new ComboBoxItem { Content = L.T(names[i]), Tag = choices[i] });
             combo.SelectedIndex = Math.Max(0, Array.IndexOf(choices, part.Color));
             combo.SelectionChanged += (_, _) => part.Color = (string)((ComboBoxItem)combo.SelectedItem).Tag;
-            body.Children.Add(Ui.Label(part.Type == "led" ? "cor" : "arena", 11, Ui.TextDim));
+            body.Children.Add(Ui.Label(part.Type == "led" ? L.T("cor") : L.T("arena"), 11, Ui.TextDim));
             body.Children.Add(combo);
         }
         var card = Ui.Card(body, Ui.Bg1, 10);

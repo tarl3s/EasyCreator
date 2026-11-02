@@ -17,7 +17,7 @@ public static class Pages
         var head = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
         if (back)
         {
-            var b = Ui.Button("← Voltar");
+            var b = Ui.Button(L.T("← Voltar"));
             b.HorizontalAlignment = HorizontalAlignment.Left;
             b.Margin = new Thickness(0, 0, 0, 12);
             b.Click += (_, _) => w.Back();
@@ -44,18 +44,18 @@ public static class Pages
         langRow.Children.Add(langPick);
         body.Children.Add(langRow);
         var sandbox = new DockPanel();
-        var open = Ui.Button("🧪 Abrir Sandbox", Ui.Accent);
+        var open = Ui.Button(L.T("🧪 Abrir Sandbox"), Ui.Accent);
         open.Click += (_, _) => w.Go(() => Sandbox.Page(w));
         DockPanel.SetDock(open, Dock.Right);
         sandbox.Children.Add(open);
         var sbText = new StackPanel();
         sbText.Children.Add(Ui.Label("🧪 Sandbox", 20, Ui.Accent, true));
-        sbText.Children.Add(Ui.Label("Modo livre: programe em qualquer linguagem ou monte um circuito e teste no simulador.", 14, Ui.TextDim));
+        sbText.Children.Add(Ui.Label(L.T("Modo livre: programe em qualquer linguagem ou monte um circuito e teste no simulador."), 14, Ui.TextDim));
         sandbox.Children.Add(sbText);
         var sbCard = Ui.Card(sandbox);
         sbCard.Margin = new Thickness(0, 0, 0, 16);
         body.Children.Add(sbCard);
-        var cards = Areas.All.Select(a => AreaCard(w, a.Id, $"{a.Icon} {a.Title}", a.Description)).ToArray();
+        var cards = Areas.All.Select(a => AreaCard(w, a.Id, $"{a.Icon} {L.T(a.Title)}", L.T(a.Description))).ToArray();
         for (int i = 0; i < cards.Length; i += 3)
         {
             var row = Columns(cards.Skip(i).Take(3).Cast<FrameworkElement>().ToArray());
@@ -64,7 +64,7 @@ public static class Pages
         }
         if (ContentStore.Errors.Count > 0)
             body.Children.Add(Ui.Label("⚠ " + string.Join("\n", ContentStore.Errors), 13, Ui.Bad));
-        return Frame(w, "EasyCreator", "Aprenda programação, robótica e engenharia, um desafio de cada vez.", body, back: false);
+        return Frame(w, "EasyCreator", L.T("Aprenda programação, robótica e engenharia, um desafio de cada vez."), body, back: false);
     }
 
     static Border AreaCard(MainWindow w, string area, string title, string text)
@@ -77,7 +77,7 @@ public static class Pages
         p.Children.Add(Ui.Label(text, 15, Ui.TextDim));
         p.Children.Add(new Border { Height = 16 });
         p.Children.Add(Bar(done, total, Ui.AreaBrush(area)));
-        p.Children.Add(Ui.Label($"{done} de {total} desafios", 13, Ui.TextDim));
+        p.Children.Add(Ui.Label(L.F("{0} de {1} desafios", done, total), 13, Ui.TextDim));
         var card = Clickable(p, () => w.Go(() => Area(w, area)));
         card.MinHeight = 200;
         return card;
@@ -94,14 +94,14 @@ public static class Pages
             p.Children.Add(new Border { Height = 10 });
             int done = Progress.Current.DoneCount(t);
             p.Children.Add(Bar(done, t.Lessons.Count, Ui.AreaBrush(area)));
-            p.Children.Add(Ui.Label($"{done} de {t.Lessons.Count} lições", 13, Ui.TextDim));
+            p.Children.Add(Ui.Label(L.F("{0} de {1} lições", done, t.Lessons.Count), 13, Ui.TextDim));
             var card = Clickable(p, () => w.Go(() => TrackPage(w, t)));
             card.Margin = new Thickness(0, 0, 0, 12);
             list.Children.Add(card);
         }
-        if (list.Children.Count == 0) list.Children.Add(Ui.Label("Nenhuma trilha encontrada.", 15, Ui.TextDim));
+        if (list.Children.Count == 0) list.Children.Add(Ui.Label(L.T("Nenhuma trilha encontrada."), 15, Ui.TextDim));
         var info = Areas.Get(area);
-        return Frame(w, $"{info.Icon} {info.Title}", info.Description, list);
+        return Frame(w, $"{info.Icon} {L.T(info.Title)}", L.T(info.Description), list);
     }
 
     static readonly string[] LevelNames = { "", "Iniciante", "Básico", "Intermediário", "Avançado", "Faculdade" };
@@ -124,7 +124,7 @@ public static class Pages
             });
             var info = new StackPanel();
             info.Children.Add(Ui.Label(l.Title, 17, open ? Ui.Text : Ui.TextDim, true));
-            info.Children.Add(Ui.Label($"Nível {l.Level} · {LevelNames[Math.Clamp(l.Level, 1, 5)]}", 13, Ui.TextDim));
+            info.Children.Add(Ui.Label(L.F("Nível {0} · {1}", l.Level, L.T(LevelNames[Math.Clamp(l.Level, 1, 5)])), 13, Ui.TextDim));
             row.Children.Add(info);
             int index = i;
             var card = open ? Clickable(row, () => w.Go(() => LessonText.Open(w, t, index))) : Ui.Card(row);

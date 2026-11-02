@@ -107,7 +107,7 @@ internal sealed class __EcTimeout : System.Exception
         }
         catch (Exception ex)
         {
-            return RunnerUtil.Fail("Erro interno ao compilar C#: " + ex.Message, "", sw);
+            return RunnerUtil.Fail(L.F("Erro interno ao compilar C#: {0}", ex.Message), "", sw);
         }
         if (compiled.Image == null) return RunnerUtil.Fail(compiled.Error, "", sw);
 
@@ -141,7 +141,7 @@ internal sealed class __EcTimeout : System.Exception
             var asm = alc.LoadFromStream(new MemoryStream(image));
             var guard = asm.GetType("__EcGuard")!;
             var entry = asm.EntryPoint;
-            if (entry == null) return RunnerUtil.Fail("O programa não tem ponto de entrada: escreva comandos soltos (top-level) ou um método static void Main().", "", sw);
+            if (entry == null) return RunnerUtil.Fail(L.T("O programa não tem ponto de entrada: escreva comandos soltos (top-level) ou um método static void Main()."), "", sw);
             var stopField = guard.GetField("Stop")!;
             var timedOutField = guard.GetField("TimedOut")!;
 
@@ -186,7 +186,7 @@ internal sealed class __EcTimeout : System.Exception
         }
         catch (Exception ex)
         {
-            return RunnerUtil.Fail("Erro interno ao rodar C#: " + ex.Message, stdout.ToString(), sw);
+            return RunnerUtil.Fail(L.F("Erro interno ao rodar C#: {0}", ex.Message), stdout.ToString(), sw);
         }
         finally
         {
@@ -251,19 +251,20 @@ internal sealed class __EcTimeout : System.Exception
 
     private static string FormatDiagnostics(List<Diagnostic> diags)
     {
-        var pt = CultureInfo.GetCultureInfo("pt-BR");
-        var sb = new StringBuilder("O código não compilou:\n");
+        // Compiler messages in the app's language (Roslyn ships pt-BR and es resources; English is the neutral one).
+        var culture = CultureInfo.GetCultureInfo(L.Lang switch { "pt" => "pt-BR", "es" => "es-ES", _ => "en-US" });
+        var sb = new StringBuilder(L.T("O código não compilou:") + "\n");
         foreach (var d in diags.OrderBy(d => d.Location.SourceSpan.Start).Take(10))
         {
             var span = d.Location.GetLineSpan();
             var pos = d.Location.IsInSource && span.Path == FileName
-                ? $"Linha {span.StartLinePosition.Line + 1}, coluna {span.StartLinePosition.Character + 1}: " : "";
-            sb.Append("- ").Append(pos).Append(d.GetMessage(pt)).Append(" [").Append(d.Id).Append("]\n");
+                ? L.F("Linha {0}, coluna {1}: ", span.StartLinePosition.Line + 1, span.StartLinePosition.Character + 1) : "";
+            sb.Append("- ").Append(pos).Append(d.GetMessage(culture)).Append(" [").Append(d.Id).Append("]\n");
         }
-        if (diags.Count > 10) sb.Append($"… e mais {diags.Count - 10} erro(s).\n");
-        if (diags.Any(d => d.Id == "CS1002")) sb.Append("Dica: em C# todo comando termina com ponto e vírgula (;).\n");
-        if (diags.Any(d => d.Id == "CS0103")) sb.Append("Dica: um nome não existe neste ponto — confira a grafia (C# diferencia maiúsculas de minúsculas) e se a variável foi declarada.\n");
-        if (diags.Any(d => d.Id is "CS0029" or "CS0266" or "CS1503")) sb.Append("Dica: os tipos não combinam. Console.ReadLine() devolve texto: converta com int.Parse ou double.Parse.\n");
+        if (diags.Count > 10) sb.Append(L.F("… e mais {0} erro(s).", diags.Count - 10)).Append('\n');
+        if (diags.Any(d => d.Id == "CS1002")) sb.Append(L.T("Dica: em C# todo comando termina com ponto e vírgula (;).")).Append('\n');
+        if (diags.Any(d => d.Id == "CS0103")) sb.Append(L.T("Dica: um nome não existe neste ponto — confira a grafia (C# diferencia maiúsculas de minúsculas) e se a variável foi declarada.")).Append('\n');
+        if (diags.Any(d => d.Id is "CS0029" or "CS0266" or "CS1503")) sb.Append(L.T("Dica: os tipos não combinam. Console.ReadLine() devolve texto: converta com int.Parse ou double.Parse.")).Append('\n');
         return sb.ToString().TrimEnd();
     }
 
@@ -277,7 +278,7 @@ internal sealed class __EcTimeout : System.Exception
             if (target == "Environment" || target.EndsWith(".Environment", StringComparison.Ordinal))
             {
                 var line = m.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
-                return $"Linha {line}: Environment.{member} não é permitido aqui porque fecharia o EasyCreator. Para encerrar o programa, use return dentro do Main.";
+                return L.F("Linha {0}: Environment.{1} não é permitido aqui porque fecharia o EasyCreator. Para encerrar o programa, use return dentro do Main.", line, member);
             }
         }
         return null;
@@ -377,7 +378,7 @@ internal sealed class __EcTimeout : System.Exception
     {
         if (ex is OutputLimitException) return RunnerUtil.OutputLimitMessage;
         if (ex is InsufficientExecutionStackException)
-            return "Recursão profunda demais: o método chamou a si mesmo vezes demais e a pilha acabou. Verifique o caso base (a condição que para a recursão).";
+            return L.T("Recursão profunda demais: o método chamou a si mesmo vezes demais e a pilha acabou. Verifique o caso base (a condição que para a recursão).");
 
         int line = 0;
         try
@@ -389,23 +390,22 @@ internal sealed class __EcTimeout : System.Exception
             }
         }
         catch { }
-        var where = line > 0 ? $" na linha {line}" : "";
         var name = ex.GetType().Name;
         var tip = ex switch
         {
-            DivideByZeroException => "Divisão por zero: o divisor ficou 0. Teste o valor antes de dividir.",
-            IndexOutOfRangeException => "Índice fora do vetor: as posições vão de 0 até Length - 1.",
-            ArgumentOutOfRangeException => "Índice ou valor fora do intervalo permitido (em listas, as posições vão de 0 até Count - 1).",
-            ArgumentNullException => "Um valor nulo foi usado — muitas vezes Console.ReadLine() devolveu null porque a entrada acabou.",
-            NullReferenceException => "Você usou um objeto que vale null (não foi criado com new ou a entrada acabou).",
-            FormatException => "O texto não pôde ser convertido em número. Confira o que foi lido da entrada.",
-            OverflowException => "O número ficou grande demais para o tipo (tente long ou double).",
-            InvalidCastException => "Conversão de tipo inválida.",
-            KeyNotFoundException => "Essa chave não existe no dicionário. Use ContainsKey ou TryGetValue antes.",
-            InvalidOperationException => "Operação inválida no estado atual (por exemplo, modificar uma lista enquanto percorre com foreach).",
+            DivideByZeroException => L.T("Divisão por zero: o divisor ficou 0. Teste o valor antes de dividir."),
+            IndexOutOfRangeException => L.T("Índice fora do vetor: as posições vão de 0 até Length - 1."),
+            ArgumentOutOfRangeException => L.T("Índice ou valor fora do intervalo permitido (em listas, as posições vão de 0 até Count - 1)."),
+            ArgumentNullException => L.T("Um valor nulo foi usado — muitas vezes Console.ReadLine() devolveu null porque a entrada acabou."),
+            NullReferenceException => L.T("Você usou um objeto que vale null (não foi criado com new ou a entrada acabou)."),
+            FormatException => L.T("O texto não pôde ser convertido em número. Confira o que foi lido da entrada."),
+            OverflowException => L.T("O número ficou grande demais para o tipo (tente long ou double)."),
+            InvalidCastException => L.T("Conversão de tipo inválida."),
+            KeyNotFoundException => L.T("Essa chave não existe no dicionário. Use ContainsKey ou TryGetValue antes."),
+            InvalidOperationException => L.T("Operação inválida no estado atual (por exemplo, modificar uma lista enquanto percorre com foreach)."),
             _ => "",
         };
-        var head = $"Erro{where}: {name}: {ex.Message}";
+        var head = line > 0 ? L.F("Erro na linha {0}: {1}: {2}", line, name, ex.Message) : L.F("Erro: {0}: {1}", name, ex.Message);
         return tip.Length > 0 ? head + "\n" + tip : head;
     }
 }

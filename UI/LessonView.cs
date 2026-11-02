@@ -16,7 +16,8 @@ public sealed partial class LessonView : Grid, IDisposable
     readonly TextBox _stdin = Ui.CodeBox();
     readonly TextBox _output = Ui.CodeBox(readOnly: true);
     readonly StackPanel _results = new();
-    readonly StackPanel _actions = new() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
+    // Wraps: at the minimum window width (or with a long installed-runner name) a single row would be cut off.
+    readonly WrapPanel _actions = new() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 6) };
     readonly Grid _right = new();
 
     bool IsRobotics => _track.Area == "robotics";
@@ -60,21 +61,22 @@ public sealed partial class LessonView : Grid, IDisposable
         bottom.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
         bottom.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(8) });
         bottom.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        var outPanel = Titled(IsRobotics ? "Monitor Serial" : "Saída", _output);
+        var outPanel = Titled(IsRobotics ? L.T("Monitor Serial") : L.T("Saída"), _output);
         var resultsScroll = new ScrollViewer { Content = _results, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         var tabs = new Grid();
         tabs.RowDefinitions.Add(new RowDefinition());
         tabs.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         tabs.Children.Add(outPanel);
         bottom.Children.Add(tabs);
-        UIElement side = _sandbox ? (IsRobotics ? new Border() : Titled("Entrada (stdin)", _stdin))
-            : IsRobotics ? Titled("Correção", resultsScroll) : Stacked(Titled("Entrada (stdin)", _stdin), Titled("Correção", resultsScroll));
+        UIElement side = _sandbox ? (IsRobotics ? new Border() : Titled(L.T("Entrada (stdin)"), _stdin))
+            : IsRobotics ? Titled(L.T("Correção"), resultsScroll) : Stacked(Titled(L.T("Entrada (stdin)"), _stdin), Titled(L.T("Correção"), resultsScroll));
         Grid.SetColumn(side, 2);
         bottom.Children.Add(side);
         Grid.SetRow(bottom, 3);
         _right.Children.Add(bottom);
 
         BuildActions();
+        foreach (var c in _actions.Children.OfType<FrameworkElement>()) c.Margin = new Thickness(c.Margin.Left, c.Margin.Top, c.Margin.Right, 4);
     }
 
     static Grid Titled(string title, UIElement body)

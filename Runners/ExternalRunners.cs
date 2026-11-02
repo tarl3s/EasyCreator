@@ -163,20 +163,21 @@ internal static class Proc
         if (r.OutputOverflow) return RunnerUtil.OutputLimitMessage;
         var reason = (uint)r.ExitCode switch
         {
-            0xC0000005 => " — acesso inválido à memória (ponteiro inválido ou índice fora do vetor)",
-            0xC00000FD => " — estouro de pilha (recursão sem fim?)",
-            0xC0000094 => " — divisão inteira por zero",
-            0xC0000409 => " — o programa foi abortado (memória corrompida?)",
+            0xC0000005 => L.T(" — acesso inválido à memória (ponteiro inválido ou índice fora do vetor)"),
+            0xC00000FD => L.T(" — estouro de pilha (recursão sem fim?)"),
+            0xC0000094 => L.T(" — divisão inteira por zero"),
+            0xC0000409 => L.T(" — o programa foi abortado (memória corrompida?)"),
             _ => "",
         };
         var err = Clean(r.Stderr, dir);
         var line = 0;
         if (lineRegex != null)
             foreach (Match m in lineRegex.Matches(r.Stderr)) line = int.Parse(m.Groups[1].Value); // the innermost frame is last
-        var kind = Regex.IsMatch(r.Stderr, @"\b(SyntaxError|IndentationError|TabError)\b") ? "Erro de sintaxe" : "Erro";
+        var syntax = Regex.IsMatch(r.Stderr, @"\b(SyntaxError|IndentationError|TabError)\b");
         var head = line > 0
-            ? $"{kind} na linha {line} (o programa terminou com código {r.ExitCode}){reason}."
-            : $"O programa terminou com erro (código {r.ExitCode}){reason}.";
+            ? (syntax ? L.F("Erro de sintaxe na linha {0} (o programa terminou com código {1}){2}.", line, r.ExitCode, reason)
+                      : L.F("Erro na linha {0} (o programa terminou com código {1}){2}.", line, r.ExitCode, reason))
+            : L.F("O programa terminou com erro (código {0}){1}.", r.ExitCode, reason);
         return err.Length > 0 ? head + "\n" + err : head;
     }
 }
@@ -208,7 +209,7 @@ public abstract class ExternalRunner : ILanguageRunner
         }
         catch (Exception ex)
         {
-            return new RunResult(false, "", $"Não foi possível rodar {DisplayName}: {ex.Message}", sw.Elapsed);
+            return new RunResult(false, "", L.F("Não foi possível rodar {0}: {1}", DisplayName, ex.Message), sw.Elapsed);
         }
     }
 
@@ -233,7 +234,7 @@ public sealed class NodeRunner : ExternalRunner
 {
     public NodeRunner(string exe, string version) : base(exe, version) { }
     public override string LanguageId => "javascript";
-    public override string DisplayName => $"Node.js (instalado: {Version})";
+    public override string DisplayName => L.F("Node.js (instalado: {0})", Version);
     private protected override Regex ErrorLine { get; } = new(@"main\.js:(\d+)");
 
     private const string Prelude = """
@@ -263,7 +264,7 @@ public sealed class CPythonRunner : ExternalRunner
 {
     public CPythonRunner(string exe, string version) : base(exe, version) { }
     public override string LanguageId => "python";
-    public override string DisplayName => $"Python (instalado: {Version})";
+    public override string DisplayName => L.F("Python (instalado: {0})", Version);
     private protected override Regex ErrorLine { get; } = new(@"main\.py"", line (\d+)");
 
     protected override async Task<RunResult> RunCoreAsync(string code, string stdin, TimeSpan timeout, CancellationToken ct, Stopwatch sw)
@@ -294,7 +295,7 @@ public sealed class NativeCRunner : ExternalRunner
     public string Compiler { get; }
     public NativeCRunner(string exe, string version, string compiler) : base(exe, version) { Compiler = compiler; }
     public override string LanguageId => "c";
-    public override string DisplayName => $"C ({Compiler} instalado: {Version})";
+    public override string DisplayName => L.F("C ({0} instalado: {1})", Compiler, Version);
 
     public static readonly TimeSpan CompileTimeout = TimeSpan.FromSeconds(60);
 
@@ -314,8 +315,8 @@ public sealed class NativeCRunner : ExternalRunner
             if (c.Canceled) return new RunResult(false, "", RunnerUtil.CanceledMessage, sw.Elapsed);
             if (c.ExitCode != 0 || !File.Exists(Path.Combine(dir, "main.exe")))
             {
-                var msg = c.TimedOut ? "A compilação demorou demais." : Proc.Clean(c.Stderr + c.Stdout, dir);
-                return new RunResult(false, "", "O código não compilou:\n" + msg, sw.Elapsed);
+                var msg = c.TimedOut ? L.T("A compilação demorou demais.") : Proc.Clean(c.Stderr + c.Stdout, dir);
+                return new RunResult(false, "", L.T("O código não compilou:") + "\n" + msg, sw.Elapsed);
             }
             var r = await Proc.RunAsync(Path.Combine(dir, "main.exe"), Array.Empty<string>(), dir, stdin, timeout, ct, env).ConfigureAwait(false);
             return FromProc(r, timeout, dir, sw);
@@ -336,7 +337,7 @@ public sealed class DotnetSdkRunner : ExternalRunner
         _tfm = $"net{major}.0";
     }
     public override string LanguageId => "csharp";
-    public override string DisplayName => $".NET SDK (instalado: {Version})";
+    public override string DisplayName => L.F(".NET SDK (instalado: {0})", Version);
     private protected override Regex ErrorLine { get; } = new(@"Program\.cs:line (\d+)");
 
     public static readonly TimeSpan BuildTimeout = TimeSpan.FromSeconds(180);
@@ -402,7 +403,7 @@ internal static class __EcConsoleSetup
                     dir, "", BuildTimeout, ct, Env).ConfigureAwait(false);
                 if (b.Canceled) return new RunResult(false, "", RunnerUtil.CanceledMessage, sw.Elapsed);
                 if (b.ExitCode != 0 || b.TimedOut)
-                    return new RunResult(false, "", b.TimedOut ? "A compilação demorou demais." : FormatBuildErrors(b.Stdout + "\n" + b.Stderr, dir), sw.Elapsed);
+                    return new RunResult(false, "", b.TimedOut ? L.T("A compilação demorou demais.") : FormatBuildErrors(b.Stdout + "\n" + b.Stderr, dir), sw.Elapsed);
                 _builtHash = hash;
             }
             var r = await Proc.RunAsync(ExePath, new[] { dll }, dir, stdin, timeout, ct, Env).ConfigureAwait(false);
@@ -413,11 +414,11 @@ internal static class __EcConsoleSetup
 
     private static string FormatBuildErrors(string output, string dir)
     {
-        var sb = new StringBuilder("O código não compilou:\n");
+        var sb = new StringBuilder(L.T("O código não compilou:") + "\n");
         var seen = new HashSet<string>();
         foreach (Match m in Regex.Matches(output, @"Program\.cs\((\d+),(\d+)\): error (CS\d+): (.*?)(?: \[[^\]]*\])?\r?$", RegexOptions.Multiline))
         {
-            var line = $"- Linha {m.Groups[1].Value}, coluna {m.Groups[2].Value}: {m.Groups[4].Value} [{m.Groups[3].Value}]";
+            var line = "- " + L.F("Linha {0}, coluna {1}: ", m.Groups[1].Value, m.Groups[2].Value) + $"{m.Groups[4].Value} [{m.Groups[3].Value}]";
             if (seen.Add(line)) sb.Append(line).Append('\n');
         }
         if (seen.Count == 0) sb.Append(Proc.Clean(output, dir));

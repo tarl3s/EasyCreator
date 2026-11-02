@@ -101,7 +101,7 @@ public sealed class JsRunner : ILanguageRunner
         }
         catch (Exception ex)
         {
-            return RunnerUtil.Fail("Erro interno ao rodar JavaScript: " + ex.Message, stdout.ToString(), sw);
+            return RunnerUtil.Fail(L.F("Erro interno ao rodar JavaScript: {0}", ex.Message), stdout.ToString(), sw);
         }
     }
 
@@ -146,16 +146,16 @@ public sealed class JsRunner : ILanguageRunner
             case "OperationCanceledException":
                 return "";
             case "StatementsCountOverflowException":
-                return "O programa executou instruções demais e foi interrompido (laço infinito?).";
+                return L.T("O programa executou instruções demais e foi interrompido (laço infinito?).");
             case "MemoryLimitExceededException":
-                return "O programa usou memória demais e foi interrompido (uma lista ou texto crescendo sem parar?).";
+                return L.T("O programa usou memória demais e foi interrompido (uma lista ou texto crescendo sem parar?).");
             case "RecursionDepthOverflowException":
-                return "Recursão profunda demais: a função chamou a si mesma vezes demais. Verifique o caso base (a condição que para a recursão).";
+                return L.T("Recursão profunda demais: a função chamou a si mesma vezes demais. Verifique o caso base (a condição que para a recursão).");
         }
 
         if (ex is Acornima.ParseErrorException pe)
-            return $"Erro de sintaxe na linha {pe.LineNumber}, coluna {pe.Column}: {pe.Description}\n" +
-                   "O código não pôde ser lido. Confira parênteses, chaves, aspas e vírgulas perto dessa linha.";
+            return L.F("Erro de sintaxe na linha {0}, coluna {1}: {2}", pe.LineNumber, pe.Column, pe.Description) + "\n" +
+                   L.T("O código não pôde ser lido. Confira parênteses, chaves, aspas e vírgulas perto dessa linha.");
 
         if (ex is JavaScriptException jse)
         {
@@ -166,20 +166,20 @@ public sealed class JsRunner : ILanguageRunner
             }
             catch { }
             var line = jse.Location.Start.Line;
-            var where = line > 0 && jse.Location.SourceFile != "prelude.js" ? $" na linha {line}" : "";
+            bool hasLine = line > 0 && jse.Location.SourceFile != "prelude.js";
             var hint = name switch
             {
-                "ReferenceError" => "Você usou um nome (variável ou função) que não foi declarado. Confira a grafia e se ele foi criado antes.",
-                "TypeError" => "Uma operação foi feita com um tipo de valor errado — por exemplo, chamar algo que não é função ou ler uma propriedade de undefined/null.",
-                "RangeError" => "Um valor ficou fora do intervalo permitido (por exemplo, tamanho de array negativo ou recursão sem fim).",
-                "SyntaxError" => "O código tem um erro de escrita. Confira parênteses, chaves, aspas e vírgulas.",
+                "ReferenceError" => L.T("Você usou um nome (variável ou função) que não foi declarado. Confira a grafia e se ele foi criado antes."),
+                "TypeError" => L.T("Uma operação foi feita com um tipo de valor errado — por exemplo, chamar algo que não é função ou ler uma propriedade de undefined/null."),
+                "RangeError" => L.T("Um valor ficou fora do intervalo permitido (por exemplo, tamanho de array negativo ou recursão sem fim)."),
+                "SyntaxError" => L.T("O código tem um erro de escrita. Confira parênteses, chaves, aspas e vírgulas."),
                 _ => "",
             };
             var msg = jse.Message;
-            var text = $"Erro{where}: {name}: {msg}";
+            var text = hasLine ? L.F("Erro na linha {0}: {1}: {2}", line, name, msg) : L.F("Erro: {0}: {1}", name, msg);
             return hint.Length > 0 ? text + "\n" + hint : text;
         }
 
-        return $"Erro: {ex.Message}";
+        return L.F("Erro: {0}", ex.Message);
     }
 }

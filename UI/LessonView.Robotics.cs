@@ -12,7 +12,7 @@ public sealed partial class LessonView
     ArduinoSession? _session;
     readonly WrapPanel _parts = new();
     readonly Canvas _arena = new() { ClipToBounds = true, Background = Ui.Code };
-    readonly TextBlock _simStatus = Ui.Label("Parado", 13, Ui.TextDim);
+    readonly TextBlock _simStatus = Ui.Label(L.T("Parado"), 13, Ui.TextDim);
     readonly Dictionary<string, Action<ComponentSnapshot>> _painters = new();
     Button? _startBtn;
     DateTime _lastFrame;
@@ -20,14 +20,14 @@ public sealed partial class LessonView
 
     void BuildRoboticsActions()
     {
-        _startBtn = Ui.Button("▶ Simular");
+        _startBtn = Ui.Button(L.T("▶ Simular"));
         _startBtn.Click += (_, _) => { if (_session?.IsRunning == true) StopRobotics(); else StartSim(); };
-        _checkBtn = Ui.Button("✔ Corrigir", Ui.Accent);
+        _checkBtn = Ui.Button(L.T("✔ Corrigir"), Ui.Accent);
         _checkBtn.Click += async (_, _) => await CheckRobotics();
-        var reset = Ui.Button("↺ Recomeçar");
+        var reset = Ui.Button(L.T("↺ Recomeçar"));
         reset.Click += (_, _) =>
         {
-            if (MessageBox.Show("Voltar ao código inicial da lição? O que você escreveu será perdido.", "Recomeçar",
+            if (MessageBox.Show(L.T("Voltar ao código inicial da lição? O que você escreveu será perdido."), L.T("Recomeçar"),
                     MessageBoxButton.YesNo) == MessageBoxResult.Yes) _code.Text = _lesson.Starter;
         };
         var speed = new ComboBox { FontSize = 14, Margin = new Thickness(8, 0, 8, 0) };
@@ -74,7 +74,7 @@ public sealed partial class LessonView
             var body = new StackPanel { Width = 150 };
             var pins = string.Join(" ", spec.Pins.Select(p => $"{p.Key}:{p.Value}"));
             body.Children.Add(Ui.Label(spec.Id, 13, bold: true));
-            body.Children.Add(Ui.Label($"{TypeName(spec.Type)} · {pins}", 11, Ui.TextDim));
+            body.Children.Add(Ui.Label($"{L.T(TypeName(spec.Type))} · {pins}", 11, Ui.TextDim));
             var visual = new Grid { Height = 64, Margin = new Thickness(0, 6, 0, 0) };
             body.Children.Add(visual);
             var state = Ui.Label("", 12, Ui.TextDim);
@@ -115,7 +115,7 @@ public sealed partial class LessonView
             }
             case "button":
             {
-                var b = Ui.Button("Segure");
+                var b = Ui.Button(L.T("Segure"));
                 b.Margin = new Thickness(0);
                 b.PreviewMouseLeftButtonDown += (_, _) => _session?.PressButton(spec.Id, true);
                 b.PreviewMouseLeftButtonUp += (_, _) => _session?.PressButton(spec.Id, false);
@@ -252,13 +252,13 @@ public sealed partial class LessonView
         if (!_session.Start(_code.Text, _lesson.Components, robot?.Color))
         {
             _output.Foreground = Ui.Bad;
-            _output.Text = _session.Error ?? "Erro ao compilar.";
+            _output.Text = _session.Error ?? L.T("Erro ao compilar.");
             _session = null;
             return;
         }
         if (_actions.Children.OfType<ComboBox>().FirstOrDefault() is { } speed) _session.SpeedFactor = SpeedOf(speed);
         _output.Foreground = Ui.Text;
-        _startBtn!.Content = "■ Parar";
+        _startBtn!.Content = L.T("■ Parar");
         _lastFrame = DateTime.Now;
         CompositionTarget.Rendering += Frame;
     }
@@ -278,7 +278,7 @@ public sealed partial class LessonView
         else if (s.Warnings.Count > 0) serial += "\n⚠ " + string.Join("\n⚠ ", s.Warnings);
         if (_output.Text != serial) { _output.Text = serial; _output.ScrollToEnd(); }
         _output.Foreground = s.Error != null ? Ui.Bad : Ui.Text;
-        _simStatus.Text = $"t = {s.TimeMs / 1000:0.0} s" + (s.CurrentLine > 0 ? $" · linha {s.CurrentLine}" : "");
+        _simStatus.Text = s.CurrentLine > 0 ? L.F("t = {0:0.0} s · linha {1}", s.TimeMs / 1000, s.CurrentLine) : $"t = {s.TimeMs / 1000:0.0} s";
         if (!s.IsRunning || s.HasFinished) StopRobotics(keepOutput: true);
     }
 
@@ -289,8 +289,8 @@ public sealed partial class LessonView
         CompositionTarget.Rendering -= Frame;
         _session?.Dispose();
         _session = null;
-        if (_startBtn != null) _startBtn.Content = "▶ Simular";
-        if (!keepOutput) _simStatus.Text = "Parado";
+        if (_startBtn != null) _startBtn.Content = L.T("▶ Simular");
+        if (!keepOutput) _simStatus.Text = L.T("Parado");
     }
 
     async Task CheckRobotics()
@@ -298,14 +298,14 @@ public sealed partial class LessonView
         StopRobotics();
         _checkBtn!.IsEnabled = false;
         _results.Children.Clear();
-        _results.Children.Add(Ui.Label("Simulando e corrigindo…", 13, Ui.TextDim));
+        _results.Children.Add(Ui.Label(L.T("Simulando e corrigindo…"), 13, Ui.TextDim));
         _cts = new CancellationTokenSource();
         try
         {
             var outcomes = await new ArduinoSimulator().GradeAsync(_lesson, _code.Text, _cts.Token);
             _results.Children.Clear();
             bool all = outcomes.Count > 0 && outcomes.All(o => o.Passed);
-            _results.Children.Add(Ui.Label(all ? "🎉 Tudo certo!" : $"{outcomes.Count(o => o.Passed)} de {outcomes.Count} verificações passaram",
+            _results.Children.Add(Ui.Label(all ? L.T("🎉 Tudo certo!") : L.F("{0} de {1} verificações passaram", outcomes.Count(o => o.Passed), outcomes.Count),
                 16, all ? Ui.Good : Ui.Bad, true));
             foreach (var o in outcomes)
             {

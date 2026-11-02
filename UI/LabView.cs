@@ -31,7 +31,7 @@ public sealed partial class LabView : Grid, IDisposable
         if (_lesson.Kind == "lab")
         {
             _lab = LabRegistry.Create(_lesson.Lab);
-            if (_lab == null) right.Children.Add(Ui.Label($"Simulador \"{_lesson.Lab}\" não encontrado.", 14, Ui.Bad));
+            if (_lab == null) right.Children.Add(Ui.Label(L.F("Simulador \"{0}\" não encontrado.", _lesson.Lab), 14, Ui.Bad));
             else
             {
                 _lab.Load(_lesson.LabParams);
@@ -43,7 +43,7 @@ public sealed partial class LabView : Grid, IDisposable
             if (_lesson.Goals.Count > 0)
             {
                 var g = new StackPanel();
-                g.Children.Add(Ui.Label("🎯 Metas do experimento", 16, bold: true));
+                g.Children.Add(Ui.Label(L.T("🎯 Metas do experimento"), 16, bold: true));
                 g.Children.Add(_goals);
                 right.Children.Add(Ui.Card(g, Ui.Bg2));
                 ShowGoals();
@@ -51,7 +51,7 @@ public sealed partial class LabView : Grid, IDisposable
         }
         for (int i = 0; i < _lesson.Questions.Count; i++) right.Children.Add(QuestionCard(_lesson.Questions[i], i));
 
-        var check = Ui.Button("✔ Verificar", Ui.Accent);
+        var check = Ui.Button(L.T("✔ Verificar"), Ui.Accent);
         check.HorizontalAlignment = HorizontalAlignment.Left;
         check.Margin = new Thickness(0, 12, 0, 0);
         check.Click += (_, _) => Verify();
@@ -69,7 +69,7 @@ public sealed partial class LabView : Grid, IDisposable
         foreach (var g in _lesson.Goals)
         {
             bool met = _labRan && _lab != null && g.IsMet(_lab.Metrics);
-            string value = _labRan && _lab != null && _lab.Metrics.TryGetValue(g.Metric, out var v) ? $"  (agora: {v:G4})" : "";
+            string value = _labRan && _lab != null && _lab.Metrics.TryGetValue(g.Metric, out var v) ? "  " + L.F("(agora: {0:G4})", v) : "";
             _goals.Children.Add(Ui.Label($"{(met ? "✓" : "○")} {g.Description}{value}", 14, met ? Ui.Good : Ui.Text));
         }
     }
@@ -77,7 +77,7 @@ public sealed partial class LabView : Grid, IDisposable
     UIElement QuestionCard(Question q, int n)
     {
         var p = new StackPanel();
-        p.Children.Add(Ui.Label($"Pergunta {n + 1}", 13, Ui.TextDim, true));
+        p.Children.Add(Ui.Label(L.F("Pergunta {0}", n + 1), 13, Ui.TextDim, true));
         p.Children.Add(Markdown.Render(q.Prompt));
         var feedback = Ui.Label("", 13);
         Func<string> answer;
@@ -124,16 +124,16 @@ public sealed partial class LabView : Grid, IDisposable
             if (ok) right++;
             fb.Foreground = ok ? Ui.Good : Ui.Bad;
             fb.Margin = new Thickness(0, 6, 0, 0);
-            fb.Text = given.Length == 0 ? "Responda esta pergunta." :
-                (ok ? "✓ Correto! " : "✗ Ainda não. ") + (ok ? q.Explanation : "Revise a teoria e tente de novo.");
+            fb.Text = given.Length == 0 ? L.T("Responda esta pergunta.") :
+                ok ? L.T("✓ Correto!") + " " + q.Explanation : L.T("✗ Ainda não. Revise a teoria e tente de novo.");
         }
         bool goalsOk = _lesson.Goals.Count == 0 || (_labRan && _lab != null && _lesson.Goals.All(g => g.IsMet(_lab.Metrics)));
         ShowGoals();
         _result.Children.Clear();
         bool all = goalsOk && right == _answers.Count;
-        var msg = all ? "🎉 Tudo certo!" :
-            !goalsOk ? (_labRan ? "Algumas metas do experimento ainda não foram cumpridas." : "Rode o experimento primeiro.")
-            : $"{right} de {_answers.Count} respostas certas.";
+        var msg = all ? L.T("🎉 Tudo certo!") :
+            !goalsOk ? (_labRan ? L.T("Algumas metas do experimento ainda não foram cumpridas.") : L.T("Rode o experimento primeiro."))
+            : L.F("{0} de {1} respostas certas.", right, _answers.Count);
         _result.Children.Add(Ui.Label(msg, 16, all ? Ui.Good : Ui.Bad, true));
         if (all) LessonText.Finished(_w, _track, _index, _result);
     }
