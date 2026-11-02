@@ -1,0 +1,366 @@
+{
+  "id": "javascript",
+  "title": "JavaScript",
+  "area": "programming",
+  "language": "javascript",
+  "description": "Aprenda a programar com JavaScript, a linguagem da web: da primeira linha de saída até classes, recursão e algoritmos de ordenação e busca com análise de complexidade.",
+  "lessons": [
+    {
+      "id": "js-01",
+      "title": "Olá, mundo!",
+      "theory": "# Seu primeiro programa\n\nUm programa é uma lista de **instruções** que o computador executa, uma depois da outra, de cima para baixo. Em JavaScript, a instrução mais simples para mostrar algo na tela é `console.log`:\n\n```javascript\nconsole.log(\"Olá, mundo!\");\n```\n\nO texto entre aspas é uma **string** (uma sequência de caracteres). Você pode usar aspas duplas `\"...\"`, simples `'...'` ou crases `` `...` ``. Cada chamada de `console.log` escreve **uma linha** e pula para a próxima.\n\n```javascript\nconsole.log(\"Primeira linha\");\nconsole.log(\"Segunda linha\");\n```\n\n## Por que o ponto e vírgula?\n\nO `;` marca o fim de uma instrução. O JavaScript até consegue adivinhar onde ela termina, mas escrever o `;` deixa o código mais claro e evita surpresas. Vamos usá-lo sempre.\n\n## Montando textos\n\nCom crases você cria um **template literal**: um texto que aceita valores dentro de `${...}`. Isso será muito útil daqui para frente:\n\n```javascript\nconst nome = \"Ana\";\nconsole.log(`Bem-vinda, ${nome}!`);\n```\n\n## Lendo uma linha\n\nNesta trilha, os programas recebem dados pela **entrada padrão**. A função `prompt()` (chamada **sem argumentos**) devolve a próxima linha digitada, como texto. Veremos isso com calma na lição 3; por enquanto basta saber que:\n\n```javascript\nconst nome = prompt();\nconsole.log(`Oi, ${nome}!`);\n```\n\n## Erros comuns\n\n- Esquecer de fechar as aspas ou os parênteses: o programa nem começa a rodar (erro de sintaxe).\n- Escrever `Console.log` com C maiúsculo: JavaScript diferencia maiúsculas de minúsculas.\n- Escrever uma mensagem diferente da pedida: o corretor compara a saída **exatamente**, letra por letra (espaços no fim da linha são ignorados).",
+      "task": "Leia um nome (uma linha) e mostre exatamente estas três linhas:\n\n```\nOlá, mundo!\nMeu nome é <nome>.\nEstou aprendendo JavaScript!\n```\n\nExemplo: para a entrada `Ana`, a saída é:\n\n```\nOlá, mundo!\nMeu nome é Ana.\nEstou aprendendo JavaScript!\n```",
+      "starter": "const nome = prompt();\n// escreva aqui as três linhas com console.log\nconsole.log(\"Olá, mundo!\");",
+      "solution": "const nome = prompt();\nconsole.log(\"Olá, mundo!\");\nconsole.log(`Meu nome é ${nome}.`);\nconsole.log(\"Estou aprendendo JavaScript!\");",
+      "hints": [
+        "Cada linha da saída é uma chamada de console.log.",
+        "Use um template literal com crases: `Meu nome é ${nome}.`",
+        "Confira o ponto final depois do nome e o acento em \"é\"."
+      ],
+      "tests": [
+        {
+          "input": "Ana\n",
+          "expected": "Olá, mundo!\nMeu nome é Ana.\nEstou aprendendo JavaScript!",
+          "hidden": false
+        },
+        {
+          "input": "Carlos Eduardo\n",
+          "expected": "Olá, mundo!\nMeu nome é Carlos Eduardo.\nEstou aprendendo JavaScript!",
+          "hidden": false
+        },
+        {
+          "input": "Zé\n",
+          "expected": "Olá, mundo!\nMeu nome é Zé.\nEstou aprendendo JavaScript!",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "js-02",
+      "title": "Variáveis e tipos",
+      "theory": "# Guardando valores\n\nNa lição 1 você já usou `const nome = prompt();`. Isso cria uma **variável**: um nome que aponta para um valor guardado na memória. Em JavaScript moderno existem duas formas de criar variáveis:\n\n```javascript\nconst pi = 3.14;     // não pode ser reatribuída\nlet contador = 0;    // pode mudar depois\ncontador = contador + 1;\n```\n\nPrefira `const` e use `let` só quando o valor realmente precisar mudar. Isso evita que você altere algo sem querer. (Existe também o antigo `var`, que tem regras de escopo confusas; evite-o.)\n\n## Tipos de dados\n\nTodo valor tem um **tipo**. Os principais são:\n\n- `string`: texto, como `\"banana\"`.\n- `number`: números, inteiros ou com casas decimais (`42`, `-3.5`). JavaScript usa um só tipo para os dois.\n- `boolean`: `true` ou `false`.\n- `null` e `undefined`: representam \"nenhum valor\".\n\nO operador `typeof` diz o tipo de um valor:\n\n```javascript\nconsole.log(typeof \"oi\");   // string\nconsole.log(typeof 42);     // number\nconsole.log(typeof true);   // boolean\n```\n\n## Strings também são objetos úteis\n\nStrings têm **propriedades** e **métodos**. `length` dá o número de caracteres; `toUpperCase()` e `toLowerCase()` devolvem uma nova string em maiúsculas ou minúsculas; `at(-1)` pega o último caractere:\n\n```javascript\nconst fruta = \"banana\";\nconsole.log(fruta.length);        // 6\nconsole.log(fruta.toUpperCase()); // BANANA\nconsole.log(fruta.at(-1));        // a\nconsole.log(fruta[0]);            // b\n```\n\nNote que os métodos **não alteram** a string original: strings em JavaScript são **imutáveis**. `fruta.toUpperCase()` cria um texto novo.\n\n## Por que os tipos importam?\n\nO mesmo operador faz coisas diferentes conforme o tipo. `+` soma números, mas **concatena** strings:\n\n```javascript\nconsole.log(2 + 3);     // 5\nconsole.log(\"2\" + \"3\"); // 23\n```\n\nEsse detalhe causa muitos erros, e por isso a próxima lição explica como converter texto em número.\n\n## Erros comuns\n\n- Tentar reatribuir uma `const`: dá erro `TypeError`.\n- Escrever `fruta.length()`: `length` é propriedade, sem parênteses.\n- Achar que `toUpperCase()` muda a variável: ele devolve uma string nova.",
+      "task": "Leia uma palavra (uma linha) e mostre quatro linhas, exatamente neste formato:\n\n```\nTexto: <palavra>\nTamanho: <número de caracteres>\nMaiúsculas: <palavra em maiúsculas>\nTipo: <resultado de typeof da palavra>\n```\n\nExemplo: para a entrada `banana`:\n\n```\nTexto: banana\nTamanho: 6\nMaiúsculas: BANANA\nTipo: string\n```",
+      "starter": "const palavra = prompt();\n// escreva aqui as quatro linhas\nconsole.log(`Texto: ${palavra}`);",
+      "solution": "const palavra = prompt();\nconsole.log(`Texto: ${palavra}`);\nconsole.log(`Tamanho: ${palavra.length}`);\nconsole.log(`Maiúsculas: ${palavra.toUpperCase()}`);\nconsole.log(`Tipo: ${typeof palavra}`);",
+      "hints": [
+        "O número de caracteres está na propriedade length (sem parênteses).",
+        "toUpperCase() devolve uma nova string em maiúsculas.",
+        "typeof palavra devolve o nome do tipo como texto."
+      ],
+      "tests": [
+        {
+          "input": "banana\n",
+          "expected": "Texto: banana\nTamanho: 6\nMaiúsculas: BANANA\nTipo: string",
+          "hidden": false
+        },
+        {
+          "input": "JavaScript\n",
+          "expected": "Texto: JavaScript\nTamanho: 10\nMaiúsculas: JAVASCRIPT\nTipo: string",
+          "hidden": false
+        },
+        {
+          "input": "42\n",
+          "expected": "Texto: 42\nTamanho: 2\nMaiúsculas: 42\nTipo: string",
+          "hidden": true
+        },
+        {
+          "input": "x\n",
+          "expected": "Texto: x\nTamanho: 1\nMaiúsculas: X\nTipo: string",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "js-03",
+      "title": "Entrada e aritmética",
+      "theory": "# Lendo dados e fazendo contas\n\n## Como a entrada chega\n\nCada exercício é corrigido por um **corretor automático**. Ele roda o seu programa várias vezes e, em cada rodada, **digita sozinho** as linhas de entrada do teste. Você não precisa (nem deve) mostrar mensagens como \"Digite um número\": o corretor compara **toda** a saída com o esperado, e qualquer texto a mais faz o teste falhar.\n\nPara ler, use `prompt()` **sem argumentos**. Cada chamada devolve a **próxima linha** da entrada como **string**, ou `null` quando a entrada acabou. `readline()` faz a mesma coisa.\n\n```javascript\nconst a = prompt(); // primeira linha\nconst b = prompt(); // segunda linha\n```\n\n## O problema do texto\n\nLembra da lição 2? `+` concatena strings. Então:\n\n```javascript\nconst a = prompt(); // \"2\"\nconst b = prompt(); // \"3\"\nconsole.log(a + b); // 23  (!)\n```\n\nÉ preciso **converter** o texto em número:\n\n- `Number(\"42\")` dá `42`; `Number(\"3.5\")` dá `3.5`; `Number(\"abc\")` dá `NaN` (\"not a number\").\n- `parseInt(\"42\", 10)` lê um inteiro na base 10, parando no primeiro caractere inválido: `parseInt(\"42abc\", 10)` dá `42`.\n- `parseFloat(\"3.5\")` lê um número com casas decimais.\n\nUse `Number` quando a linha inteira deve ser um número; sempre passe a base `10` para `parseInt`.\n\n## Operadores aritméticos\n\n```javascript\nconsole.log(7 + 2);  // 9\nconsole.log(7 - 2);  // 5\nconsole.log(7 * 2);  // 14\nconsole.log(7 / 2);  // 3.5   (divisão sempre dá decimal)\nconsole.log(7 % 2);  // 1     (resto)\nconsole.log(2 ** 3); // 8     (potência)\n```\n\nPara a **divisão inteira**, use `Math.trunc(a / b)`, que corta a parte decimal em direção ao zero. Com negativos, `Math.trunc(-7 / 2)` dá `-3`, e o resto `-7 % 2` dá `-1`: em JavaScript o resto tem o **sinal do dividendo**. (`Math.floor` arredonda para baixo e daria `-4`; são coisas diferentes!)\n\n## Casas decimais\n\nNúmeros com vírgula podem sair com muitas casas (`0.1 + 0.2` dá `0.30000000000000004`, por causa da representação binária). Para mostrar um valor com um número fixo de casas, use `toFixed`:\n\n```javascript\nconst media = 7 / 2;\nconsole.log(media.toFixed(2)); // 3.50\n```\n\n`toFixed` devolve uma **string** com ponto como separador decimal.\n\n## Erros comuns\n\n- Esquecer de converter e obter `\"23\"` em vez de `5`.\n- Usar `Math.floor` quando o enunciado pede truncar.\n- Imprimir mensagens de \"digite...\" antes de ler.",
+      "task": "Leia dois inteiros `a` e `b` (um por linha; `b` nunca é zero) e mostre:\n\n```\nSoma: <a + b>\nDiferença: <a - b>\nProduto: <a * b>\nDivisão inteira: <a / b truncado em direção ao zero>\nResto: <a % b>\nMédia: <(a + b) / 2 com 2 casas decimais>\n```\n\nExemplo: para `7` e `2`:\n\n```\nSoma: 9\nDiferença: 5\nProduto: 14\nDivisão inteira: 3\nResto: 1\nMédia: 4.50\n```",
+      "starter": "const a = prompt();\nconst b = prompt();\n// converta para número e escreva aqui as contas\nconsole.log(`Soma: ${a + b}`);",
+      "solution": "const a = Number(prompt());\nconst b = Number(prompt());\nconsole.log(`Soma: ${a + b}`);\nconsole.log(`Diferença: ${a - b}`);\nconsole.log(`Produto: ${a * b}`);\nconsole.log(`Divisão inteira: ${Math.trunc(a / b)}`);\nconsole.log(`Resto: ${a % b}`);\nconsole.log(`Média: ${((a + b) / 2).toFixed(2)}`);",
+      "hints": [
+        "prompt() devolve texto: use Number(prompt()) para obter um número.",
+        "Math.trunc(a / b) faz a divisão inteira truncando em direção ao zero.",
+        "Para a média, use ((a + b) / 2).toFixed(2)."
+      ],
+      "tests": [
+        {
+          "input": "7\n2\n",
+          "expected": "Soma: 9\nDiferença: 5\nProduto: 14\nDivisão inteira: 3\nResto: 1\nMédia: 4.50",
+          "hidden": false
+        },
+        {
+          "input": "10\n5\n",
+          "expected": "Soma: 15\nDiferença: 5\nProduto: 50\nDivisão inteira: 2\nResto: 0\nMédia: 7.50",
+          "hidden": false
+        },
+        {
+          "input": "-7\n2\n",
+          "expected": "Soma: -5\nDiferença: -9\nProduto: -14\nDivisão inteira: -3\nResto: -1\nMédia: -2.50",
+          "hidden": true
+        },
+        {
+          "input": "0\n3\n",
+          "expected": "Soma: 3\nDiferença: -3\nProduto: 0\nDivisão inteira: 0\nResto: 0\nMédia: 1.50",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "js-04",
+      "title": "Condicionais",
+      "theory": "# Tomando decisões\n\nAté agora os programas executavam todas as linhas, sempre. Com `if` o programa **escolhe** o que fazer conforme uma condição:\n\n```javascript\nconst idade = Number(prompt());\nif (idade >= 18) {\n  console.log(\"Maior de idade\");\n} else {\n  console.log(\"Menor de idade\");\n}\n```\n\nA condição entre parênteses é avaliada como `true` ou `false`. Se for verdadeira, o primeiro bloco roda; senão, o bloco do `else`.\n\n## Várias alternativas\n\nEncadeie com `else if`. As condições são testadas **em ordem**, e só o primeiro bloco verdadeiro executa:\n\n```javascript\nif (nota >= 9) {\n  console.log(\"A\");\n} else if (nota >= 7) {\n  console.log(\"B\");\n} else {\n  console.log(\"C\");\n}\n```\n\nPor isso a ordem importa: se você testasse `nota >= 7` antes de `nota >= 9`, um 10 receberia \"B\".\n\n## Operadores de comparação\n\n- `===` igual (valor **e** tipo) e `!==` diferente.\n- `<`, `<=`, `>`, `>=`.\n\nEvite `==` e `!=`: eles convertem tipos de forma surpreendente (`\"0\" == 0` é `true`, `\"\" == 0` também). Usando `===` você só compara o que é realmente igual. Isso reforça a lição 3: converta a entrada com `Number` antes de comparar.\n\n## Operadores lógicos\n\n- `&&` (e): verdadeiro se **as duas** partes forem.\n- `||` (ou): verdadeiro se **pelo menos uma** for.\n- `!` (não): inverte.\n\n```javascript\nif (nota < 0 || nota > 10) {\n  console.log(\"Nota inválida\");\n}\n```\n\n`&&` e `||` são **preguiçosos** (avaliação em curto-circuito): se a primeira parte já decide o resultado, a segunda nem é calculada.\n\n## Validar primeiro\n\nUma boa prática é tratar os casos inválidos **antes**, no início da cadeia. Assim o resto do código pode supor que os dados são válidos, e a lógica fica mais simples de ler.\n\n## Erros comuns\n\n- Usar `=` (atribuição) no lugar de `===` (comparação).\n- Escrever `0 <= nota <= 10`: em JavaScript isso compara `true`/`false` com 10 e quase sempre dá `true`. Use `nota >= 0 && nota <= 10`.\n- Esquecer as chaves `{}` e achar que várias linhas estão dentro do `if`.",
+      "task": "Leia uma nota (um número que pode ter casas decimais, como `6.5`) e mostre **uma** linha:\n\n- `Nota inválida` se a nota for menor que 0 ou maior que 10;\n- `Aprovado` se for maior ou igual a 7;\n- `Recuperação` se for maior ou igual a 5;\n- `Reprovado` caso contrário.\n\nExemplo: para a entrada `6.5`, a saída é `Recuperação`.",
+      "starter": "const nota = Number(prompt());\n// escreva aqui as condições\nconsole.log(\"Aprovado\");",
+      "solution": "const nota = Number(prompt());\nif (nota < 0 || nota > 10) {\n  console.log(\"Nota inválida\");\n} else if (nota >= 7) {\n  console.log(\"Aprovado\");\n} else if (nota >= 5) {\n  console.log(\"Recuperação\");\n} else {\n  console.log(\"Reprovado\");\n}",
+      "hints": [
+        "Teste primeiro se a nota é inválida, com ||.",
+        "Depois use else if do maior limite (7) para o menor (5)."
+      ],
+      "tests": [
+        {
+          "input": "6.5\n",
+          "expected": "Recuperação",
+          "hidden": false
+        },
+        {
+          "input": "7\n",
+          "expected": "Aprovado",
+          "hidden": false
+        },
+        {
+          "input": "4.9\n",
+          "expected": "Reprovado",
+          "hidden": false
+        },
+        {
+          "input": "10.5\n",
+          "expected": "Nota inválida",
+          "hidden": true
+        },
+        {
+          "input": "-1\n",
+          "expected": "Nota inválida",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "js-05",
+      "title": "Laços de repetição",
+      "theory": "# Repetindo instruções\n\nImagine somar 100 números escrevendo 100 linhas. Laços resolvem isso: eles repetem um bloco enquanto for necessário.\n\n## while\n\nRepete **enquanto** a condição for verdadeira:\n\n```javascript\nlet i = 1;\nwhile (i <= 3) {\n  console.log(i);\n  i++; // o mesmo que i = i + 1\n}\n```\n\nSe você esquecer de mudar `i`, a condição nunca fica falsa e o programa trava num **laço infinito**.\n\n## for\n\nO `for` junta as três partes do laço numa linha: início, condição e passo.\n\n```javascript\nfor (let i = 0; i < 5; i++) {\n  console.log(`Volta ${i}`);\n}\n```\n\nUse `for` quando você sabe quantas vezes vai repetir; `while` quando depende de algo que só se descobre durante a execução (por exemplo, ler até a entrada acabar, quando `prompt()` devolve `null`).\n\n## Acumuladores\n\nUm padrão essencial: uma variável que **acumula** um resultado ao longo do laço.\n\n```javascript\nconst n = Number(prompt());\nlet soma = 0;\nfor (let i = 0; i < n; i++) {\n  const x = Number(prompt());\n  soma += x;\n}\nconsole.log(soma);\n```\n\nPara achar o maior e o menor, a ideia é parecida: comece com o **primeiro** valor lido (ou com `-Infinity` para o maior e `Infinity` para o menor) e, a cada novo número, compare e atualize. Começar com `0` é um erro clássico: se todos os números forem negativos, o \"maior\" sairia 0, que nem estava na lista.\n\n## break e continue\n\n- `break` sai do laço imediatamente.\n- `continue` pula para a próxima volta.\n\n## Casos de borda\n\nSempre pergunte: e se não houver nenhum dado? Com `n = 0` o laço não executa nenhuma vez, a soma fica 0, mas \"maior\" e \"menor\" não existem. Bons programas tratam esse caso explicitamente.\n\n## Erros comuns\n\n- Laço que roda uma vez a mais ou a menos (`<=` no lugar de `<`): o famoso erro \"off-by-one\".\n- Esquecer de converter cada linha com `Number`, e a soma virar concatenação.\n- Inicializar maior/menor com 0.",
+      "task": "Leia um inteiro `n` (n ≥ 0) e depois `n` inteiros, um por linha. Mostre:\n\n```\nSoma: <soma>\nMaior: <maior valor>\nMenor: <menor valor>\n```\n\nSe `n` for 0, mostre apenas a linha `Nenhum número`.\n\nExemplo: para a entrada `3`, `4`, `-2`, `9`:\n\n```\nSoma: 11\nMaior: 9\nMenor: -2\n```",
+      "starter": "const n = Number(prompt());\nlet soma = 0;\n// escreva aqui o laço que lê os n números\nconsole.log(`Soma: ${soma}`);",
+      "solution": "const n = Number(prompt());\nif (n === 0) {\n  console.log(\"Nenhum número\");\n} else {\n  let soma = 0;\n  let maior = -Infinity;\n  let menor = Infinity;\n  for (let i = 0; i < n; i++) {\n    const x = Number(prompt());\n    soma += x;\n    if (x > maior) maior = x;\n    if (x < menor) menor = x;\n  }\n  console.log(`Soma: ${soma}`);\n  console.log(`Maior: ${maior}`);\n  console.log(`Menor: ${menor}`);\n}",
+      "hints": [
+        "Use um for de 0 até n - 1 e leia um número a cada volta.",
+        "Comece o maior com -Infinity e o menor com Infinity.",
+        "Trate n === 0 antes do laço."
+      ],
+      "tests": [
+        {
+          "input": "3\n4\n-2\n9\n",
+          "expected": "Soma: 11\nMaior: 9\nMenor: -2",
+          "hidden": false
+        },
+        {
+          "input": "1\n5\n",
+          "expected": "Soma: 5\nMaior: 5\nMenor: 5",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Nenhum número",
+          "hidden": true
+        },
+        {
+          "input": "4\n-3\n-8\n-1\n-5\n",
+          "expected": "Soma: -17\nMaior: -1\nMenor: -8",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "js-06",
+      "title": "Funções",
+      "theory": "# Dando nome a um pedaço de lógica\n\nUma **função** agrupa instruções sob um nome, recebe **parâmetros** e pode **devolver** um resultado com `return`. Ela evita repetir código e permite pensar em partes menores: primeiro você resolve \"como saber se um número é primo\"; depois usa isso sem se preocupar com os detalhes.\n\n```javascript\nfunction quadrado(x) {\n  return x * x;\n}\nconsole.log(quadrado(5)); // 25\n```\n\nTambém existe a forma de **arrow function**, comum em JavaScript moderno:\n\n```javascript\nconst dobro = (x) => x * 2;\n```\n\n## return encerra a função\n\nQuando `return` executa, a função termina na hora. Isso permite \"sair cedo\":\n\n```javascript\nfunction ehPar(n) {\n  if (n % 2 === 0) return true;\n  return false;\n}\n```\n\nUma função sem `return` devolve `undefined`. Um erro comum é usar `console.log` dentro da função quando ela deveria **devolver** o valor: mostrar e devolver são coisas diferentes.\n\n## Escopo\n\nVariáveis declaradas com `let`/`const` dentro de uma função (ou de um bloco `{}`) só existem ali dentro. Isso é bom: cada função tem seu próprio \"espaço\" e não atrapalha as outras.\n\n## Exemplo: números primos\n\nUm número é primo se for maior que 1 e só for divisível por 1 e por ele mesmo. Não é preciso testar todos os divisores até `n`: se `n = a * b`, um dos dois é no máximo `√n`. Então basta testar `d` enquanto `d * d <= n`. Isso reduz o trabalho de cerca de `n` passos para cerca de `√n` (para n = 1.000.000, de um milhão para mil!). Começamos a pensar em **eficiência**, assunto da lição 10.\n\n```javascript\nfunction ehPrimo(n) {\n  if (n < 2) return false;\n  for (let d = 2; d * d <= n; d++) {\n    if (n % d === 0) return false;\n  }\n  return true;\n}\n```\n\n## Juntando resultados\n\nPara mostrar vários valores numa linha só, guarde-os num **array** e use `join`:\n\n```javascript\nconst lista = [];\nlista.push(2);\nlista.push(3);\nconsole.log(lista.join(\" \")); // 2 3\n```\n\nArrays serão o tema da lição 7; por ora, `push` e `join` bastam. Não mostre o array direto com `console.log(lista)`: o formato muda de ambiente para ambiente.\n\n## Erros comuns\n\n- Esquecer o `return` e receber `undefined`.\n- Tratar 0 e 1 como primos (não são!), ou esquecer os negativos.\n- Chamar a função sem os parênteses: `ehPrimo` é a função; `ehPrimo(7)` é o resultado.",
+      "task": "Escreva uma função `ehPrimo(n)` que devolve `true` se `n` for primo e `false` caso contrário. Depois leia dois inteiros `a` e `b` (a ≤ b) e mostre, numa única linha separada por espaços, todos os primos do intervalo fechado `[a, b]` em ordem crescente. Se não houver nenhum, mostre `Nenhum primo`.\n\nExemplo: para `10` e `20`, a saída é:\n\n```\n11 13 17 19\n```",
+      "starter": "function ehPrimo(n) {\n  // escreva aqui\n  return false;\n}\n\nconst a = Number(prompt());\nconst b = Number(prompt());\nconst primos = [];\nfor (let x = a; x <= b; x++) {\n  if (ehPrimo(x)) primos.push(x);\n}\nconsole.log(primos.length > 0 ? primos.join(\" \") : \"Nenhum primo\");",
+      "solution": "function ehPrimo(n) {\n  if (n < 2) return false;\n  for (let d = 2; d * d <= n; d++) {\n    if (n % d === 0) return false;\n  }\n  return true;\n}\n\nconst a = Number(prompt());\nconst b = Number(prompt());\nconst primos = [];\nfor (let x = a; x <= b; x++) {\n  if (ehPrimo(x)) primos.push(x);\n}\nconsole.log(primos.length > 0 ? primos.join(\" \") : \"Nenhum primo\");",
+      "hints": [
+        "Números menores que 2 não são primos.",
+        "Teste divisores d a partir de 2 enquanto d * d <= n; se n % d === 0, não é primo."
+      ],
+      "tests": [
+        {
+          "input": "10\n20\n",
+          "expected": "11 13 17 19",
+          "hidden": false
+        },
+        {
+          "input": "1\n10\n",
+          "expected": "2 3 5 7",
+          "hidden": false
+        },
+        {
+          "input": "24\n28\n",
+          "expected": "Nenhum primo",
+          "hidden": true
+        },
+        {
+          "input": "-5\n2\n",
+          "expected": "2",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "js-07",
+      "title": "Arrays e strings",
+      "theory": "# Coleções de valores\n\nUm **array** guarda vários valores em ordem, acessados por **índice** a partir de 0:\n\n```javascript\nconst cores = [\"azul\", \"verde\", \"roxo\"];\nconsole.log(cores[0]);      // azul\nconsole.log(cores.length);  // 3\nconsole.log(cores.at(-1));  // roxo\ncores.push(\"preto\");        // adiciona no fim\n```\n\nDiferente das strings (lição 2), arrays são **mutáveis**: `push`, `pop` e atribuições como `cores[1] = \"rosa\"` alteram o próprio array. Mesmo declarado com `const`, o conteúdo pode mudar; o que não muda é a variável apontar para outro array.\n\n## Percorrendo\n\n```javascript\nfor (const cor of cores) {\n  console.log(cor);\n}\n```\n\nO `for...of` passa por cada elemento. Se precisar do índice, use o `for` clássico da lição 5.\n\n## Métodos que devolvem algo novo\n\n- `map(f)`: novo array aplicando `f` a cada item.\n- `filter(f)`: novo array só com os itens em que `f` dá `true`.\n- `reverse()`: inverte **no lugar** (altera o array!). Para não alterar, copie antes: `[...arr].reverse()`.\n- `join(sep)`: junta tudo numa string.\n\n```javascript\nconst nums = [1, 2, 3, 4];\nconst pares = nums.filter((n) => n % 2 === 0);\nconsole.log(pares.join(\", \")); // 2, 4\n```\n\n## De string para array e de volta\n\n`split` quebra uma string num array; `join` faz o caminho inverso. Isso é a ponte entre ler uma linha e trabalhar com suas palavras:\n\n```javascript\nconst frase = \"  o rato   roeu \";\nconst palavras = frase.trim().split(/\\s+/);\n```\n\n`trim()` tira espaços das pontas e `split(/\\s+/)` divide por **um ou mais** espaços (uma expressão regular). Atenção: `\"\".split(/\\s+/)` devolve `[\"\"]`, um array com **uma** string vazia, não um array vazio! Por isso trate a linha vazia separadamente, ou filtre: `.filter((p) => p !== \"\")`.\n\n## Linha vazia ou ausente\n\nSe a entrada não tiver nenhuma linha, `prompt()` devolve `null`. O operador `??` dá um valor padrão nesse caso: `const linha = prompt() ?? \"\";`.\n\n## Erros comuns\n\n- Mostrar o array com `console.log(arr)`: use `join` para controlar o formato.\n- Acessar `arr[arr.length]`, que é `undefined` (o último índice é `length - 1`).\n- Esquecer que `reverse()` altera o array original.",
+      "task": "Leia uma linha com uma frase (as palavras podem estar separadas por vários espaços, e a linha pode estar vazia). Mostre:\n\n```\nPalavras: <quantidade de palavras>\nInvertida: <as palavras em ordem inversa, separadas por um espaço>\nMais longa: <a palavra mais longa; em caso de empate, a que aparece primeiro>\n```\n\nSe não houver nenhuma palavra, mostre apenas `Palavras: 0`.\n\nExemplo: para `o rato roeu a roupa`:\n\n```\nPalavras: 5\nInvertida: roupa a roeu rato o\nMais longa: roupa\n```",
+      "starter": "const linha = prompt() ?? \"\";\nconst palavras = linha.split(\" \");\n// escreva aqui\nconsole.log(`Palavras: ${palavras.length}`);",
+      "solution": "const linha = prompt() ?? \"\";\nconst palavras = linha.trim().split(/\\s+/).filter((p) => p !== \"\");\nconsole.log(`Palavras: ${palavras.length}`);\nif (palavras.length > 0) {\n  console.log(`Invertida: ${[...palavras].reverse().join(\" \")}`);\n  let maisLonga = palavras[0];\n  for (const p of palavras) {\n    if (p.length > maisLonga.length) maisLonga = p;\n  }\n  console.log(`Mais longa: ${maisLonga}`);\n}",
+      "hints": [
+        "Use trim() e split(/\\s+/) e depois filtre strings vazias.",
+        "Para inverter sem alterar o original: [...palavras].reverse().join(\" \").",
+        "Na busca da mais longa, troque só quando o tamanho for estritamente maior (>), para manter a primeira em caso de empate."
+      ],
+      "tests": [
+        {
+          "input": "o rato roeu a roupa\n",
+          "expected": "Palavras: 5\nInvertida: roupa a roeu rato o\nMais longa: roupa",
+          "hidden": false
+        },
+        {
+          "input": "   JavaScript    é   legal\n",
+          "expected": "Palavras: 3\nInvertida: legal é JavaScript\nMais longa: JavaScript",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Palavras: 0",
+          "hidden": true
+        },
+        {
+          "input": "sol lua mar\n",
+          "expected": "Palavras: 3\nInvertida: mar lua sol\nMais longa: sol",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "js-08",
+      "title": "Objetos e classes",
+      "theory": "# Agrupando dados e comportamento\n\nArrays guardam itens por posição. Muitas vezes, porém, os dados têm **nomes**: uma pessoa tem nome, idade, e-mail. Para isso existem os **objetos**, coleções de pares chave-valor:\n\n```javascript\nconst pessoa = { nome: \"Ana\", idade: 30 };\nconsole.log(pessoa.nome);       // Ana\npessoa.idade += 1;\nconsole.log(pessoa[\"idade\"]);   // 31\n```\n\nObjetos também servem como **dicionários**: `contagem[palavra] = (contagem[palavra] ?? 0) + 1` conta ocorrências de cada palavra. (Para chaves arbitrárias, `Map` é ainda mais seguro.)\n\n## Classes: moldes de objetos\n\nQuando você precisa de muitos objetos com a mesma forma **e o mesmo comportamento**, use uma **classe**. Ela define o **construtor** (que prepara cada objeto novo) e os **métodos** (funções que operam sobre os dados do objeto):\n\n```javascript\nclass Retangulo {\n  constructor(largura, altura) {\n    this.largura = largura;\n    this.altura = altura;\n  }\n  area() {\n    return this.largura * this.altura;\n  }\n}\n\nconst r = new Retangulo(3, 4);\nconsole.log(r.area()); // 12\n```\n\n`this` é o objeto em que o método foi chamado. `new Retangulo(3, 4)` cria uma **instância**, roda o `constructor` e devolve o objeto pronto.\n\n## Encapsulamento\n\nA grande ideia das classes é **proteger as regras** dos dados. Numa conta bancária, ninguém deveria poder fazer `conta.saldo = -1000`. Em vez disso, oferecemos métodos que validam cada operação. Campos com `#` são **privados**: só o código da classe acessa.\n\n```javascript\nclass Contador {\n  #valor = 0;\n  incrementar() { this.#valor++; }\n  get valor() { return this.#valor; }\n}\n```\n\nO `get` cria um **getter**: `c.valor` parece uma propriedade, mas é um método que só lê.\n\n## Métodos que informam sucesso\n\nUm método pode devolver `true`/`false` para dizer se conseguiu fazer a operação. Quem chama decide o que mostrar. Assim a classe cuida das **regras** e o programa principal cuida da **entrada e saída**, uma separação que deixa o código mais fácil de testar e reaproveitar (lembra das funções da lição 6?).\n\n## Lendo comandos\n\nÉ comum ler linhas como `D 100` e separá-las com `split(\" \")` (lição 7):\n\n```javascript\nconst [tipo, valorTexto] = prompt().split(\" \");\nconst valor = Number(valorTexto);\n```\n\nEssa sintaxe com colchetes é a **desestruturação**: pega os itens do array em variáveis.\n\n## Erros comuns\n\n- Esquecer o `new`: `Retangulo(3, 4)` dá erro.\n- Esquecer o `this.` dentro dos métodos e acessar uma variável que não existe.\n- Mostrar um objeto direto com `console.log(obj)`: monte o texto você mesmo.",
+      "task": "Crie uma classe `ContaBancaria` com:\n\n- `constructor(titular)`: saldo inicial 0;\n- `depositar(valor)`: soma ao saldo;\n- `sacar(valor)`: se houver saldo suficiente, subtrai e devolve `true`; senão, não altera nada e devolve `false`;\n- um getter ou método para consultar o saldo.\n\nEntrada: o nome do titular; depois um inteiro `n`; depois `n` linhas, cada uma `D <valor>` (depósito) ou `S <valor>` (saque), com valores possivelmente decimais.\n\nPara cada operação mostre uma linha (valores com 2 casas decimais):\n\n- `Depósito de <valor>`\n- `Saque de <valor>` se deu certo, ou `Saldo insuficiente para sacar <valor>`\n\nNo fim: `Saldo de <titular>: <saldo>`.\n\nExemplo: para `Ana`, `3`, `D 100`, `S 30.5`, `S 200`:\n\n```\nDepósito de 100.00\nSaque de 30.50\nSaldo insuficiente para sacar 200.00\nSaldo de Ana: 69.50\n```",
+      "starter": "class ContaBancaria {\n  constructor(titular) {\n    this.titular = titular;\n    this.saldo = 0;\n  }\n  // escreva aqui os métodos depositar e sacar\n}\n\nconst conta = new ContaBancaria(prompt());\nconst n = Number(prompt());\nfor (let i = 0; i < n; i++) {\n  prompt();\n}\nconsole.log(`Saldo de ${conta.titular}: ${conta.saldo.toFixed(2)}`);",
+      "solution": "class ContaBancaria {\n  #saldo = 0;\n  constructor(titular) {\n    this.titular = titular;\n  }\n  depositar(valor) {\n    this.#saldo += valor;\n  }\n  sacar(valor) {\n    if (valor > this.#saldo) return false;\n    this.#saldo -= valor;\n    return true;\n  }\n  get saldo() {\n    return this.#saldo;\n  }\n}\n\nconst conta = new ContaBancaria(prompt());\nconst n = Number(prompt());\nfor (let i = 0; i < n; i++) {\n  const [tipo, texto] = prompt().split(\" \");\n  const valor = Number(texto);\n  if (tipo === \"D\") {\n    conta.depositar(valor);\n    console.log(`Depósito de ${valor.toFixed(2)}`);\n  } else if (conta.sacar(valor)) {\n    console.log(`Saque de ${valor.toFixed(2)}`);\n  } else {\n    console.log(`Saldo insuficiente para sacar ${valor.toFixed(2)}`);\n  }\n}\nconsole.log(`Saldo de ${conta.titular}: ${conta.saldo.toFixed(2)}`);",
+      "hints": [
+        "Separe cada linha com split(\" \") e converta o valor com Number.",
+        "sacar deve comparar o valor com o saldo antes de subtrair e devolver true ou false.",
+        "Use toFixed(2) em todos os valores mostrados."
+      ],
+      "tests": [
+        {
+          "input": "Ana\n3\nD 100\nS 30.5\nS 200\n",
+          "expected": "Depósito de 100.00\nSaque de 30.50\nSaldo insuficiente para sacar 200.00\nSaldo de Ana: 69.50",
+          "hidden": false
+        },
+        {
+          "input": "Bruno\n0\n",
+          "expected": "Saldo de Bruno: 0.00",
+          "hidden": false
+        },
+        {
+          "input": "Carla Souza\n4\nS 10\nD 50\nS 50\nD 0.25\n",
+          "expected": "Saldo insuficiente para sacar 10.00\nDepósito de 50.00\nSaque de 50.00\nDepósito de 0.25\nSaldo de Carla Souza: 0.25",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "js-09",
+      "title": "Recursão",
+      "theory": "# Funções que chamam a si mesmas\n\nUma função **recursiva** resolve um problema chamando a si mesma para uma versão **menor** do mesmo problema. Toda recursão precisa de duas partes:\n\n- **Caso base**: a situação simples, respondida diretamente, que faz a recursão parar.\n- **Passo recursivo**: reduz o problema e confia que a chamada menor dá a resposta certa.\n\nO exemplo clássico é o fatorial: `n! = n * (n-1)!`, com `0! = 1`.\n\n```javascript\nfunction fatorial(n) {\n  if (n === 0) return 1;          // caso base\n  return n * fatorial(n - 1);     // passo recursivo\n}\n```\n\n## O que acontece por baixo\n\nCada chamada fica guardada na **pilha de chamadas** (call stack) esperando a chamada de dentro terminar. `fatorial(3)` chama `fatorial(2)`, que chama `fatorial(1)`, que chama `fatorial(0)`. Este devolve 1, e as respostas voltam multiplicando: 1, 1, 2, 6.\n\nSe faltar o caso base (ou se o problema não diminuir), as chamadas nunca param e o programa estoura a pilha (`RangeError: Maximum call stack size exceeded`). A pilha tem um limite de alguns milhares de chamadas, por isso recursão profunda demais pode falhar mesmo estando correta; nesses casos um laço é mais seguro.\n\n## Pensar recursivamente\n\nA pergunta-chave é: \"se eu já soubesse a resposta para um problema um pouco menor, como chegaria à resposta deste?\" Por exemplo, a soma dos dígitos de 1234 é o último dígito (`1234 % 10 = 4`) mais a soma dos dígitos de `Math.trunc(1234 / 10) = 123`:\n\n```javascript\nfunction somaDigitos(n) {\n  if (n < 10) return n;\n  return (n % 10) + somaDigitos(Math.trunc(n / 10));\n}\n```\n\nCada chamada remove um dígito, então o número de chamadas é o número de dígitos: a recursão faz cerca de `log10(n)` passos.\n\n## Limite de precisão\n\nO tipo `number` representa inteiros com exatidão só até `Number.MAX_SAFE_INTEGER` (cerca de 9 × 10^15). `18!` ainda cabe; `20!` já não. Para inteiros maiores, JavaScript tem o `BigInt` (`20n`), que tem tamanho ilimitado. Neste exercício `n` vai até 18, então `number` basta.\n\n## Recursão x laço\n\nTudo que se faz com recursão pode ser feito com laços, e vice-versa. A recursão brilha em problemas naturalmente recursivos (árvores, divisão e conquista, como o merge sort da próxima lição); o laço costuma ser mais econômico em memória.\n\n## Erros comuns\n\n- Caso base ausente ou errado (por exemplo, testar `n === 1` e chamar com 0).\n- Esquecer o `return` na chamada recursiva.\n- Usar `/` sem `Math.trunc` e gerar decimais que nunca chegam ao caso base.",
+      "task": "Escreva duas funções **recursivas** (sem laços):\n\n- `fatorial(n)`: devolve `n!` (com `0! = 1`);\n- `somaDigitos(n)`: devolve a soma dos dígitos de um inteiro `n ≥ 0`.\n\nLeia um inteiro `n` (0 ≤ n ≤ 18) e mostre:\n\n```\nFatorial: <n!>\nSoma dos dígitos: <soma dos dígitos de n!>\n```\n\nExemplo: para `5`:\n\n```\nFatorial: 120\nSoma dos dígitos: 3\n```",
+      "starter": "function fatorial(n) {\n  // escreva aqui (recursivo)\n  return 1;\n}\n\nfunction somaDigitos(n) {\n  // escreva aqui (recursivo)\n  return 0;\n}\n\nconst n = Number(prompt());\nconst f = fatorial(n);\nconsole.log(`Fatorial: ${f}`);\nconsole.log(`Soma dos dígitos: ${somaDigitos(f)}`);",
+      "solution": "function fatorial(n) {\n  if (n === 0) return 1;\n  return n * fatorial(n - 1);\n}\n\nfunction somaDigitos(n) {\n  if (n < 10) return n;\n  return (n % 10) + somaDigitos(Math.trunc(n / 10));\n}\n\nconst n = Number(prompt());\nconst f = fatorial(n);\nconsole.log(`Fatorial: ${f}`);\nconsole.log(`Soma dos dígitos: ${somaDigitos(f)}`);",
+      "hints": [
+        "fatorial: caso base n === 0 devolve 1; senão n * fatorial(n - 1).",
+        "somaDigitos: se n < 10 devolve n; senão (n % 10) + somaDigitos(Math.trunc(n / 10))."
+      ],
+      "tests": [
+        {
+          "input": "5\n",
+          "expected": "Fatorial: 120\nSoma dos dígitos: 3",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Fatorial: 1\nSoma dos dígitos: 1",
+          "hidden": false
+        },
+        {
+          "input": "10\n",
+          "expected": "Fatorial: 3628800\nSoma dos dígitos: 27",
+          "hidden": false
+        },
+        {
+          "input": "18\n",
+          "expected": "Fatorial: 6402373705728000\nSoma dos dígitos: 54",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "js-10",
+      "title": "Ordenação e busca binária",
+      "theory": "# Algoritmos e sua eficiência\n\nEsta lição junta tudo que você aprendeu (laços, funções, arrays, recursão) para estudar dois algoritmos fundamentais e, principalmente, **como medir** quanto trabalho eles fazem.\n\n## Notação Big-O\n\nNão medimos algoritmos em segundos (isso depende da máquina), mas em **quantas operações** fazem em função do tamanho da entrada `n`, olhando só o termo que domina quando `n` cresce. Escrevemos `O(f(n))` para dizer \"cresce no máximo como f(n)\", ignorando constantes:\n\n- `O(1)`: constante (acessar `arr[i]`).\n- `O(log n)`: dividir o problema ao meio a cada passo.\n- `O(n)`: percorrer tudo uma vez (achar o maior, lição 5).\n- `O(n log n)`: os bons algoritmos de ordenação.\n- `O(n²)`: dois laços aninhados sobre os dados.\n\nPara n = 1.000.000: log n ≈ 20, n log n ≈ 2 × 10^7, n² = 10^12. A diferença entre um programa que termina num instante e um que leva horas.\n\n## Ordenação por inserção: O(n²)\n\nA ideia é a de ordenar cartas na mão: pegue cada elemento e deslize-o para a esquerda até o lugar certo.\n\n```javascript\nfunction insercao(v) {\n  for (let i = 1; i < v.length; i++) {\n    const x = v[i];\n    let j = i - 1;\n    while (j >= 0 && v[j] > x) {\n      v[j + 1] = v[j];\n      j--;\n    }\n    v[j + 1] = x;\n  }\n}\n```\n\nNo pior caso (array invertido), o elemento `i` anda `i` posições: 1 + 2 + ... + (n-1) = n(n-1)/2, ou seja, **O(n²)**. No melhor caso (já ordenado), O(n). É ótima para arrays pequenos ou quase ordenados.\n\n## Merge sort: O(n log n)\n\n**Divisão e conquista** (com recursão, lição 9): divida o array ao meio, ordene cada metade recursivamente e **intercale** as duas metades ordenadas, sempre pegando o menor dos dois primeiros.\n\n```javascript\nfunction mergeSort(v) {\n  if (v.length <= 1) return v;\n  const meio = Math.floor(v.length / 2);\n  const a = mergeSort(v.slice(0, meio));\n  const b = mergeSort(v.slice(meio));\n  const r = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) r.push(a[i] <= b[j] ? a[i++] : b[j++]);\n  while (i < a.length) r.push(a[i++]);\n  while (j < b.length) r.push(b[j++]);\n  return r;\n}\n```\n\nA recursão tem log₂ n níveis, e em cada nível a intercalação percorre os n elementos: total **O(n log n)**, em qualquer caso. O custo é memória extra O(n).\n\nNa prática você usaria `arr.sort((x, y) => x - y)`. Cuidado: `sort()` **sem** função compara como **texto**, e `[10, 9, 1].sort()` dá `1, 10, 9`!\n\n## Busca binária: O(log n)\n\nNum array **ordenado**, procure olhando o meio: se o valor do meio é menor que o alvo, o alvo só pode estar à direita; senão, à esquerda (ou no meio). Cada passo descarta metade, então bastam cerca de log₂ n passos: 20 para um milhão de elementos, contra até um milhão na busca linear O(n).\n\nPara achar a **primeira** ocorrência, mesmo com repetidos, mantenha um intervalo `[ini, fim)` e procure a primeira posição com valor `>= alvo`:\n\n```javascript\nlet ini = 0, fim = v.length;\nwhile (ini < fim) {\n  const meio = Math.floor((ini + fim) / 2);\n  if (v[meio] < alvo) ini = meio + 1;\n  else fim = meio;\n}\n// encontrado se ini < v.length && v[ini] === alvo\n```\n\n## Vale a pena ordenar?\n\nOrdenar custa O(n log n). Para uma só busca, a busca linear O(n) é mais barata. Mas para k buscas: k·n contra n log n + k log n. Com muitas consultas, ordenar uma vez e usar busca binária vence de longe. Esse tipo de raciocínio (o custo total, não só o de um passo) é o centro da análise de algoritmos.\n\n## Erros comuns\n\n- Aplicar busca binária num array não ordenado.\n- Errar os limites e cair num laço infinito (por exemplo, `fim = meio - 1` com intervalo semiaberto).\n- Usar `sort()` sem comparador em números.",
+      "task": "Leia um inteiro `n` (n ≥ 1), depois `n` inteiros (um por linha) e, por fim, um inteiro `alvo`.\n\n1. Ordene os números em ordem crescente **implementando você mesmo** um algoritmo de ordenação (inserção ou merge sort; não use `sort`).\n2. Procure `alvo` no array ordenado com **busca binária**.\n\nMostre:\n\n```\nOrdenado: <números ordenados separados por espaço>\nPosição: <índice (a partir de 0) da PRIMEIRA ocorrência do alvo no array ordenado>\n```\n\nou, na segunda linha, `Não encontrado` se o alvo não estiver no array.\n\nExemplo: para `5`, `8`, `3`, `5`, `1`, `3`, alvo `5`:\n\n```\nOrdenado: 1 3 3 5 8\nPosição: 3\n```",
+      "starter": "const n = Number(prompt());\nconst v = [];\nfor (let i = 0; i < n; i++) v.push(Number(prompt()));\nconst alvo = Number(prompt());\n// escreva aqui a ordenação e a busca binária\nconsole.log(`Ordenado: ${v.join(\" \")}`);",
+      "solution": "function mergeSort(v) {\n  if (v.length <= 1) return v;\n  const meio = Math.floor(v.length / 2);\n  const a = mergeSort(v.slice(0, meio));\n  const b = mergeSort(v.slice(meio));\n  const r = [];\n  let i = 0;\n  let j = 0;\n  while (i < a.length && j < b.length) r.push(a[i] <= b[j] ? a[i++] : b[j++]);\n  while (i < a.length) r.push(a[i++]);\n  while (j < b.length) r.push(b[j++]);\n  return r;\n}\n\nfunction buscaBinaria(v, alvo) {\n  let ini = 0;\n  let fim = v.length;\n  while (ini < fim) {\n    const meio = Math.floor((ini + fim) / 2);\n    if (v[meio] < alvo) ini = meio + 1;\n    else fim = meio;\n  }\n  return ini < v.length && v[ini] === alvo ? ini : -1;\n}\n\nconst n = Number(prompt());\nconst numeros = [];\nfor (let i = 0; i < n; i++) numeros.push(Number(prompt()));\nconst alvo = Number(prompt());\nconst ordenado = mergeSort(numeros);\nconsole.log(`Ordenado: ${ordenado.join(\" \")}`);\nconst pos = buscaBinaria(ordenado, alvo);\nconsole.log(pos >= 0 ? `Posição: ${pos}` : \"Não encontrado\");",
+      "hints": [
+        "Comece pela ordenação por inserção: é mais curta. Teste-a com números negativos.",
+        "Na busca binária, use o intervalo [ini, fim) e mova ini para meio + 1 quando v[meio] < alvo; senão fim = meio.",
+        "No fim, o alvo foi encontrado se ini < v.length e v[ini] === alvo."
+      ],
+      "tests": [
+        {
+          "input": "5\n8\n3\n5\n1\n3\n5\n",
+          "expected": "Ordenado: 1 3 3 5 8\nPosição: 3",
+          "hidden": false
+        },
+        {
+          "input": "4\n10\n-2\n7\n0\n4\n",
+          "expected": "Ordenado: -2 0 7 10\nNão encontrado",
+          "hidden": false
+        },
+        {
+          "input": "1\n42\n42\n",
+          "expected": "Ordenado: 42\nPosição: 0",
+          "hidden": true
+        },
+        {
+          "input": "6\n2\n2\n2\n1\n9\n2\n2\n",
+          "expected": "Ordenado: 1 2 2 2 2 9\nPosição: 1",
+          "hidden": true
+        },
+        {
+          "input": "3\n10\n9\n1\n100\n",
+          "expected": "Ordenado: 1 9 10\nNão encontrado",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    }
+  ]
+}

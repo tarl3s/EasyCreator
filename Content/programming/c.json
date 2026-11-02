@@ -1,0 +1,389 @@
+{
+  "id": "c",
+  "title": "C",
+  "area": "programming",
+  "language": "c",
+  "description": "Aprenda C do zero: saída na tela, variáveis e tipos, entrada, decisões, laços, funções e ponteiros, vetores e strings, structs, recursão e, no fim, ordenação e busca binária com análise de complexidade. C é a linguagem que mostra como o computador realmente funciona.",
+  "lessons": [
+    {
+      "id": "c-01",
+      "title": "Olá, mundo! Seu primeiro programa em C",
+      "theory": "# Seu primeiro programa em C\n\nC é uma das linguagens mais importantes da história. Sistemas operacionais (Linux, Windows), bancos de dados e até os interpretadores de outras linguagens (como o do Python) foram escritos em C. Aprender C é aprender **como o computador realmente funciona**: memória, tipos e instruções.\n\n## A estrutura mínima\n\nTodo programa em C tem esta cara:\n\n```c\n#include <stdio.h>\n\nint main(void) {\n    printf(\"Ola, mundo!\\n\");\n    return 0;\n}\n```\n\nVamos linha por linha:\n\n- `#include <stdio.h>` traz a biblioteca de **entrada e saída padrão** (standard input/output). É ela que define o `printf`.\n- `int main(void)` é a **função principal**. Todo programa começa a rodar por ela. O `int` diz que ela devolve um número inteiro ao sistema.\n- As chaves `{` e `}` marcam o começo e o fim do bloco de código da função.\n- `printf(\"...\")` escreve um texto na tela.\n- `return 0;` avisa ao sistema que o programa terminou **sem erros**.\n\n## O ponto e vírgula\n\nEm C, toda instrução termina com `;`. Esquecer o ponto e vírgula é o erro mais comum de quem está começando, e o compilador vai reclamar na linha seguinte, o que confunde. Se aparecer um erro estranho, olhe a linha **anterior**.\n\n## Quebra de linha: \\n\n\nO `printf` **não** pula linha sozinho. Para isso usamos a sequência especial `\\n` (new line):\n\n```c\nprintf(\"Linha 1\\n\");\nprintf(\"Linha 2\\n\");\n```\n\nSem o `\\n`, os dois textos sairiam colados: `Linha 1Linha 2`.\n\n## O símbolo de porcentagem\n\nDentro do `printf`, o caractere `%` é especial (você verá na próxima lição que ele serve para mostrar valores de variáveis). Para escrever um `%` de verdade, escreva **dois**: `%%`.\n\n```c\nprintf(\"Desconto de 50%%\\n\");\n```\n\nA saída é `Desconto de 50%`.\n\n## Acentos\n\nNeste curso, as mensagens dos programas em C são escritas **sem acentos** (por exemplo, `Ola` em vez de `Olá`). Em C, acentos dependem da codificação do terminal e podem aparecer como símbolos estranhos; evitar acentos deixa a saída sempre igual.\n\n## Compilar e executar\n\nC é uma linguagem **compilada**: o código-fonte é traduzido para instruções de máquina antes de rodar. Aqui no EasyCreator isso é feito para você ao clicar em executar. A saída do seu programa é comparada com a saída esperada, caractere por caractere (espaços no fim das linhas são ignorados), então capriche na escrita exata.",
+      "task": "Escreva um programa que mostre exatamente estas três linhas:\n\n```\nOla, mundo!\nEstou aprendendo C.\nProgresso: 100%\n```\n\nO programa não lê nenhuma entrada. Lembre-se de usar `\\n` no fim de cada linha e `%%` para mostrar o símbolo de porcentagem.",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    printf(\"Ola, mundo!\\n\");\n    /* escreva aqui as outras duas linhas */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    printf(\"Ola, mundo!\\n\");\n    printf(\"Estou aprendendo C.\\n\");\n    printf(\"Progresso: 100%%\\n\");\n    return 0;\n}",
+      "hints": [
+        "Use um `printf` para cada linha e termine cada texto com `\\n`.",
+        "Para mostrar `%` na tela, escreva `%%` dentro do texto do `printf`.",
+        "Confira o ponto final em \"Estou aprendendo C.\" e a vírgula em \"Ola, mundo!\"."
+      ],
+      "tests": [
+        {
+          "input": "",
+          "expected": "Ola, mundo!\nEstou aprendendo C.\nProgresso: 100%",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Ola, mundo!\nEstou aprendendo C.\nProgresso: 100%",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Ola, mundo!\nEstou aprendendo C.\nProgresso: 100%",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "c-02",
+      "title": "Variáveis e tipos",
+      "theory": "# Variáveis e tipos\n\nNa lição anterior você escreveu textos fixos. Agora vamos guardar **valores** na memória. Uma variável é um espaço na memória com um **nome** e um **tipo**.\n\n## Por que C exige um tipo?\n\nEm C, você precisa dizer o tipo de cada variável antes de usá-la. O tipo diz ao compilador **quantos bytes** reservar e **como interpretar** esses bytes. Isso torna C rápido e previsível.\n\n```c\nint idade = 20;          /* número inteiro */\nlong populacao = 210000; /* inteiro que pode ser maior */\ndouble altura = 1.75;    /* número com casas decimais */\nchar inicial = 'A';      /* um único caractere */\n```\n\nAtenção: um `char` usa **aspas simples** (`'A'`); textos usam **aspas duplas** (`\"Ana\"`).\n\n## Mostrando variáveis com printf\n\nO `printf` usa **especificadores de formato**, que começam com `%`, para dizer onde e como cada valor aparece:\n\n- `%d` para `int`\n- `%ld` para `long`\n- `%f` para `double` (mostra 6 casas: `1.750000`)\n- `%.2f` para `double` com exatamente 2 casas: `1.75`\n- `%c` para `char`\n- `%s` para textos\n\n```c\nint idade = 20;\ndouble altura = 1.75;\nprintf(\"Idade: %d, altura: %.2f\\n\", idade, altura);\n```\n\nSaída: `Idade: 20, altura: 1.75`. Os valores entram na ordem em que aparecem depois do texto.\n\n## Divisão inteira: a pegadinha clássica\n\nQuando você divide dois `int`, o resultado também é `int`: a parte decimal é **descartada**.\n\n```c\nint a = 7, b = 2;\nprintf(\"%d\\n\", a / b);   /* 3, e não 3.5 */\nprintf(\"%d\\n\", a % b);   /* 1: o resto da divisão */\n```\n\nO operador `%` (fora do texto do printf) calcula o **resto** da divisão inteira. Para obter a divisão com decimais, pelo menos um dos lados precisa ser `double`:\n\n```c\ndouble r = 1.0 * a / b;      /* 3.5 */\ndouble s = (double) a / b;   /* também 3.5: conversão explícita (cast) */\n```\n\nMultiplicar por `1.0` transforma o cálculo em decimal antes da divisão. Cuidado: `1.0 * (a / b)` daria `3.0`, porque a divisão inteira já aconteceu dentro dos parênteses.\n\n## Erros comuns\n\n- Usar `%d` para um `double` (ou `%f` para um `int`): o compilador nem sempre avisa e o valor sai errado.\n- Esquecer de inicializar: `int x;` sem valor contém \"lixo\" de memória.\n- Esperar que `7 / 2` dê `3.5`.\n\n## Nomes de variáveis\n\nUse letras, números e `_`, sem começar com número e sem acentos: `nota_final`, `totalAlunos`. C diferencia maiúsculas de minúsculas: `Total` e `total` são variáveis diferentes.",
+      "task": "Crie as variáveis `int a = 17`, `int b = 5`, `char letra = 'C'` e `double preco = 19.9` e mostre exatamente:\n\n```\na = 17, b = 5\nSoma: 22\nDivisao inteira: 3\nResto: 2\nDivisao real: 3.40\nLetra: C\nPreco: 19.90\n```\n\nOs números devem ser calculados a partir das variáveis (não escreva os resultados à mão). A divisão real e o preço usam 2 casas decimais. O programa não lê entrada.",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int a = 17;\n    int b = 5;\n    char letra = 'C';\n    double preco = 19.9;\n    printf(\"a = %d, b = %d\\n\", a, b);\n    /* escreva aqui as outras linhas */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int a = 17;\n    int b = 5;\n    char letra = 'C';\n    double preco = 19.9;\n    printf(\"a = %d, b = %d\\n\", a, b);\n    printf(\"Soma: %d\\n\", a + b);\n    printf(\"Divisao inteira: %d\\n\", a / b);\n    printf(\"Resto: %d\\n\", a % b);\n    printf(\"Divisao real: %.2f\\n\", 1.0 * a / b);\n    printf(\"Letra: %c\\n\", letra);\n    printf(\"Preco: %.2f\\n\", preco);\n    return 0;\n}",
+      "hints": [
+        "`a / b` com dois `int` dá a divisão inteira; `a % b` dá o resto.",
+        "Para a divisão real use `1.0 * a / b` e mostre com `%.2f`.",
+        "Use `%c` para o `char` e `%.2f` para o `double`."
+      ],
+      "tests": [
+        {
+          "input": "",
+          "expected": "a = 17, b = 5\nSoma: 22\nDivisao inteira: 3\nResto: 2\nDivisao real: 3.40\nLetra: C\nPreco: 19.90",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "a = 17, b = 5\nSoma: 22\nDivisao inteira: 3\nResto: 2\nDivisao real: 3.40\nLetra: C\nPreco: 19.90",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "a = 17, b = 5\nSoma: 22\nDivisao inteira: 3\nResto: 2\nDivisao real: 3.40\nLetra: C\nPreco: 19.90",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "c-03",
+      "title": "Entrada de dados e aritmética",
+      "theory": "# Lendo dados com scanf\n\nAté agora os valores estavam fixos no código. Programas úteis **leem dados** de quem usa. Em C, a leitura é feita com `scanf`, o \"irmão\" do `printf`.\n\n```c\nint idade;\nscanf(\"%d\", &idade);\nprintf(\"Voce tem %d anos\\n\", idade);\n```\n\n## Por que o & ?\n\nO `scanf` precisa **guardar** o valor lido dentro da sua variável. Para isso, ele precisa saber **onde ela está na memória**. O operador `&` dá o **endereço** da variável. Sem o `&`, o `scanf` receberia apenas uma cópia do valor (lixo), e o programa pode até travar. Você vai entender endereços a fundo na lição de funções e ponteiros; por enquanto, lembre: **número lido com scanf leva &**.\n\nFormatos de leitura:\n\n- `%d` lê um `int`\n- `%ld` lê um `long`\n- `%lf` lê um `double` (atenção: no `scanf` é `%lf`, no `printf` é `%f`)\n- `%c` lê um caractere\n- `%s` lê uma palavra (sem espaços)\n\nO `scanf` com `%d` ignora espaços e quebras de linha antes do número, então tanto faz os valores virem na mesma linha ou em linhas separadas.\n\n## Como os testes funcionam\n\nAqui no EasyCreator, quem \"digita\" os dados é o **corretor automático**: ele entrega a entrada do teste ao seu programa e compara tudo o que foi escrito na tela com a saída esperada. Por isso, **não escreva mensagens como \"Digite um numero:\"** antes de ler. Elas apareceriam na saída e o teste falharia.\n\n## Operadores aritméticos\n\n- `+` soma, `-` subtração, `*` multiplicação\n- `/` divisão (inteira se os dois lados forem `int`)\n- `%` resto da divisão inteira\n\nPrecedência: `*`, `/` e `%` são feitos antes de `+` e `-`. Use parênteses quando quiser outra ordem: `(a + b) / 2`.\n\n## Números negativos\n\nEm C, a divisão inteira **trunca em direção ao zero**: `-7 / 2` dá `-3` (e não `-4`), e o resto tem o sinal do primeiro número: `-7 % 2` dá `-1`. Sempre vale a regra `a == (a / b) * b + a % b`.\n\n## Média com decimais\n\nLembrando a lição anterior: `(a + b) / 2` com `int` perde os decimais. Divida por `2.0`:\n\n```c\ndouble media = (a + b) / 2.0;\nprintf(\"%.2f\\n\", media);\n```\n\n## Erros comuns\n\n- Esquecer o `&` no `scanf`.\n- Usar `%f` em vez de `%lf` para ler um `double`.\n- Dividir por zero: com `int`, o programa é encerrado com erro. Nesta tarefa o segundo número nunca é zero.",
+      "task": "Leia dois números inteiros `a` e `b` (um por linha; `b` nunca é zero) e mostre:\n\n```\nSoma: <a+b>\nDiferenca: <a-b>\nProduto: <a*b>\nQuociente: <a/b inteiro>\nResto: <a%b>\nMedia: <media com 2 casas>\n```\n\nExemplo: para a entrada `10` e `3`, a saída é:\n\n```\nSoma: 13\nDiferenca: 7\nProduto: 30\nQuociente: 3\nResto: 1\nMedia: 6.50\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int a, b;\n    scanf(\"%d\", &a);\n    scanf(\"%d\", &b);\n    printf(\"Soma: %d\\n\", a + b);\n    /* escreva aqui as outras linhas */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int a, b;\n    scanf(\"%d\", &a);\n    scanf(\"%d\", &b);\n    printf(\"Soma: %d\\n\", a + b);\n    printf(\"Diferenca: %d\\n\", a - b);\n    printf(\"Produto: %d\\n\", a * b);\n    printf(\"Quociente: %d\\n\", a / b);\n    printf(\"Resto: %d\\n\", a % b);\n    printf(\"Media: %.2f\\n\", (a + b) / 2.0);\n    return 0;\n}",
+      "hints": [
+        "Leia cada número com `scanf(\"%d\", &variavel);` e não mostre nenhuma mensagem antes.",
+        "Para a média, divida por `2.0` (e não por `2`) e mostre com `%.2f`.",
+        "Com negativos, C trunca em direção ao zero: `-7 / 2` é `-3` e `-7 % 2` é `-1`."
+      ],
+      "tests": [
+        {
+          "input": "10\n3\n",
+          "expected": "Soma: 13\nDiferenca: 7\nProduto: 30\nQuociente: 3\nResto: 1\nMedia: 6.50",
+          "hidden": false
+        },
+        {
+          "input": "7\n7\n",
+          "expected": "Soma: 14\nDiferenca: 0\nProduto: 49\nQuociente: 1\nResto: 0\nMedia: 7.00",
+          "hidden": false
+        },
+        {
+          "input": "-7\n2\n",
+          "expected": "Soma: -5\nDiferenca: -9\nProduto: -14\nQuociente: -3\nResto: -1\nMedia: -2.50",
+          "hidden": false
+        },
+        {
+          "input": "0\n5\n",
+          "expected": "Soma: 5\nDiferenca: -5\nProduto: 0\nQuociente: 0\nResto: 0\nMedia: 2.50",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "c-04",
+      "title": "Decisões com if e else",
+      "theory": "# Tomando decisões\n\nAté aqui, todo programa executava todas as linhas, sempre na mesma ordem. Com `if`, o programa **escolhe** o que fazer de acordo com os dados que leu (lição anterior).\n\n```c\nif (nota >= 50) {\n    printf(\"Aprovado\\n\");\n} else {\n    printf(\"Reprovado\\n\");\n}\n```\n\n## Verdadeiro e falso em C\n\nC não tinha, originalmente, um tipo booleano. A regra é simples: **zero é falso, qualquer outro valor é verdadeiro**. As comparações devolvem `1` (verdadeiro) ou `0` (falso):\n\n- `==` igual, `!=` diferente\n- `<`, `<=`, `>`, `>=`\n\n## O erro mais perigoso: = versus ==\n\n`=` **atribui**, `==` **compara**. Veja:\n\n```c\nif (x = 5) {   /* ERRADO: guarda 5 em x, e 5 é \"verdadeiro\" */\n    ...\n}\n```\n\nEsse `if` é sempre verdadeiro e ainda estraga o valor de `x`. Muitos compiladores só dão um aviso, então preste atenção.\n\n## Várias alternativas: else if\n\n```c\nif (nota >= 90) {\n    printf(\"A\\n\");\n} else if (nota >= 70) {\n    printf(\"B\\n\");\n} else if (nota >= 50) {\n    printf(\"C\\n\");\n} else {\n    printf(\"D\\n\");\n}\n```\n\nAs condições são testadas **de cima para baixo** e só o primeiro bloco verdadeiro roda. Por isso a ordem importa: se o teste `nota >= 50` viesse primeiro, uma nota 95 receberia \"C\".\n\n## Operadores lógicos\n\n- `&&` (E): verdadeiro só se os dois lados forem verdadeiros\n- `||` (OU): verdadeiro se pelo menos um lado for verdadeiro\n- `!` (NÃO): inverte\n\n```c\nif (idade >= 18 && idade < 65) { ... }\nif (dia == 6 || dia == 7) { ... }\n```\n\nC usa **avaliação de curto-circuito**: em `a && b`, se `a` for falso, `b` nem é avaliado. Isso permite escrever `if (n != 0 && 10 / n > 2)` sem risco de dividir por zero.\n\n## Divisibilidade com %\n\nO resto da divisão é a forma clássica de testar se um número divide outro: `n % 2 == 0` significa \"n é par\"; `ano % 4 == 0` significa \"ano é múltiplo de 4\".\n\n## Ano bissexto\n\nO calendário gregoriano define: um ano é **bissexto** se for divisível por 4, **exceto** os divisíveis por 100, que só são bissextos se também forem divisíveis por 400. Assim, 2024 é bissexto, 1900 não é, e 2000 é. Traduzir uma regra dessas em `&&` e `||` é exatamente o tipo de raciocínio que a programação exige: leia com calma e use parênteses para deixar a intenção clara.\n\n## Dica sobre chaves\n\nSe um `if` tem uma única instrução, as chaves são opcionais. Mesmo assim, use-as: acrescentar uma segunda linha depois e esquecer as chaves é um bug clássico.",
+      "task": "Leia um ano (número inteiro positivo) e diga se ele é bissexto.\n\n- Se for bissexto, mostre: `<ano> e bissexto`\n- Caso contrário, mostre: `<ano> nao e bissexto`\n\nRegra: divisível por 4 e não divisível por 100, **ou** divisível por 400.\n\nExemplo: entrada `2024`, saída `2024 e bissexto`.",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int ano;\n    scanf(\"%d\", &ano);\n    /* escreva aqui a decisao correta */\n    printf(\"%d nao e bissexto\\n\", ano);\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int ano;\n    scanf(\"%d\", &ano);\n    if ((ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0) {\n        printf(\"%d e bissexto\\n\", ano);\n    } else {\n        printf(\"%d nao e bissexto\\n\", ano);\n    }\n    return 0;\n}",
+      "hints": [
+        "\"Divisível por 4\" se escreve `ano % 4 == 0`.",
+        "Combine as partes: `(ano % 4 == 0 && ano % 100 != 0) || ano % 400 == 0`.",
+        "Teste mentalmente 1900 (não é) e 2000 (é) antes de enviar."
+      ],
+      "tests": [
+        {
+          "input": "2024\n",
+          "expected": "2024 e bissexto",
+          "hidden": false
+        },
+        {
+          "input": "2023\n",
+          "expected": "2023 nao e bissexto",
+          "hidden": false
+        },
+        {
+          "input": "1900\n",
+          "expected": "1900 nao e bissexto",
+          "hidden": true
+        },
+        {
+          "input": "2000\n",
+          "expected": "2000 e bissexto",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "c-05",
+      "title": "Repetição com for e while",
+      "theory": "# Laços de repetição\n\nCom `if` o programa escolhe um caminho. Com **laços**, ele repete um bloco várias vezes. É isso que permite processar 10 ou 10 mil números com o mesmo código.\n\n## while: repete enquanto a condição for verdadeira\n\n```c\nint i = 1;\nwhile (i <= 5) {\n    printf(\"%d\\n\", i);\n    i++;\n}\n```\n\n`i++` soma 1 a `i` (é o mesmo que `i = i + 1`). Se você esquecer essa linha, a condição nunca fica falsa e o programa entra em **laço infinito**.\n\n## for: quando você sabe quantas vezes repetir\n\nO `for` junta as três partes de um laço contado numa linha só: **início**, **condição** e **passo**.\n\n```c\nint i;\nfor (i = 0; i < 5; i++) {\n    printf(\"%d \", i);\n}\n```\n\nMostra `0 1 2 3 4 `. A ordem de execução é: início (uma vez), testa a condição, executa o bloco, executa o passo, testa de novo, e assim por diante. Contar a partir de 0 e usar `<` é o padrão em C, porque os vetores (lição 7) começam na posição 0.\n\n## do-while: executa pelo menos uma vez\n\n```c\ndo {\n    ...\n} while (condicao);\n```\n\nA condição é testada no fim; útil quando o bloco precisa rodar antes do primeiro teste.\n\n## Acumuladores\n\nUm padrão muito comum é o **acumulador**: uma variável que começa com um valor neutro e é atualizada a cada volta.\n\n```c\nint soma = 0, i, x;\nfor (i = 0; i < n; i++) {\n    scanf(\"%d\", &x);\n    soma += x;     /* o mesmo que soma = soma + x */\n}\n```\n\nPara a **soma**, o valor neutro é 0. Para o **produto**, é 1.\n\n## Maior e menor\n\nPara encontrar o maior valor, uma armadilha comum é começar com `maior = 0`. Se todos os números forem negativos (por exemplo -5, -1, -9), o resultado sairia 0, que nem está na lista! A solução correta é **começar com o primeiro valor lido**:\n\n```c\nif (i == 0 || x > maior) {\n    maior = x;\n}\n```\n\nNa primeira volta (`i == 0`) o valor é sempre aceito; nas seguintes, só se for maior.\n\n## break e continue\n\n- `break` sai do laço imediatamente.\n- `continue` pula para a próxima volta.\n\nUse com moderação: um laço com condição clara é mais fácil de entender.\n\n## Caso especial: nenhum dado\n\nSempre pense no caso **vazio**. Se a quantidade for zero, não existe maior nem menor, e o programa precisa tratar isso com um `if` antes do laço (lição 4).",
+      "task": "Leia um inteiro `n` (n >= 0) e, em seguida, `n` números inteiros (um por linha). Mostre:\n\n```\nSoma: <soma>\nMaior: <maior valor>\nMenor: <menor valor>\n```\n\nSe `n` for 0, mostre apenas a linha `Nenhum numero`.\n\nExemplo: entrada `3`, `4`, `-2`, `10` gera:\n\n```\nSoma: 12\nMaior: 10\nMenor: -2\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    /* escreva aqui o laco que le os n numeros */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint main(void) {\n    int n, i, x;\n    int soma = 0, maior = 0, menor = 0;\n    scanf(\"%d\", &n);\n    if (n == 0) {\n        printf(\"Nenhum numero\\n\");\n        return 0;\n    }\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", &x);\n        soma += x;\n        if (i == 0 || x > maior) {\n            maior = x;\n        }\n        if (i == 0 || x < menor) {\n            menor = x;\n        }\n    }\n    printf(\"Soma: %d\\n\", soma);\n    printf(\"Maior: %d\\n\", maior);\n    printf(\"Menor: %d\\n\", menor);\n    return 0;\n}",
+      "hints": [
+        "Use `for (i = 0; i < n; i++)` e leia um número em cada volta.",
+        "Não comece `maior` com 0: aceite o primeiro número lido (`i == 0`) como maior e menor.",
+        "Trate `n == 0` antes do laço e mostre `Nenhum numero`."
+      ],
+      "tests": [
+        {
+          "input": "3\n4\n-2\n10\n",
+          "expected": "Soma: 12\nMaior: 10\nMenor: -2",
+          "hidden": false
+        },
+        {
+          "input": "1\n42\n",
+          "expected": "Soma: 42\nMaior: 42\nMenor: 42",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Nenhum numero",
+          "hidden": false
+        },
+        {
+          "input": "3\n-5\n-1\n-9\n",
+          "expected": "Soma: -15\nMaior: -1\nMenor: -9",
+          "hidden": true
+        },
+        {
+          "input": "5\n3\n8\n-2\n7\n1\n",
+          "expected": "Soma: 17\nMaior: 8\nMenor: -2",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "c-06",
+      "title": "Funções e ponteiros",
+      "theory": "# Funções: dividir para conquistar\n\nSeus programas estão crescendo. Funções permitem dar um **nome** a um trecho de código, reutilizá-lo e testá-lo separadamente. Você já usa funções desde a lição 1: `main`, `printf` e `scanf`.\n\n```c\nint quadrado(int x) {\n    return x * x;\n}\n\nint main(void) {\n    printf(\"%d\\n\", quadrado(7));   /* 49 */\n    return 0;\n}\n```\n\n- `int` antes do nome é o **tipo de retorno**; use `void` se a função não devolve nada.\n- `(int x)` é a lista de **parâmetros**.\n- `return` encerra a função e devolve o valor.\n\nEm C, uma função precisa ser conhecida **antes** de ser chamada. Por isso escreva as funções acima do `main` (ou declare o protótipo `int quadrado(int x);` no topo).\n\n## Funções que respondem sim ou não\n\nUma função pode devolver `1` (verdadeiro) ou `0` (falso), como as comparações da lição 4. Um número primo só é divisível por 1 e por ele mesmo:\n\n```c\nint ehPrimo(int n) {\n    int d;\n    if (n < 2) return 0;\n    for (d = 2; d * d <= n; d++) {\n        if (n % d == 0) return 0;\n    }\n    return 1;\n}\n```\n\nPor que `d * d <= n`? Se `n` tiver um divisor maior que a raiz quadrada, ele forma par com outro **menor** que a raiz, que já teria sido encontrado. Isso reduz o trabalho de `n` para cerca de raiz de `n` passos.\n\n## Passagem por valor\n\nEm C, os parâmetros recebem **cópias** dos valores. Esta função não funciona:\n\n```c\nvoid trocarErrado(int a, int b) {\n    int t = a;\n    a = b;\n    b = t;     /* troca só as cópias! */\n}\n```\n\n## Ponteiros: o endereço de uma variável\n\nLembra do `&` no `scanf`? Ele dá o **endereço** de uma variável. Um **ponteiro** é uma variável que guarda um endereço:\n\n```c\nint x = 10;\nint *p = &x;    /* p aponta para x */\n*p = 25;        /* altera x através do ponteiro */\nprintf(\"%d\\n\", x);   /* 25 */\n```\n\n- `int *p` declara um ponteiro para `int`.\n- `&x` é \"o endereço de x\".\n- `*p` é \"o valor que está no endereço guardado em p\".\n\nCom ponteiros, uma função consegue alterar variáveis de quem a chamou:\n\n```c\nvoid trocar(int *a, int *b) {\n    int t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = 3, y = 8;\n    trocar(&x, &y);\n    printf(\"%d %d\\n\", x, y);   /* 8 3 */\n    return 0;\n}\n```\n\nÉ exatamente isso que o `scanf` faz: você passa `&idade` e ele escreve no endereço recebido.\n\n## Erros comuns\n\n- Chamar `trocar(x, y)` sem `&`: a função receberia números, não endereços.\n- Usar um ponteiro sem antes apontá-lo para algum lugar (`int *p; *p = 5;` é um erro grave).\n- Esquecer o `return` numa função que devolve `int`.\n\n## Saída separada por espaços\n\nPara mostrar números separados por um espaço sem sobrar espaço no começo, use um contador: escreva o espaço **antes** de cada número, exceto o primeiro.",
+      "task": "Escreva duas funções:\n\n- `int ehPrimo(int n)`: devolve 1 se `n` for primo e 0 caso contrário (números menores que 2 não são primos);\n- `void trocar(int *a, int *b)`: troca os valores apontados.\n\nNo `main`, leia dois inteiros `a` e `b` (um por linha). Se `a > b`, use `trocar(&a, &b)`. Depois mostre:\n\n```\nIntervalo: <a> a <b>\n<primos de a até b, inclusive, separados por um espaço>\nTotal: <quantidade de primos>\n```\n\nSe não houver primos no intervalo, a segunda linha deve ser `Nenhum primo`.\n\nExemplo: entrada `30` e `10` gera:\n\n```\nIntervalo: 10 a 30\n11 13 17 19 23 29\nTotal: 6\n```",
+      "starter": "#include <stdio.h>\n\nint ehPrimo(int n) {\n    /* escreva aqui */\n    return 0;\n}\n\nvoid trocar(int *a, int *b) {\n    /* escreva aqui */\n}\n\nint main(void) {\n    int a, b;\n    scanf(\"%d\", &a);\n    scanf(\"%d\", &b);\n    /* escreva aqui o resto do programa */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nint ehPrimo(int n) {\n    int d;\n    if (n < 2) {\n        return 0;\n    }\n    for (d = 2; d * d <= n; d++) {\n        if (n % d == 0) {\n            return 0;\n        }\n    }\n    return 1;\n}\n\nvoid trocar(int *a, int *b) {\n    int t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int a, b, i;\n    int total = 0;\n    scanf(\"%d\", &a);\n    scanf(\"%d\", &b);\n    if (a > b) {\n        trocar(&a, &b);\n    }\n    printf(\"Intervalo: %d a %d\\n\", a, b);\n    for (i = a; i <= b; i++) {\n        if (ehPrimo(i)) {\n            if (total > 0) {\n                printf(\" \");\n            }\n            printf(\"%d\", i);\n            total++;\n        }\n    }\n    if (total == 0) {\n        printf(\"Nenhum primo\");\n    }\n    printf(\"\\n\");\n    printf(\"Total: %d\\n\", total);\n    return 0;\n}",
+      "hints": [
+        "Em `ehPrimo`, devolva 0 para `n < 2` e teste divisores `d` enquanto `d * d <= n`.",
+        "Em `trocar`, use uma variável auxiliar: `int t = *a; *a = *b; *b = t;`.",
+        "Escreva o espaço antes de cada primo, menos o primeiro (use o contador `total`)."
+      ],
+      "tests": [
+        {
+          "input": "1\n20\n",
+          "expected": "Intervalo: 1 a 20\n2 3 5 7 11 13 17 19\nTotal: 8",
+          "hidden": false
+        },
+        {
+          "input": "30\n10\n",
+          "expected": "Intervalo: 10 a 30\n11 13 17 19 23 29\nTotal: 6",
+          "hidden": false
+        },
+        {
+          "input": "24\n28\n",
+          "expected": "Intervalo: 24 a 28\nNenhum primo\nTotal: 0",
+          "hidden": false
+        },
+        {
+          "input": "-5\n2\n",
+          "expected": "Intervalo: -5 a 2\n2\nTotal: 1",
+          "hidden": true
+        },
+        {
+          "input": "7\n7\n",
+          "expected": "Intervalo: 7 a 7\n7\nTotal: 1",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "c-07",
+      "title": "Vetores e strings",
+      "theory": "# Vetores (arrays)\n\nAté agora, cada valor tinha sua própria variável. Na lição 5 você somou `n` números, mas não conseguia guardar todos para usar depois. Um **vetor** guarda vários valores do mesmo tipo, lado a lado na memória:\n\n```c\nint notas[5];          /* 5 inteiros: notas[0] .. notas[4] */\nint primos[4] = {2, 3, 5, 7};\n```\n\n- O tamanho é **fixo** e definido na declaração.\n- Os índices vão de `0` a `tamanho - 1`.\n- C **não verifica** os limites: acessar `notas[5]` lê ou estraga memória de outra coisa. Esse é um dos bugs mais perigosos da linguagem.\n\nPercorrer um vetor é o casamento perfeito com o `for`:\n\n```c\nint i, soma = 0;\nfor (i = 0; i < 4; i++) {\n    soma += primos[i];\n}\n```\n\nTambém existem vetores de duas dimensões, como uma tabela: `int m[3][4];` e `m[linha][coluna]`.\n\n## Vetores e ponteiros\n\nO nome de um vetor, usado numa expressão, vira o **endereço do primeiro elemento**. Por isso `primos` e `&primos[0]` são a mesma coisa, e `*(primos + 2)` é o mesmo que `primos[2]`. Ao passar um vetor para uma função, você passa esse endereço, então a função **altera o vetor original** (diferente da passagem por valor da lição 6):\n\n```c\nvoid zerar(int v[], int n) {\n    int i;\n    for (i = 0; i < n; i++) v[i] = 0;\n}\n```\n\nComo a função não sabe o tamanho do vetor, o tamanho vai como parâmetro separado.\n\n## Strings: vetores de char\n\nC não tem um tipo \"texto\". Uma **string** é um vetor de `char` terminado pelo caractere especial `'\\0'` (o terminador nulo):\n\n```c\nchar nome[10] = \"Ana\";\n/* nome[0]='A', nome[1]='n', nome[2]='a', nome[3]='\\0' */\n```\n\nReserve sempre **um espaço a mais** para o `'\\0'`. É ele que diz ao `printf(\"%s\")` onde o texto termina.\n\nPara ler uma palavra (sem espaços), use `%s` **sem** o `&`: o nome do vetor já é um endereço.\n\n```c\nchar palavra[101];\nscanf(\"%s\", palavra);\n```\n\n## A biblioteca string.h\n\nCom `#include <string.h>` você ganha funções prontas:\n\n- `strlen(s)`: quantidade de caracteres (sem contar o `'\\0'`)\n- `strcmp(a, b)`: devolve `0` se as strings forem iguais\n- `strcpy(destino, origem)`: copia uma string\n\nAtenção: `if (a == b)` com strings compara **endereços**, não o conteúdo. Para comparar textos use sempre `strcmp(a, b) == 0`. Da mesma forma, não dá para fazer `destino = origem;`: use `strcpy`.\n\n## Montando uma string à mão\n\nPara inverter uma palavra de tamanho `n`, a posição `i` do resultado recebe a posição `n - 1 - i` do original. No fim, não esqueça de colocar o `'\\0'` na posição `n`; sem ele, o `printf` continuaria lendo memória até achar um zero por acaso.\n\n```c\nfor (i = 0; i < n; i++) {\n    inv[i] = s[n - 1 - i];\n}\ninv[n] = '\\0';\n```\n\nUm **palíndromo** é uma palavra que é igual de trás para frente, como \"radar\" e \"ovo\".",
+      "task": "Leia uma palavra (só letras minúsculas, sem espaços, até 100 caracteres) e mostre:\n\n```\nTamanho: <quantidade de letras>\nInvertida: <a palavra de tras para frente>\nPalindromo: <sim ou nao>\n```\n\nExemplo: entrada `casa` gera:\n\n```\nTamanho: 4\nInvertida: asac\nPalindromo: nao\n```\n\nVocê pode usar `strlen` e `strcmp` de `<string.h>`.",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char palavra[101];\n    scanf(\"%s\", palavra);\n    /* escreva aqui */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char palavra[101];\n    char invertida[101];\n    int n, i;\n    scanf(\"%s\", palavra);\n    n = strlen(palavra);\n    for (i = 0; i < n; i++) {\n        invertida[i] = palavra[n - 1 - i];\n    }\n    invertida[n] = '\\0';\n    printf(\"Tamanho: %d\\n\", n);\n    printf(\"Invertida: %s\\n\", invertida);\n    if (strcmp(palavra, invertida) == 0) {\n        printf(\"Palindromo: sim\\n\");\n    } else {\n        printf(\"Palindromo: nao\\n\");\n    }\n    return 0;\n}",
+      "hints": [
+        "Use `strlen(palavra)` para o tamanho e um segundo vetor `char invertida[101]`.",
+        "`invertida[i] = palavra[n - 1 - i];` e, no fim, `invertida[n] = '\\0';`.",
+        "Compare as strings com `strcmp(palavra, invertida) == 0`, nunca com `==`."
+      ],
+      "tests": [
+        {
+          "input": "radar\n",
+          "expected": "Tamanho: 5\nInvertida: radar\nPalindromo: sim",
+          "hidden": false
+        },
+        {
+          "input": "casa\n",
+          "expected": "Tamanho: 4\nInvertida: asac\nPalindromo: nao",
+          "hidden": false
+        },
+        {
+          "input": "a\n",
+          "expected": "Tamanho: 1\nInvertida: a\nPalindromo: sim",
+          "hidden": false
+        },
+        {
+          "input": "abba\n",
+          "expected": "Tamanho: 4\nInvertida: abba\nPalindromo: sim",
+          "hidden": true
+        },
+        {
+          "input": "programa\n",
+          "expected": "Tamanho: 8\nInvertida: amargorp\nPalindromo: nao",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "c-08",
+      "title": "Structs: agrupando dados",
+      "theory": "# Structs\n\nImagine guardar nome, duas notas e a média de 100 alunos. Com o que vimos até agora, seriam quatro vetores separados (`nomes`, `notas1`, `notas2`, `medias`) que você precisa manter sincronizados à mão. Uma **struct** agrupa dados relacionados num único tipo novo:\n\n```c\nstruct Ponto {\n    int x;\n    int y;\n};\n\nstruct Ponto p;\np.x = 3;\np.y = 4;\n```\n\nCada item (`x`, `y`) é um **campo**, acessado com o ponto: `p.x`.\n\n## typedef: dando um nome curto\n\nEscrever `struct Ponto` toda vez é cansativo. Com `typedef`, o tipo ganha um nome direto:\n\n```c\ntypedef struct {\n    char nome[50];\n    int nota1;\n    int nota2;\n    double media;\n} Aluno;\n\nAluno a;\n```\n\nAgora `Aluno` é um tipo como `int`. Uma struct pode conter vetores (como `nome`), números e até outras structs.\n\n## Vetores de structs\n\nO poder aparece quando juntamos com os vetores da lição 7:\n\n```c\nAluno turma[100];\nscanf(\"%s\", turma[0].nome);       /* vetor de char: sem & */\nscanf(\"%d\", &turma[0].nota1);     /* int: com & */\n```\n\nLeia a expressão da esquerda para a direita: `turma[0]` é um `Aluno`; `.nota1` é o campo; `&` pega o endereço desse campo.\n\n## Structs e funções: cópia ou ponteiro?\n\nAssim como um `int` (lição 6), uma struct passada para uma função é **copiada**. Se a função precisa **alterar** a struct, passe um ponteiro. Para acessar um campo através de um ponteiro, C tem o operador seta `->`:\n\n```c\nvoid calcularMedia(Aluno *a) {\n    a->media = (a->nota1 + a->nota2) / 2.0;\n}\n\ncalcularMedia(&turma[i]);\n```\n\n`a->media` é só uma forma mais legível de escrever `(*a).media`. Os parênteses são obrigatórios na segunda forma, porque o ponto tem precedência maior que o `*`.\n\nPassar ponteiro tem outra vantagem: uma struct grande não precisa ser copiada inteira a cada chamada; só o endereço (alguns bytes) viaja.\n\n## Encontrando o \"melhor\"\n\nPara achar o aluno de maior média, guarde o **índice** do melhor, não só o valor: assim você ainda tem acesso ao nome.\n\n```c\nint melhor = 0;\nfor (i = 1; i < n; i++) {\n    if (turma[i].media > turma[melhor].media) melhor = i;\n}\n```\n\nCom `>` (e não `>=`), em caso de empate fica o **primeiro** encontrado. Pequenos detalhes assim definem o comportamento do programa; leia a especificação com atenção.\n\n## Erros comuns\n\n- Esquecer o `;` depois da chave que fecha a struct.\n- Usar `.` num ponteiro (`a.media` quando `a` é `Aluno *`): use `->`.\n- Colocar `&` antes de um campo `char nome[50]` no `scanf(\"%s\")`.\n- Comparar structs com `==`: C não permite; compare campo a campo.\n\nStructs são a base de tudo que vem depois: listas, árvores e os \"objetos\" de linguagens como C++ e C# nasceram dessa ideia.",
+      "task": "Leia `n` (1 <= n <= 100) e, para cada aluno, três linhas: o nome (uma palavra), a nota 1 e a nota 2 (inteiros). Use um `typedef struct` para o aluno e uma função `void calcularMedia(Aluno *a)` que preencha o campo `media` com a média das duas notas.\n\nMostre uma linha por aluno, na ordem de entrada, com a média em 2 casas, e no fim o aluno de maior média (em caso de empate, o primeiro):\n\n```\n<nome>: <media>\n...\nMelhor: <nome>\n```\n\nExemplo: entrada `2`, `Eva`, `8`, `6`, `Fabio`, `7`, `9` gera:\n\n```\nEva: 7.00\nFabio: 8.00\nMelhor: Fabio\n```",
+      "starter": "#include <stdio.h>\n\ntypedef struct {\n    char nome[50];\n    int nota1;\n    int nota2;\n    double media;\n} Aluno;\n\nvoid calcularMedia(Aluno *a) {\n    /* escreva aqui */\n}\n\nint main(void) {\n    Aluno turma[100];\n    int n;\n    scanf(\"%d\", &n);\n    /* escreva aqui a leitura e a saida */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\ntypedef struct {\n    char nome[50];\n    int nota1;\n    int nota2;\n    double media;\n} Aluno;\n\nvoid calcularMedia(Aluno *a) {\n    a->media = (a->nota1 + a->nota2) / 2.0;\n}\n\nint main(void) {\n    Aluno turma[100];\n    int n, i;\n    int melhor = 0;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%s\", turma[i].nome);\n        scanf(\"%d\", &turma[i].nota1);\n        scanf(\"%d\", &turma[i].nota2);\n        calcularMedia(&turma[i]);\n    }\n    for (i = 0; i < n; i++) {\n        printf(\"%s: %.2f\\n\", turma[i].nome, turma[i].media);\n        if (turma[i].media > turma[melhor].media) {\n            melhor = i;\n        }\n    }\n    printf(\"Melhor: %s\\n\", turma[melhor].nome);\n    return 0;\n}",
+      "hints": [
+        "Em `calcularMedia`, use a seta: `a->media = (a->nota1 + a->nota2) / 2.0;`.",
+        "No `scanf`, o nome vai sem `&` (`turma[i].nome`) e as notas com `&` (`&turma[i].nota1`).",
+        "Guarde o índice do melhor aluno e troque só quando a média for estritamente maior (`>`)."
+      ],
+      "tests": [
+        {
+          "input": "3\nAna\n7\n8\nBruno\n9\n10\nCarla\n5\n6\n",
+          "expected": "Ana: 7.50\nBruno: 9.50\nCarla: 5.50\nMelhor: Bruno",
+          "hidden": false
+        },
+        {
+          "input": "1\nDavi\n0\n0\n",
+          "expected": "Davi: 0.00\nMelhor: Davi",
+          "hidden": false
+        },
+        {
+          "input": "2\nEva\n8\n6\nFabio\n7\n9\n",
+          "expected": "Eva: 7.00\nFabio: 8.00\nMelhor: Fabio",
+          "hidden": false
+        },
+        {
+          "input": "2\nGil\n8\n6\nHugo\n7\n7\n",
+          "expected": "Gil: 7.00\nHugo: 7.00\nMelhor: Gil",
+          "hidden": true
+        },
+        {
+          "input": "4\nInes\n10\n9\nJoao\n3\n4\nLia\n10\n10\nMauro\n6\n5\n",
+          "expected": "Ines: 9.50\nJoao: 3.50\nLia: 10.00\nMauro: 5.50\nMelhor: Lia",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-09",
+      "title": "Recursão",
+      "theory": "# Recursão: funções que chamam a si mesmas\n\nNa lição 6 você viu que uma função pode chamar outra. Uma função também pode chamar **a si mesma**. Isso é **recursão**, e é uma forma poderosa de resolver problemas que contêm versões menores de si mesmos.\n\n## As duas partes obrigatórias\n\nToda função recursiva precisa de:\n\n1. **Caso base**: uma situação simples respondida diretamente, sem nova chamada.\n2. **Passo recursivo**: a função chama a si mesma com um problema **menor**, que se aproxima do caso base.\n\nO fatorial é o exemplo clássico: `n! = n * (n-1)!` e `0! = 1! = 1`.\n\n```c\nlong fatorial(int n) {\n    if (n <= 1) {\n        return 1;                  /* caso base */\n    }\n    return n * fatorial(n - 1);   /* passo recursivo */\n}\n```\n\n## O que acontece na memória: a pilha de chamadas\n\nCada chamada ganha seu próprio \"quadro\" na **pilha de chamadas** (call stack), com suas próprias variáveis. Para `fatorial(4)`:\n\n```\nfatorial(4) = 4 * fatorial(3)\n              fatorial(3) = 3 * fatorial(2)\n                            fatorial(2) = 2 * fatorial(1)\n                                          fatorial(1) = 1\n```\n\nAs chamadas vão \"descendo\" até o caso base e depois os resultados \"sobem\": 1, 2, 6, 24. Se você esquecer o caso base (ou o problema não diminuir), as chamadas nunca param e a pilha estoura: é o famoso **stack overflow**, e o programa é encerrado.\n\n## Por que long?\n\nO fatorial cresce muito rápido: `12!` já é 479001600. Um `int` comum guarda até cerca de 2,1 bilhões, e `13!` passa disso. Quando um inteiro ultrapassa o limite, acontece **overflow** e o valor sai errado, sem nenhum aviso. Usamos `long` e `%ld` como boa prática, mas lembre que todo tipo inteiro em C tem um limite.\n\n## Fibonacci e o custo da recursão ingênua\n\nA sequência de Fibonacci começa com 0 e 1, e cada termo é a soma dos dois anteriores: 0, 1, 1, 2, 3, 5, 8, 13...\n\n```c\nint fibonacci(int n) {\n    if (n < 2) {\n        return n;          /* fib(0) = 0, fib(1) = 1 */\n    }\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}\n```\n\nO código é lindo, quase igual à definição matemática, mas tem um custo escondido: `fibonacci(n - 1)` e `fibonacci(n - 2)` recalculam os mesmos valores várias vezes. O número de chamadas cresce **exponencialmente** (aproximadamente 1,6 elevado a n). Para n = 20 são cerca de 22 mil chamadas; para n = 50, bilhões. Uma versão com laço, guardando só os dois últimos termos, faz apenas n passos. Essa diferença entre crescimento exponencial e linear é o tema da próxima lição: **complexidade de algoritmos**.\n\n## Quando usar recursão?\n\n- Quando o problema tem estrutura naturalmente recursiva: árvores, pastas dentro de pastas, dividir e conquistar (ordenação por intercalação, busca binária).\n- Quando a versão recursiva é bem mais clara que a iterativa.\n\nEvite quando a profundidade pode ficar enorme (cada chamada ocupa pilha) ou quando há muito recálculo, como no Fibonacci ingênuo.\n\n## Como pensar recursivamente\n\nNão tente acompanhar todas as chamadas de cabeça. Confie: \"se `fatorial(n - 1)` estiver certo, então `n * fatorial(n - 1)` está certo\". Verifique o caso base e garanta que cada chamada se aproxima dele. Essa é a mesma ideia da **indução matemática**.",
+      "task": "Leia um inteiro `n` (0 <= n <= 12) e mostre, usando **funções recursivas**:\n\n```\nFatorial: <n!>\nFibonacci: <fib(n)>\n```\n\nUse `long fatorial(int n)` (mostre com `%ld`) e `int fibonacci(int n)`, com `fib(0) = 0` e `fib(1) = 1`.\n\nExemplo: entrada `5` gera:\n\n```\nFatorial: 120\nFibonacci: 5\n```",
+      "starter": "#include <stdio.h>\n\nlong fatorial(int n) {\n    /* escreva aqui */\n    return 0;\n}\n\nint fibonacci(int n) {\n    /* escreva aqui */\n    return 0;\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    printf(\"Fatorial: %ld\\n\", fatorial(n));\n    printf(\"Fibonacci: %d\\n\", fibonacci(n));\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nlong fatorial(int n) {\n    if (n <= 1) {\n        return 1;\n    }\n    return n * fatorial(n - 1);\n}\n\nint fibonacci(int n) {\n    if (n < 2) {\n        return n;\n    }\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\nint main(void) {\n    int n;\n    scanf(\"%d\", &n);\n    printf(\"Fatorial: %ld\\n\", fatorial(n));\n    printf(\"Fibonacci: %d\\n\", fibonacci(n));\n    return 0;\n}",
+      "hints": [
+        "Fatorial: caso base `n <= 1` devolve 1; senão `n * fatorial(n - 1)`.",
+        "Fibonacci: caso base `n < 2` devolve o próprio `n`; senão a soma das duas chamadas anteriores.",
+        "Lembre que `0! = 1` e `fib(0) = 0`."
+      ],
+      "tests": [
+        {
+          "input": "5\n",
+          "expected": "Fatorial: 120\nFibonacci: 5",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Fatorial: 1\nFibonacci: 0",
+          "hidden": false
+        },
+        {
+          "input": "1\n",
+          "expected": "Fatorial: 1\nFibonacci: 1",
+          "hidden": false
+        },
+        {
+          "input": "10\n",
+          "expected": "Fatorial: 3628800\nFibonacci: 55",
+          "hidden": true
+        },
+        {
+          "input": "12\n",
+          "expected": "Fatorial: 479001600\nFibonacci: 144",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-10",
+      "title": "Ordenação e busca binária",
+      "theory": "# Ordenação, busca binária e complexidade\n\nVocê já domina vetores (lição 7), funções (lição 6) e viu na lição 9 que dois algoritmos corretos podem ter custos muito diferentes. Agora vamos medir esse custo com rigor e aplicar a ideia a dois problemas fundamentais: **ordenar** e **buscar**.\n\n## Complexidade: notação O grande\n\nNão medimos algoritmos em segundos (isso depende da máquina), mas em **quantos passos** eles fazem em função do tamanho da entrada `n`. A notação **O(f(n))** descreve como esse número cresce no pior caso, ignorando constantes:\n\n- **O(1)**: constante. Acessar `v[i]`.\n- **O(log n)**: logarítmica. A cada passo, o problema cai pela metade. Para n = 1 milhão, cerca de 20 passos.\n- **O(n)**: linear. Percorrer o vetor uma vez.\n- **O(n log n)**: os melhores algoritmos de ordenação por comparação (merge sort, heap sort, quick sort no caso médio).\n- **O(n²)**: quadrática. Dois laços aninhados sobre o vetor. Para n = 1 milhão, 10¹² passos: inviável.\n\nA diferença entre classes domina qualquer constante quando `n` cresce. É por isso que escolher o algoritmo certo importa mais do que micro-otimizar o código.\n\n## Ordenação por inserção (insertion sort)\n\nÉ o método de quem organiza cartas na mão: pegue cada elemento e **insira-o** na posição correta entre os que já estão ordenados à esquerda, deslocando os maiores uma casa para a direita.\n\n```c\nvoid ordenar(int v[], int n) {\n    int i, j, chave;\n    for (i = 1; i < n; i++) {\n        chave = v[i];\n        j = i - 1;\n        while (j >= 0 && v[j] > chave) {\n            v[j + 1] = v[j];\n            j--;\n        }\n        v[j + 1] = chave;\n    }\n}\n```\n\nNote o curto-circuito da lição 4: se `j >= 0` for falso, `v[j]` nem é acessado (evitando `v[-1]`).\n\nAnálise: no **pior caso** (vetor em ordem decrescente), o elemento `i` é comparado com todos os `i` anteriores: 1 + 2 + ... + (n-1) = n(n-1)/2, ou seja, **O(n²)**. No **melhor caso** (já ordenado), cada `while` para na primeira comparação: **O(n)**. Ele ordena **no lugar** (memória extra O(1)) e é **estável** (iguais mantêm a ordem). Para vetores pequenos é excelente; para grandes, prefira O(n log n).\n\n## Busca linear versus busca binária\n\nProcurar um valor olhando um por um custa **O(n)**. Mas, se o vetor está **ordenado**, dá para fazer muito melhor: olhe o elemento do **meio**. Se for o procurado, achou. Se for menor, o valor só pode estar à direita; se for maior, à esquerda. Cada comparação **descarta metade** do que resta.\n\n```c\nint buscaBinaria(int v[], int n, int x) {\n    int ini = 0, fim = n - 1, meio;\n    while (ini <= fim) {\n        meio = (ini + fim) / 2;\n        if (v[meio] == x) return meio;\n        if (v[meio] < x) ini = meio + 1;\n        else fim = meio - 1;\n    }\n    return -1;   /* não encontrado */\n}\n```\n\nDepois de k passos restam n / 2^k elementos; a busca termina quando sobra 1, ou seja, k = log₂ n. Logo, **O(log n)**. Para 1 bilhão de elementos: no máximo 30 comparações, contra 1 bilhão da busca linear.\n\n## O custo total\n\nOrdenar custa O(n²) com inserção (ou O(n log n) com um algoritmo melhor) e cada busca custa O(log n). Se você vai fazer **muitas** buscas no mesmo vetor, ordenar uma vez compensa. Para uma única busca, a linear O(n) seria mais barata que ordenar. Esse tipo de raciocínio de custo-benefício é o coração da análise de algoritmos.\n\n## Erros comuns\n\n- Fazer busca binária num vetor **não ordenado**: o resultado é imprevisível.\n- Usar `ini < fim` em vez de `ini <= fim`: o último candidato não é testado.\n- Esquecer o `+ 1` / `- 1` ao mover os limites: laço infinito.\n\n## Constantes com #define\n\nPara o tamanho máximo do vetor, é comum usar `#define MAX 100` no topo e declarar `int v[MAX];`. Assim o número aparece num só lugar.",
+      "task": "Leia `n` (1 <= n <= 100), depois `n` inteiros **distintos** (um por linha) e, por fim, um inteiro `x`. Ordene o vetor em ordem crescente **implementando o algoritmo você mesmo** (não use bibliotecas) e procure `x` com **busca binária**. Mostre:\n\n```\nOrdenado: <elementos separados por um espaco>\nPosicao: <indice de x no vetor ordenado, comecando em 0>\n```\n\nSe `x` não estiver no vetor, a segunda linha deve ser `Nao encontrado`.\n\nExemplo: entrada `5`, `9`, `3`, `8`, `1`, `5`, `8` gera:\n\n```\nOrdenado: 1 3 5 8 9\nPosicao: 3\n```",
+      "starter": "#include <stdio.h>\n#define MAX 100\n\nvoid ordenar(int v[], int n) {\n    /* escreva aqui */\n}\n\nint buscaBinaria(int v[], int n, int x) {\n    /* escreva aqui */\n    return -1;\n}\n\nint main(void) {\n    int v[MAX];\n    int n, i, x;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", &v[i]);\n    }\n    scanf(\"%d\", &x);\n    /* escreva aqui a saida */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#define MAX 100\n\nvoid ordenar(int v[], int n) {\n    int i, j, chave;\n    for (i = 1; i < n; i++) {\n        chave = v[i];\n        j = i - 1;\n        while (j >= 0 && v[j] > chave) {\n            v[j + 1] = v[j];\n            j--;\n        }\n        v[j + 1] = chave;\n    }\n}\n\nint buscaBinaria(int v[], int n, int x) {\n    int ini = 0;\n    int fim = n - 1;\n    int meio;\n    while (ini <= fim) {\n        meio = (ini + fim) / 2;\n        if (v[meio] == x) {\n            return meio;\n        }\n        if (v[meio] < x) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    return -1;\n}\n\nint main(void) {\n    int v[MAX];\n    int n, i, x, pos;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", &v[i]);\n    }\n    scanf(\"%d\", &x);\n    ordenar(v, n);\n    printf(\"Ordenado:\");\n    for (i = 0; i < n; i++) {\n        printf(\" %d\", v[i]);\n    }\n    printf(\"\\n\");\n    pos = buscaBinaria(v, n, x);\n    if (pos >= 0) {\n        printf(\"Posicao: %d\\n\", pos);\n    } else {\n        printf(\"Nao encontrado\\n\");\n    }\n    return 0;\n}",
+      "hints": [
+        "Ordenação por inserção: para cada `i`, guarde `v[i]` e desloque para a direita os anteriores que forem maiores.",
+        "Na busca binária, mantenha `ini` e `fim`; repita enquanto `ini <= fim`, olhando `meio = (ini + fim) / 2`.",
+        "Para a primeira linha, escreva `Ordenado:` e depois cada número precedido de um espaço."
+      ],
+      "tests": [
+        {
+          "input": "5\n9\n3\n8\n1\n5\n8\n",
+          "expected": "Ordenado: 1 3 5 8 9\nPosicao: 3",
+          "hidden": false
+        },
+        {
+          "input": "4\n10\n-2\n7\n4\n6\n",
+          "expected": "Ordenado: -2 4 7 10\nNao encontrado",
+          "hidden": false
+        },
+        {
+          "input": "1\n42\n42\n",
+          "expected": "Ordenado: 42\nPosicao: 0",
+          "hidden": false
+        },
+        {
+          "input": "6\n6\n5\n4\n3\n2\n1\n1\n",
+          "expected": "Ordenado: 1 2 3 4 5 6\nPosicao: 0",
+          "hidden": true
+        },
+        {
+          "input": "7\n15\n-8\n0\n23\n4\n-1\n11\n23\n",
+          "expected": "Ordenado: -8 -1 0 4 11 15 23\nPosicao: 6",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    }
+  ]
+}
