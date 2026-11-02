@@ -1,0 +1,481 @@
+{
+  "id": "metallurgy",
+  "title": "Metalurgia e Solda: do átomo ao cordão",
+  "area": "metallurgy",
+  "language": "",
+  "description": "Por que o aço endurece na água, o que acontece dentro do metal quando você solda e como escolher corrente, tensão e velocidade — de cristais e grãos até aporte térmico, carbono equivalente e procedimentos de soldagem (WPS). Os simuladores ensinam os parâmetros, mas soldar de verdade se aprende na prática: faça um curso com instrutor qualificado (por exemplo, no SENAI) e use sempre o EPI completo.",
+  "lessons": [
+    {
+      "id": "met-01-estrutura",
+      "title": "Por dentro do metal: átomos, cristais e grãos",
+      "level": 1,
+      "kind": "quiz",
+      "theory": "# Bem-vindo à metalurgia!\n\nMetalurgia é a ciência e a técnica de **obter, transformar e usar os metais**. Soldar, temperar uma faca, escolher o aço de uma ponte ou o alumínio de um avião: tudo depende de entender o que acontece **dentro** do metal.\n\n**Importante:** este curso ensina a teoria e deixa você treinar os **parâmetros** em simuladores. Soldagem é uma habilidade das mãos e tem riscos reais (radiação, choque, fumos, fogo). Para soldar de verdade, faça um **curso prático com instrutor qualificado** — por exemplo, os cursos de soldador do **SENAI** — e use sempre o EPI completo.\n\n# A ligação metálica\n\nNum metal, os átomos ficam organizados e \"emprestam\" seus elétrons mais externos para uma **nuvem de elétrons** que circula livremente entre eles. Isso explica por que os metais:\n\n- **conduzem eletricidade e calor** (os elétrons andam fácil);\n- são **brilhantes** (os elétrons refletem a luz);\n- são **dúcteis**: podem ser dobrados, puxados em fios e martelados sem quebrar, porque as camadas de átomos deslizam umas sobre as outras sem romper a ligação.\n\n# Os átomos formam cristais\n\nNo estado sólido os átomos de um metal se arrumam num padrão que se repete — um **cristal**. A menor \"caixinha\" que se repete é a **célula unitária**. Três arranjos aparecem em quase todos os metais de engenharia:\n\n- **CCC — cúbica de corpo centrado** (em inglês BCC): um átomo em cada canto do cubo e um no centro. São **2 átomos por célula** e 68% do espaço ocupado. Exemplos: **ferro α (ferrita)** na temperatura ambiente, cromo, tungstênio, molibdênio.\n- **CFC — cúbica de face centrada** (FCC): um átomo em cada canto e um no centro de cada face. São **4 átomos por célula** e 74% do espaço ocupado (o máximo possível). Exemplos: **alumínio, cobre, níquel, ouro, ferro γ (austenita)** e o aço inox austenítico (304).\n- **HC — hexagonal compacta** (HCP): titânio, zinco, magnésio.\n\nOs metais **CFC** têm muitos planos onde as camadas podem deslizar, por isso são **muito dúcteis** e continuam tenazes mesmo no frio (o alumínio e o inox 304 não ficam frágeis em tanques criogênicos). Os **CCC** são mais resistentes, mas podem ficar frágeis em baixa temperatura.\n\n## O ferro muda de cristal (alotropia)\n\nO ferro puro troca de estrutura quando é aquecido:\n\n```\nTemperatura ambiente até 912 °C  ->  ferro α  (CCC)\n912 °C até 1394 °C               ->  ferro γ  (CFC)\n1394 °C até 1538 °C              ->  ferro δ  (CCC)\nacima de 1538 °C                 ->  líquido\n```\n\nEssa mudança de CCC para CFC é a base de **todos os tratamentos térmicos do aço** — e o CFC (austenita) consegue dissolver muito mais carbono que o CCC. Guarde isso para as próximas lições.\n\n# Grãos e contornos de grão\n\nQuando o metal líquido solidifica, cristais começam a crescer em vários pontos ao mesmo tempo, cada um com sua orientação. Quando se encontram, formam **grãos**, separados por **contornos de grão**. Uma peça de aço tem milhões de grãos, visíveis no microscópio depois de polir e atacar com ácido.\n\n- **Grão fino** = metal **mais resistente e mais tenaz** (os contornos atrapalham o movimento dos defeitos). É a relação de **Hall-Petch**: σe = σ0 + k / √d, onde d é o tamanho do grão.\n- **Grão grosseiro** (metal superaquecido, ou a região perto da solda) = mais frágil.\n\n# Defeitos que explicam a deformação\n\nCristais reais têm defeitos: **lacunas** (falta um átomo), **átomos intrusos** e **discordâncias** (uma \"linha\" de átomos fora do lugar). A deformação permanente (plástica) acontece quando as **discordâncias se movem**. Tudo que atrapalha esse movimento **endurece** o metal:\n\n- **encruamento**: deformar a frio cria mais discordâncias, que se enroscam (dobre um arame várias vezes e ele fica duro);\n- **refino de grão**;\n- **solução sólida**: átomos de outro elemento distorcem o cristal;\n- **precipitados** e **fases duras** (como a cementita e a martensita do aço).\n\n# Ligas: solução sólida\n\n- **Substitucional**: o átomo de liga ocupa o lugar de um átomo do metal (níquel no cobre, cromo no ferro do inox).\n- **Intersticial**: um átomo pequeno se encaixa nos espaços entre os átomos do metal. É o caso do **carbono no ferro** — o \"segredo\" do aço.",
+      "questions": [
+        {
+          "prompt": "Qual é a estrutura cristalina do ferro na temperatura ambiente (ferrita, ferro α)?",
+          "kind": "choice",
+          "options": ["CFC — cúbica de face centrada", "CCC — cúbica de corpo centrado", "HC — hexagonal compacta", "Amorfa, sem cristal"],
+          "answer": "1",
+          "explanation": "O ferro α é CCC até 912 °C; acima disso vira γ (austenita), que é CFC."
+        },
+        {
+          "prompt": "Quantos átomos há, efetivamente, dentro de uma célula unitária **CFC**?",
+          "kind": "number",
+          "answer": "4",
+          "tolerance": 0,
+          "unit": "átomos",
+          "explanation": "8 cantos × 1/8 = 1 átomo, mais 6 faces × 1/2 = 3 átomos: total 4."
+        },
+        {
+          "prompt": "Por que o alumínio e o cobre são tão fáceis de dobrar e esticar?",
+          "kind": "choice",
+          "options": ["Porque são CFC e têm muitos planos de deslizamento", "Porque não têm grãos", "Porque são líquidos na temperatura ambiente", "Porque não têm elétrons livres"],
+          "answer": "0",
+          "explanation": "A estrutura CFC tem muitos sistemas de deslizamento para as discordâncias se moverem: o metal deforma muito antes de romper."
+        },
+        {
+          "prompt": "Segundo a relação de Hall-Petch, o que acontece com a resistência quando o grão fica **menor**?",
+          "kind": "choice",
+          "options": ["Diminui", "Aumenta", "Não muda", "O metal derrete"],
+          "answer": "1",
+          "explanation": "Mais contornos de grão bloqueiam as discordâncias: grão fino = mais resistência (e mais tenacidade)."
+        },
+        {
+          "prompt": "O carbono dissolvido no ferro forma que tipo de solução sólida?",
+          "kind": "choice",
+          "options": ["Substitucional", "Intersticial", "Nenhuma: carbono não se dissolve no ferro", "Eutética"],
+          "answer": "1",
+          "explanation": "O átomo de carbono é pequeno e se encaixa nos interstícios (espaços) entre os átomos de ferro."
+        }
+      ]
+    },
+    {
+      "id": "met-02-tracao",
+      "title": "Propriedades mecânicas e o ensaio de tração",
+      "level": 2,
+      "kind": "lab",
+      "lab": "tensile",
+      "labParams": { "material": "al6061", "diameter": "10", "gaugeLength": "50" },
+      "theory": "# Como medir a resistência de um metal?\n\nNo **ensaio de tração**, um corpo de prova padronizado é preso em duas garras e puxado devagar até romper. A máquina registra a **força** e o **alongamento**. Dividindo pela geometria inicial, obtemos a **curva tensão × deformação**, que é a \"impressão digital\" mecânica do material.\n\n## Tensão e deformação\n\n```\ntensão       σ = F / A0     (N/mm² = MPa)\ndeformação   ε = ΔL / L0    (adimensional, ou em %)\nárea         A0 = π · d² / 4\n```\n\nExemplo: uma barra de 10 mm de diâmetro tem A0 = π·10²/4 = 78,5 mm². Com 20 kN (20 000 N), σ = 20 000 / 78,5 ≈ **255 MPa**.\n\n# Lendo a curva\n\n- **Região elástica**: reta. Tirando a carga, o metal volta ao tamanho original. A inclinação é o **módulo de elasticidade (Young)**: σ = E · ε (**lei de Hooke**). Aço ≈ **200 GPa**, alumínio ≈ 70 GPa, cobre ≈ 115 GPa. O módulo quase não muda com tratamento térmico: um aço mole e um aço temperado têm a mesma rigidez!\n- **Limite de escoamento (σe)**: onde começa a deformação permanente. Como a transição é suave em muitos metais, usamos o critério de **0,2%**: uma reta paralela à parte elástica, deslocada 0,2% — onde ela corta a curva é o σe. Aços de baixo carbono têm um \"patamar\" de escoamento bem visível.\n- **Encruamento**: depois de escoar, o metal fica mais resistente à medida que deforma.\n- **Limite de resistência (σr)**: a tensão máxima da curva. A **força máxima** que a peça aguenta é F = σr · A0.\n- **Estricção (empescoçamento)**: depois do máximo, a deformação se concentra num ponto, o diâmetro afina e a curva de engenharia cai até a **ruptura**.\n- **Alongamento**: quanto o corpo de prova cresceu depois de romper (em % de L0). Mede a **ductilidade**.\n- **Tenacidade**: a energia absorvida até romper — a área sob a curva.\n\n## Dúctil × frágil\n\nUm material **dúctil** (aço baixo carbono, cobre, alumínio, inox) escoa, estica e \"avisa\" antes de romper. Um material **frágil** (ferro fundido cinzento, vidro, aço temperado sem revenir) rompe quase sem deformar — de repente. Em estruturas, preferimos sempre materiais que avisam.\n\n# Dureza\n\nDureza é a resistência à penetração. Os ensaios mais usados:\n\n- **Brinell (HB)**: esfera de aço/metal duro, mede o diâmetro da marca.\n- **Vickers (HV)**: pirâmide de diamante; serve para tudo, inclusive para medir a dureza perto de uma solda.\n- **Rockwell C (HRC)**: cone de diamante, leitura direta; usado em aços temperados (20 a 70 HRC).\n\nPara aços, a dureza Brinell se relaciona com a resistência: σr (MPa) ≈ 3,4 × HB.",
+      "task": "Escolha o **material** e o **diâmetro** do corpo de prova para que ele aguente uma **força máxima entre 40 e 55 kN** e tenha **alongamento de pelo menos 20%** (um material dúctil, que avisa antes de romper).",
+      "hints": [
+        "Força máxima = σr × A0. Para 40–55 kN com um material de σr ≈ 400 MPa, a área precisa ficar entre 100 e 137 mm².",
+        "O alumínio 6061-T6 alonga só cerca de 12%. Aços de baixo carbono e o inox 304 alongam bem mais.",
+        "Aço 1020 (σr = 380 MPa) com 12 mm de diâmetro: A0 = 113 mm² → F ≈ 43 kN."
+      ],
+      "goals": [
+        { "metric": "maxForce", "op": "between", "value": 40, "max": 55, "description": "Força máxima entre 40 e 55 kN" },
+        { "metric": "elongation", "op": ">=", "value": 20, "description": "Alongamento de pelo menos 20%" }
+      ],
+      "solutionInputs": { "material": "aco1020", "diameter": "12", "gaugeLength": "50" },
+      "questions": [
+        {
+          "prompt": "Uma barra de aço de **10 mm** de diâmetro é puxada com **20 kN**. Qual é a tensão, em MPa?",
+          "kind": "number",
+          "answer": "254.6",
+          "tolerance": 2,
+          "unit": "MPa",
+          "explanation": "A0 = π·10²/4 = 78,54 mm²; σ = 20 000 N / 78,54 mm² ≈ 254,6 MPa."
+        },
+        {
+          "prompt": "No simulador, qual material rompeu **sem escoar e sem estricção**?",
+          "kind": "choice",
+          "options": ["Cobre recozido", "Aço inox 304", "Ferro fundido cinzento", "Aço SAE 1020"],
+          "answer": "2",
+          "explanation": "O ferro fundido cinzento é frágil: as lamelas de grafita funcionam como trincas e ele rompe com menos de 1% de deformação."
+        },
+        {
+          "prompt": "O módulo de elasticidade de um aço temperado (duro) comparado ao do mesmo aço recozido (mole) é…",
+          "kind": "choice",
+          "options": ["Muito maior", "Praticamente igual (≈ 200 GPa)", "Muito menor", "Zero"],
+          "answer": "1",
+          "explanation": "O módulo depende da ligação entre os átomos, não da microestrutura: o tratamento muda σe e σr, não a rigidez E."
+        }
+      ]
+    },
+    {
+      "id": "met-03-ferro-carbono",
+      "title": "O diagrama ferro-carbono e os aços",
+      "level": 2,
+      "kind": "lab",
+      "lab": "heattreat",
+      "labParams": { "carbon": "0.20", "temperature": "700", "cooling": "furnace", "temper": "0" },
+      "theory": "# Aço = ferro + carbono\n\n- **Aço**: ferro com até **2,11% de carbono** (na prática, quase sempre menos de 1%).\n- **Ferro fundido**: de 2,11% a 6,67% de carbono.\n\nNa norma SAE/AISI, os dois últimos dígitos dão o carbono em centésimos de %: **SAE 1020 = 0,20% C**, **SAE 1045 = 0,45% C**, **SAE 1080 = 0,80% C**.\n\n# As fases do aço\n\n- **Ferrita (α)**: ferro CCC. Dissolve no máximo 0,022% de C. **Mole e dúctil** (≈ 90 HV).\n- **Austenita (γ)**: ferro CFC. Dissolve até 2,11% de C, mas nos aços carbono só existe **quente** (acima de 727 °C). É o ponto de partida de todo tratamento térmico.\n- **Cementita (Fe₃C)**: um carboneto com 6,67% de C. **Duríssima e frágil**.\n- **Perlita**: não é uma fase, é uma **mistura em lâminas** de ferrita + cementita que se forma quando austenita com 0,76% C esfria devagar. Vista no microscópio, parece uma impressão digital.\n\n# O diagrama Fe–Fe₃C (a parte dos aços)\n\nO diagrama mostra quais fases existem em **equilíbrio** (resfriamento bem lento) para cada teor de carbono (eixo horizontal) e temperatura (eixo vertical). As linhas importantes:\n\n- **A1 = 727 °C**: abaixo dela não existe austenita. Acima, começa a se formar.\n- **A3**: de 912 °C (ferro puro) até 727 °C (0,76% C). Acima de A3 um aço **hipoeutetoide** é 100% austenita.\n- **Acm**: de 727 °C (0,76% C) até 1148 °C (2,11% C). Acima dela um aço **hipereutetoide** é 100% austenita.\n- **Ponto eutetoide: 0,76% C e 727 °C** — a austenita vira **100% perlita** de uma vez.\n\n## Três tipos de aço\n\n- **Hipoeutetoide** (C < 0,76%): ferrita + perlita. Ex.: 1020, 1045.\n- **Eutetoide** (C ≈ 0,76%): só perlita. Ex.: 1080, trilhos e molas.\n- **Hipereutetoide** (C > 0,76%): perlita + uma rede de cementita nos contornos. Ex.: ferramentas, limas, rolamentos.\n\n# A regra da alavanca\n\nPara saber **quanto** de cada constituinte existe, usamos a **regra da alavanca**. Num aço hipoeutetoide resfriado devagar:\n\n```\nfração de perlita = (C - 0,022) / (0,76 - 0,022)\n\nAço 1040: (0,40 - 0,022) / 0,738 = 0,51  ->  51% perlita e 49% ferrita\n```\n\nQuanto mais carbono, mais perlita: mais **duro e resistente**, menos **dúctil e soldável**.\n\n# Usando o simulador\n\nEscolha o **carbono**, a **temperatura** e o **meio de resfriamento**. O ponto verde mostra onde o aço está no diagrama. Aquecer acima de A3/Acm transforma tudo em austenita (**austenitizar**); o resfriamento lento no **forno** (recozimento) devolve a estrutura de equilíbrio. Não passe muito de ~1100 °C: o grão cresce e, perto da linha solidus, o aço começa a **fundir** (\"queimar\").",
+      "task": "Encontre o **aço eutetoide**: aqueça um aço até ele ficar **100% austenita** (sem queimar) e resfrie no **forno**, obtendo **pelo menos 95% de perlita**.",
+      "hints": [
+        "A perlita sozinha (sem ferrita nem cementita sobrando) só aparece com 0,76% de carbono.",
+        "Para um aço com 0,76% C, qualquer temperatura um pouco acima de 727 °C já deixa tudo austenita — por exemplo 780 °C.",
+        "Se o ponto ficou abaixo da linha A1 (727 °C), nada virou austenita."
+      ],
+      "goals": [
+        { "metric": "austeniteAtTemp", "op": ">=", "value": 0.99, "description": "Aquecido até 100% austenita" },
+        { "metric": "pearlite", "op": ">=", "value": 0.95, "description": "Pelo menos 95% de perlita no fim" },
+        { "metric": "overheated", "op": "<=", "value": 0, "description": "Sem superaquecer nem queimar o aço" }
+      ],
+      "solutionInputs": { "carbon": "0.76", "temperature": "780", "cooling": "furnace", "temper": "0" },
+      "questions": [
+        {
+          "prompt": "Qual é a temperatura da linha **A1** (eutetoide) do diagrama ferro-carbono?",
+          "kind": "number",
+          "answer": "727",
+          "tolerance": 1,
+          "unit": "°C",
+          "explanation": "A 727 °C a austenita com 0,76% C se transforma em perlita (ferrita + cementita)."
+        },
+        {
+          "prompt": "Pela regra da alavanca, quantos **%** de perlita tem um aço **SAE 1040** resfriado lentamente?",
+          "kind": "number",
+          "answer": "51.2",
+          "tolerance": 6,
+          "unit": "%",
+          "explanation": "(0,40 − 0,022) / (0,76 − 0,022) = 0,512 → cerca de 51% de perlita; o resto (49%) é ferrita."
+        },
+        {
+          "prompt": "Qual destas fases tem estrutura **CFC** e só existe quente nos aços carbono?",
+          "kind": "choice",
+          "options": ["Ferrita", "Cementita", "Austenita", "Perlita"],
+          "answer": "2",
+          "explanation": "A austenita (ferro γ) é CFC e dissolve até 2,11% de carbono; abaixo de 727 °C ela se transforma."
+        }
+      ]
+    },
+    {
+      "id": "met-04-tratamentos",
+      "title": "Tratamentos térmicos: têmpera, revenimento, recozimento e normalização",
+      "level": 3,
+      "kind": "lab",
+      "lab": "heattreat",
+      "labParams": { "carbon": "0.45", "steelName": "SAE 1045", "lock": "carbon", "temperature": "760", "cooling": "air", "temper": "0" },
+      "safety": "Tratamento térmico é trabalho a quente: peças a 850 °C não mudam de cor ao esfriar até ~500 °C e parecem frias. Use **luvas de raspa/térmicas**, **protetor facial**, avental e **tenazes** — nunca a mão. O **óleo de têmpera** pode pegar fogo: mergulhe a peça inteira de uma vez, use tanque com tampa e tenha um **extintor (classe B)** por perto; nunca jogue água em óleo quente. Faça isso só em oficina preparada, com orientação.",
+      "theory": "# Mudar o aço sem mudar a composição\n\nCom o **mesmo aço** você pode ter uma peça mole para usinar ou uma ferramenta dura que corta outro aço. A diferença está no **ciclo de temperatura**: aquecer até austenita e escolher **quão rápido** ela esfria.\n\n# Os quatro tratamentos principais\n\n## Recozimento (pleno)\n\nAquecer ≈ **A3 + 30 a 50 °C** e resfriar **dentro do forno**, bem devagar. Resultado: ferrita + perlita grossa, **mole, dúctil**, sem tensões. Usado antes de usinar ou estampar.\n\n## Normalização\n\nMesma temperatura, resfriamento ao **ar calmo**. Resultado: **perlita fina e grão refinado** — um pouco mais duro e mais tenaz que o recozido. Corrige o grão grosseiro de peças forjadas ou soldadas.\n\n## Têmpera\n\nAquecer ≈ **A3 + 30 a 50 °C** (para o 1045: A3 ≈ 800 °C → 830–850 °C), manter até homogeneizar e resfriar **muito rápido** em **água** ou **óleo**. A austenita não tem tempo de expulsar o carbono e vira **martensita**: uma estrutura tetragonal supersaturada de carbono, em forma de agulhas, **muito dura e muito frágil**.\n\n- A dureza da martensita depende do **carbono**: com 0,2% C chega a ~47 HRC; com 0,45% a ~58 HRC; acima de 0,6% passa de 64 HRC.\n- Se a temperatura ficou **entre A1 e A3**, só parte vira austenita: sobra **ferrita mole** no meio da martensita (têmpera incompleta).\n- **Temperabilidade**: aços com pouco carbono (e sem liga) precisam de água; com mais carbono ou elementos de liga (Cr, Mo, Ni, Mn) o óleo basta. Água num aço de alto carbono pode **trincar** a peça.\n\n## Revenimento\n\nA martensita recém-formada é frágil como vidro. Por isso, logo depois da têmpera, reaquecemos a peça a **150–650 °C** (abaixo de A1). Parte do carbono precipita como carbonetos finos e as tensões aliviam: a peça perde um pouco de dureza e ganha muita **tenacidade**.\n\n```\n1045 temperado em água ............ ~57 HRC (frágil)\nrevenido a 200 °C ................. ~54 HRC (ferramentas)\nrevenido a 400 °C ................. ~45 HRC (molas, eixos)\nrevenido a 600 °C ................. ~28 HRC (peças estruturais tenazes)\n```\n\n**Têmpera + revenimento** (beneficiamento) é o tratamento das peças que precisam ser fortes **e** tenazes: eixos, engrenagens, parafusos de alta resistência, facas.\n\n# Velocidade de resfriamento\n\nNo gráfico temperatura × tempo do simulador, veja como a curva cai: **forno** (horas), **ar** (minutos), **óleo** (segundos), **água** (ainda mais rápido). Diagramas TTT/CCT mostram, para cada aço, que estrutura sai de cada velocidade: perlita grossa, perlita fina, bainita ou martensita.",
+      "task": "Com o aço **SAE 1045**, produza uma peça com **dureza entre 45 e 52 HRC**, pelo menos **90% de martensita** (revenida) e **tenacidade ≥ 35/100**: austenitize por completo, tempere e revenha.",
+      "hints": [
+        "Primeiro garanta 100% austenita: o A3 do 1045 é ≈ 800 °C. Use 830–850 °C.",
+        "Óleo não é rápido o bastante para um aço carbono comum com 0,45% C: use água.",
+        "Só a têmpera dá ~57 HRC e tenacidade baixa. Um revenimento entre 350 e 425 °C leva para a faixa pedida."
+      ],
+      "goals": [
+        { "metric": "hrc", "op": "between", "value": 45, "max": 52, "description": "Dureza entre 45 e 52 HRC" },
+        { "metric": "martensite", "op": ">=", "value": 0.9, "description": "Pelo menos 90% de martensita" },
+        { "metric": "toughness", "op": ">=", "value": 35, "description": "Tenacidade de pelo menos 35/100" }
+      ],
+      "solutionInputs": { "temperature": "840", "cooling": "water", "temper": "375" },
+      "questions": [
+        {
+          "prompt": "Qual tratamento deixa o aço **o mais mole possível** para ser usinado?",
+          "kind": "choice",
+          "options": ["Têmpera em água", "Recozimento (resfriar no forno)", "Revenimento a 200 °C", "Normalização em água"],
+          "answer": "1",
+          "explanation": "No recozimento o resfriamento lento forma ferrita + perlita grossa, a estrutura mais mole do aço."
+        },
+        {
+          "prompt": "Por que **sempre** se faz revenimento depois da têmpera?",
+          "kind": "choice",
+          "options": ["Para deixar o aço mais duro ainda", "Para trocar um pouco de dureza por tenacidade e aliviar tensões", "Para transformar a martensita em austenita", "Para limpar a carepa"],
+          "answer": "1",
+          "explanation": "A martensita bruta é frágil e cheia de tensões; o revenimento precipita carbonetos e alivia as tensões, ganhando tenacidade."
+        },
+        {
+          "prompt": "Um aço 1045 aquecido a **760 °C** (entre A1 e A3) e temperado em água fica…",
+          "kind": "choice",
+          "options": ["100% martensita", "Com martensita e ferrita mole misturadas (têmpera incompleta)", "100% perlita", "Totalmente fundido"],
+          "answer": "1",
+          "explanation": "Entre A1 e A3 parte da ferrita ainda não virou austenita; ela continua ferrita depois da têmpera e deixa pontos moles."
+        }
+      ]
+    },
+    {
+      "id": "met-05-seguranca",
+      "title": "Segurança na soldagem: o que nunca pode faltar",
+      "level": 3,
+      "kind": "quiz",
+      "safety": "**Nunca solde sem treinamento e sem EPI.** O mínimo: **máscara de solda com filtro de tonalidade adequada** (automática ou fixa; DIN 10–13 conforme o processo e a corrente) com **óculos de segurança** por baixo; **luvas de raspa**; **avental de raspa**, mangas/perneiras; **botas de couro com biqueira**; roupa de **algodão** (nunca sintético). Solde com **ventilação ou exaustão local**, **extintor** ao alcance, inflamáveis afastados e **biombos** protegendo quem está por perto. Aprenda na prática com um **instrutor qualificado** (ex.: cursos do SENAI).",
+      "theory": "# Os perigos da soldagem\n\nSoldar é seguro **quando** você conhece os riscos e se protege de cada um. Este simulador não tem nenhum deles — a oficina tem todos.\n\n## 1. Radiação do arco (UV e infravermelho)\n\nO arco elétrico emite **ultravioleta** e **infravermelho** intensos.\n\n- Olhar o arco sem filtro, mesmo por segundos, causa a **fotoceratite** (\"olho de solda\"): areia nos olhos, dor forte e lacrimejamento horas depois. Exposição repetida lesa a **retina** e causa catarata.\n- O UV **queima a pele** como sol forte, em minutos (pescoço e punhos são os mais atingidos).\n- **Filtro por tonalidade (DIN)**, como referência: eletrodo revestido até ~150 A → **10–11**; acima → **12–13**; MIG/MAG → **10–14**; TIG → **9–13**; oxicorte → **4–6**. Na dúvida comece escuro e clareie até ver bem a poça.\n- **Máscara automática** escurece em frações de milissegundo; confira a bateria e os sensores. Use sempre **óculos de segurança** por baixo (respingos e escória ao picar o cordão).\n- Proteja os outros: **biombos/cortinas** de solda e aviso antes de abrir o arco.\n\n## 2. Fumos e gases\n\nA fumaça da solda é feita de partículas de metal oxidado. Ela contém **manganês** (afeta o sistema nervoso), **cromo hexavalente e níquel** (no inox: cancerígenos), **zinco** (aço galvanizado: causa a **febre dos fumos metálicos**), além de **ozônio** (TIG e MIG no alumínio) e **CO**.\n\n- Use **exaustão local** (captor perto do arco) ou ventilação forte; mantenha a cabeça **fora da pluma** de fumaça.\n- Em ambiente fechado ou com inox/galvanizado, use **respirador** adequado (PFF2 ou máscara com linha de ar).\n- **Nunca** solde peças pintadas, galvanizadas ou com óleo sem remover o revestimento e sem exaustão.\n- **Gases de proteção** (argônio, CO₂) não têm cheiro e **expulsam o oxigênio**: em espaço confinado podem matar por asfixia.\n\n## 3. Choque elétrico\n\n- Trabalhe **seco**: luvas e roupas secas, nada de piso molhado.\n- Cabos e porta-eletrodo **sem emendas nem isolamento danificado**.\n- **Garra obra (terra) presa perto da solda**, em metal limpo.\n- Nunca enrole o cabo no corpo e nunca troque o eletrodo com a mão nua.\n- Se alguém levar choque: **desligue a energia antes de tocar** na pessoa.\n\n## 4. Incêndio e explosão\n\n- Respingos voam **mais de 10 m** e caem em frestas. Afaste inflamáveis (≈ **11 m**) ou cubra com **manta antichama**.\n- Tenha **extintor** (pó ABC ou CO₂) ao alcance e, em trabalho a quente, um **vigia** que fica de olho até ~30 min depois do fim.\n- **Nunca** solde ou corte tambores ou tanques que já tiveram combustível, mesmo \"vazios\": os vapores explodem.\n\n## 5. Queimaduras\n\nEscória, respingos e a peça quente queimam. Use **avental de raspa**, mangas, perneiras, **luvas de raspa**, **botas de couro** com biqueira e calça por cima da bota. Roupa de **algodão** grosso, sem bolsos abertos — tecido sintético derrete e gruda na pele. Marque peças quentes com giz (\"QUENTE\").\n\n## 6. Cilindros de gás\n\n- Sempre **em pé e acorrentados**, com o **capacete** quando não estiverem em uso.\n- Abra a válvula devagar, sem ficar na frente do regulador.\n- No oxiacetileno: **válvulas corta-chama/antirretrocesso**, acetileno nunca acima de 1 bar (15 psi), e nada de óleo ou graxa no oxigênio.\n\n## 7. Ruído, ergonomia e espaço confinado\n\nGoivagem e esmerilhamento passam de 100 dB: use **protetor auricular**. Espaço confinado (tanques, porões) exige **permissão de entrada**, medição de gases e vigia (NR-33).\n\n# Normas brasileiras\n\nNo Brasil, o EPI é regido pela **NR-6** (com Certificado de Aprovação — CA), a segurança em eletricidade pela **NR-10**, espaços confinados pela **NR-33** e o trabalho a quente em construção e reparação naval pela **NR-34**. A **ABNT** e a **AWS** têm normas específicas de segurança em soldagem.",
+      "questions": [
+        {
+          "prompt": "Você vai soldar com eletrodo revestido a **120 A**. Qual faixa de tonalidade de filtro é a referência?",
+          "kind": "choice",
+          "options": ["DIN 3 (óculos de sol)", "DIN 5 (oxicorte)", "DIN 10–11", "Qualquer uma, desde que escura"],
+          "answer": "2",
+          "explanation": "Para SMAW até ~150 A a referência é DIN 10–11; acima disso, 12–13. Filtros de oxicorte (4–6) não protegem do arco elétrico."
+        },
+        {
+          "prompt": "Soldar **aço galvanizado** sem exaustão costuma causar…",
+          "kind": "choice",
+          "options": ["Febre dos fumos metálicos (por causa do zinco)", "Nada, o zinco é inofensivo", "Somente olho de solda", "Choque elétrico"],
+          "answer": "0",
+          "explanation": "O zinco evapora e forma óxido de zinco; inalado, causa febre, calafrios e mal-estar — a febre dos fumos metálicos."
+        },
+        {
+          "prompt": "Qual roupa é adequada sob o avental de raspa?",
+          "kind": "choice",
+          "options": ["Camiseta de poliéster", "Roupa de algodão grosso, mangas compridas, calça por cima da bota", "Bermuda e chinelo, porque é quente", "Agasalho de náilon"],
+          "answer": "1",
+          "explanation": "Tecidos sintéticos derretem e grudam na pele com um respingo; algodão grosso e couro protegem."
+        },
+        {
+          "prompt": "Um colega está tomando choque preso a um cabo de solda. O que fazer **primeiro**?",
+          "kind": "choice",
+          "options": ["Puxá-lo pelo braço", "Jogar água", "Desligar a máquina/energia antes de tocar nele", "Esperar passar"],
+          "answer": "2",
+          "explanation": "Tocar na vítima energizada coloca você no circuito. Desligue a energia e só então socorra (e chame ajuda)."
+        },
+        {
+          "prompt": "Como os cilindros de gás devem ficar na oficina?",
+          "kind": "choice",
+          "options": ["Deitados no chão", "Em pé, acorrentados, com capacete quando fora de uso", "Perto da bancada de solda, sem fixação", "Dentro do armário de inflamáveis junto com tintas"],
+          "answer": "1",
+          "explanation": "Um cilindro que cai pode quebrar a válvula e virar um projétil; por isso ficam em pé e presos."
+        },
+        {
+          "prompt": "Por que **nunca** se solda um tambor que já teve combustível, mesmo vazio?",
+          "kind": "choice",
+          "options": ["Porque o metal é muito fino", "Porque os vapores que restam podem explodir com o calor", "Porque o tambor é de alumínio", "Não há problema se estiver vazio"],
+          "answer": "1",
+          "explanation": "Resíduos evaporam com o calor e formam uma mistura explosiva dentro do tambor."
+        }
+      ]
+    },
+    {
+      "id": "met-06-eletrodo",
+      "title": "Eletrodo revestido (SMAW): corrente, arco e velocidade",
+      "level": 3,
+      "kind": "lab",
+      "lab": "welding",
+      "labParams": { "process": "smaw", "metal": "carbon", "thickness": "6", "joint": "fillet", "position": "flat" },
+      "safety": "No simulador não há riscos; na oficina há. Use **máscara com filtro DIN 10–11** (até ~150 A), óculos de segurança por baixo, **luvas e avental de raspa**, mangas, **botas de couro**, roupa de algodão. Solde com **exaustão/ventilação**, **extintor** por perto e inflamáveis afastados. Ao picar a escória, ela salta quente: óculos sempre. Treine com um **instrutor qualificado** antes de soldar sozinho.",
+      "theory": "# Como funciona o eletrodo revestido\n\nNo processo **SMAW** (*Shielded Metal Arc Welding*), uma vareta de metal com um **revestimento** (o eletrodo) é ligada a um polo da máquina, e a peça ao outro (garra obra). Ao encostar e afastar o eletrodo abre-se um **arco elétrico** de ~5000 °C que funde a ponta do eletrodo e a peça, formando a **poça de fusão**.\n\nO **revestimento** derrete junto e:\n\n- gera **gases** que protegem a poça do ar (oxigênio e nitrogênio deixam o cordão poroso e frágil);\n- forma a **escória**, uma casca que cobre o cordão e é removida depois (picar e escovar);\n- **estabiliza o arco** e pode adicionar elementos de liga.\n\nÉ o processo mais simples e portátil: funciona ao ar livre, com vento, e com uma máquina pequena.\n\n# A classificação AWS: E6013, E7018…\n\n```\nE 60 1 3\n|  |  | +-- tipo de revestimento e corrente (3 = rutílico, CA ou CC)\n|  |  +---- posições (1 = todas)\n|  +------- resistência mínima: 60 ksi (≈ 420 MPa)\n+---------- eletrodo\n```\n\n- **E6013** (rutílico): fácil de abrir e manter o arco, escória que sai sozinha, cordão bonito; penetração **rasa**. Ótimo para serralheria e chapas finas.\n- **E7018** (básico, **baixo hidrogênio**): cordão mais resistente e tenaz, para estruturas e aços que trincam. Exige **arco curto** e eletrodo **seco** (guardado em estufa ~100–150 °C, ressecado a ~300–350 °C).\n- **E6010** (celulósico): penetração profunda, usado em passes de raiz de tubulações.\n\n# Os parâmetros\n\n## Corrente (A)\n\nDefine quanto metal funde e quanto **penetra**. Cada diâmetro tem uma faixa (aprox., posição plana):\n\n```\nE6013   2,5 mm: 60-90 A    3,25 mm: 90-130 A    4,0 mm: 130-180 A\nE7018   2,5 mm: 70-100 A   3,25 mm: 100-145 A   4,0 mm: 140-190 A\n```\n\n- Corrente **baixa**: o arco apaga ou gruda, cordão alto e estreito, **falta de fusão** e **escória presa**.\n- Corrente **alta**: muito **respingo**, **mordedura** nas bordas, eletrodo vermelho, risco de **furar**.\n\n## Comprimento do arco (≈ tensão)\n\nNo SMAW a máquina controla a corrente; a **tensão** depende de **quão longe** você mantém o eletrodo. Regra: **arco ≈ diâmetro do eletrodo**. Arco longo = tensão alta, arco instável, **porosidade** (o gás não protege), respingos e mordedura. Arco curto demais = o eletrodo gruda.\n\n## Velocidade de soldagem\n\nTipicamente **2 a 5 mm/s** (12 a 30 cm/min). Devagar demais: cordão gordo, metal frio caindo na frente da poça (sobreposição). Rápido demais: cordão fino, mordedura, falta de fusão.\n\n## Ângulo\n\nIncline o eletrodo **10–20°** para trás (técnica **puxando**/arraste) e, no filete, a ~45° entre as duas chapas. Eletrodo em pé deixa a escória correr para a frente do arco.\n\n# Aporte térmico\n\nA energia por milímetro de cordão é o **aporte térmico** (*heat input*):\n\n```\nQ (kJ/mm) = η · U (V) · I (A) / v (mm/s) / 1000\nη ≈ 0,8 para eletrodo revestido e MIG/MAG; ≈ 0,6 para TIG\n```\n\nExemplo: 22 V, 120 A, 3 mm/s → Q = 0,8 × 22 × 120 / 3 / 1000 ≈ **0,70 kJ/mm**.\n\n# No simulador\n\nO cordão aparece na vista de cima; depois que o arco passa pela linha **A**, o **corte A–A** mostra a **zona fundida (ZF)**, a **zona termicamente afetada (ZTA)** e os defeitos. Os indicadores dizem a probabilidade de cada defeito, e a dica explica a causa principal.",
+      "task": "Solde um **filete em T** numa chapa de **6 mm** com eletrodo **E6013 de 3,25 mm**: obtenha **qualidade ≥ 80**, **falta de fusão ≤ 15%** e **porosidade ≤ 15%**.",
+      "hints": [
+        "Comece pela corrente: a faixa do E6013 de 3,25 mm é 90–130 A. Fique no meio dela.",
+        "Arco ≈ diâmetro do eletrodo (≈ 3,25 mm). Arco longo dá porosidade e respingo.",
+        "Velocidade de 2,5 a 4 mm/s e eletrodo inclinado 10–20°."
+      ],
+      "goals": [
+        { "metric": "quality", "op": ">=", "value": 80, "description": "Qualidade do cordão ≥ 80" },
+        { "metric": "lackOfFusion", "op": "<=", "value": 0.15, "description": "Falta de fusão ≤ 15%" },
+        { "metric": "porosity", "op": "<=", "value": 0.15, "description": "Porosidade ≤ 15%" }
+      ],
+      "solutionInputs": { "electrode": "E6013", "diameter": "3.25", "current": "115", "arcLength": "3.25", "travelSpeed": "3", "angle": "15", "preheat": "20" },
+      "questions": [
+        {
+          "prompt": "Calcule o aporte térmico: **U = 22 V**, **I = 120 A**, **v = 3 mm/s**, **η = 0,8**.",
+          "kind": "number",
+          "answer": "0.704",
+          "tolerance": 3,
+          "unit": "kJ/mm",
+          "explanation": "Q = 0,8 × 22 × 120 / 3 / 1000 = 0,704 kJ/mm."
+        },
+        {
+          "prompt": "O que significa o **60** em **E6013**?",
+          "kind": "choice",
+          "options": ["Diâmetro de 6,0 mm", "Resistência à tração mínima de 60 ksi (≈ 420 MPa)", "Corrente de 60 A", "60% de ferro no revestimento"],
+          "answer": "1",
+          "explanation": "Os dois (ou três) primeiros dígitos dão a resistência mínima do metal depositado em ksi."
+        },
+        {
+          "prompt": "Manter o **arco longo demais** no eletrodo revestido causa principalmente…",
+          "kind": "choice",
+          "options": ["Penetração excessiva", "Porosidade, respingos e mordedura", "Eletrodo grudando", "Cordão mais estreito e alto"],
+          "answer": "1",
+          "explanation": "Arco longo = tensão alta e proteção ruim: o ar entra na poça (poros), o arco espalha metal (respingos) e cava as bordas (mordedura)."
+        }
+      ]
+    },
+    {
+      "id": "met-07-mig",
+      "title": "MIG/MAG (GMAW): arame, tensão e gás",
+      "level": 3,
+      "kind": "lab",
+      "lab": "welding",
+      "labParams": { "process": "gmaw", "metal": "carbon", "thickness": "4", "joint": "butt", "position": "flat" },
+      "safety": "O MIG/MAG gera **mais radiação e mais fumos** que o eletrodo: use **filtro DIN 11–13**, exaustão local e cubra toda a pele (o UV queima em minutos). O arame sai da tocha energizado: **nunca aponte a tocha para o corpo** nem aperte o gatilho olhando o bico. O **cilindro** fica em pé e acorrentado; CO₂ e argônio em ambiente fechado expulsam o oxigênio. Luvas e avental de raspa, botas de couro, **extintor** por perto, e prática com **instrutor**.",
+      "theory": "# Como funciona o MIG/MAG\n\nNo **GMAW** (*Gas Metal Arc Welding*) um **arame** contínuo sai de um carretel, passa pela tocha e é o próprio eletrodo; um **gás** sai pelo bocal e protege a poça. Não há escória para picar e a produção é alta — é o processo mais usado na indústria (carros, estruturas, implementos).\n\n- **MAG** (*Metal Active Gas*): gás **ativo** (CO₂ ou Ar + CO₂) — para **aço carbono**.\n- **MIG** (*Metal Inert Gas*): gás **inerte** (argônio, Ar + hélio) — para **alumínio** e outros não ferrosos.\n\n# A máquina de tensão constante\n\nAqui o soldador **não regula a corrente diretamente**:\n\n- A **velocidade do arame** (m/min) define a **corrente**: mais arame entrando, mais corrente para derretê-lo. Para arame de 1,0 mm, aproximadamente: 3 m/min ≈ 100 A, 5 m/min ≈ 145 A, 8 m/min ≈ 210 A.\n- A **tensão** (V) define o **comprimento do arco**. Uma referência para arame de aço: **U ≈ 14 + 0,05 × I**. Tensão baixa demais: o arame \"bate\" na peça, estala e respinga. Alta demais: arco longo, gotas grandes, cordão largo e mordedura.\n- O **stick-out** (arame para fora do bico) fica em **10–20 mm**. Longo demais: a corrente cai, o gás não chega e o arco fica instável.\n\n# Modos de transferência\n\n- **Curto-circuito**: corrente e tensão baixas; a gota toca a poça a cada ~100 vezes por segundo. Pouco calor: chapas finas e fora de posição.\n- **Globular**: gotas grandes e irregulares; muito respingo (evitar).\n- **Spray**: corrente e tensão altas com gás rico em argônio; um jato fino de gotas, muito calor e penetração — chapas grossas na posição plana.\n- **Pulsado**: a máquina alterna pulsos; spray com pouco calor médio.\n\n# Gases\n\n```\nCO2 puro ........... aço carbono: penetra bem, barato, mais respingo\nAr + 15-25% CO2 .... aço carbono: arco suave, pouco respingo (o mais comum)\nAr + 2% O2 / CO2 ... aço inox (pouco carbono no cordão)\nArgônio / Ar + He .. alumínio, cobre (MIG)\n```\n\nVazão típica: **12–18 L/min**. Pouco gás = **porosidade**; gás demais cria turbulência e puxa ar. Vento também leva o gás: o MIG não é bom ao ar livre.\n\n# Técnica\n\n- Tocha **empurrando** (5–15°) dá cordão mais plano; puxando, mais penetração.\n- Velocidade típica: 4–9 mm/s.\n- Em **junta de topo** sem chanfro, chapas até ~4–5 mm podem ser soldadas com **penetração total** num passe — sem perfurar.",
+      "task": "Solde uma **junta de topo** em chapa de **4 mm** com **penetração total (≥ 3,2 mm)** sem perfurar, com **respingo ≤ 20%**, **porosidade ≤ 10%** e **qualidade ≥ 80**.",
+      "hints": [
+        "A corrente vem do arame: para penetrar 3,2 mm você precisa de algo perto de 190–200 A (≈ 7–7,5 m/min com arame de 1,0 mm).",
+        "Ajuste a tensão pela regra U ≈ 14 + 0,05 × I. Com ~200 A, algo entre 22 e 24 V.",
+        "Gás Ar + CO₂ a 12–18 L/min, stick-out de 10–20 mm e tocha a 5–15°."
+      ],
+      "goals": [
+        { "metric": "penetration", "op": ">=", "value": 3.2, "description": "Penetração ≥ 3,2 mm (total)" },
+        { "metric": "burnThrough", "op": "<=", "value": 0.1, "description": "Sem perfurar (≤ 10%)" },
+        { "metric": "spatter", "op": "<=", "value": 0.2, "description": "Respingos ≤ 20%" },
+        { "metric": "porosity", "op": "<=", "value": 0.1, "description": "Porosidade ≤ 10%" },
+        { "metric": "quality", "op": ">=", "value": 80, "description": "Qualidade ≥ 80" }
+      ],
+      "solutionInputs": { "wireDiameter": "1.0", "wireFeed": "7.5", "voltage": "23", "stickout": "15", "travelSpeed": "6", "angle": "10", "gas": "ar-co2", "gasFlow": "15" },
+      "questions": [
+        {
+          "prompt": "Numa máquina MIG/MAG de tensão constante, o que **aumenta a corrente**?",
+          "kind": "choice",
+          "options": ["Aumentar a tensão", "Aumentar a velocidade do arame", "Aumentar a vazão de gás", "Aumentar o stick-out"],
+          "answer": "1",
+          "explanation": "Mais arame entrando por segundo exige mais corrente para fundi-lo. (Aumentar o stick-out, ao contrário, reduz a corrente.)"
+        },
+        {
+          "prompt": "Qual gás você usaria para soldar **alumínio** com MIG?",
+          "kind": "choice",
+          "options": ["CO₂ puro", "Ar + 20% CO₂", "Argônio puro", "Oxigênio"],
+          "answer": "2",
+          "explanation": "O alumínio exige gás inerte (argônio ou Ar + He); gases com CO₂/O₂ oxidam a poça."
+        },
+        {
+          "prompt": "Pela regra U ≈ 14 + 0,05 × I, qual tensão usar com **180 A**?",
+          "kind": "number",
+          "answer": "23",
+          "tolerance": 3,
+          "unit": "V",
+          "explanation": "14 + 0,05 × 180 = 14 + 9 = 23 V."
+        }
+      ]
+    },
+    {
+      "id": "met-08-tig",
+      "title": "TIG (GTAW): alumínio e inox",
+      "level": 4,
+      "kind": "lab",
+      "lab": "welding",
+      "labParams": { "process": "gtaw", "metal": "aluminum", "thickness": "3", "joint": "butt", "position": "flat" },
+      "safety": "O TIG emite **UV muito forte** e gera **ozônio** (pior no alumínio, que reflete a luz): filtro **DIN 10–13**, pele toda coberta e exaustão. Ao afiar o tungstênio, use esmeril exclusivo, óculos e **evite o tungstênio toriado** (ponta vermelha, levemente radioativo) — prefira lantanado ou ceriado. **Fumos de inox** contêm cromo hexavalente: exaustão local obrigatória. A ignição por **alta frequência** pode interferir em marca-passos. Luvas de TIG (finas) só para o processo TIG; pratique com **instrutor**.",
+      "theory": "# Como funciona o TIG\n\nNo **GTAW** (*Gas Tungsten Arc Welding*) o arco nasce de um eletrodo de **tungstênio que não se consome** (funde a 3422 °C). O metal de adição, quando necessário, é uma vareta colocada **à mão** na poça. O gás é **inerte** (argônio). Resultado: o processo mais **limpo e preciso**, sem respingos nem escória — usado em inox, alumínio, titânio, tubulações e peças finas. É também o mais lento e o que exige mais coordenação (as duas mãos e às vezes o pé no pedal).\n\n# Polaridade: CC− ou CA?\n\n- **CC− (eletrodo negativo)**: ~70% do calor vai para a peça. Penetração boa e tungstênio frio. É a escolha para **aço carbono, inox, cobre e titânio**.\n- **CC+ (eletrodo positivo)**: ~70% do calor vai para o tungstênio, que derrete e contamina a poça. Quase não se usa.\n- **CA (corrente alternada)**: obrigatória no **alumínio** (e magnésio). O alumínio é coberto por uma camada de **óxido (Al₂O₃) que funde a 2050 °C**, enquanto o metal funde a **660 °C**. No meio ciclo positivo o arco **arranca o óxido** (efeito de limpeza catódica); no negativo, aquece a peça. Sem CA, o óxido fica e o metal não se une.\n\n# Parâmetros\n\n- **Corrente**: referência de ~**1 A por 0,025 mm** de espessura (≈ 40 A por mm) no aço; o alumínio, que espalha o calor, pede um pouco mais em CA. Ex.: alumínio de 3 mm ≈ 120–150 A.\n- **Comprimento do arco**: curto, **≈ 1,5–3 mm** (mais ou menos o diâmetro do tungstênio). Arco longo espalha o calor e reduz a penetração; encostar o tungstênio na poça contamina tudo.\n- **Gás**: **argônio puro**, 7–12 L/min (Ar + hélio dá mais calor para peças grossas de alumínio/cobre). Nunca gás com CO₂ ou O₂: queima o tungstênio.\n- **Velocidade**: lenta, 1–4 mm/s.\n\n# Particularidades\n\n## Alumínio\n\n- **Limpe** com escova de aço inox exclusiva e solvente: óleo e umidade viram **hidrogênio** na poça → **porosidade**.\n- Conduz o calor 3× mais que o aço: no começo do cordão precisa de mais corrente (o pedal ajuda).\n- Não muda de cor antes de fundir: a poça aparece de repente.\n\n## Aço inox austenítico (304, 316)\n\n- Conduz pouco o calor e dilata muito: **distorce** fácil. Use **baixo aporte térmico**.\n- Entre ~450 e 850 °C o cromo forma carbonetos nos contornos de grão (**sensitização**) e o inox perde a resistência à corrosão naquela região. Por isso usamos metal de adição \"L\" (**308L, 316L**, baixo carbono) e pouco calor.\n- Em tubos, faz-se **purga** com argônio do lado de dentro para a raiz não oxidar.",
+      "task": "Solde **alumínio de 3 mm** em **junta de topo** com penetração total e sem perfurar: **qualidade ≥ 80**, **falta de fusão ≤ 10%**, **porosidade ≤ 10%** e **perfuração ≤ 10%**.",
+      "hints": [
+        "Primeiro a polaridade: alumínio só funciona bem em CA (corrente alternada).",
+        "Gás argônio puro, 7–12 L/min. Arco curto: 2–3 mm.",
+        "Corrente perto de 130–140 A com velocidade de ~2,5 mm/s e tocha a 10–20°."
+      ],
+      "goals": [
+        { "metric": "quality", "op": ">=", "value": 80, "description": "Qualidade ≥ 80" },
+        { "metric": "lackOfFusion", "op": "<=", "value": 0.1, "description": "Falta de fusão ≤ 10%" },
+        { "metric": "porosity", "op": "<=", "value": 0.1, "description": "Porosidade ≤ 10%" },
+        { "metric": "burnThrough", "op": "<=", "value": 0.1, "description": "Perfuração ≤ 10%" }
+      ],
+      "solutionInputs": { "polarity": "ac", "gas": "ar", "current": "135", "arcLength": "2.5", "travelSpeed": "2.5", "angle": "15", "gasFlow": "10" },
+      "questions": [
+        {
+          "prompt": "Por que o TIG no alumínio usa **corrente alternada**?",
+          "kind": "choice",
+          "options": ["Porque é mais barato", "Porque o meio ciclo positivo quebra a camada de óxido de alumínio", "Porque o alumínio não conduz corrente contínua", "Para o tungstênio durar mais"],
+          "answer": "1",
+          "explanation": "O Al₂O₃ funde a 2050 °C e o alumínio a 660 °C; a limpeza catódica do meio ciclo positivo remove o óxido para o metal se unir."
+        },
+        {
+          "prompt": "Pela regra de ~1 A para cada 0,025 mm, qual corrente aproximada para **aço de 2 mm** em CC−?",
+          "kind": "number",
+          "answer": "80",
+          "tolerance": 10,
+          "unit": "A",
+          "explanation": "2 mm / 0,025 mm = 80 → cerca de 80 A."
+        },
+        {
+          "prompt": "Por que se usa metal de adição **308L** (\"L\" = baixo carbono) no inox 304?",
+          "kind": "choice",
+          "options": ["Para ficar mais duro", "Para evitar a sensitização (carbonetos de cromo) e manter a resistência à corrosão", "Porque é magnético", "Para soldar mais rápido"],
+          "answer": "1",
+          "explanation": "Com pouco carbono quase não se formam carbonetos de cromo entre 450 e 850 °C, e o cromo continua protegendo contra a corrosão."
+        }
+      ]
+    },
+    {
+      "id": "met-09-defeitos",
+      "title": "Juntas, posições, defeitos e inspeção",
+      "level": 4,
+      "kind": "lab",
+      "lab": "welding",
+      "labParams": { "process": "smaw", "metal": "carbon", "thickness": "8", "joint": "fillet", "position": "vertical" },
+      "safety": "Soldar **fora da posição** (vertical e sobrecabeça) faz respingos e escória caírem sobre você: use **mangas, avental, perneiras, touca/balaclava de raspa** e gola fechada, além da máscara (DIN 10–11) e óculos. Na inspeção: **líquidos penetrantes** e reveladores são inflamáveis e irritantes (ventilação, luvas nitrílicas); **radiografia** só por profissionais licenciados, com a área isolada — nunca entre numa área sinalizada de radiação.",
+      "theory": "# Tipos de junta\n\n- **Topo**: as chapas lado a lado, no mesmo plano.\n- **Em T** (ângulo): uma chapa em pé sobre a outra; soldada com **filete**.\n- **Sobreposta**: uma chapa sobre a outra; filete na borda.\n- **Canto** e **aresta**: chapas formando um canto ou com as bordas juntas.\n\n## Chanfros\n\nChapas finas (até ~4–6 mm) são soldadas de topo com **bordas retas**. Acima disso a junta é **chanfrada** para o arco chegar até o fundo: chanfro em **V** (~60°), **X** (dos dois lados, chapas grossas), **U** ou **J** (menos metal de adição). O chanfro tem **face de raiz** (nariz, ~1,5 mm) e **abertura de raiz** (~2–3 mm). A junta grossa é preenchida em vários passes: **raiz**, **enchimento** e **acabamento**.\n\n# Posições (AWS / ISO)\n\n```\nTopo (chanfro)       Filete\n1G  plana            1F  plana\n2G  horizontal       2F  horizontal\n3G  vertical         3F  vertical\n4G  sobrecabeça      4F  sobrecabeça\n5G/6G tubos (fixos ou a 45°)\n```\n\nFora da posição plana a **gravidade puxa a poça**: use eletrodo menor, **10–15% menos corrente**, poça pequena e, na vertical, solde **subindo** (ascendente) com um leve movimento de \"tecimento\".\n\n# Os defeitos e suas causas\n\n- **Porosidade**: bolhas de gás presas. Causas: arco longo, gás pouco ou demais, vento, eletrodo úmido, peça suja/oleada.\n- **Inclusão de escória**: escória presa entre passes. Causas: corrente baixa, limpeza ruim entre passes, ângulo errado.\n- **Falta de fusão**: o metal depositado não fundiu a parede da junta. Causas: corrente baixa, velocidade alta, arco desviado.\n- **Falta de penetração**: a raiz não fundiu. Causas: corrente baixa, abertura pequena, nariz grande.\n- **Mordedura**: um sulco na borda do cordão. Causas: corrente/tensão altas, velocidade alta, ângulo errado — muito comum na vertical.\n- **Sobreposição**: metal que escorreu sobre a chapa sem fundi-la (velocidade baixa, poça grande).\n- **Perfuração**: calor demais em chapa fina.\n- **Trincas**: as mais perigosas. **A quente** (na solidificação: enxofre, cordão estreito e fundo) ou **a frio** (horas depois, na ZTA dura com hidrogênio).\n- **Respingos e distorção**: problemas de acabamento e de dimensão.\n\n# Inspeção\n\n## Ensaios não destrutivos (END)\n\n- **Visual (EV)**: o primeiro e mais barato. Com gabaritos medem-se perna do filete, reforço, mordedura e alinhamento. Encontra a maioria dos problemas.\n- **Líquido penetrante (LP)**: limpar → aplicar o penetrante → remover o excesso → aplicar o revelador, que \"chupa\" o líquido das trincas. Detecta só descontinuidades **abertas na superfície**, em qualquer metal não poroso.\n- **Partículas magnéticas (PM)**: magnetiza a peça e espalha pó de ferro, que se acumula sobre trincas **superficiais e pouco abaixo da superfície**. Só em materiais **ferromagnéticos** (não serve para alumínio nem inox austenítico).\n- **Ultrassom (US)**: um cabeçote envia som de alta frequência; ecos revelam descontinuidades **internas** (falta de fusão, trincas). Também mede espessura.\n- **Radiografia (RX / gamagrafia)**: raios X ou gama atravessam a solda e marcam um filme ou detector: **poros** e **inclusões** aparecem como manchas. Exige proteção radiológica.\n\n## Ensaios destrutivos\n\nUsados para **qualificar** procedimentos e soldadores: **dobramento** (a solda dobrada não pode abrir), **macrografia** (corta-se, lixa-se e ataca-se com ácido para ver ZF e ZTA — como o corte A–A do simulador), **tração** e **impacto Charpy**.\n\n# No simulador\n\nAgora a solda é um **filete na vertical ascendente (3F)**. Os mesmos parâmetros da posição plana causam **mordedura** e a poça escorre. Compare a faixa de corrente mostrada com a da lição de eletrodo revestido.",
+      "task": "Solde um **filete vertical ascendente (3F)** em chapa de **8 mm**: **mordedura ≤ 15%**, **falta de fusão ≤ 15%** e **qualidade ≥ 80**.",
+      "hints": [
+        "Na vertical a faixa de corrente cai uns 10–15%: veja a faixa ao lado do controle de corrente.",
+        "O E7018 de 3,25 mm é o eletrodo clássico de estruturas na vertical.",
+        "Velocidade menor que na plana (≈ 2 mm/s), arco curto (≈ 3 mm) e ângulo pequeno (≈ 10°)."
+      ],
+      "goals": [
+        { "metric": "undercut", "op": "<=", "value": 0.15, "description": "Mordedura ≤ 15%" },
+        { "metric": "lackOfFusion", "op": "<=", "value": 0.15, "description": "Falta de fusão ≤ 15%" },
+        { "metric": "quality", "op": ">=", "value": 80, "description": "Qualidade ≥ 80" }
+      ],
+      "solutionInputs": { "electrode": "E7018", "diameter": "3.25", "current": "115", "arcLength": "3", "travelSpeed": "2", "angle": "10", "preheat": "20" },
+      "questions": [
+        {
+          "prompt": "Qual ensaio detecta **apenas** descontinuidades abertas na superfície, em qualquer metal não poroso?",
+          "kind": "choice",
+          "options": ["Ultrassom", "Radiografia", "Líquido penetrante", "Partículas magnéticas"],
+          "answer": "2",
+          "explanation": "O líquido penetrante precisa entrar pela abertura da trinca; não vê nada interno."
+        },
+        {
+          "prompt": "Você precisa achar **poros internos** numa solda de topo de 20 mm de alumínio. Qual ensaio é o mais indicado?",
+          "kind": "choice",
+          "options": ["Partículas magnéticas", "Radiografia", "Inspeção visual", "Líquido penetrante"],
+          "answer": "1",
+          "explanation": "Poros e inclusões são volumétricos e aparecem bem na radiografia; partículas magnéticas não funcionam em alumínio."
+        },
+        {
+          "prompt": "Na designação de posições, **3F** significa…",
+          "kind": "choice",
+          "options": ["Topo na vertical", "Filete na vertical", "Filete sobrecabeça", "Três passes de filete"],
+          "answer": "1",
+          "explanation": "O número é a posição (3 = vertical) e a letra o tipo de solda (F = filete, G = chanfro/topo)."
+        }
+      ]
+    },
+    {
+      "id": "met-10-engenharia",
+      "title": "Engenharia da solda: aporte térmico, CE, pré-aquecimento e WPS",
+      "level": 5,
+      "kind": "lab",
+      "lab": "welding",
+      "labParams": { "process": "smaw", "metal": "carbon", "thickness": "25", "joint": "butt", "position": "flat", "carbon": "0.22", "ce": "0.50" },
+      "safety": "Pré-aquecer chapas grossas (maçarico ou mantas elétricas) acrescenta **riscos de queimadura e incêndio**: meça a temperatura com **lápis térmico ou termômetro de contato**, nunca com a mão; use luvas de raspa e mantenha **extintor** e **vigia de fogo**. Com gás combustível, siga as regras de cilindros e válvulas corta-chama. Trabalhar ao lado de peças a 150 °C por horas exige pausas e hidratação. O EPI completo de soldagem (máscara DIN 10–13, avental, luvas, botas, exaustão) continua obrigatório.",
+      "theory": "# Da oficina à engenharia\n\nNa estrutura de uma ponte, num vaso de pressão ou numa plataforma, uma solda não pode \"parecer boa\": ela precisa de **propriedades comprovadas**. Esta lição junta o que vimos em uma visão de engenharia.\n\n# Aporte térmico e velocidade de resfriamento\n\n```\nQ = η · U · I / v           (kJ/mm)\n```\n\nO aporte define **quanto calor** entra; a **espessura** e a **temperatura inicial** definem **quão rápido** ele sai. O parâmetro mais usado é o **t8/5**: o tempo para a ZTA esfriar de **800 a 500 °C** — a faixa em que a austenita se transforma.\n\n- **Chapa grossa** (fluxo de calor 3D): t8/5 ∝ Q · (1/(500 − T0) − 1/(800 − T0)).\n- **Chapa fina** (fluxo 2D): t8/5 ∝ Q² / e² · (…), cresce rápido com o aporte.\n- t8/5 **curto** (pouco aporte, chapa grossa, peça fria) → ZTA com **martensita**, **dura e frágil**.\n- t8/5 **longo** → ZTA mais mole, mas com **grão grosseiro** e menor tenacidade se exagerar.\n\nO simulador usa as fórmulas da **EN 1011-2** para o t8/5 e a fórmula de **Düren** para a dureza máxima da ZTA.\n\n# As regiões da ZTA\n\nDo cordão para fora: **grão grosseiro** (aquecido muito acima de A3: o pior lugar, onde nascem as trincas), **grão fino** (normalizado, bom), **intercrítica** (entre A1 e A3) e **subcrítica** (abaixo de A1, revenida).\n\n# Carbono equivalente (CE)\n\nNão é só o carbono que endurece a ZTA: manganês, cromo, molibdênio, níquel… também aumentam a temperabilidade. O **IIW** resume isso no **carbono equivalente**:\n\n```\nCE(IIW) = C + Mn/6 + (Cr + Mo + V)/5 + (Ni + Cu)/15\n```\n\n- **CE < 0,40**: boa soldabilidade, normalmente sem pré-aquecimento (espessuras moderadas).\n- **0,40 a 0,60**: cuidado — consumível de **baixo hidrogênio** e **pré-aquecimento** conforme espessura.\n- **CE > 0,60**: soldagem difícil; pré e pós-aquecimento, procedimento especial.\n\n# Trinca a frio (induzida por hidrogênio)\n\nPrecisa de **três** coisas ao mesmo tempo, e aparece horas depois, abaixo de ~200 °C:\n\n- **hidrogênio** na solda (umidade do revestimento, óleo, ferrugem — eletrodo celulósico/rutílico tem muito; o **E7018** seco tem pouco);\n- **microestrutura dura** na ZTA (CE alto + resfriamento rápido);\n- **tensões** (restrição de chapas grossas).\n\nTire qualquer uma e a trinca não ocorre. Por isso as ferramentas do engenheiro são:\n\n- **consumível de baixo hidrogênio** (E7018 seco, MIG, TIG);\n- **pré-aquecimento** (e temperatura **entre passes**): aumenta o t8/5 → ZTA mais mole, e dá tempo ao hidrogênio de escapar;\n- **aporte térmico** suficiente;\n- **pós-aquecimento** (~200–250 °C por algumas horas) e **tratamento térmico de alívio de tensões** (TTAT, ~600 °C) em casos críticos.\n\n# WPS, PQR e qualificação\n\n- **EPS / WPS** (*Welding Procedure Specification*): o documento que diz **como** soldar: processo, metal de base, consumível, posição, faixas de corrente, tensão, velocidade, aporte, pré-aquecimento, interpasse, gás…\n- **RQP / PQR** (*Procedure Qualification Record*): o **registro do teste** que provou que a WPS produz uma solda boa (corpos de prova soldados e ensaiados: tração, dobramento, Charpy, macro, dureza).\n- **Qualificação do soldador (WPQ)**: cada soldador faz um teste e é qualificado para os processos e posições que soldou.\n- Normas comuns: **AWS D1.1** (estruturas de aço), **ASME IX** (vasos e tubulações), **ISO 15614 / ISO 9606**, **Petrobras N-133**.\n\nAs variáveis **essenciais** (como o tipo de consumível, a faixa de espessura, o pré-aquecimento mínimo) não podem mudar sem requalificar o procedimento.\n\n# No simulador\n\nO aço desta lição tem **C = 0,22%** e **CE = 0,50**, em chapa de **25 mm** (chanfro em V, vários passes). Observe a **dureza da ZTA (HV)**, o **t8/5** e o risco de **trinca** ao mudar o consumível, o aporte e o pré-aquecimento.",
+      "task": "Defina os parâmetros de uma solda de topo em aço **CE = 0,50**, **25 mm**: **risco de trinca ≤ 20%**, **qualidade ≥ 80** e **aporte térmico entre 0,8 e 2,5 kJ/mm**.",
+      "hints": [
+        "Com CE 0,50 e 25 mm o hidrogênio é o inimigo: troque o E6013 por um eletrodo básico de baixo hidrogênio.",
+        "Eletrodo de 4,0 mm dentro da sua faixa (140–190 A) com ~3 mm/s dá aporte perto de 1 kJ/mm.",
+        "Ainda trincando? Pré-aqueça: algo entre 100 e 150 °C. A dica do simulador mostra o pré-aquecimento sugerido."
+      ],
+      "goals": [
+        { "metric": "crackRisk", "op": "<=", "value": 0.2, "description": "Risco de trinca ≤ 20%" },
+        { "metric": "quality", "op": ">=", "value": 80, "description": "Qualidade ≥ 80" },
+        { "metric": "heatInput", "op": "between", "value": 0.8, "max": 2.5, "description": "Aporte térmico entre 0,8 e 2,5 kJ/mm" }
+      ],
+      "solutionInputs": { "electrode": "E7018", "diameter": "4.0", "current": "165", "arcLength": "4", "travelSpeed": "3", "angle": "15", "preheat": "120" },
+      "questions": [
+        {
+          "prompt": "Calcule o **CE(IIW)** de um aço com C = 0,20; Mn = 1,40; Cr = 0,20; Mo = 0,10; V = 0; Ni = 0,10; Cu = 0,10 (%).",
+          "kind": "number",
+          "answer": "0.507",
+          "tolerance": 2,
+          "unit": "",
+          "explanation": "0,20 + 1,40/6 + (0,20 + 0,10 + 0)/5 + (0,10 + 0,10)/15 = 0,20 + 0,233 + 0,060 + 0,013 ≈ 0,507."
+        },
+        {
+          "prompt": "Calcule o aporte térmico de um passe com **U = 24 V**, **I = 160 A**, **v = 3 mm/s** e **η = 0,8**.",
+          "kind": "number",
+          "answer": "1.024",
+          "tolerance": 2,
+          "unit": "kJ/mm",
+          "explanation": "Q = 0,8 × 24 × 160 / 3 / 1000 = 1,024 kJ/mm."
+        },
+        {
+          "prompt": "Por que o **pré-aquecimento** reduz o risco de trinca a frio?",
+          "kind": "choice",
+          "options": ["Porque aumenta a resistência do metal de adição", "Porque deixa o resfriamento mais lento (ZTA menos dura) e dá tempo para o hidrogênio escapar", "Porque elimina a necessidade de EPI", "Porque reduz o aporte térmico"],
+          "answer": "1",
+          "explanation": "Com T0 maior o t8/5 aumenta, forma-se menos martensita na ZTA, e o hidrogênio difunde para fora enquanto a peça está quente."
+        },
+        {
+          "prompt": "Qual documento **registra o teste** que comprovou que um procedimento de soldagem produz soldas adequadas?",
+          "kind": "choice",
+          "options": ["WPS / EPS", "PQR / RQP", "Certificado de Aprovação (CA) do EPI", "Nota fiscal do eletrodo"],
+          "answer": "1",
+          "explanation": "O PQR (RQP) registra os parâmetros reais usados e os resultados dos ensaios; a WPS (EPS) é a instrução que se apoia nele."
+        }
+      ]
+    }
+  ]
+}
