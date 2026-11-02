@@ -123,6 +123,12 @@ public static partial class ArduinoTests
         // a local declared without a value holds garbage (like a real compiler), globals and statics start at zero
         new("variável local sem valor tem lixo", "int g; int main(){ int x; char c; static int s; int v[2]; printf(\"%d %d %d %d %d\\n\", x, c, s, g, v[1]); return 0; }", "", "-858993460 -52 0 0 -858993460"),
         new("variável no laço recebe valor antes de usar", "int main(){ int s = 0; for (int i = 0; i < 4; i++) { int t; t = i * 2; s += t; } printf(\"%d\\n\", s); return 0; }", "", "12"),
+        new("negativos: divisão e resto", "int main(){ printf(\"%d %d %d %d %d %d\\n\", 7 / -2, 7 % -3, -7 % -2, -8 / 3, -1 / 2, -9 % 3); return 0; }", "", "-3 1 -1 -2 0 0"),
+        new("conversões implícitas", "int main(){ int i = 3.99; char c = 300; double d = 5 / 2; double e = 5 / 2.0; unsigned char u = -1; short s = 70000; printf(\"%d %d %.1f %.1f %d %d %d\\n\", i, c, d, e, u, s, (int)-3.99); return 0; }", "", "3 44 2.0 2.5 255 4464 -3"),
+        new("precedência unária e ponteiros", "int main(){ int a[3] = {10, 20, 30}; int *p = a; int x = *p++; int y = (*p)++; int z = !0 == 1; int w = -2 * -3; int b, c; b = c = 4; printf(\"%d %d %d %d %d %d %d %d\\n\", x, y, a[1], z, w, b, c, 1 == 1 & 2); return 0; }", "", "10 20 21 1 6 4 4 0"),
+        new("operador vírgula e sizeof de expressão", "int main(){ int x = (1, 2, 3); double d; printf(\"%d %d %d\\n\", x, (int)sizeof(d), (int)sizeof x); return 0; }", "", "3 8 4"),
+        new("scanf com separador e negativo", "int main(){ int a, b; double c; int n = scanf(\"%d,%d %lf\", &a, &b, &c); printf(\"%d %d %d %.2f\\n\", n, a, b, c); return 0; }", "-4,7 -0.5", "3 -4 7 -0.50"),
+        new("printf negativos e largura", "int main(){ printf(\"[%6.2f][%-6d][%05d][%+.1f][%3c][%-4s]\\n\", -3.14159, -12, -42, 0.0, 'x', \"ab\"); return 0; }", "", "[ -3.14][-12   ][-0042][+0.0][  x][ab  ]"),
 
         // ---- errors (friendly messages) ----
         new("erro: ponto e vírgula", "int main(){\n  int x = 5\n  printf(\"%d\", x);\n  return 0;\n}", "", null, "linha 2"),
