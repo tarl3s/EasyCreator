@@ -282,6 +282,8 @@ public sealed class CInterpreter
     void BadAddr(long a)
     {
         if (a == 0) throw RtErr("acesso a um ponteiro NULL (o ponteiro não aponta para nada)");
+        if (Math.Abs(a - Junk) < 1 << 20)
+            throw RtErr("acesso por um ponteiro que nunca recebeu um endereço (ponteiro não inicializado: faça ele apontar para uma variável, um vetor ou um malloc antes de usar)");
         throw RtErr("acesso a um endereço de memória inválido (ponteiro ou índice fora da área válida)");
     }
 
@@ -340,6 +342,42 @@ public sealed class CInterpreter
                 }
         }
     }
+
+    /// <summary>A local variable declared without a value holds whatever was in memory ("lixo"). Zeroed memory would
+    /// let a forgotten <c>int soma;</c> pass every test here and fail with a real compiler, so locals get the junk
+    /// pattern a Visual Studio debug build uses (0xCC bytes: int -858993460, char 'Ì', double -9.26e+61), and an
+    /// uninitialised pointer points nowhere valid.</summary>
+    public void FillGarbage(long a, CType t)
+    {
+        switch (t.K)
+        {
+            case TK.Array:
+                {
+                    long n = Math.Max(0, t.Len), cells = t.Elem!.Cells;
+                    if (n == 0 || cells == 0) return;
+                    CheckRange(a, n * cells);
+                    if (t.Elem.IsScalar) { Array.Fill(Mem, GarbageFor(t.Elem), (int)a, (int)(n * cells)); return; }
+                    for (long i = 0; i < n; i++) FillGarbage(a + i * cells, t.Elem);
+                    return;
+                }
+            case TK.Struct:
+                foreach (var f in t.S!.Fields) FillGarbage(a + f.Offset, f.T);
+                return;
+            default:
+                if (t.IsScalar) Write(a, GarbageFor(t));
+                return;
+        }
+    }
+
+    const long Junk = unchecked((long)0xCCCCCCCCCCCCCCCCUL);
+
+    static long GarbageFor(CType t) => t.K switch
+    {
+        TK.Float => BitConverter.DoubleToInt64Bits(BitConverter.Int32BitsToSingle(unchecked((int)0xCCCCCCCC))),
+        TK.Double or TK.Ptr => Junk,
+        TK.Bool => 1,
+        _ => Conv.Norm(Junk, t)
+    };
 
     // ---------- heap ----------
     public long Malloc(long bytes)

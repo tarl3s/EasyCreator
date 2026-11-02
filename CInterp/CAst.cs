@@ -669,6 +669,7 @@ public sealed class DeclStmt : Stmt
             return Flow.Normal;
         }
         if (Init != null) Initializer.Init(ip, a, t, Init, Line);
+        else if (!V.Global) ip.FillGarbage(a, t);
         return Flow.Normal;
     }
 }
