@@ -1,0 +1,397 @@
+{
+  "title": "Electrical Engineering: from Ohm to power systems",
+  "description": "From Ohm's Law to three-phase systems: voltage, current, Kirchhoff, Thévenin, capacitors, alternating current, power factor and rectifiers — all in a circuit simulator with a virtual multimeter and oscilloscope.",
+  "lessons": {
+    "ele-01-ohm": {
+      "hints": [
+        "Use Ohm's Law backwards: R = V / I = 9 / 0.020.",
+        "The exact value (450 Ω) doesn't exist in the standard series; pick the closest one that still gives between 18 and 22 mA.",
+        "Check the power by clicking the resistor: P = V × I."
+      ],
+      "questions": [
+        {
+          "prompt": "A **3 V** flashlight lights a **15 Ω** bulb. What is the current?",
+          "options": [],
+          "explanation": "I = V / R = 3 / 15 = 0.2 A (200 mA).",
+          "unit": "A"
+        },
+        {
+          "prompt": "If you **double the resistance** and keep the same voltage, the current…",
+          "options": [
+            "doubles",
+            "drops by half",
+            "doesn't change",
+            "goes to zero"
+          ],
+          "explanation": "I = V / R: with R twice as large, the current is half. That is exactly what the ammeter shows when you increase R1."
+        },
+        {
+          "prompt": "A current of **1 ampere** means…",
+          "options": [
+            "1 coulomb of charge passing per second",
+            "1 joule of energy in each coulomb",
+            "1 watt of power per second",
+            "1 electron passing per second"
+          ],
+          "explanation": "Current is charge per time: 1 A = 1 C/s, about 6.2 × 10¹⁸ electrons per second. \"Joule per coulomb\" is the definition of the volt."
+        }
+      ],
+      "goals": [
+        "Current in R1 between 18 mA and 22 mA",
+        "Power in R1 of at most 0.25 W"
+      ],
+      "title": "Charge, voltage, current and Ohm's Law",
+      "theory": "# What electricity is made of\n\nAll matter has **electric charges**. The **electron** has a tiny negative charge: 1.6 × 10⁻¹⁹ coulombs (C). In a copper wire, billions of electrons are \"loose\" and can move between atoms. When they all move in the same direction, we have an **electric current**.\n\n## The three quantities you will always use\n\n- **Current (I)**, measured in **amperes (A)**: how much charge passes per second. 1 A = 1 coulomb per second. Formula: `I = Q / t`.\n- **Voltage (V)**, measured in **volts (V)**: the \"push\" that makes charge move. It is the energy each coulomb gains or loses: 1 V = 1 joule per coulomb. A battery cell has 1.5 V; a 9 V battery pushes six times harder.\n- **Resistance (R)**, measured in **ohms (Ω)**: how much a material resists the passage of current. Copper has very low resistance; a resistor is a part made to have an exact resistance value.\n\nA useful comparison: think of a water tank. **Voltage** is the height of the water (the pressure), **current** is the flow in the pipe and **resistance** is a thin pipe or a half-closed tap.\n\n# Ohm's Law\n\nGeorg Ohm discovered in 1827 that in a resistor the current is proportional to the voltage:\n\n```\nV = R × I        I = V / R        R = V / I\n```\n\nExample: a 9 V battery across a 1 kΩ (1000 Ω) resistor gives I = 9 / 1000 = 0.009 A = **9 mA** (milliamperes).\n\n## Prefixes that appear all the time\n\n- **k** (kilo) = × 1000 → 4.7 kΩ = 4700 Ω\n- **M** (mega) = × 1,000,000\n- **m** (milli) = ÷ 1000 → 20 mA = 0.020 A\n- **µ** (micro) = ÷ 1,000,000\n\n# How to use the simulator\n\n- The circuit has a **battery (V1)**, an **ammeter (A1)** in series that shows the current, a **resistor (R1)** and a **voltmeter (M1)** in parallel with it.\n- The **ground** symbol (the three lines) is the 0 V point: all voltages are measured relative to it.\n- **Click** any component or node: the **multimeter** below shows voltage, current and power.\n- Components with the value in **green** are adjustable: drag the control or use ◀ ▶ (the values follow the E24 standard series: 1.0 · 1.1 · 1.2 · 1.3 · 1.5 · 1.6 · 1.8 · 2.0 · 2.2 · … · 4.7 · … · 9.1, repeated in each decade: 47 Ω, 470 Ω, 4.7 kΩ…).",
+      "task": "A high-brightness LED works at **about 20 mA**. Before connecting the LED, test the current with the resistor alone: adjust **R1** so the 9 V battery delivers between **18 and 22 mA**, without exceeding **0.25 W** in the resistor (the limit of an ordinary 1/4 W resistor).\n\n(With the LED in the circuit, it would have about 2 V and the resistor only the remaining 7 V: R = (9 − 2) / 0.020 = 350 Ω. That is for the diode lesson.)"
+    },
+    "ele-02-serie-paralelo": {
+      "hints": [
+        "If n2 has half of the 12 V, the parallel R2 ∥ R3 must be 100 Ω (equal to R1).",
+        "Two equal resistors in parallel give half the value of one of them. Which resistor, in parallel with 200 Ω, gives 100 Ω?"
+      ],
+      "questions": [
+        {
+          "prompt": "Two **300 Ω resistors in parallel** are equivalent to how many ohms?",
+          "options": [],
+          "explanation": "Two equal in parallel: R/2 = 300/2 = 150 Ω. By the formula: (300 × 300)/(300 + 300) = 150 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "Resistors of **100 Ω, 220 Ω and 680 Ω in series**: what is the equivalent resistance?",
+          "options": [],
+          "explanation": "In series the resistances add up: 100 + 220 + 680 = 1000 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "In a house, the outlets are wired…",
+          "options": [
+            "in series",
+            "in parallel",
+            "half in series, half in parallel",
+            "depends on the connected appliance"
+          ],
+          "explanation": "In parallel: each outlet gets the full mains voltage and an appliance works independently of the others."
+        }
+      ],
+      "goals": [
+        "Voltage at node n2 equal to 6 V",
+        "Equivalent resistance of 200 Ω"
+      ],
+      "title": "Resistors in series and in parallel",
+      "theory": "# Series: only one path\n\nResistors in **series** sit one after the other: the **same current** flows through all of them, and the source voltage is **divided** among them.\n\n```\nReq = R1 + R2 + R3 + …\n```\n\nThe **voltage divider** is the most famous series circuit: two resistors on a source V. The voltage in the middle is\n\n```\nVout = V × R2 / (R1 + R2)\n```\n\n# Parallel: several paths\n\nResistors in **parallel** connect the same two points: all get the **same voltage**, and the total current is **divided** among the paths. More paths = easier for the current = an equivalent resistance **smaller** than the smallest of them.\n\n```\n1/Req = 1/R1 + 1/R2 + …\nTwo resistors:  Req = (R1 × R2) / (R1 + R2)\nTwo equal:      Req = R / 2\n```\n\n## Where this shows up\n\n- The outlets and lamps of a house are in **parallel**: each appliance gets the full 127 V or 220 V and works even if another is off.\n- Old Christmas lights were in **series**: one bulb burned out, everything went dark.\n\n# The circuit\n\nThe 12 V source feeds **R1 = 100 Ω** in series with the parallel of **R2 = 200 Ω** and **R3** (adjustable). The voltage at node **n2** depends on the value of the parallel R2 ∥ R3. The simulator also computes the **Req** metric: the equivalent resistance the source \"sees\" (source V ÷ source current).",
+      "task": "Adjust **R3** so the voltage at node **n2** is **6 V** — half of the source. For that, the parallel R2 ∥ R3 must equal R1, and the total equivalent resistance becomes **200 Ω**."
+    },
+    "ele-03-kirchhoff": {
+      "hints": [
+        "Write the node equation with Vn2 = 6: (10 − 6)/1k + (V2 − 6)/1k = 6/1k.",
+        "4 + (V2 − 6) = 6 → V2 = …"
+      ],
+      "questions": [
+        {
+          "prompt": "With node n2 at 6 V, what is the current in **R1**, in milliamperes?",
+          "options": [],
+          "explanation": "I(R1) = (10 − 6) V / 1 kΩ = 4 mA, entering node n2.",
+          "unit": "mA"
+        },
+        {
+          "prompt": "And the current in **R3** (from n2 to ground), in milliamperes?",
+          "options": [],
+          "explanation": "I(R3) = 6 V / 1 kΩ = 6 mA. By the Current Law it is the sum of those arriving: 4 mA from R1 + 2 mA from R2 ((8 − 6)/1k).",
+          "unit": "mA"
+        },
+        {
+          "prompt": "The Current Law is a consequence of which principle?",
+          "options": [
+            "Conservation of charge",
+            "Conservation of energy",
+            "Ohm's Law",
+            "Joule effect"
+          ],
+          "explanation": "Charge is neither created nor lost at a node: everything that enters leaves. The Voltage Law comes from the conservation of energy."
+        }
+      ],
+      "goals": [
+        "Voltage at node n2 equal to 6 V"
+      ],
+      "title": "Kirchhoff's Laws and nodal analysis",
+      "theory": "# When Ohm's Law alone is not enough\n\nWith **two sources** in the circuit, you can't simplify everything into series and parallel. That's where Gustav Kirchhoff's two laws (1845) come in, valid for **any** circuit.\n\n## 1st Law — Current Law (KCL)\n\nA **node** is a point where two or more components connect. Charge doesn't accumulate in a wire, so:\n\n**The sum of the currents entering a node equals the sum of those leaving it.**\n\n```\nI_in1 + I_in2 = I_out1 + I_out2\n```\n\nThis is the **conservation of charge**.\n\n## 2nd Law — Voltage Law (KVL)\n\nGoing around any closed path (a **loop**), the sum of the voltages is **zero**: what the sources raise, the resistors drop. This is the **conservation of energy**.\n\n# Nodal analysis: the engineers' method\n\n- Choose a reference node (the **ground**, 0 V).\n- Name the voltage of each other node (here only one: **V(n2)**).\n- Write the Current Law at each one, replacing each current with (voltage difference) / R.\n\nIn our circuit, adding the currents **arriving** at n2 from V1 and V2 and equating them to the one **leaving** through R3:\n\n```\n(10 - Vn2)/R1 + (V2 - Vn2)/R2 = Vn2/R3\n```\n\nWith R1 = R2 = R3 = 1 kΩ, you can solve for Vn2 or, the other way around, find which V2 produces the Vn2 you want. This is exactly how simulators (like this one, and the SPICE used in universities) solve circuits: they build one equation per node and solve the system — **Modified Nodal Analysis**.",
+      "task": "Source V1 is fixed at 10 V. Adjust source **V2** so node **n2** is at **6 V**. Then click R1, R2 and R3 and check the Current Law with the currents the multimeter shows."
+    },
+    "ele-04-potencia-energia": {
+      "questions": [
+        {
+          "prompt": "An appliance connected to **127 V** draws **10 A**. What is its power?",
+          "options": [],
+          "explanation": "P = V × I = 127 × 10 = 1270 W (1.27 kW).",
+          "unit": "W"
+        },
+        {
+          "prompt": "What is the current of a **5500 W** shower connected to **220 V**?",
+          "options": [],
+          "explanation": "I = P / V = 5500 / 220 = 25 A. At 127 V it would be 43 A — that's why powerful showers are 220 V.",
+          "unit": "A"
+        },
+        {
+          "prompt": "This 5.5 kW shower is used **20 minutes a day** for **30 days**. How many kWh does it consume in the month?",
+          "options": [],
+          "explanation": "20 min = 1/3 h. E = 5.5 kW × (1/3) h × 30 = 55 kWh.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "With a rate of **R$ 0.90 per kWh**, how much do those 55 kWh cost?",
+          "options": [],
+          "explanation": "Cost = 55 × 0.90 = R$ 49.50.",
+          "unit": "R$"
+        },
+        {
+          "prompt": "Replacing a **60 W** incandescent bulb with a **9 W** LED, on **5 h a day** for **30 days**, saves how many kWh?",
+          "options": [],
+          "explanation": "The difference is 51 W. E = 0.051 kW × 5 h × 30 = 7.65 kWh per month, for a single bulb.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "Why does a wire that is too thin get hot when a lot of current flows?",
+          "options": [
+            "Because the power lost in the wire is P = R × I²: it grows with the square of the current",
+            "Because the voltage in the wire rises and the current falls",
+            "Because a thin wire has zero resistance",
+            "Because the current stands still inside the wire"
+          ],
+          "explanation": "The wire has a small resistance; the heat is R × I². Doubling the current quadruples the heating — that is why wire gauge and breaker have to match the current."
+        }
+      ],
+      "title": "Power, energy and the electricity bill",
+      "theory": "# Power: how fast energy is used\n\n**Power (P)** is energy per time, measured in **watts (W)**. 1 W = 1 joule per second. In an electrical component:\n\n```\nP = V × I\n```\n\nCombined with Ohm's Law (V = R × I), two other very useful forms appear:\n\n```\nP = R × I²        P = V² / R\n```\n\nThe heat generated in a resistor (the **Joule effect**) is what heats the shower, the iron and the toaster's heating element — and also what melts wires too thin for the current they carry.\n\n# Energy: what the power company charges for\n\n**Energy = Power × Time.** In joules the numbers get huge, so the electricity bill uses the **kilowatt-hour (kWh)**: the energy of 1000 W running for 1 hour.\n\n```\nE (kWh) = P (kW) × time (h)\nCost = E (kWh) × rate (R$/kWh)\n```\n\nExample: a 100 W TV on 5 h a day for 30 days:\n\n```\nE = 0.1 kW × 5 h × 30 = 15 kWh\nAt a rate of R$ 0.90/kWh → R$ 13.50 per month\n```\n\n# Current, wire and circuit breaker\n\nFor the same power, **higher voltage = lower current** (I = P / V). That is why a 220 V shower uses thinner wire than a 127 V one of the same power. The **circuit breaker** trips when the current goes above what the wire can handle, before it heats up and catches fire.\n\n## Who uses the most in a house\n\n- Electric shower: 4000 to 7500 W — the champion.\n- Air conditioner, electric oven, dryer: 1000 to 3000 W.\n- Refrigerator: ~150 W, but on all day.\n- LED bulb: 7 to 15 W (an equivalent incandescent used 60 to 100 W).",
+      "safety": "The household outlet (127 V or 220 V) **kills**. Never open outlets, showers or electrical panels without switching off the breaker and without training — electrical installations are work for a qualified electrician (NR-10 standard). Experiment only with cells, batteries and simulators."
+    },
+    "ele-05-thevenin": {
+      "hints": [
+        "To find Rth, imagine the 12 V source as a wire: R1 and R2 end up in parallel, and R3 in series with them.",
+        "Maximum power happens with RL = Rth."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the Thévenin voltage **Vth** seen by the load?",
+          "options": [],
+          "explanation": "With RL disconnected no current flows in R3, so Vth is the divider voltage: 12 × 3k/(6k + 3k) = 4 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "What is the Thévenin resistance **Rth**, in kΩ?",
+          "options": [],
+          "explanation": "Source becomes a short: 6k ∥ 3k = 2 kΩ, plus R3 = 1 kΩ in series → Rth = 3 kΩ.",
+          "unit": "kΩ"
+        },
+        {
+          "prompt": "At the maximum power transfer point, the efficiency of the **Thévenin equivalent** (power in the load ÷ power delivered by the Vth source) is…",
+          "options": [
+            "100%",
+            "75%",
+            "50%",
+            "25%"
+          ],
+          "explanation": "With RL = Rth, the same current flows through both and they have the same voltage: half the power stays in the load and half in Rth. (In the original circuit, which also burns energy in R1 and R2, the efficiency is even lower.)"
+        }
+      ],
+      "goals": [
+        "Power in load RL of at least 1.32 mW (the maximum is 1.33 mW)"
+      ],
+      "title": "Thévenin, Norton and maximum power transfer",
+      "theory": "# Any circuit becomes a source and a resistor\n\n**Thévenin's Theorem** says that, seen from two terminals, **any** linear circuit (sources and resistors) behaves exactly like:\n\n- a voltage source **Vth** (the open-circuit voltage at the terminals), in series with\n- a resistance **Rth** (the resistance seen from the terminals with the sources \"turned off\": a voltage source becomes a short, a current source becomes an open circuit).\n\n**Norton's Theorem** is its sibling: a current source **In = Vth / Rth** in parallel with the same Rth.\n\n## Computing it for our circuit\n\nThe 12 V source feeds a divider (R1 = 6 kΩ, R2 = 3 kΩ) and, after R3 = 1 kΩ, comes the load **RL**.\n\n```\nVth = 12 × 3k / (6k + 3k) = 4 V\nRth = (6k ∥ 3k) + 1k = 2k + 1k = 3 kΩ\n```\n\n# Maximum power transfer\n\nThe power in the load is\n\n```\nP(RL) = Vth² × RL / (Rth + RL)²\n```\n\n- RL very small: high current, but almost no voltage across it → little power.\n- RL very large: high voltage, but almost no current → little power.\n- The maximum happens when **RL = Rth**, and equals **Pmax = Vth² / (4 × Rth)**.\n\nThat is why people talk about **impedance matching**: antennas, audio amplifiers and speakers are designed with this idea. But careful: at the maximum power point the load and Rth receive the same power — in the Thévenin equivalent the **efficiency is only 50%**. In the real circuit it can be even worse: here, with RL = 3 kΩ, the 12 V source delivers about 18.7 mW for the load to receive 1.33 mW (≈ 7%), because R1 and R2 also burn energy. The power grid does the opposite (RL much larger than Rth) to avoid wasting energy.",
+      "task": "Adjust the load **RL** so it receives the **maximum power** possible from the circuit (at least 1.32 mW). First, compute Vth and Rth on paper — the questions below ask for these values."
+    },
+    "ele-06-rc": {
+      "hints": [
+        "τ = R × C → R = τ / C = 0.1 / 0.0001.",
+        "With τ = 0.1 s, 10 time constants fit in 1 s: the capacitor ends up with practically the full 5 V of the source."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the time constant of a circuit with **R = 10 kΩ** and **C = 47 µF**?",
+          "options": [],
+          "explanation": "τ = R × C = 10,000 × 0.000047 = 0.47 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "After **one** time constant, the capacitor is at what percent of the final voltage?",
+          "options": [
+            "50%",
+            "63%",
+            "86%",
+            "99%"
+          ],
+          "explanation": "1 − e⁻¹ ≈ 0.632. At 2τ it reaches 86%, at 3τ 95% and at 5τ 99.3%."
+        },
+        {
+          "prompt": "In a **direct-current** circuit, after a long time connected, a capacitor behaves like…",
+          "options": [
+            "a wire (short circuit)",
+            "an open circuit",
+            "a 1 Ω resistor",
+            "a current source"
+          ],
+          "explanation": "With the voltage steady, i = C × dV/dt = 0: no current flows, like an open circuit. The inductor does the opposite and becomes a wire."
+        }
+      ],
+      "goals": [
+        "Time constant τ = 0.1 s",
+        "Capacitor charged (≥ 4.9 V) at the end of the simulation"
+      ],
+      "title": "Capacitors, inductors and the RC transient",
+      "theory": "# The capacitor stores charge\n\nA **capacitor** is two conducting plates separated by an insulator. Connected to a source, it accumulates charge: **Q = C × V**. The **capacitance C** is measured in **farads (F)** — in practice, in µF, nF and pF. The stored energy is `E = C × V² / 2`.\n\nThe current in a capacitor exists only while the voltage **changes**: `i = C × dV/dt`. In direct current, once charged, it is an **open circuit**.\n\n# The inductor stores energy in the magnetic field\n\nAn **inductor** is a coil of wire. It opposes changes in **current**: `v = L × di/dt`. The **inductance L** is measured in **henrys (H)**. In direct current, once settled, it is a **wire**. The stored energy is `E = L × I² / 2`.\n\n# The RC transient\n\nWhen we connect a source V to a resistor R in series with an uncharged capacitor C, the capacitor voltage rises like this:\n\n```\nvC(t) = V × (1 − e^(−t/τ))        τ = R × C\n```\n\n- **τ (tau)** is the **time constant**, in seconds (Ω × F = s).\n- After **1 τ**, the capacitor reaches **63.2%** of the final voltage.\n- After **5 τ**, 99.3%: in practice, charged.\n- The current does the opposite: it starts at V/R and falls to zero.\n\nIn the **RL** circuit, the same curve appears in the current, with **τ = L / R**.\n\n## Where this is used\n\nTimers (the 555 circuit), filters that clean up noise, button *debounce*, the camera flash and the car turn-signal delay are all \"one R and one C\".\n\n# The oscilloscope\n\nIn this lab the simulator runs time: click **▶ Simulate** and the oscilloscope draws the capacitor voltage **V(n2)** (green, left scale) and the current **I(C1)** (yellow, right scale). The simulator measures **τ** by itself: the moment when V(n2) passes 63.2% of the change. If the curve hasn't settled by the end of the simulation (large τ), it estimates τ from the shape of the exponential.",
+      "task": "With C1 = 100 µF, adjust **R1** so the time constant is **τ = 0.1 s** (between 0.095 and 0.105 s) and the capacitor ends up **charged** (at least 4.9 V) in 1 second of simulation.",
+      "safety": "Large capacitors (TV power supplies, microwaves, camera flashes) stay charged **after being unplugged** and can give serious shocks. Never open these appliances."
+    },
+    "ele-07-fasores": {
+      "hints": [
+        "f0 = 1 / (2π √(L C)) = 1 / (2π √(0.01 × 0.000001)).",
+        "√(10⁻⁸) = 10⁻⁴. f0 = 1 / (6.283 × 0.0001) ≈ 1592 Hz. Use ◀ ▶ for fine tuning."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the reactance **XL** of a **10 mH** inductor at **1 kHz**?",
+          "options": [],
+          "explanation": "XL = 2π f L = 2 × 3.1416 × 1000 × 0.01 ≈ 62.8 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "What is the resonant frequency of a circuit with **L = 10 mH** and **C = 1 µF**?",
+          "options": [],
+          "explanation": "f0 = 1/(2π√(LC)) = 1/(2π × 10⁻⁴) ≈ 1592 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "At resonance in a **series** RLC circuit, the impedance is…",
+          "options": [
+            "maximum and infinite",
+            "minimum and equal to R",
+            "equal to XL + XC",
+            "zero"
+          ],
+          "explanation": "XL and XC cancel (XL − XC = 0), leaving only R: minimum impedance and maximum current, in phase with the voltage."
+        }
+      ],
+      "goals": [
+        "Phase angle between −10° and +10° (resonance)",
+        "Source current of at least 0.48 A"
+      ],
+      "title": "Alternating current: phasors, impedance and resonance",
+      "theory": "# Alternating current (AC)\n\nAt the outlet, the voltage is not constant: it oscillates like a **sine wave**, 60 times per second in Brazil (**60 Hz**).\n\n```\nv(t) = Vpeak × sin(2π f t)        ω = 2π f (rad/s)\n```\n\nThe value shown on appliances (127 V, 220 V) is the **effective value (RMS)**: the DC value that would give the same heating. For sine waves, `Vpeak = Vrms × √2` (the \"127 V\" reaches peaks of 180 V).\n\n# Phasors: sine waves become arrows\n\nIn AC, all the voltages and currents in a circuit have the **same frequency**; what changes is the **amplitude** and the **phase** (the delay). A **phasor** keeps only that: a complex number with magnitude (effective value) and angle. We write `220∠0°` or `10∠−90°`. This way, derivatives become multiplications and the circuit is solved with algebra, as in DC.\n\n# Impedance: the \"resistance\" in AC\n\nThe **impedance Z** (in ohms) is a complex number: `V = Z × I`.\n\n- Resistor: **Z = R** (voltage and current in phase).\n- Inductor: **Z = j × XL**, with `XL = ω L = 2π f L` (the current **lags** by 90°).\n- Capacitor: **Z = −j × XC**, with `XC = 1 / (ω C)` (the current **leads** by 90°).\n\nIn a **series RLC** circuit: `Z = R + j(XL − XC)`, `|Z| = √(R² + (XL − XC)²)` and the **phase angle** is `φ = arctan((XL − XC) / R)`.\n\n# Resonance\n\nXL grows with frequency and XC decreases. At the frequency where **XL = XC** they cancel: the impedance is **minimum (only R)**, the current is **maximum** and the phase is **zero**.\n\n```\nf0 = 1 / (2π √(L C))\n```\n\nThis is how a radio tunes a station: an LC circuit resonates only at its frequency.\n\n# In this lab\n\nThe graph shows the **source current as a function of frequency** (logarithmic scale). The red dashed line is the current frequency of the source. Change the frequency and watch the **phase** metric (impedance angle): negative = capacitive, positive = inductive.",
+      "task": "The source is 10 V RMS and the circuit is R = 20 Ω, L = 10 mH, C = 1 µF. Adjust the source **frequency** to **resonance**: phase angle between −10° and +10° and current of at least 0.48 A."
+    },
+    "ele-08-fator-potencia": {
+      "hints": [
+        "Without a capacitor: P ≈ 3857 W and Q ≈ 2908 var. For PF = 0.95, Q can be at most P × tan(18.2°) ≈ 1268 var.",
+        "The capacitor must supply at least 2908 − 1268 ≈ 1640 var: C = 1640 / (2π × 60 × 220²) ≈ 90 µF. Something between 90 and 150 µF works well."
+      ],
+      "questions": [
+        {
+          "prompt": "A load consumes **P = 8 kW** with apparent power **S = 10 kVA**. What is the power factor?",
+          "options": [],
+          "explanation": "PF = P / S = 8 / 10 = 0.8."
+        },
+        {
+          "prompt": "A **P = 3 kW** motor has an inductive **PF = 0.6**. What is the reactive power, in kvar?",
+          "options": [],
+          "explanation": "S = P / PF = 3 / 0.6 = 5 kVA. Q = √(S² − P²) = √(25 − 9) = 4 kvar.",
+          "unit": "kvar"
+        },
+        {
+          "prompt": "Why does the utility charge for the excess reactive energy of an industry with a low power factor?",
+          "options": [
+            "Because the active power consumed gets larger",
+            "Because more current flows for the same useful power, increasing losses in cables and transformers",
+            "Because the grid voltage goes up",
+            "Because the meter runs backwards"
+          ],
+          "explanation": "With a low PF, I = P / (V × PF) is larger. The grid needs bigger cables and transformers and loses more energy in R × I²."
+        }
+      ],
+      "goals": [
+        "Power factor of at least 0.95",
+        "Load still inductive (phase ≥ 0°): no excess capacitor",
+        "Line current below 19 A"
+      ],
+      "title": "AC power and power factor correction",
+      "theory": "# Three powers\n\nIn AC, with voltage and current out of phase by an angle φ, three powers appear:\n\n- **Active power P** (watts, W): the one that becomes useful work and heat. `P = V × I × cos φ`.\n- **Reactive power Q** (volt-ampere reactive, var): energy that goes back and forth between the source and the fields of inductors and capacitors, without being consumed. `Q = V × I × sin φ`.\n- **Apparent power S** (volt-ampere, VA): the product `S = V × I`, which sizes wires and transformers. `S² = P² + Q²` (the **power triangle**).\n\n# Power factor\n\n```\nPF = P / S = cos φ\n```\n\nMotors are **inductive** loads (the current lags): a motor with PF = 0.8 draws 25% more current than needed for the same useful power. That extra current heats cables and transformers. That is why, in Brazil, ANEEL rules set the **reference PF at 0.92**: industries and businesses served at medium or high voltage (\"Group A\") pay for the excess reactive energy when they fall below it. Residential consumers (low voltage) don't pay this charge.\n\n# Correction with capacitors\n\nA capacitor in parallel with the motor supplies **capacitive** reactive power, which cancels part of the motor's inductive reactive power. The active power **doesn't change** — only the line current decreases.\n\n```\nQc = P × (tan φ_before − tan φ_after)\nC = Qc / (2π f × V²)\n```\n\nBe careful not to overdo it: too much capacitor makes the circuit **capacitive** (PF drops again, now leading).\n\n# The circuit\n\nThe motor is modeled by **Rm = 8 Ω** (the part that does work) in series with **Lm = 16 mH** (the magnetic field), at 220 V and 60 Hz. Ammeter A1 shows the line current and the oscilloscope shows the source voltage and current: watch the phase shift shrink as you increase C1. The **phase** metric is the load angle (positive = inductive).",
+      "task": "Choose capacitor **C1** to bring the power factor to **at least 0.95**, without overshooting (the load must remain slightly **inductive**, phase ≥ 0°), and watch the line current drop below **19 A**.",
+      "safety": "The 220 V mains is **lethal**. Correction capacitor banks stay charged after being switched off. Power factor correction in real installations is work for a qualified electrician or engineer (NR-10)."
+    },
+    "ele-09-retificador": {
+      "hints": [
+        "The load draws about 15 V / 100 Ω = 0.15 A.",
+        "C ≥ I / (2 f × ΔV) = 0.15 / (120 × 1) ≈ 1250 µF. Pick the next standard value with some margin."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **peak** voltage of a **12 V RMS** secondary?",
+          "options": [],
+          "explanation": "Vpeak = Vrms × √2 = 12 × 1.414 ≈ 17 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "In a full-wave rectifier (60 Hz) with a load of **0.15 A** and **C = 1000 µF**, what is the approximate ripple?",
+          "options": [],
+          "explanation": "ΔV ≈ I / (2 f C) = 0.15 / (120 × 0.001) = 1.25 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "In the bridge rectifier, how many diodes conduct at the same time in each half-cycle?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "explanation": "Two: one carries the current to the positive output and the other brings it back through ground. That is why the output loses about 2 × 0.7 = 1.4 V."
+        }
+      ],
+      "goals": [
+        "Output ripple of at most 1 V",
+        "Average output voltage of at least 14 V"
+      ],
+      "title": "Diodes and the full-wave rectifier",
+      "theory": "# The diode: a one-way valve\n\nThe **diode** lets current pass in one direction only: from the **anode** (the wide side of the symbol's triangle) to the **cathode** (the bar, where the triangle's tip is). The triangle works like an arrow: it points in the direction the current flows. It is made of silicon with two regions, P and N (the **PN junction**).\n\n- **Forward biased** (anode more positive): it conducts, with an almost fixed drop of **≈ 0.7 V** (silicon). The **LED** is a diode that emits light, with a drop of 1.8 to 3.3 V depending on the color.\n- **Reverse biased**: it practically doesn't conduct (up to the breakdown voltage).\n\nIn the simulator the diode is modeled as a switch: off below 0.7 V; on above it, as 0.7 V in series with a small resistance.\n\n# Rectifier: from AC to DC\n\nPhones, computers and almost all electronics need **direct current**, but the outlet gives **alternating**. The power supply does:\n\n- **Transformer**: steps 127/220 V down to, for example, 12 V RMS (peak 12 × √2 ≈ 17 V).\n- **Bridge rectifier** (4 diodes): in the positive half-cycle D1 and D4 conduct; in the negative, D3 and D2. In both cases the current leaves on the same side: the output is **always positive** (full wave). In each half-cycle the current passes through **two** diodes: we lose ≈ 1.4 V.\n- **Filter capacitor**: charges at the peaks and feeds the load between them, leaving the voltage almost smooth. The remaining variation is the **ripple**.\n\n```\nRipple ≈ I_load / (2 × f × C)        (full wave: 2 × 60 = 120 peaks per second)\n```\n\nThe formula is a slightly **pessimistic** estimate: it assumes the capacitor discharges during the whole half-cycle, but it starts charging a little before the peak. The real ripple (the simulator's) is usually 10 to 20% smaller — designing by the formula leaves some margin.\n\n- **Regulator** (for example, the 7805): removes the remaining ripple — a topic for another lesson.\n\n# In this lab\n\nThe sine source (17 V peak, 60 Hz) represents the transformer secondary. The oscilloscope shows the source voltage **V(V1)** and the output **V(o1)** across the 100 Ω load. The **ripple** metric is the difference between the maximum and minimum of the output at the end of the simulation; **Vavg** is the average.",
+      "task": "Choose the filter capacitor **C1** so the output **ripple** is **at most 1 V**, with an average voltage of at least **14 V**.",
+      "safety": "Power supplies plugged into the outlet have 127/220 V before the transformer — don't open chargers or power supplies. Electrolytic capacitors have polarity: connected backwards they can **burst**."
+    },
+    "ele-10-trifasico": {
+      "hints": [
+        "Balanced load = three equal resistances.",
+        "With Ra = Rb = Rc = 10 Ω: P = 3 × 127² / 10 ≈ 4.84 kW."
+      ],
+      "questions": [
+        {
+          "prompt": "In a star system with a **phase voltage of 127 V**, what is the line voltage?",
+          "options": [],
+          "explanation": "VL = √3 × Vp = 1.732 × 127 ≈ 220 V — it is what voltmeter M1 shows between phases B and C.",
+          "unit": "V"
+        },
+        {
+          "prompt": "A balanced resistive three-phase load has **12.7 A** per phase at **127 V** phase voltage. What is the total power, in watts?",
+          "options": [],
+          "explanation": "P = 3 × Vp × Ip × cos φ = 3 × 127 × 12.7 × 1 ≈ 4839 W. The same as √3 × 220 × 12.7.",
+          "unit": "W"
+        },
+        {
+          "prompt": "Why is the neutral current zero when the load is balanced?",
+          "options": [
+            "Because the neutral has infinite resistance",
+            "Because the three currents have the same value and are 120° apart, and their phasor sum is zero",
+            "Because only one phase conducts at a time",
+            "Because the line voltage is √3 larger"
+          ],
+          "explanation": "Three equal phasors at 120° form a closed triangle: Ia + Ib + Ic = 0. By the Current Law, nothing is left to return through the neutral."
+        }
+      ],
+      "goals": [
+        "Neutral current below 0.5 A",
+        "Total power between 4.6 kW and 5.1 kW"
+      ],
+      "title": "Three-phase systems",
+      "theory": "# Why three phases?\n\nEnergy is generated and transmitted in **three phases**: three sinusoidal voltages of equal value, shifted by **120°** from each other (A, B and C). Compared to single-phase, three-phase:\n\n- transmits the same power with **less copper** in the cables;\n- delivers **constant power** over time (the three waves complement each other) — motors turn smoothly;\n- creates a **rotating magnetic field**, which lets the induction motor start by itself.\n\n# Star (Y) connection\n\nThe three sources (or loads) have a common point, the **neutral**.\n\n- **Phase voltage** (Vp): between a phase and the neutral.\n- **Line voltage** (VL): between two phases. From the phasors, `VL = √3 × Vp`. That is where the **127/220 V** pair comes from (220 = √3 × 127) and the **220/380 V**.\n- In star, the line current equals the phase current.\n\n```\nVa = 127∠0°   Vb = 127∠−120°   Vc = 127∠120°\nVab = Va − Vb = 220∠30°\n```\n\n# Balanced load and neutral current\n\nBy the Current Law at the load's star point, the neutral current is the **phasor sum** of the three phase currents:\n\n```\nIn = Ia + Ib + Ic\n```\n\nIf the three loads are **equal** (a **balanced** load), the three currents have the same magnitude and are 120° apart: the sum is **zero**. With different loads, current is left over in the neutral, which heats the conductor and unbalances the voltages. That's why electricians spread a building's circuits among the phases.\n\n# Three-phase power\n\n```\nP = 3 × Vp × Ip × cos φ = √3 × VL × IL × cos φ\n```\n\n# The circuit\n\nThree 127 V sources (60 Hz, 0°, −120°, +120°) feed loads Ra, Rb and Rc connected in star. The star point returns to the source neutral through conductor **Rn** (0.5 Ω), and voltmeter **M1** measures the line voltage between B and C. The oscilloscope shows the three phase voltages.",
+      "task": "The phase C load (**Rc**) is different from the others and makes current flow in the neutral. **Balance the load**: the neutral current must fall below **0.5 A** and the total power must be between **4.6 and 5.1 kW**.",
+      "safety": "Three-phase networks (220/380 V in industries, 13.8 kV or more in distribution) are **deadly**. Only qualified and authorized professionals (NR-10), with protective equipment, work on them. Here everything is simulated."
+    }
+  }
+}

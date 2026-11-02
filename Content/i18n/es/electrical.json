@@ -1,0 +1,397 @@
+{
+  "title": "Ingeniería Eléctrica: de Ohm a los sistemas de potencia",
+  "description": "De la Ley de Ohm a los sistemas trifásicos: tensión, corriente, Kirchhoff, Thévenin, condensadores, corriente alterna, factor de potencia y rectificadores — todo en un simulador de circuitos con multímetro y osciloscopio virtuales.",
+  "lessons": {
+    "ele-01-ohm": {
+      "hints": [
+        "Usa la Ley de Ohm al revés: R = V / I = 9 / 0,020.",
+        "El valor exacto (450 Ω) no existe en la serie comercial; elige el más cercano que aún dé entre 18 y 22 mA.",
+        "Comprueba la potencia haciendo clic en el resistor: P = V × I."
+      ],
+      "questions": [
+        {
+          "prompt": "Una linterna de **3 V** enciende una bombilla de **15 Ω**. ¿Cuál es la corriente?",
+          "options": [],
+          "explanation": "I = V / R = 3 / 15 = 0,2 A (200 mA).",
+          "unit": "A"
+        },
+        {
+          "prompt": "Si **duplicas la resistencia** y mantienes la misma tensión, la corriente…",
+          "options": [
+            "se duplica",
+            "cae a la mitad",
+            "no cambia",
+            "va a cero"
+          ],
+          "explanation": "I = V / R: con R el doble de grande, la corriente queda a la mitad. Es exactamente lo que muestra el amperímetro cuando aumentas R1."
+        },
+        {
+          "prompt": "Una corriente de **1 amperio** significa…",
+          "options": [
+            "1 culombio de carga pasando por segundo",
+            "1 julio de energía en cada culombio",
+            "1 vatio de potencia por segundo",
+            "1 electrón pasando por segundo"
+          ],
+          "explanation": "La corriente es carga por tiempo: 1 A = 1 C/s, unos 6,2 × 10¹⁸ electrones por segundo. \"Julio por culombio\" es la definición del voltio."
+        }
+      ],
+      "goals": [
+        "Corriente en R1 entre 18 mA y 22 mA",
+        "Potencia en R1 de como máximo 0,25 W"
+      ],
+      "title": "Carga, tensión, corriente y la Ley de Ohm",
+      "theory": "# De qué está hecha la electricidad\n\nToda la materia tiene **cargas eléctricas**. El **electrón** tiene una carga negativa minúscula: 1,6 × 10⁻¹⁹ culombios (C). En un cable de cobre, miles de millones de electrones están \"sueltos\" y pueden moverse entre los átomos. Cuando todos se mueven en el mismo sentido, tenemos una **corriente eléctrica**.\n\n## Las tres magnitudes que usarás siempre\n\n- **Corriente (I)**, medida en **amperios (A)**: cuánta carga pasa por segundo. 1 A = 1 culombio por segundo. Fórmula: `I = Q / t`.\n- **Tensión (V)**, medida en **voltios (V)**: el \"empujón\" que hace moverse a la carga. Es la energía que cada culombio gana o pierde: 1 V = 1 julio por culombio. Una pila tiene 1,5 V; una batería de 9 V empuja seis veces más.\n- **Resistencia (R)**, medida en **ohmios (Ω)**: cuánto dificulta un material el paso de la corriente. El cobre tiene una resistencia muy baja; el resistor es una pieza hecha para tener un valor exacto de resistencia.\n\nUna comparación útil: piensa en un depósito de agua. La **tensión** es la altura del agua (la presión), la **corriente** es el caudal en la tubería y la **resistencia** es una tubería fina o un grifo medio cerrado.\n\n# La Ley de Ohm\n\nGeorg Ohm descubrió en 1827 que en un resistor la corriente es proporcional a la tensión:\n\n```\nV = R × I        I = V / R        R = V / I\n```\n\nEjemplo: una batería de 9 V en un resistor de 1 kΩ (1000 Ω) da I = 9 / 1000 = 0,009 A = **9 mA** (miliamperios).\n\n## Prefijos que aparecen todo el tiempo\n\n- **k** (kilo) = × 1000 → 4,7 kΩ = 4700 Ω\n- **M** (mega) = × 1 000 000\n- **m** (mili) = ÷ 1000 → 20 mA = 0,020 A\n- **µ** (micro) = ÷ 1 000 000\n\n# Cómo usar el simulador\n\n- El circuito tiene una **batería (V1)**, un **amperímetro (A1)** en serie, que muestra la corriente, un **resistor (R1)** y un **voltímetro (M1)** en paralelo con él.\n- El símbolo de **tierra** (las tres líneas) es el punto de 0 V: todas las tensiones se miden respecto a él.\n- **Haz clic** en cualquier componente o nodo: el **multímetro** de abajo muestra tensión, corriente y potencia.\n- Los componentes con el valor en **verde** son ajustables: arrastra el control o usa ◀ ▶ (los valores siguen la serie comercial E24: 1,0 · 1,1 · 1,2 · 1,3 · 1,5 · 1,6 · 1,8 · 2,0 · 2,2 · … · 4,7 · … · 9,1, repetidos en cada década: 47 Ω, 470 Ω, 4,7 kΩ…).",
+      "task": "Un LED de alto brillo trabaja con **unos 20 mA**. Antes de conectar el LED, prueba la corriente solo con el resistor: ajusta **R1** para que la batería de 9 V entregue entre **18 y 22 mA**, sin pasar de **0,25 W** en el resistor (el límite de un resistor común de 1/4 W).\n\n(Con el LED en el circuito, tendría unos 2 V y el resistor solo los 7 V restantes: R = (9 − 2) / 0,020 = 350 Ω. Eso queda para la lección de diodos.)"
+    },
+    "ele-02-serie-paralelo": {
+      "hints": [
+        "Si n2 tiene la mitad de los 12 V, el paralelo R2 ∥ R3 tiene que valer 100 Ω (igual que R1).",
+        "Dos resistores iguales en paralelo dan la mitad del valor de uno de ellos. ¿Qué resistor, en paralelo con 200 Ω, da 100 Ω?"
+      ],
+      "questions": [
+        {
+          "prompt": "Dos resistores de **300 Ω en paralelo** equivalen a cuántos ohmios?",
+          "options": [],
+          "explanation": "Dos iguales en paralelo: R/2 = 300/2 = 150 Ω. Con la fórmula: (300 × 300)/(300 + 300) = 150 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "Resistores de **100 Ω, 220 Ω y 680 Ω en serie**: ¿cuál es la resistencia equivalente?",
+          "options": [],
+          "explanation": "En serie las resistencias se suman: 100 + 220 + 680 = 1000 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "En una casa, los enchufes se conectan…",
+          "options": [
+            "en serie",
+            "en paralelo",
+            "mitad en serie, mitad en paralelo",
+            "depende del aparato conectado"
+          ],
+          "explanation": "En paralelo: cada enchufe recibe toda la tensión de la red y un aparato funciona independiente de los demás."
+        }
+      ],
+      "goals": [
+        "Tensión en el nodo n2 igual a 6 V",
+        "Resistencia equivalente de 200 Ω"
+      ],
+      "title": "Resistores en serie y en paralelo",
+      "theory": "# Serie: un solo camino\n\nLos resistores en **serie** van uno tras otro: pasa la **misma corriente** por todos y la tensión de la fuente se **divide** entre ellos.\n\n```\nReq = R1 + R2 + R3 + …\n```\n\nEl **divisor de tensión** es el circuito serie más famoso: dos resistores en una fuente V. La tensión en el medio es\n\n```\nVsalida = V × R2 / (R1 + R2)\n```\n\n# Paralelo: varios caminos\n\nLos resistores en **paralelo** conectan los mismos dos puntos: todos reciben la **misma tensión** y la corriente total se **divide** entre los caminos. Más caminos = más facilidad para la corriente = resistencia equivalente **menor** que la menor de ellas.\n\n```\n1/Req = 1/R1 + 1/R2 + …\nDos resistores:  Req = (R1 × R2) / (R1 + R2)\nDos iguales:     Req = R / 2\n```\n\n## Dónde aparece esto\n\n- Los enchufes y lámparas de una casa están en **paralelo**: cada aparato recibe los 127 V o 220 V completos y funciona aunque otro esté apagado.\n- Las antiguas luces de Navidad iban en **serie**: se quemaba una bombilla y se apagaba todo.\n\n# El circuito\n\nLa fuente de 12 V alimenta **R1 = 100 Ω** en serie con el paralelo de **R2 = 200 Ω** y **R3** (ajustable). La tensión en el nodo **n2** depende de cuánto vale el paralelo R2 ∥ R3. El simulador también calcula la métrica **Req**: la resistencia equivalente que la fuente \"ve\" (V de la fuente ÷ corriente de la fuente).",
+      "task": "Ajusta **R3** para que la tensión en el nodo **n2** sea **6 V** — la mitad de la fuente. Para eso el paralelo R2 ∥ R3 debe valer lo mismo que R1, y la resistencia equivalente total queda en **200 Ω**."
+    },
+    "ele-03-kirchhoff": {
+      "hints": [
+        "Arma la ecuación del nodo con Vn2 = 6: (10 − 6)/1k + (V2 − 6)/1k = 6/1k.",
+        "4 + (V2 − 6) = 6 → V2 = …"
+      ],
+      "questions": [
+        {
+          "prompt": "Con el nodo n2 en 6 V, ¿cuál es la corriente en **R1**, en miliamperios?",
+          "options": [],
+          "explanation": "I(R1) = (10 − 6) V / 1 kΩ = 4 mA, entrando al nodo n2.",
+          "unit": "mA"
+        },
+        {
+          "prompt": "¿Y la corriente en **R3** (de n2 a tierra), en miliamperios?",
+          "options": [],
+          "explanation": "I(R3) = 6 V / 1 kΩ = 6 mA. Por la Ley de los Nodos es la suma de las que llegan: 4 mA de R1 + 2 mA de R2 ((8 − 6)/1k).",
+          "unit": "mA"
+        },
+        {
+          "prompt": "¿La Ley de los Nodos es consecuencia de qué principio?",
+          "options": [
+            "Conservación de la carga",
+            "Conservación de la energía",
+            "Ley de Ohm",
+            "Efecto Joule"
+          ],
+          "explanation": "La carga no se crea ni desaparece en un nodo: todo lo que entra sale. En cambio, la Ley de las Mallas viene de la conservación de la energía."
+        }
+      ],
+      "goals": [
+        "Tensión en el nodo n2 igual a 6 V"
+      ],
+      "title": "Leyes de Kirchhoff y análisis nodal",
+      "theory": "# Cuando la Ley de Ohm sola no basta\n\nCon **dos fuentes** en el circuito, no se puede simplificar todo en serie y paralelo. Ahí entran las dos leyes de Gustav Kirchhoff (1845), que valen para **cualquier** circuito.\n\n## 1ª Ley — Ley de los Nodos (LCK)\n\nUn **nodo** es un punto donde se conectan dos o más componentes. La carga no se acumula en un cable, así que:\n\n**La suma de las corrientes que entran en un nodo es igual a la suma de las que salen.**\n\n```\nI_entra1 + I_entra2 = I_sale1 + I_sale2\n```\n\nEs la **conservación de la carga**.\n\n## 2ª Ley — Ley de las Mallas (LVK)\n\nRecorriendo cualquier camino cerrado (una **malla**), la suma de las tensiones es **cero**: lo que las fuentes suben, los resistores lo bajan. Es la **conservación de la energía**.\n\n# Análisis nodal: el método de los ingenieros\n\n- Elige un nodo de referencia (la **tierra**, 0 V).\n- Ponle nombre a la tensión de cada otro nodo (aquí solo uno: **V(n2)**).\n- Escribe la Ley de los Nodos en cada uno, cambiando cada corriente por (diferencia de tensión) / R.\n\nEn nuestro circuito, sumando las corrientes que **llegan** a n2 desde V1 y V2 e igualándolas a la que **sale** por R3:\n\n```\n(10 - Vn2)/R1 + (V2 - Vn2)/R2 = Vn2/R3\n```\n\nCon R1 = R2 = R3 = 1 kΩ, se puede despejar Vn2 o, al revés, descubrir qué V2 produce el Vn2 que quieres. Así es exactamente como los simuladores (como este, y el SPICE de las universidades) resuelven circuitos: arman una ecuación por nodo y resuelven el sistema — el **Análisis Nodal Modificado**.",
+      "task": "La fuente V1 es fija en 10 V. Ajusta la fuente **V2** para que el nodo **n2** quede en **6 V**. Después haz clic en R1, R2 y R3 y comprueba la Ley de los Nodos con las corrientes que muestra el multímetro."
+    },
+    "ele-04-potencia-energia": {
+      "questions": [
+        {
+          "prompt": "Un aparato conectado a **127 V** consume **10 A**. ¿Cuál es su potencia?",
+          "options": [],
+          "explanation": "P = V × I = 127 × 10 = 1270 W (1,27 kW).",
+          "unit": "W"
+        },
+        {
+          "prompt": "¿Cuál es la corriente de una ducha de **5500 W** conectada a **220 V**?",
+          "options": [],
+          "explanation": "I = P / V = 5500 / 220 = 25 A. A 127 V serían 43 A — por eso las duchas potentes son de 220 V.",
+          "unit": "A"
+        },
+        {
+          "prompt": "Esa ducha de 5,5 kW se usa **20 minutos al día** durante **30 días**. ¿Cuántos kWh consume en el mes?",
+          "options": [],
+          "explanation": "20 min = 1/3 h. E = 5,5 kW × (1/3) h × 30 = 55 kWh.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "Con una tarifa de **R$ 0,90 por kWh**, ¿cuánto cuestan esos 55 kWh?",
+          "options": [],
+          "explanation": "Costo = 55 × 0,90 = R$ 49,50.",
+          "unit": "R$"
+        },
+        {
+          "prompt": "Cambiar una lámpara incandescente de **60 W** por una LED de **9 W**, encendida **5 h al día** durante **30 días**, ahorra cuántos kWh?",
+          "options": [],
+          "explanation": "La diferencia es 51 W. E = 0,051 kW × 5 h × 30 = 7,65 kWh al mes, en una sola lámpara.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "¿Por qué un cable demasiado fino se calienta cuando pasa mucha corriente?",
+          "options": [
+            "Porque la potencia perdida en el cable es P = R × I²: crece con el cuadrado de la corriente",
+            "Porque la tensión en el cable aumenta y la corriente disminuye",
+            "Porque un cable fino tiene resistencia cero",
+            "Porque la corriente se queda quieta dentro del cable"
+          ],
+          "explanation": "El cable tiene una pequeña resistencia; el calor es R × I². Duplicar la corriente cuadruplica el calentamiento — por eso el calibre del cable y el disyuntor tienen que corresponder a la corriente."
+        }
+      ],
+      "title": "Potencia, energía y la factura de la luz",
+      "theory": "# Potencia: la rapidez con que se usa la energía\n\nLa **potencia (P)** es energía por tiempo, medida en **vatios (W)**. 1 W = 1 julio por segundo. En un componente eléctrico:\n\n```\nP = V × I\n```\n\nCombinando con la Ley de Ohm (V = R × I), aparecen otras dos formas muy útiles:\n\n```\nP = R × I²        P = V² / R\n```\n\nEl calor generado en un resistor (el **efecto Joule**) es lo que calienta la ducha, la plancha y la resistencia de la tostadora — y también lo que derrite cables demasiado finos para la corriente que llevan.\n\n# Energía: lo que cobra la compañía eléctrica\n\n**Energía = Potencia × Tiempo.** En julios los números se vuelven enormes, así que la factura de la luz usa el **kilovatio-hora (kWh)**: la energía de 1000 W funcionando durante 1 hora.\n\n```\nE (kWh) = P (kW) × tiempo (h)\nCosto = E (kWh) × tarifa (R$/kWh)\n```\n\nEjemplo: una TV de 100 W encendida 5 h al día durante 30 días:\n\n```\nE = 0,1 kW × 5 h × 30 = 15 kWh\nCon tarifa de R$ 0,90/kWh → R$ 13,50 al mes\n```\n\n# Corriente, cable e interruptor automático\n\nPara la misma potencia, **mayor tensión = menor corriente** (I = P / V). Por eso la ducha de 220 V usa un cable más fino que la de 127 V de la misma potencia. El **interruptor automático** (disyuntor) se dispara cuando la corriente supera el límite que aguanta el cable, antes de que se caliente y se incendie.\n\n## Quién gasta más en una casa\n\n- Ducha eléctrica: 4000 a 7500 W — la campeona.\n- Aire acondicionado, horno eléctrico, secadora: 1000 a 3000 W.\n- Nevera: ~150 W, pero encendida todo el día.\n- Lámpara LED: 7 a 15 W (una incandescente equivalente gastaba 60 a 100 W).",
+      "safety": "El enchufe de casa (127 V o 220 V) **mata**. Nunca abras enchufes, duchas ni tableros eléctricos sin apagar el disyuntor y sin formación — las instalaciones eléctricas son trabajo de un electricista habilitado (norma NR-10). Experimenta solo con pilas, baterías y simuladores."
+    },
+    "ele-05-thevenin": {
+      "hints": [
+        "Para hallar Rth, imagina la fuente de 12 V como un cable: R1 y R2 quedan en paralelo, y R3 en serie con ellos.",
+        "La potencia máxima ocurre con RL = Rth."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la tensión de Thévenin **Vth** vista por la carga?",
+          "options": [],
+          "explanation": "Con RL desconectada no pasa corriente por R3, así que Vth es la tensión del divisor: 12 × 3k/(6k + 3k) = 4 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "¿Cuál es la resistencia de Thévenin **Rth**, en kΩ?",
+          "options": [],
+          "explanation": "La fuente se vuelve cortocircuito: 6k ∥ 3k = 2 kΩ, más R3 = 1 kΩ en serie → Rth = 3 kΩ.",
+          "unit": "kΩ"
+        },
+        {
+          "prompt": "En el punto de máxima transferencia de potencia, la eficiencia del **equivalente de Thévenin** (potencia en la carga ÷ potencia entregada por la fuente Vth) es…",
+          "options": [
+            "100%",
+            "75%",
+            "50%",
+            "25%"
+          ],
+          "explanation": "Con RL = Rth, pasa la misma corriente por las dos y tienen la misma tensión: la mitad de la potencia queda en la carga y la mitad en Rth. (En el circuito original, que también gasta energía en R1 y R2, la eficiencia es todavía menor.)"
+        }
+      ],
+      "goals": [
+        "Potencia en la carga RL de al menos 1,32 mW (el máximo es 1,33 mW)"
+      ],
+      "title": "Thévenin, Norton y la máxima transferencia de potencia",
+      "theory": "# Cualquier circuito se vuelve una fuente y un resistor\n\nEl **Teorema de Thévenin** dice que, visto desde dos terminales, **cualquier** circuito lineal (fuentes y resistores) se comporta exactamente como:\n\n- una fuente de tensión **Vth** (la tensión en los terminales en abierto), en serie con\n- una resistencia **Rth** (la resistencia vista desde los terminales con las fuentes \"apagadas\": una fuente de tensión se vuelve un cortocircuito, una fuente de corriente se vuelve un circuito abierto).\n\nEl **Teorema de Norton** es su hermano: una fuente de corriente **In = Vth / Rth** en paralelo con la misma Rth.\n\n## Calculándolo para nuestro circuito\n\nLa fuente de 12 V alimenta un divisor (R1 = 6 kΩ, R2 = 3 kΩ) y, después de R3 = 1 kΩ, queda la carga **RL**.\n\n```\nVth = 12 × 3k / (6k + 3k) = 4 V\nRth = (6k ∥ 3k) + 1k = 2k + 1k = 3 kΩ\n```\n\n# Máxima transferencia de potencia\n\nLa potencia en la carga es\n\n```\nP(RL) = Vth² × RL / (Rth + RL)²\n```\n\n- RL muy pequeña: corriente alta, pero casi nada de tensión en ella → poca potencia.\n- RL muy grande: tensión alta, pero casi nada de corriente → poca potencia.\n- El máximo ocurre cuando **RL = Rth**, y vale **Pmax = Vth² / (4 × Rth)**.\n\nPor eso se habla de **adaptar impedancias**: antenas, amplificadores de audio y altavoces se diseñan con esa idea. Pero ojo: en el punto de máxima potencia la carga y Rth reciben la misma potencia — en el equivalente de Thévenin la **eficiencia es solo del 50%**. En el circuito real puede ser aún peor: aquí, con RL = 3 kΩ, la fuente de 12 V entrega unos 18,7 mW para que la carga reciba 1,33 mW (≈ 7%), porque R1 y R2 también gastan energía. La red eléctrica hace lo contrario (RL mucho mayor que Rth) para no desperdiciar.",
+      "task": "Ajusta la carga **RL** para que reciba la **máxima potencia** posible del circuito (al menos 1,32 mW). Antes, calcula Vth y Rth en papel — las preguntas de abajo piden esos valores."
+    },
+    "ele-06-rc": {
+      "hints": [
+        "τ = R × C → R = τ / C = 0,1 / 0,0001.",
+        "Con τ = 0,1 s, en 1 s caben 10 constantes de tiempo: el condensador termina prácticamente con los 5 V de la fuente."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la constante de tiempo de un circuito con **R = 10 kΩ** y **C = 47 µF**?",
+          "options": [],
+          "explanation": "τ = R × C = 10 000 × 0,000047 = 0,47 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "Después de **una** constante de tiempo, ¿con qué porcentaje de la tensión final está el condensador?",
+          "options": [
+            "50%",
+            "63%",
+            "86%",
+            "99%"
+          ],
+          "explanation": "1 − e⁻¹ ≈ 0,632. Con 2τ llega al 86%, con 3τ al 95% y con 5τ al 99,3%."
+        },
+        {
+          "prompt": "En un circuito de **corriente continua**, después de mucho tiempo conectado, un condensador se comporta como…",
+          "options": [
+            "un cable (cortocircuito)",
+            "un circuito abierto",
+            "un resistor de 1 Ω",
+            "una fuente de corriente"
+          ],
+          "explanation": "Con la tensión quieta, i = C × dV/dt = 0: no pasa corriente, como un circuito abierto. El inductor hace lo contrario y se vuelve un cable."
+        }
+      ],
+      "goals": [
+        "Constante de tiempo τ = 0,1 s",
+        "Condensador cargado (≥ 4,9 V) al final de la simulación"
+      ],
+      "title": "Condensadores, inductores y el transitorio RC",
+      "theory": "# El condensador guarda carga\n\nUn **condensador** son dos placas conductoras separadas por un aislante. Conectado a una fuente, acumula carga: **Q = C × V**. La **capacitancia C** se mide en **faradios (F)** — en la práctica, en µF, nF y pF. La energía almacenada es `E = C × V² / 2`.\n\nLa corriente en un condensador solo existe mientras la tensión **cambia**: `i = C × dV/dt`. En corriente continua, una vez cargado, es un **circuito abierto**.\n\n# El inductor guarda energía en el campo magnético\n\nUn **inductor** es una bobina de cable. Se opone a las variaciones de **corriente**: `v = L × di/dt`. La **inductancia L** se mide en **henrios (H)**. En corriente continua, una vez estabilizado, es un **cable**. La energía almacenada es `E = L × I² / 2`.\n\n# El transitorio RC\n\nCuando conectamos una fuente V a un resistor R en serie con un condensador C descargado, la tensión en el condensador sube así:\n\n```\nvC(t) = V × (1 − e^(−t/τ))        τ = R × C\n```\n\n- **τ (tau)** es la **constante de tiempo**, en segundos (Ω × F = s).\n- Después de **1 τ**, el condensador llega al **63,2%** de la tensión final.\n- Después de **5 τ**, al 99,3%: en la práctica, cargado.\n- La corriente hace lo contrario: empieza en V/R y cae hasta cero.\n\nEn el circuito **RL**, la misma curva aparece en la corriente, con **τ = L / R**.\n\n## Dónde se usa esto\n\nTemporizadores (el circuito 555), filtros que limpian ruido, el *antirrebote* de botones, el flash de la cámara y el retraso del intermitente del coche son todos \"una R y una C\".\n\n# El osciloscopio\n\nEn este laboratorio el simulador hace correr el tiempo: haz clic en **▶ Simular** y el osciloscopio dibuja la tensión en el condensador **V(n2)** (verde, escala de la izquierda) y la corriente **I(C1)** (amarilla, escala de la derecha). El simulador mide **τ** por sí solo: el instante en que V(n2) pasa del 63,2% de la variación. Si la curva aún no se ha estabilizado al final de la simulación (τ grande), estima τ por la forma de la exponencial.",
+      "task": "Con C1 = 100 µF, ajusta **R1** para que la constante de tiempo sea **τ = 0,1 s** (entre 0,095 y 0,105 s) y el condensador termine **cargado** (al menos 4,9 V) en 1 segundo de simulación.",
+      "safety": "Los condensadores grandes (fuentes de TV, microondas, flash de cámara) siguen cargados **después de apagarse** y pueden dar descargas graves. Nunca abras esos aparatos."
+    },
+    "ele-07-fasores": {
+      "hints": [
+        "f0 = 1 / (2π √(L C)) = 1 / (2π √(0,01 × 0,000001)).",
+        "√(10⁻⁸) = 10⁻⁴. f0 = 1 / (6,283 × 0,0001) ≈ 1592 Hz. Usa ◀ ▶ para el ajuste fino."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la reactancia **XL** de un inductor de **10 mH** a **1 kHz**?",
+          "options": [],
+          "explanation": "XL = 2π f L = 2 × 3,1416 × 1000 × 0,01 ≈ 62,8 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "¿Cuál es la frecuencia de resonancia de un circuito con **L = 10 mH** y **C = 1 µF**?",
+          "options": [],
+          "explanation": "f0 = 1/(2π√(LC)) = 1/(2π × 10⁻⁴) ≈ 1592 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "En la resonancia de un circuito RLC **serie**, la impedancia es…",
+          "options": [
+            "máxima e infinita",
+            "mínima e igual a R",
+            "igual a XL + XC",
+            "cero"
+          ],
+          "explanation": "XL y XC se cancelan (XL − XC = 0), quedando solo R: impedancia mínima y corriente máxima, en fase con la tensión."
+        }
+      ],
+      "goals": [
+        "Ángulo de fase entre −10° y +10° (resonancia)",
+        "Corriente de la fuente de al menos 0,48 A"
+      ],
+      "title": "Corriente alterna: fasores, impedancia y resonancia",
+      "theory": "# Corriente alterna (CA)\n\nEn el enchufe, la tensión no es constante: oscila como una **sinusoide**, 60 veces por segundo en Brasil (**60 Hz**).\n\n```\nv(t) = Vpico × sen(2π f t)        ω = 2π f (rad/s)\n```\n\nEl valor que aparece en los aparatos (127 V, 220 V) es el **valor eficaz (RMS)**: el valor continuo que daría el mismo calentamiento. Para sinusoides, `Vpico = Vrms × √2` (los \"127 V\" llegan a picos de 180 V).\n\n# Fasores: las sinusoides se vuelven flechas\n\nEn CA, todas las tensiones y corrientes de un circuito tienen la **misma frecuencia**; lo que cambia es la **amplitud** y la **fase** (el retraso). Un **fasor** guarda solo eso: un número complejo con módulo (valor eficaz) y ángulo. Escribimos `220∠0°` o `10∠−90°`. Así, las derivadas se vuelven multiplicaciones y el circuito se resuelve con álgebra, como en CC.\n\n# Impedancia: la \"resistencia\" en CA\n\nLa **impedancia Z** (en ohmios) es un número complejo: `V = Z × I`.\n\n- Resistor: **Z = R** (tensión y corriente en fase).\n- Inductor: **Z = j × XL**, con `XL = ω L = 2π f L` (la corriente **se retrasa** 90°).\n- Condensador: **Z = −j × XC**, con `XC = 1 / (ω C)` (la corriente **se adelanta** 90°).\n\nEn un circuito **RLC serie**: `Z = R + j(XL − XC)`, `|Z| = √(R² + (XL − XC)²)` y el **ángulo de fase** es `φ = arctan((XL − XC) / R)`.\n\n# Resonancia\n\nXL crece con la frecuencia y XC disminuye. En la frecuencia en que **XL = XC** se cancelan: la impedancia es **mínima (solo R)**, la corriente es **máxima** y la fase es **cero**.\n\n```\nf0 = 1 / (2π √(L C))\n```\n\nAsí sintoniza una radio una emisora: un circuito LC resuena solo en la frecuencia de ella.\n\n# En este laboratorio\n\nEl gráfico muestra la **corriente de la fuente en función de la frecuencia** (escala logarítmica). La línea roja discontinua es la frecuencia actual de la fuente. Cambia la frecuencia y observa la métrica **phase** (ángulo de la impedancia): negativa = capacitivo, positiva = inductivo.",
+      "task": "La fuente tiene 10 V eficaces y el circuito es R = 20 Ω, L = 10 mH, C = 1 µF. Ajusta la **frecuencia** de la fuente hasta la **resonancia**: ángulo de fase entre −10° y +10° y corriente de al menos 0,48 A."
+    },
+    "ele-08-fator-potencia": {
+      "hints": [
+        "Sin condensador: P ≈ 3857 W y Q ≈ 2908 var. Para FP = 0,95, Q puede ser como máximo P × tan(18,2°) ≈ 1268 var.",
+        "El condensador tiene que suministrar al menos 2908 − 1268 ≈ 1640 var: C = 1640 / (2π × 60 × 220²) ≈ 90 µF. Algo entre 90 y 150 µF funciona bien."
+      ],
+      "questions": [
+        {
+          "prompt": "Una carga consume **P = 8 kW** con potencia aparente **S = 10 kVA**. ¿Cuál es el factor de potencia?",
+          "options": [],
+          "explanation": "FP = P / S = 8 / 10 = 0,8."
+        },
+        {
+          "prompt": "Un motor de **P = 3 kW** tiene **FP = 0,6** inductivo. ¿Cuál es la potencia reactiva, en kvar?",
+          "options": [],
+          "explanation": "S = P / FP = 3 / 0,6 = 5 kVA. Q = √(S² − P²) = √(25 − 9) = 4 kvar.",
+          "unit": "kvar"
+        },
+        {
+          "prompt": "¿Por qué la distribuidora cobra la energía reactiva excedente de una industria con factor de potencia bajo?",
+          "options": [
+            "Porque la potencia activa consumida aumenta",
+            "Porque circula más corriente para la misma potencia útil, aumentando las pérdidas en cables y transformadores",
+            "Porque la tensión de la red sube",
+            "Porque el contador gira al revés"
+          ],
+          "explanation": "Con FP bajo, I = P / (V × FP) es mayor. La red necesita cables y transformadores más grandes y pierde más energía en R × I²."
+        }
+      ],
+      "goals": [
+        "Factor de potencia de al menos 0,95",
+        "Carga todavía inductiva (fase ≥ 0°): sin exceso de condensador",
+        "Corriente de la línea por debajo de 19 A"
+      ],
+      "title": "Potencia en CA y corrección del factor de potencia",
+      "theory": "# Tres potencias\n\nEn CA, con tensión y corriente desfasadas un ángulo φ, aparecen tres potencias:\n\n- **Potencia activa P** (vatios, W): la que se convierte en trabajo útil y calor. `P = V × I × cos φ`.\n- **Potencia reactiva Q** (voltamperio reactivo, var): energía que va y viene entre la fuente y los campos de los inductores y condensadores, sin consumirse. `Q = V × I × sen φ`.\n- **Potencia aparente S** (voltamperio, VA): el producto `S = V × I`, que dimensiona cables y transformadores. `S² = P² + Q²` (el **triángulo de potencias**).\n\n# Factor de potencia\n\n```\nFP = P / S = cos φ\n```\n\nLos motores son cargas **inductivas** (la corriente se retrasa): un motor con FP = 0,8 toma un 25% más de corriente de la necesaria para la misma potencia útil. Esa corriente extra calienta cables y transformadores. Por eso, en Brasil, las reglas de ANEEL fijan el **FP de referencia en 0,92**: industrias y comercios atendidos en media o alta tensión (el \"Grupo A\") pagan por la energía reactiva excedente cuando quedan por debajo. Los consumidores residenciales (baja tensión) no pagan ese cobro.\n\n# Corrección con condensadores\n\nUn condensador en paralelo con el motor suministra potencia reactiva **capacitiva**, que cancela parte de la reactiva inductiva del motor. La potencia activa **no cambia** — solo disminuye la corriente de la línea.\n\n```\nQc = P × (tan φ_antes − tan φ_después)\nC = Qc / (2π f × V²)\n```\n\nCuidado con exagerar: demasiado condensador deja el circuito **capacitivo** (el FP cae otra vez, ahora adelantado).\n\n# El circuito\n\nEl motor se modela con **Rm = 8 Ω** (la parte que hace trabajo) en serie con **Lm = 16 mH** (el campo magnético), a 220 V y 60 Hz. El amperímetro A1 muestra la corriente de la línea y el osciloscopio muestra la tensión y la corriente de la fuente: observa cómo disminuye el desfase cuando aumentas C1. La métrica **phase** es el ángulo de la carga (positivo = inductivo).",
+      "task": "Elige el condensador **C1** para llevar el factor de potencia a **al menos 0,95**, sin pasarte (la carga debe seguir ligeramente **inductiva**, fase ≥ 0°), y observa cómo la corriente de la línea cae por debajo de **19 A**.",
+      "safety": "La red de 220 V es **letal**. Los bancos de condensadores de corrección quedan cargados después de apagarse. La corrección del factor de potencia en instalaciones reales es trabajo de un electricista o ingeniero habilitado (NR-10)."
+    },
+    "ele-09-retificador": {
+      "hints": [
+        "La carga toma unos 15 V / 100 Ω = 0,15 A.",
+        "C ≥ I / (2 f × ΔV) = 0,15 / (120 × 1) ≈ 1250 µF. Elige el siguiente valor comercial con margen."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la tensión de **pico** de un secundario de **12 V eficaces**?",
+          "options": [],
+          "explanation": "Vpico = Vrms × √2 = 12 × 1,414 ≈ 17 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "En un rectificador de onda completa (60 Hz) con carga de **0,15 A** y **C = 1000 µF**, ¿cuál es el rizado aproximado?",
+          "options": [],
+          "explanation": "ΔV ≈ I / (2 f C) = 0,15 / (120 × 0,001) = 1,25 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "En el puente rectificador, ¿cuántos diodos conducen al mismo tiempo en cada semiciclo?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "explanation": "Dos: uno lleva la corriente hasta la salida positiva y otro la trae de vuelta por tierra. Por eso la salida pierde cerca de 2 × 0,7 = 1,4 V."
+        }
+      ],
+      "goals": [
+        "Rizado en la salida de como máximo 1 V",
+        "Tensión media en la salida de al menos 14 V"
+      ],
+      "title": "Diodos y el rectificador de onda completa",
+      "theory": "# El diodo: una válvula de un solo sentido\n\nEl **diodo** deja pasar la corriente en un solo sentido: del **ánodo** (el lado ancho del triángulo del símbolo) al **cátodo** (la barra, donde está la punta del triángulo). El triángulo funciona como una flecha: apunta en el sentido en que pasa la corriente. Está hecho de silicio con dos regiones, P y N (la **unión PN**).\n\n- **Polarizado directo** (ánodo más positivo): conduce, con una caída casi fija de **≈ 0,7 V** (silicio). El **LED** es un diodo que emite luz, con una caída de 1,8 a 3,3 V según el color.\n- **Polarizado inverso**: prácticamente no conduce (hasta la tensión de ruptura).\n\nEn el simulador el diodo se modela como un interruptor: apagado por debajo de 0,7 V; encendido por encima, como 0,7 V en serie con una pequeña resistencia.\n\n# Rectificador: de CA a CC\n\nLos móviles, ordenadores y casi toda la electrónica necesitan **corriente continua**, pero el enchufe da **alterna**. La fuente hace:\n\n- **Transformador**: baja 127/220 V a, por ejemplo, 12 V eficaces (pico de 12 × √2 ≈ 17 V).\n- **Puente rectificador** (4 diodos): en el semiciclo positivo conducen D1 y D4; en el negativo, D3 y D2. En los dos casos la corriente sale por el mismo lado: la salida es **siempre positiva** (onda completa). En cada semiciclo la corriente pasa por **dos** diodos: perdemos ≈ 1,4 V.\n- **Condensador de filtro**: se carga en los picos y alimenta la carga entre ellos, dejando la tensión casi lisa. Lo que queda de variación es el **rizado** (*ripple*).\n\n```\nRizado ≈ I_carga / (2 × f × C)        (onda completa: 2 × 60 = 120 picos por segundo)\n```\n\nLa fórmula es una estimación algo **pesimista**: supone que el condensador se descarga durante todo el semiciclo, pero vuelve a cargarse un poco antes del pico. El rizado real (el del simulador) suele ser un 10 a 20% menor — diseñar con la fórmula deja un margen.\n\n- **Regulador** (por ejemplo, el 7805): elimina el resto del rizado — tema para otra lección.\n\n# En este laboratorio\n\nLa fuente sinusoidal (17 V de pico, 60 Hz) representa el secundario del transformador. El osciloscopio muestra la tensión de la fuente **V(V1)** y la salida **V(o1)** sobre la carga de 100 Ω. La métrica **ripple** es la diferencia entre el máximo y el mínimo de la salida al final de la simulación; **Vavg** es la media.",
+      "task": "Elige el condensador de filtro **C1** para que el **rizado** en la salida sea **como máximo 1 V**, con una tensión media de al menos **14 V**.",
+      "safety": "Las fuentes conectadas al enchufe tienen 127/220 V antes del transformador — no abras cargadores ni fuentes. Los condensadores electrolíticos tienen polaridad: conectados al revés pueden **reventar**."
+    },
+    "ele-10-trifasico": {
+      "hints": [
+        "Carga equilibrada = tres resistencias iguales.",
+        "Con Ra = Rb = Rc = 10 Ω: P = 3 × 127² / 10 ≈ 4,84 kW."
+      ],
+      "questions": [
+        {
+          "prompt": "En un sistema en estrella con **tensión de fase de 127 V**, ¿cuál es la tensión de línea?",
+          "options": [],
+          "explanation": "VL = √3 × Vf = 1,732 × 127 ≈ 220 V — es lo que muestra el voltímetro M1 entre las fases B y C.",
+          "unit": "V"
+        },
+        {
+          "prompt": "Una carga trifásica equilibrada y resistiva tiene **12,7 A** por fase con **127 V** de fase. ¿Cuál es la potencia total, en vatios?",
+          "options": [],
+          "explanation": "P = 3 × Vf × If × cos φ = 3 × 127 × 12,7 × 1 ≈ 4839 W. Lo mismo que √3 × 220 × 12,7.",
+          "unit": "W"
+        },
+        {
+          "prompt": "¿Por qué la corriente en el neutro es cero cuando la carga está equilibrada?",
+          "options": [
+            "Porque el neutro tiene resistencia infinita",
+            "Porque las tres corrientes tienen el mismo valor y están desfasadas 120°, y su suma fasorial es cero",
+            "Porque solo una fase conduce a la vez",
+            "Porque la tensión de línea es √3 mayor"
+          ],
+          "explanation": "Tres fasores iguales a 120° forman un triángulo cerrado: Ia + Ib + Ic = 0. Por la Ley de los Nodos, no sobra nada para volver por el neutro."
+        }
+      ],
+      "goals": [
+        "Corriente en el neutro por debajo de 0,5 A",
+        "Potencia total entre 4,6 kW y 5,1 kW"
+      ],
+      "title": "Sistemas trifásicos",
+      "theory": "# ¿Por qué tres fases?\n\nLa energía se genera y se transmite en **tres fases**: tres tensiones sinusoidales del mismo valor, desfasadas **120°** entre sí (A, B y C). Comparado con el monofásico, el trifásico:\n\n- transmite la misma potencia con **menos cobre** en los cables;\n- entrega **potencia constante** en el tiempo (las tres ondas se complementan) — los motores giran suaves;\n- crea un **campo magnético giratorio**, lo que hace que el motor de inducción arranque solo.\n\n# Conexión en estrella (Y)\n\nLas tres fuentes (o cargas) tienen un punto común, el **neutro**.\n\n- **Tensión de fase** (Vf): entre una fase y el neutro.\n- **Tensión de línea** (VL): entre dos fases. Por los fasores, `VL = √3 × Vf`. De ahí viene el par **127/220 V** (220 = √3 × 127) y el **220/380 V**.\n- En estrella, la corriente de línea es igual a la corriente de fase.\n\n```\nVa = 127∠0°   Vb = 127∠−120°   Vc = 127∠120°\nVab = Va − Vb = 220∠30°\n```\n\n# Carga equilibrada y corriente en el neutro\n\nPor la Ley de los Nodos en el punto estrella de la carga, la corriente en el neutro es la **suma fasorial** de las tres corrientes de fase:\n\n```\nIn = Ia + Ib + Ic\n```\n\nSi las tres cargas son **iguales** (carga **equilibrada**), las tres corrientes tienen el mismo módulo y están a 120° una de otra: la suma es **cero**. Con cargas distintas, sobra corriente en el neutro, que calienta el conductor y desequilibra las tensiones. Por eso los electricistas reparten los circuitos de un edificio entre las fases.\n\n# Potencia trifásica\n\n```\nP = 3 × Vf × If × cos φ = √3 × VL × IL × cos φ\n```\n\n# El circuito\n\nTres fuentes de 127 V (60 Hz, 0°, −120°, +120°) alimentan las cargas Ra, Rb y Rc conectadas en estrella. El punto estrella vuelve al neutro de la fuente por el conductor **Rn** (0,5 Ω), y el voltímetro **M1** mide la tensión de línea entre B y C. El osciloscopio muestra las tres tensiones de fase.",
+      "task": "La carga de la fase C (**Rc**) es distinta de las otras y hace circular corriente por el neutro. **Equilibra la carga**: la corriente en el neutro debe quedar por debajo de **0,5 A** y la potencia total entre **4,6 y 5,1 kW**.",
+      "safety": "Las redes trifásicas (220/380 V en industrias, 13,8 kV o más en distribución) son **mortales**. Solo profesionales habilitados y autorizados (NR-10), con equipo de protección, trabajan en ellas. Aquí todo es simulado."
+    }
+  }
+}
