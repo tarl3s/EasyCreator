@@ -1,0 +1,368 @@
+{
+  "id": "python",
+  "title": "Python",
+  "area": "programming",
+  "language": "python",
+  "description": "Aprenda a programar do zero com Python, a linguagem mais usada para começar: saída, variáveis, decisões, repetições, funções, listas, dicionários, classes, recursão e, no fim, algoritmos de ordenação e busca com análise de complexidade.",
+  "lessons": [
+    {
+      "id": "py-01",
+      "title": "Seu primeiro programa: print",
+      "theory": "# Bem-vindo ao Python\n\nUm programa é uma lista de instruções que o computador executa **de cima para baixo**, uma linha de cada vez. A instrução mais simples que existe em Python é `print`, que mostra um texto na tela (a \"saída\" do programa).\n\n```python\nprint(\"Olá, mundo!\")\nprint(\"Estou aprendendo Python.\")\n```\n\nEsse programa mostra duas linhas, exatamente nessa ordem. Cada `print` termina pulando para a linha seguinte.\n\n## Textos são strings\n\nO que fica entre aspas é uma **string** (um texto). Você pode usar aspas duplas `\"...\"` ou simples `'...'`, desde que abra e feche com o mesmo tipo. Sem aspas, o Python acha que você está falando de um nome de variável ou de um comando, e reclama com um erro.\n\n```python\nprint(\"Python\")    # mostra Python\nprint('Python')    # também mostra Python\n```\n\nTudo que vem depois de `#` é um **comentário**: o Python ignora. Comentários servem para explicar o código para pessoas.\n\n## Vários valores no mesmo print\n\nO `print` aceita vários valores separados por vírgula. Ele coloca um espaço entre eles automaticamente:\n\n```python\nprint(\"Tenho\", 15, \"anos\")   # Tenho 15 anos\n```\n\n## f-strings: texto com valores dentro\n\nQuando o texto mistura partes fixas com valores, a forma mais clara é a **f-string**: coloque um `f` antes das aspas e escreva o valor entre chaves.\n\n```python\nnome = \"Ana\"\nprint(f\"Oi, {nome}!\")        # Oi, Ana!\nprint(f\"*** {nome} ***\")     # *** Ana ***\n```\n\nA linha `nome = \"Ana\"` guarda um texto com um nome; vamos estudar isso a fundo na próxima lição. Nesta lição, o código inicial já lê um nome para você na variável `nome` — o seu trabalho é só escrever os `print`.\n\n## Por que a saída precisa ser exata?\n\nO corretor compara o que o seu programa mostra com o resultado esperado, **caractere por caractere**. Uma vírgula a mais, um ponto faltando ou uma letra maiúscula diferente fazem o teste falhar. Isso parece rigoroso, mas é assim que programas conversam entre si: um programa que espera `Olá, Ana!` não entende `ola ana`.\n\n## Erros comuns\n\n- Esquecer de fechar as aspas ou os parênteses: `print(\"Oi)` dá **SyntaxError**.\n- Escrever `Print` com P maiúsculo: Python diferencia maiúsculas de minúsculas.\n- Esquecer o `f` da f-string: `print(\"Oi, {nome}\")` mostra literalmente `{nome}`.\n- Colocar espaços extras dentro das aspas: eles aparecem na saída.",
+      "task": "O código inicial já lê um nome e guarda na variável `nome`. Complete o programa para que ele mostre exatamente estas três linhas:\n\n```\nOlá, <nome>!\nBem-vindo ao Python.\n*** <nome> ***\n```\n\nExemplo: se o nome for `Ana`, a saída deve ser:\n\n```\nOlá, Ana!\nBem-vindo ao Python.\n*** Ana ***\n```",
+      "starter": "nome = input()\n# Escreva os seus print abaixo desta linha",
+      "solution": "nome = input()\nprint(f\"Olá, {nome}!\")\nprint(\"Bem-vindo ao Python.\")\nprint(f\"*** {nome} ***\")",
+      "hints": [
+        "Cada linha da saída é um `print` separado.",
+        "Use uma f-string para colocar o nome dentro do texto: `print(f\"Olá, {nome}!\")`.",
+        "Confira a pontuação: vírgula depois de \"Olá\", exclamação no fim, ponto final na segunda linha e três asteriscos de cada lado na terceira."
+      ],
+      "tests": [
+        {
+          "input": "Ana\n",
+          "expected": "Olá, Ana!\nBem-vindo ao Python.\n*** Ana ***",
+          "hidden": false
+        },
+        {
+          "input": "Bruno\n",
+          "expected": "Olá, Bruno!\nBem-vindo ao Python.\n*** Bruno ***",
+          "hidden": false
+        },
+        {
+          "input": "Maria Clara\n",
+          "expected": "Olá, Maria Clara!\nBem-vindo ao Python.\n*** Maria Clara ***",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "py-02",
+      "title": "Variáveis e tipos",
+      "theory": "# Variáveis: nomes para valores\n\nNa lição anterior você usou `nome`, que guardava um texto. Isso é uma **variável**: um nome que aponta para um valor guardado na memória. Você cria (ou muda) uma variável com `=`, que em Python significa **atribuição**, não \"igualdade\":\n\n```python\npontos = 10\npontos = pontos + 5   # pega o valor atual (10), soma 5 e guarda de volta\nprint(pontos)         # 15\n```\n\nLeia `pontos = pontos + 5` como \"pontos **recebe** pontos mais 5\". Escrever `pontos += 5` faz a mesma coisa.\n\n## Os tipos básicos\n\nTodo valor tem um **tipo**, e o tipo decide o que dá para fazer com ele:\n\n- `int`: números inteiros, como `42`, `0`, `-7`.\n- `float`: números com parte decimal, como `1.75` (o separador é o **ponto**, nunca vírgula).\n- `str`: textos, como `\"Ana\"`.\n- `bool`: verdadeiro ou falso, `True` ou `False`.\n\n```python\nidade = 15          # int\naltura = 1.68       # float\nnome = \"Ana\"        # str\nestudante = True    # bool\nprint(type(idade))  # <class 'int'>\n```\n\n## Por que o tipo importa?\n\nO operador `+` soma números, mas **junta** textos:\n\n```python\nprint(2 + 3)        # 5\nprint(\"2\" + \"3\")    # 23\n```\n\nMisturar os dois (`\"Idade: \" + 15`) dá **TypeError**: o Python não adivinha se você quer somar ou juntar. Por isso existem as **conversões**:\n\n```python\nint(\"15\")       # 15 (texto -> inteiro)\nfloat(\"1.68\")   # 1.68 (texto -> decimal)\nstr(15)         # \"15\" (número -> texto)\n```\n\nTudo o que se lê do teclado chega como `str`. Para fazer contas, converta com `int(...)` ou `float(...)`. No código inicial desta lição, a leitura e a conversão já estão prontas.\n\n## Formatando decimais\n\nNúmeros decimais no computador têm pequenas imprecisões (`0.1 + 0.2` dá `0.30000000000000004`). Para mostrar um decimal de forma previsível, fixe o número de casas na f-string com `:.2f`:\n\n```python\naltura = 1.7\nprint(f\"{altura:.2f}\")   # 1.70\n```\n\n## Nomes de variáveis\n\nUse nomes que expliquem o conteúdo: `idade`, `preco_total`. Eles podem ter letras, números e `_`, mas não podem começar com número nem ter espaço. `Idade` e `idade` são variáveis diferentes.\n\n## Erros comuns\n\n- Usar uma variável antes de criá-la: **NameError**.\n- Somar texto com número sem converter: **TypeError**.\n- Escrever decimal com vírgula: `1,68` vira outra coisa (uma tupla), não um número.",
+      "task": "O código inicial lê três linhas: um nome (texto), uma idade (inteiro) e uma altura em metros (decimal). Mostre:\n\n```\nNome: <nome>\nIdade: <idade>\nDaqui a 10 anos: <idade + 10>\nAltura: <altura com 2 casas decimais> m\n```\n\nExemplo: para as entradas `Ana`, `15` e `1.6`, a saída é:\n\n```\nNome: Ana\nIdade: 15\nDaqui a 10 anos: 25\nAltura: 1.60 m\n```",
+      "starter": "nome = input()\nidade = int(input())\naltura = float(input())\n# Escreva o resto do programa aqui\nprint(f\"Nome: {nome}\")",
+      "solution": "nome = input()\nidade = int(input())\naltura = float(input())\nprint(f\"Nome: {nome}\")\nprint(f\"Idade: {idade}\")\nprint(f\"Daqui a 10 anos: {idade + 10}\")\nprint(f\"Altura: {altura:.2f} m\")",
+      "hints": [
+        "Você pode fazer contas dentro das chaves de uma f-string: `{idade + 10}`.",
+        "Para mostrar o decimal com duas casas, use `{altura:.2f}`."
+      ],
+      "tests": [
+        {
+          "input": "Ana\n15\n1.6\n",
+          "expected": "Nome: Ana\nIdade: 15\nDaqui a 10 anos: 25\nAltura: 1.60 m",
+          "hidden": false
+        },
+        {
+          "input": "Carlos\n0\n0.5\n",
+          "expected": "Nome: Carlos\nIdade: 0\nDaqui a 10 anos: 10\nAltura: 0.50 m",
+          "hidden": false
+        },
+        {
+          "input": "Beatriz\n42\n1.8\n",
+          "expected": "Nome: Beatriz\nIdade: 42\nDaqui a 10 anos: 52\nAltura: 1.80 m",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "py-03",
+      "title": "Entrada de dados e aritmética",
+      "theory": "# Lendo dados com input()\n\nAté aqui o código inicial lia os dados por você. Agora é a sua vez. A função `input()` espera uma linha da entrada e devolve essa linha como **texto** (`str`):\n\n```python\nnome = input()\nidade = int(input())     # lê a linha e converte para inteiro\n```\n\n## Como o corretor fornece a entrada\n\nQuando você roda os testes, ninguém digita nada: o corretor **entrega as linhas da entrada automaticamente**, uma por chamada de `input()`, na ordem. Por isso, **não** escreva mensagens como `input(\"Digite um número: \")`. Essa mensagem apareceria na saída e o teste falharia, porque a saída esperada não tem esse texto. Chame sempre `input()` sem argumentos.\n\n## Os operadores aritméticos\n\nNa lição anterior você converteu textos em números; agora vamos fazer contas com eles.\n\n```python\na = 17\nb = 5\nprint(a + b)    # 22  soma\nprint(a - b)    # 12  subtração\nprint(a * b)    # 85  multiplicação\nprint(a / b)    # 3.4 divisão real (resultado sempre float)\nprint(a // b)   # 3   divisão inteira\nprint(a % b)    # 2   resto da divisão\nprint(a ** 2)   # 289 potência\n```\n\nA precedência é a da matemática: `**` primeiro, depois `*`, `/`, `//`, `%`, e por último `+` e `-`. Na dúvida, use parênteses: `(a + b) * 2`.\n\n## Divisão inteira e resto com negativos\n\nEm Python, `//` arredonda **para baixo** (em direção ao menos infinito), não em direção a zero. E o resto `%` sempre tem o mesmo sinal do divisor. Eles obedecem sempre à regra:\n\n```python\na == (a // b) * b + (a % b)\n```\n\nEntão `-7 // 2` é `-4` (e não `-3`), e `-7 % 2` é `1`, porque `-4 * 2 + 1 == -7`. Outras linguagens, como C e Java, fazem diferente; é um detalhe que pega muita gente.\n\n## Por que `/` sempre dá float?\n\n`6 / 3` dá `2.0`, não `2`. O Python 3 escolheu que `/` é sempre a divisão \"de verdade\". Quando você quer um inteiro, diga isso explicitamente com `//`. Para mostrar a divisão real de forma previsível, formate com casas fixas: `f\"{a / b:.2f}\"`.\n\n## Erros comuns\n\n- Esquecer de converter: `input() + input()` com `2` e `3` dá `23`, não `5`.\n- Dividir por zero: **ZeroDivisionError**.\n- Escrever uma mensagem dentro do `input(...)`: a mensagem vai para a saída.",
+      "task": "Leia dois números inteiros `a` e `b`, um por linha (`b` nunca é zero). Mostre exatamente:\n\n```\nSoma: <a + b>\nDiferença: <a - b>\nProduto: <a * b>\nDivisão inteira: <a // b>\nResto: <a % b>\nDivisão real: <a / b com 2 casas decimais>\n```\n\nExemplo: para `17` e `5`:\n\n```\nSoma: 22\nDiferença: 12\nProduto: 85\nDivisão inteira: 3\nResto: 2\nDivisão real: 3.40\n```",
+      "starter": "# Leia a e b com int(input()) e mostre os resultados",
+      "solution": "a = int(input())\nb = int(input())\nprint(f\"Soma: {a + b}\")\nprint(f\"Diferença: {a - b}\")\nprint(f\"Produto: {a * b}\")\nprint(f\"Divisão inteira: {a // b}\")\nprint(f\"Resto: {a % b}\")\nprint(f\"Divisão real: {a / b:.2f}\")",
+      "hints": [
+        "Lembre de converter cada leitura: `a = int(input())`.",
+        "Use `//` para a divisão inteira, `%` para o resto e `:.2f` para formatar a divisão real.",
+        "Não escreva mensagens dentro de `input()`; a saída tem que ter só as seis linhas."
+      ],
+      "tests": [
+        {
+          "input": "17\n5\n",
+          "expected": "Soma: 22\nDiferença: 12\nProduto: 85\nDivisão inteira: 3\nResto: 2\nDivisão real: 3.40",
+          "hidden": false
+        },
+        {
+          "input": "0\n3\n",
+          "expected": "Soma: 3\nDiferença: -3\nProduto: 0\nDivisão inteira: 0\nResto: 0\nDivisão real: 0.00",
+          "hidden": false
+        },
+        {
+          "input": "-7\n2\n",
+          "expected": "Soma: -5\nDiferença: -9\nProduto: -14\nDivisão inteira: -4\nResto: 1\nDivisão real: -3.50",
+          "hidden": true
+        },
+        {
+          "input": "10\n4\n",
+          "expected": "Soma: 14\nDiferença: 6\nProduto: 40\nDivisão inteira: 2\nResto: 2\nDivisão real: 2.50",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "py-04",
+      "title": "Decisões com if, elif e else",
+      "theory": "# Programas que escolhem\n\nAté agora, todos os seus programas faziam sempre a mesma coisa, linha após linha. Para reagir aos dados que você leu com `input()` na lição anterior, o programa precisa **decidir**. Para isso existe o `if`:\n\n```python\nidade = int(input())\nif idade >= 18:\n    print(\"Maior de idade\")\nelse:\n    print(\"Menor de idade\")\n```\n\n## Condições e comparações\n\nUma condição é uma expressão que vale `True` ou `False`. Os operadores de comparação são:\n\n- `==` igual (dois sinais! um só é atribuição)\n- `!=` diferente\n- `<`, `<=`, `>`, `>=`\n\nE você combina condições com `and` (as duas verdadeiras), `or` (pelo menos uma) e `not` (inverte). Python ainda permite comparações encadeadas, que leem como na matemática:\n\n```python\nif 0 <= nota <= 100:\n    print(\"nota válida\")\n```\n\n## A indentação é a regra\n\nO que pertence ao `if` é o bloco **recuado** (indentado) logo abaixo dele, depois dos dois-pontos. O padrão é usar 4 espaços. Em outras linguagens a indentação é só estética; em Python ela **é** a estrutura do programa. Uma linha fora do recuo já não faz parte do `if`.\n\n## Várias alternativas: elif\n\nQuando há mais de dois caminhos, use `elif` (\"senão, se\"). O Python testa as condições **na ordem** e executa só o primeiro bloco cuja condição for verdadeira:\n\n```python\nif nota >= 90:\n    conceito = \"A\"\nelif nota >= 80:\n    conceito = \"B\"\nelse:\n    conceito = \"C\"\n```\n\nRepare que no `elif nota >= 80` não precisamos escrever `nota < 90`: se chegamos nele, a primeira condição já foi falsa. Por isso a **ordem importa**: se você testar `nota >= 80` antes de `nota >= 90`, uma nota 95 receberia \"B\".\n\n## Validar a entrada primeiro\n\nUm bom hábito é tratar os casos inválidos logo no começo. Assim o resto do código pode supor que os dados estão corretos:\n\n```python\nif nota < 0 or nota > 100:\n    print(\"Nota inválida\")\nelse:\n    ...\n```\n\n## Erros comuns\n\n- Usar `=` em vez de `==` na condição: **SyntaxError**.\n- Esquecer os dois-pontos no fim do `if`, `elif` ou `else`.\n- Misturar tabs e espaços na indentação.\n- Colocar as condições na ordem errada, de modo que uma mais geral \"engole\" as mais específicas.",
+      "task": "Leia uma nota inteira. Se ela estiver fora do intervalo de 0 a 100, mostre apenas `Nota inválida`. Caso contrário, mostre duas linhas:\n\n```\nConceito: <A, B, C, D ou F>\n<Aprovado ou Reprovado>\n```\n\nRegras do conceito: 90 ou mais = A; 80 a 89 = B; 70 a 79 = C; 60 a 69 = D; abaixo de 60 = F. A pessoa é `Aprovado` com nota 60 ou mais; senão, `Reprovado`.\n\nExemplo: para `85`:\n\n```\nConceito: B\nAprovado\n```",
+      "starter": "nota = int(input())\n# Escreva as decisões aqui",
+      "solution": "nota = int(input())\nif nota < 0 or nota > 100:\n    print(\"Nota inválida\")\nelse:\n    if nota >= 90:\n        conceito = \"A\"\n    elif nota >= 80:\n        conceito = \"B\"\n    elif nota >= 70:\n        conceito = \"C\"\n    elif nota >= 60:\n        conceito = \"D\"\n    else:\n        conceito = \"F\"\n    print(f\"Conceito: {conceito}\")\n    if nota >= 60:\n        print(\"Aprovado\")\n    else:\n        print(\"Reprovado\")",
+      "hints": [
+        "Primeiro trate o caso inválido com `if nota < 0 or nota > 100:`.",
+        "Teste os conceitos do maior para o menor com `elif`, assim cada condição só precisa do limite inferior.",
+        "Atenção às bordas: 90 é A, 60 ainda é aprovado."
+      ],
+      "tests": [
+        {
+          "input": "85\n",
+          "expected": "Conceito: B\nAprovado",
+          "hidden": false
+        },
+        {
+          "input": "59\n",
+          "expected": "Conceito: F\nReprovado",
+          "hidden": false
+        },
+        {
+          "input": "60\n",
+          "expected": "Conceito: D\nAprovado",
+          "hidden": true
+        },
+        {
+          "input": "100\n",
+          "expected": "Conceito: A\nAprovado",
+          "hidden": true
+        },
+        {
+          "input": "-5\n",
+          "expected": "Nota inválida",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "py-05",
+      "title": "Repetições com for e while",
+      "theory": "# Fazendo o computador repetir\n\nNa lição anterior o programa escolhia um caminho. Agora ele vai repetir um caminho várias vezes. Imagine somar 1000 números: escrever 1000 `input()` seria absurdo. Os **laços** (loops) resolvem isso.\n\n## for com range\n\nO `for` repete um bloco para cada valor de uma sequência. A sequência mais comum é `range`:\n\n```python\nfor i in range(5):       # i vale 0, 1, 2, 3, 4\n    print(i)\n\nfor i in range(1, 4):    # 1, 2, 3 (o fim nunca entra)\n    print(i)\n```\n\n`range(n)` gera exatamente `n` valores, de `0` a `n - 1`. Se `n` for 0, o laço simplesmente não roda nenhuma vez — o que é ótimo: o caso \"lista vazia\" muitas vezes se resolve sozinho.\n\n## while: repetir enquanto for verdade\n\nO `while` repete enquanto a condição for verdadeira. Use-o quando você não sabe de antemão quantas voltas serão:\n\n```python\nn = 1\nwhile n < 100:\n    n = n * 2\nprint(n)   # 128\n```\n\nCuidado: se nada dentro do laço mudar a condição, ele nunca termina (**laço infinito**).\n\n## O padrão acumulador\n\nPara somar, contar ou achar o maior, crie uma variável **antes** do laço e atualize-a **dentro** dele:\n\n```python\nn = int(input())\nsoma = 0\nfor i in range(n):\n    x = int(input())\n    soma += x\nprint(soma)\n```\n\nPara o **maior** valor, um truque seguro é começar com o primeiro número lido, em vez de inventar um valor como 0 (que estaria errado se todos os números fossem negativos):\n\n```python\nmaior = None\nfor i in range(n):\n    x = int(input())\n    if maior is None or x > maior:\n        maior = x\n```\n\n## break e continue\n\n`break` sai do laço na hora; `continue` pula para a próxima volta. Use com moderação: na maioria das vezes, uma boa condição deixa o código mais claro.\n\n## Por que isso importa?\n\nOs laços são a base de quase todo algoritmo: percorrer dados, procurar, contar, ordenar. Na lição 10 você vai medir **quantas voltas** um algoritmo dá, e isso vai decidir se ele é rápido ou lento.\n\n## Erros comuns\n\n- Esquecer de indentar o corpo do laço, ou indentar a linha do `print` final (aí ela roda a cada volta).\n- Zerar o acumulador **dentro** do laço.\n- Dividir pela quantidade quando ela é zero: trate esse caso antes.",
+      "task": "Leia um inteiro `n` e depois `n` números inteiros, um por linha. Se `n` for 0, mostre apenas `Nenhum número`. Caso contrário mostre:\n\n```\nSoma: <soma>\nMédia: <média com 2 casas decimais>\nMaior: <maior>\nMenor: <menor>\nPares: <quantidade de números pares>\n```\n\nExemplo: para a entrada `4`, `3`, `8`, `-2`, `5`:\n\n```\nSoma: 14\nMédia: 3.50\nMaior: 8\nMenor: -2\nPares: 2\n```",
+      "starter": "n = int(input())\n# Use um laço para ler os n números",
+      "solution": "n = int(input())\nif n == 0:\n    print(\"Nenhum número\")\nelse:\n    soma = 0\n    pares = 0\n    maior = None\n    menor = None\n    for i in range(n):\n        x = int(input())\n        soma += x\n        if x % 2 == 0:\n            pares += 1\n        if maior is None or x > maior:\n            maior = x\n        if menor is None or x < menor:\n            menor = x\n    print(f\"Soma: {soma}\")\n    print(f\"Média: {soma / n:.2f}\")\n    print(f\"Maior: {maior}\")\n    print(f\"Menor: {menor}\")\n    print(f\"Pares: {pares}\")",
+      "hints": [
+        "Use `for i in range(n):` e, dentro dele, `x = int(input())`.",
+        "Crie `soma`, `pares`, `maior` e `menor` antes do laço; comece `maior` e `menor` com o primeiro número (ou `None`).",
+        "Um número é par quando `x % 2 == 0` — isso vale também para negativos e para o zero."
+      ],
+      "tests": [
+        {
+          "input": "4\n3\n8\n-2\n5\n",
+          "expected": "Soma: 14\nMédia: 3.50\nMaior: 8\nMenor: -2\nPares: 2",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Nenhum número",
+          "hidden": false
+        },
+        {
+          "input": "1\n-7\n",
+          "expected": "Soma: -7\nMédia: -7.00\nMaior: -7\nMenor: -7\nPares: 0",
+          "hidden": true
+        },
+        {
+          "input": "3\n-1\n-5\n-3\n",
+          "expected": "Soma: -9\nMédia: -3.00\nMaior: -1\nMenor: -5\nPares: 0",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "py-06",
+      "title": "Funções",
+      "theory": "# Funções: dar nome a uma ideia\n\nVocê já usa funções desde a primeira lição: `print`, `input`, `int`, `range`. Agora vai criar as suas. Uma função é um bloco de código com nome, que recebe **parâmetros** e pode devolver um resultado com `return`:\n\n```python\ndef quadrado(x):\n    return x * x\n\nprint(quadrado(4))      # 16\nprint(quadrado(3) + 1)  # 10\n```\n\n`def` define a função; o corpo só roda quando ela é **chamada**. O `return` encerra a função na hora e entrega o valor para quem chamou.\n\n## Por que criar funções?\n\n- **Reaproveitar**: escreva uma vez, use em vários lugares.\n- **Organizar**: o programa principal passa a ler como uma história (\"para cada número, se é primo, mostre\").\n- **Testar e raciocinar**: uma função pequena com uma única responsabilidade é fácil de verificar sozinha.\n\n## return não é print\n\nEsta é a confusão mais comum. `print` mostra algo para a pessoa; `return` entrega um valor para o **programa** continuar usando. Uma função sem `return` devolve `None`:\n\n```python\ndef dobro_errado(x):\n    print(x * 2)\n\ny = dobro_errado(5)   # mostra 10, mas y vale None\n```\n\n## Funções que devolvem bool\n\nFunções que respondem \"sim ou não\" deixam o código muito legível:\n\n```python\ndef eh_par(n):\n    return n % 2 == 0\n\nif eh_par(10):\n    print(\"par\")\n```\n\n## Escopo\n\nVariáveis criadas dentro da função são **locais**: existem só durante a chamada. Prefira passar dados por parâmetro e receber resultados por `return`, em vez de depender de variáveis de fora.\n\n## Exemplo: números primos\n\nUm número primo é maior que 1 e só é divisível por 1 e por ele mesmo. Não é preciso testar todos os divisores até `n`: se `n = a * b`, um dos dois é no máximo a raiz quadrada de `n`. Então basta testar `d` enquanto `d * d <= n`. Para `n = 1 000 000`, isso são cerca de 1000 testes em vez de um milhão — sua primeira otimização de algoritmo!\n\n```python\ndef eh_primo(n):\n    if n < 2:\n        return False\n    d = 2\n    while d * d <= n:\n        if n % d == 0:\n            return False\n        d += 1\n    return True\n```\n\nRepare nos `return False` no meio do laço: assim que achamos um divisor, a resposta já é conhecida e não faz sentido continuar.\n\n## Juntando resultados numa linha\n\nPara mostrar vários valores separados por espaço, guarde-os numa lista e use `\" \".join(...)` com os números convertidos em texto. Listas serão o tema da próxima lição; por ora basta saber:\n\n```python\nachados = []\nachados.append(str(7))\nprint(\" \".join(achados))\n```\n\n## Erros comuns\n\n- Esquecer o `return` e receber `None`.\n- Colocar `return True` dentro do laço (decide cedo demais, no primeiro divisor testado).\n- Esquecer de tratar `n < 2`: 0 e 1 não são primos.",
+      "task": "Escreva a função `eh_primo(n)` que devolve `True` se `n` é primo e `False` caso contrário. Depois leia dois inteiros `a` e `b` (um por linha, com `a <= b`) e mostre, numa única linha separados por um espaço, todos os primos do intervalo de `a` até `b` (inclusive). Se não houver nenhum, mostre `Nenhum primo`.\n\nExemplo: para `10` e `30`:\n\n```\n11 13 17 19 23 29\n```",
+      "starter": "def eh_primo(n):\n    # Escreva a função aqui\n    return False\n\na = int(input())\nb = int(input())\n# Mostre os primos entre a e b",
+      "solution": "def eh_primo(n):\n    if n < 2:\n        return False\n    d = 2\n    while d * d <= n:\n        if n % d == 0:\n            return False\n        d += 1\n    return True\n\n\na = int(input())\nb = int(input())\nprimos = []\nfor x in range(a, b + 1):\n    if eh_primo(x):\n        primos.append(str(x))\nif primos:\n    print(\" \".join(primos))\nelse:\n    print(\"Nenhum primo\")",
+      "hints": [
+        "Na função, devolva `False` para `n < 2` e teste divisores `d` enquanto `d * d <= n`.",
+        "Percorra o intervalo com `for x in range(a, b + 1):` — o `+ 1` inclui o `b`.",
+        "Junte os primos com `\" \".join(lista)`, lembrando que a lista precisa ter textos (`str(x)`)."
+      ],
+      "tests": [
+        {
+          "input": "10\n30\n",
+          "expected": "11 13 17 19 23 29",
+          "hidden": false
+        },
+        {
+          "input": "-5\n2\n",
+          "expected": "2",
+          "hidden": false
+        },
+        {
+          "input": "24\n28\n",
+          "expected": "Nenhum primo",
+          "hidden": true
+        },
+        {
+          "input": "1\n1\n",
+          "expected": "Nenhum primo",
+          "hidden": true
+        },
+        {
+          "input": "97\n101\n",
+          "expected": "97 101",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "py-07",
+      "title": "Listas e strings",
+      "theory": "# Listas: muitos valores num nome só\n\nNa lição 5 você somou números à medida que os lia, mas não conseguia voltar a eles depois. Uma **lista** guarda vários valores em ordem, e você pode acessá-los quantas vezes quiser:\n\n```python\nnotas = [7, 9, 5]\nprint(notas[0])     # 7  (o primeiro índice é 0)\nprint(notas[-1])    # 5  (índices negativos contam do fim)\nprint(len(notas))   # 3\nnotas.append(10)    # agora [7, 9, 5, 10]\n```\n\nAcessar um índice que não existe (`notas[10]`) dá **IndexError**.\n\n## Fatias (slices)\n\n`lista[i:j]` pega do índice `i` até antes de `j`. Omitir um lado significa \"do começo\" ou \"até o fim\". O passo `-1` inverte:\n\n```python\nnums = [1, 2, 3, 4, 5]\nprint(nums[1:3])    # [2, 3]\nprint(nums[::-1])   # [5, 4, 3, 2, 1]\n```\n\n## Strings também são sequências\n\nUma string se comporta como uma lista de caracteres: tem `len`, índices e fatias. A diferença é que strings são **imutáveis**: os métodos devolvem uma string nova em vez de alterar a original.\n\n```python\ns = \"Python\"\nprint(s[0], s[-1], len(s))   # P n 6\nprint(s.lower())             # python\nprint(s[::-1])               # nohtyP\n```\n\n## split e join: a ponte entre texto e lista\n\n`split()` sem argumentos quebra o texto nos espaços (ignorando espaços repetidos) e devolve uma lista de palavras. `join` faz o caminho inverso:\n\n```python\nfrase = \"o  rato roeu\"\npalavras = frase.split()          # ['o', 'rato', 'roeu']\nprint(\" \".join(palavras[::-1]))   # roeu rato o\n```\n\n## Percorrer e procurar\n\nO `for` percorre listas e strings diretamente, sem `range`:\n\n```python\nmaior = \"\"\nfor p in palavras:\n    if len(p) > len(maior):   # > estrito: num empate, fica a primeira\n        maior = p\n```\n\nRepare no `>` estrito: se usássemos `>=`, uma palavra posterior de mesmo tamanho substituiria a primeira. Pequenos detalhes assim definem o comportamento do programa em empates.\n\n## Palíndromos\n\nUm palíndromo se lê igual nos dois sentidos (\"Ame a ema\"). Para comparar, primeiro **normalize**: tire os espaços e passe para minúsculas. Depois compare com o inverso:\n\n```python\nlimpo = \"\".join(frase.split()).lower()\nprint(limpo == limpo[::-1])\n```\n\nEssa ideia de transformar os dados para uma forma padrão antes de comparar aparece o tempo todo em programação.\n\n## Erros comuns\n\n- Achar que o primeiro índice é 1.\n- Esperar que `s.lower()` mude `s`: é preciso guardar o resultado (`s = s.lower()`).\n- Usar `split(\" \")` com espaços repetidos: aparecem palavras vazias. Prefira `split()`.",
+      "task": "Leia uma linha de texto com pelo menos uma palavra (só letras sem acento e espaços). Mostre:\n\n```\nPalavras: <quantidade de palavras>\nInvertida: <as palavras em ordem inversa, separadas por um espaço>\nMaior: <a palavra mais longa; em caso de empate, a que aparece primeiro>\nPalíndromo: <sim ou não>\n```\n\nA frase é palíndromo se, ignorando espaços e diferenças entre maiúsculas e minúsculas, ela for igual de trás para frente.\n\nExemplo: para `Ame a ema`:\n\n```\nPalavras: 3\nInvertida: ema a Ame\nMaior: Ame\nPalíndromo: sim\n```",
+      "starter": "frase = input()\npalavras = frase.split()\n# Continue a partir daqui\nprint(f\"Palavras: {len(palavras)}\")",
+      "solution": "frase = input()\npalavras = frase.split()\nprint(f\"Palavras: {len(palavras)}\")\nprint(\"Invertida: \" + \" \".join(palavras[::-1]))\nmaior = \"\"\nfor p in palavras:\n    if len(p) > len(maior):\n        maior = p\nprint(f\"Maior: {maior}\")\nlimpo = \"\".join(palavras).lower()\nif limpo == limpo[::-1]:\n    print(\"Palíndromo: sim\")\nelse:\n    print(\"Palíndromo: não\")",
+      "hints": [
+        "`palavras[::-1]` inverte a lista e `\" \".join(...)` junta de volta com espaços.",
+        "Para a maior palavra, compare `len(p) > len(maior)` com `>` estrito para manter a primeira num empate.",
+        "Para o palíndromo, junte as palavras sem espaço (`\"\".join(palavras)`), use `.lower()` e compare com o texto invertido."
+      ],
+      "tests": [
+        {
+          "input": "Ame a ema\n",
+          "expected": "Palavras: 3\nInvertida: ema a Ame\nMaior: Ame\nPalíndromo: sim",
+          "hidden": false
+        },
+        {
+          "input": "o rato roeu a roupa\n",
+          "expected": "Palavras: 5\nInvertida: roupa a roeu rato o\nMaior: roupa\nPalíndromo: não",
+          "hidden": false
+        },
+        {
+          "input": "Python\n",
+          "expected": "Palavras: 1\nInvertida: Python\nMaior: Python\nPalíndromo: não",
+          "hidden": true
+        },
+        {
+          "input": "  Socorram   me subi no onibus em   Marrocos\n",
+          "expected": "Palavras: 7\nInvertida: Marrocos em onibus no subi me Socorram\nMaior: Socorram\nPalíndromo: sim",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "py-08",
+      "title": "Dicionários e classes",
+      "theory": "# Dicionários: procurar pelo nome\n\nUma lista encontra valores pela **posição**. Muitas vezes, porém, queremos encontrar pelo **nome**: o saldo da \"Ana\", o telefone do \"Bruno\". Para isso existe o **dicionário** (`dict`), que associa **chaves** a **valores**:\n\n```python\nidades = {\"Ana\": 15, \"Bruno\": 17}\nprint(idades[\"Ana\"])        # 15\nidades[\"Carla\"] = 16        # cria uma chave nova\nprint(\"Bruno\" in idades)    # True\nprint(len(idades))          # 3\n```\n\nAcessar uma chave que não existe dá **KeyError**. Por isso verifique antes com `in`, ou use `idades.get(\"Zé\", 0)`, que devolve um valor padrão.\n\n## Por que dicionários são rápidos?\n\nProcurar um valor numa lista exige olhar elemento por elemento (na lição 10 chamaremos isso de **O(n)**). O dicionário usa uma **tabela hash**: ele calcula, a partir da chave, onde o valor está guardado e vai direto lá. Em média, buscar, inserir e remover custam **O(1)**, não importa o tamanho.\n\n## Ordem das chaves\n\nNão confie na ordem em que um dicionário mostra as chaves: ela depende da versão do Python. Quando a saída precisa de uma ordem definida, ordene as chaves explicitamente:\n\n```python\nfor nome in sorted(idades):\n    print(nome, idades[nome])\n```\n\n## Classes: seus próprios tipos\n\nVocê conhece `int`, `str`, `list` e `dict`. Uma **classe** cria um tipo novo que junta **dados** (atributos) e **comportamento** (métodos). Cada valor criado a partir da classe é um **objeto**:\n\n```python\nclass Conta:\n    def __init__(self, titular):\n        self.titular = titular\n        self.saldo = 0\n\n    def depositar(self, valor):\n        self.saldo += valor\n\nc = Conta(\"Ana\")       # chama __init__\nc.depositar(50)\nprint(c.saldo)         # 50\n```\n\n- `__init__` é o **construtor**: roda quando o objeto é criado e prepara seus atributos.\n- `self` é o próprio objeto. Todo método o recebe como primeiro parâmetro, mas você não o passa na chamada: `c.depositar(50)` vira `Conta.depositar(c, 50)` por baixo dos panos.\n- Atributos ficam em `self.nome_do_atributo` e cada objeto tem os seus.\n\n## Por que usar classes?\n\nA classe garante as **regras** do seu tipo num lugar só. Por exemplo, uma conta nunca deve ficar negativa. Se todo saque passar pelo método `sacar`, basta escrever a regra lá:\n\n```python\n    def sacar(self, valor):\n        if valor > self.saldo:\n            return False\n        self.saldo -= valor\n        return True\n```\n\nO método devolve `True` ou `False` para quem chamou decidir o que mostrar. Esse princípio — esconder os detalhes e expor operações seguras — se chama **encapsulamento**.\n\n## Dicionário de objetos\n\nJuntando tudo: um dicionário de nome para objeto `Conta` é um pequeno \"banco de dados\" em memória.\n\n```python\ncontas = {}\nif \"Ana\" not in contas:\n    contas[\"Ana\"] = Conta(\"Ana\")\ncontas[\"Ana\"].depositar(100)\n```\n\n## Erros comuns\n\n- Esquecer o `self` na definição do método (dá TypeError na chamada).\n- Escrever `saldo = 0` em vez de `self.saldo = 0` no `__init__`: vira uma variável local que some.\n- Mostrar o dicionário sem ordenar e depender da ordem.",
+      "task": "Crie a classe `Conta` com o construtor `__init__(self, titular)` (saldo começa em 0), o método `depositar(valor)` e o método `sacar(valor)`, que só saca se houver saldo suficiente e devolve `True` ou `False`.\n\nLeia um inteiro `n` e depois `n` operações, uma por linha, no formato `<operação> <nome> <valor>`, onde a operação é `deposito` ou `saque` e o valor é um inteiro positivo. A conta de um nome é criada (com saldo 0) na primeira vez que ele aparece. Quando um saque não puder ser feito, mostre na hora `Saldo insuficiente: <nome>` e não altere o saldo.\n\nNo fim, mostre `<nome>: <saldo>` para cada conta, em ordem alfabética dos nomes.\n\nExemplo: para a entrada\n\n```\n4\ndeposito Ana 100\nsaque Ana 30\nsaque Bruno 10\ndeposito Bruno 5\n```\n\na saída é:\n\n```\nSaldo insuficiente: Bruno\nAna: 70\nBruno: 5\n```",
+      "starter": "class Conta:\n    def __init__(self, titular):\n        self.titular = titular\n        self.saldo = 0\n\n    # Escreva os métodos depositar e sacar aqui\n\n\nn = int(input())\ncontas = {}\n# Leia as operações e mostre os saldos",
+      "solution": "class Conta:\n    def __init__(self, titular):\n        self.titular = titular\n        self.saldo = 0\n\n    def depositar(self, valor):\n        self.saldo += valor\n\n    def sacar(self, valor):\n        if valor > self.saldo:\n            return False\n        self.saldo -= valor\n        return True\n\n\nn = int(input())\ncontas = {}\nfor i in range(n):\n    operacao, nome, texto = input().split()\n    valor = int(texto)\n    if nome not in contas:\n        contas[nome] = Conta(nome)\n    conta = contas[nome]\n    if operacao == \"deposito\":\n        conta.depositar(valor)\n    elif not conta.sacar(valor):\n        print(f\"Saldo insuficiente: {nome}\")\nfor nome in sorted(contas):\n    print(f\"{nome}: {contas[nome].saldo}\")",
+      "hints": [
+        "`operacao, nome, texto = input().split()` separa a linha em três partes; converta o valor com `int(texto)`.",
+        "Antes de usar uma conta, crie-a se o nome ainda não estiver no dicionário: `if nome not in contas:`.",
+        "No fim, percorra `sorted(contas)` para mostrar os nomes em ordem alfabética."
+      ],
+      "tests": [
+        {
+          "input": "4\ndeposito Ana 100\nsaque Ana 30\nsaque Bruno 10\ndeposito Bruno 5\n",
+          "expected": "Saldo insuficiente: Bruno\nAna: 70\nBruno: 5",
+          "hidden": false
+        },
+        {
+          "input": "1\nsaque Bia 1\n",
+          "expected": "Saldo insuficiente: Bia\nBia: 0",
+          "hidden": false
+        },
+        {
+          "input": "5\ndeposito Zeca 50\ndeposito Ana 20\nsaque Zeca 50\nsaque Zeca 1\ndeposito Ana 30\n",
+          "expected": "Saldo insuficiente: Zeca\nAna: 50\nZeca: 0",
+          "hidden": true
+        },
+        {
+          "input": "3\ndeposito Carla 10\nsaque Carla 10\nsaque Carla 10\n",
+          "expected": "Saldo insuficiente: Carla\nCarla: 0",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "py-09",
+      "title": "Recursão",
+      "theory": "# Funções que chamam a si mesmas\n\nNa lição 6 você criou funções que chamam outras funções. Uma função **recursiva** chama **a si mesma** para resolver uma versão menor do mesmo problema. O exemplo clássico é o fatorial: `n! = n * (n-1)!`, com `0! = 1`.\n\n```python\ndef fatorial(n):\n    if n == 0:            # caso base\n        return 1\n    return n * fatorial(n - 1)   # caso recursivo\n```\n\n## As duas partes obrigatórias\n\n- **Caso base**: uma situação simples o bastante para responder direto, sem recursão.\n- **Caso recursivo**: reduz o problema e confia que a chamada menor está certa.\n\nSe o caso recursivo não se aproximar do caso base, a função se chama para sempre até estourar a **pilha de chamadas** (RecursionError). Cada chamada ocupa memória até terminar: `fatorial(4)` empilha `fatorial(3)`, `fatorial(2)`, `fatorial(1)`, `fatorial(0)`, e só então os resultados voltam multiplicando.\n\n## O salto de fé\n\nO jeito certo de pensar em recursão não é rastrear todas as chamadas na cabeça, e sim usar **indução**: suponha que a função já funciona para problemas menores e pergunte \"como uso essa resposta para resolver o problema atual?\". Se o caso base está certo e cada passo está certo, a função inteira está certa.\n\n## Torre de Hanói\n\nHá três pinos, A, B e C. No pino A há `n` discos, do maior (embaixo) para o menor (em cima), numerados de 1 (menor) a `n` (maior). O objetivo é levá-los todos para C, movendo **um disco por vez** e **nunca** colocando um disco maior sobre um menor.\n\nResolver isso com laços é difícil. Com recursão, fica curto. Para mover `n` discos da origem para o destino usando um pino auxiliar:\n\n- mova os `n - 1` discos de cima da origem para o **auxiliar** (usando o destino como apoio);\n- mova o disco `n` (o maior) da origem para o destino;\n- mova os `n - 1` discos do auxiliar para o destino (usando a origem como apoio).\n\nO caso base é `n == 0`: não há nada a fazer.\n\n```python\ndef hanoi(n, origem, destino, auxiliar):\n    if n == 0:\n        return\n    hanoi(n - 1, origem, auxiliar, destino)\n    print(f\"Mover disco {n} de {origem} para {destino}\")\n    hanoi(n - 1, auxiliar, destino, origem)\n```\n\n## Quantos movimentos?\n\nSe `M(n)` é o número de movimentos, então `M(0) = 0` e `M(n) = 2 * M(n-1) + 1`. Resolvendo essa **recorrência**, `M(n) = 2**n - 1`: com 3 discos são 7 movimentos; com 64 discos, mais de 18 quintilhões. Esse é um crescimento **exponencial**, e mostra por que analisar o custo de um algoritmo importa tanto — o assunto da última lição.\n\n## Recursão ou laço?\n\nTudo que se faz com recursão dá para fazer com laços (e vice-versa). Recursão brilha quando o problema tem estrutura recursiva natural: árvores, divisão e conquista (como o merge sort da próxima lição), combinações. Para contas simples como o fatorial, um laço gasta menos memória.\n\n## Erros comuns\n\n- Esquecer o caso base, ou escrever um que nunca é alcançado.\n- Esquecer o `return` no caso recursivo de uma função que devolve valor.\n- Trocar a ordem dos pinos nas chamadas recursivas.",
+      "task": "Leia um inteiro `n` (de 1 a 6), o número de discos no pino `A`. Usando uma função recursiva, mostre todos os movimentos que levam os discos de `A` para `C` (usando `B` como auxiliar), um por linha, no formato `Mover disco <k> de <origem> para <destino>`, na ordem da solução recursiva descrita na teoria. Na última linha mostre `Total: <quantidade> movimentos`.\n\nExemplo: para `2`:\n\n```\nMover disco 1 de A para B\nMover disco 2 de A para C\nMover disco 1 de B para C\nTotal: 3 movimentos\n```",
+      "starter": "def hanoi(n, origem, destino, auxiliar):\n    # Escreva a função recursiva aqui\n    pass\n\n\nn = int(input())\nhanoi(n, \"A\", \"C\", \"B\")",
+      "solution": "def hanoi(n, origem, destino, auxiliar):\n    if n == 0:\n        return 0\n    movimentos = hanoi(n - 1, origem, auxiliar, destino)\n    print(f\"Mover disco {n} de {origem} para {destino}\")\n    movimentos += 1\n    movimentos += hanoi(n - 1, auxiliar, destino, origem)\n    return movimentos\n\n\nn = int(input())\ntotal = hanoi(n, \"A\", \"C\", \"B\")\nprint(f\"Total: {total} movimentos\")",
+      "hints": [
+        "Caso base: se `n == 0`, não há nada a mover.",
+        "Primeiro `hanoi(n - 1, origem, auxiliar, destino)`, depois mostre o movimento do disco `n`, depois `hanoi(n - 1, auxiliar, destino, origem)`.",
+        "O total é `2 ** n - 1`, ou faça a função devolver quantos movimentos fez."
+      ],
+      "tests": [
+        {
+          "input": "1\n",
+          "expected": "Mover disco 1 de A para C\nTotal: 1 movimentos",
+          "hidden": false
+        },
+        {
+          "input": "2\n",
+          "expected": "Mover disco 1 de A para B\nMover disco 2 de A para C\nMover disco 1 de B para C\nTotal: 3 movimentos",
+          "hidden": false
+        },
+        {
+          "input": "3\n",
+          "expected": "Mover disco 1 de A para C\nMover disco 2 de A para B\nMover disco 1 de C para B\nMover disco 3 de A para C\nMover disco 1 de B para A\nMover disco 2 de B para C\nMover disco 1 de A para C\nTotal: 7 movimentos",
+          "hidden": true
+        },
+        {
+          "input": "4\n",
+          "expected": "Mover disco 1 de A para B\nMover disco 2 de A para C\nMover disco 1 de B para C\nMover disco 3 de A para B\nMover disco 1 de C para A\nMover disco 2 de C para B\nMover disco 1 de A para B\nMover disco 4 de A para C\nMover disco 1 de B para C\nMover disco 2 de B para A\nMover disco 1 de C para A\nMover disco 3 de B para C\nMover disco 1 de A para B\nMover disco 2 de A para C\nMover disco 1 de B para C\nTotal: 15 movimentos",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "py-10",
+      "title": "Ordenação, busca binária e complexidade",
+      "theory": "# Algoritmos e o seu custo\n\nVocê já sabe ler dados, repetir, criar funções, usar listas e recursão. Agora vamos juntar tudo em dois algoritmos fundamentais da computação — **ordenar** e **buscar** — e aprender a medir quanto eles custam.\n\n## Notação Big-O\n\nMedir em segundos depende do computador. Em vez disso, contamos quantas **operações básicas** um algoritmo faz em função do tamanho `n` da entrada, e olhamos só para o termo que domina quando `n` cresce, ignorando constantes. É a notação **O(...)**, que descreve o pior caso:\n\n- **O(1)**: constante. Acessar `lista[i]`, buscar num `dict` (em média).\n- **O(log n)**: logarítmica. A cada passo o problema cai pela metade. Com `n = 1 000 000`, uns 20 passos.\n- **O(n)**: linear. Percorrer a lista uma vez (somar, achar o maior).\n- **O(n log n)**: o custo dos bons algoritmos de ordenação. Para um milhão, uns 20 milhões de passos.\n- **O(n²)**: quadrática. Dois laços aninhados sobre os dados. Para um milhão, um **trilhão** de passos.\n- **O(2ⁿ)**: exponencial, como a Torre de Hanói da lição 9.\n\nA diferença entre O(n²) e O(n log n) é a diferença entre esperar segundos e esperar dias.\n\n## Ordenação por inserção: O(n²)\n\nA ideia é a de ordenar cartas na mão: pegue cada elemento e deslize-o para a esquerda até a posição certa.\n\n```python\ndef insercao(v):\n    for i in range(1, len(v)):\n        x = v[i]\n        j = i - 1\n        while j >= 0 and v[j] > x:\n            v[j + 1] = v[j]\n            j -= 1\n        v[j + 1] = x\n```\n\nNo pior caso (lista ao contrário), o elemento `i` anda `i` posições: `1 + 2 + ... + (n-1) = n(n-1)/2` passos, ou seja, **O(n²)**. Numa lista quase ordenada ela é rápida (O(n)), o que a torna útil em casos pequenos.\n\n## Merge sort: O(n log n)\n\nO merge sort usa **divisão e conquista**, com recursão:\n\n- divida a lista ao meio;\n- ordene cada metade recursivamente (caso base: listas com 0 ou 1 elemento já estão ordenadas);\n- **intercale** (merge) as duas metades ordenadas numa só.\n\n```python\ndef intercalar(a, b):\n    r = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            r.append(a[i]); i += 1\n        else:\n            r.append(b[j]); j += 1\n    return r + a[i:] + b[j:]\n\ndef merge_sort(v):\n    if len(v) <= 1:\n        return v\n    meio = len(v) // 2\n    return intercalar(merge_sort(v[:meio]), merge_sort(v[meio:]))\n```\n\nPor que O(n log n)? Intercalar custa O(n) em cada nível da recursão, e como a lista é dividida ao meio a cada nível, há cerca de `log₂ n` níveis. A recorrência é `T(n) = 2T(n/2) + O(n)`, cuja solução é **O(n log n)**. O preço é memória extra O(n) para as listas intermediárias. (O `sorted()` do Python usa o Timsort, também O(n log n); aqui escrevemos à mão para entender.)\n\n## Busca binária: O(log n)\n\nProcurar um valor numa lista desordenada exige olhar tudo: O(n). Numa lista **ordenada**, dá para fazer como num dicionário de papel: olhe o meio e descarte a metade onde o valor não pode estar.\n\n```python\ndef busca(v, alvo):\n    ini, fim = 0, len(v)        # procura em v[ini:fim]\n    while ini < fim:\n        meio = (ini + fim) // 2\n        if v[meio] < alvo:\n            ini = meio + 1\n        else:\n            fim = meio\n    if ini < len(v) and v[ini] == alvo:\n        return ini\n    return -1\n```\n\nEssa versão encontra a **primeira** ocorrência mesmo com valores repetidos: quando `v[meio] >= alvo`, ela não para, e continua procurando à esquerda. O intervalo cai pela metade a cada volta, então são no máximo cerca de `log₂ n + 1` voltas.\n\n## O custo total\n\nOrdenar uma vez custa O(n log n) e cada busca custa O(log n). Com `q` buscas, o total é O(n log n + q log n), muito melhor que O(q · n) de procurar linearmente toda vez, quando `q` é grande. Ordenar para depois buscar rápido é uma troca clássica em computação.\n\n## Erros comuns\n\n- Busca binária em lista **não ordenada**: o resultado não faz sentido.\n- Erros de \"um a mais/um a menos\" nos limites (`fim = meio` vs `fim = meio - 1`) causam laços infinitos. Defina claramente se o intervalo é fechado ou semiaberto e mantenha.\n- Esquecer o caso da lista vazia.",
+      "task": "Leia um inteiro `n` e, na linha seguinte, `n` inteiros separados por espaço (se `n` for 0, essa linha vem vazia). Depois leia um inteiro `q` e `q` valores, um por linha.\n\nOrdene a lista **implementando você mesmo** um algoritmo de ordenação (inserção ou merge sort, sem usar `sorted` nem `.sort()`) e mostre `Ordenada: <valores separados por espaço>`, ou `Ordenada: vazia` se `n` for 0. Depois, para cada valor procurado, use **busca binária** na lista ordenada e mostre `<valor>: posição <i>` com o índice (começando em 0) da **primeira** ocorrência, ou `<valor>: não encontrado`.\n\nExemplo: para a entrada\n\n```\n6\n5 2 9 2 7 1\n3\n2\n8\n9\n```\n\na saída é:\n\n```\nOrdenada: 1 2 2 5 7 9\n2: posição 1\n8: não encontrado\n9: posição 5\n```",
+      "starter": "def merge_sort(v):\n    # Implemente a ordenação aqui\n    return v\n\n\ndef busca(v, alvo):\n    # Implemente a busca binária aqui\n    return -1\n\n\nn = int(input())\nv = [int(x) for x in input().split()]\nq = int(input())\n# Mostre a lista ordenada e o resultado de cada busca",
+      "solution": "def intercalar(a, b):\n    r = []\n    i = 0\n    j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            r.append(a[i])\n            i += 1\n        else:\n            r.append(b[j])\n            j += 1\n    return r + a[i:] + b[j:]\n\n\ndef merge_sort(v):\n    if len(v) <= 1:\n        return v\n    meio = len(v) // 2\n    return intercalar(merge_sort(v[:meio]), merge_sort(v[meio:]))\n\n\ndef busca(v, alvo):\n    ini = 0\n    fim = len(v)\n    while ini < fim:\n        meio = (ini + fim) // 2\n        if v[meio] < alvo:\n            ini = meio + 1\n        else:\n            fim = meio\n    if ini < len(v) and v[ini] == alvo:\n        return ini\n    return -1\n\n\nn = int(input())\nv = [int(x) for x in input().split()]\nq = int(input())\nordenada = merge_sort(v)\nif ordenada:\n    print(\"Ordenada: \" + \" \".join(str(x) for x in ordenada))\nelse:\n    print(\"Ordenada: vazia\")\nfor k in range(q):\n    alvo = int(input())\n    pos = busca(ordenada, alvo)\n    if pos >= 0:\n        print(f\"{alvo}: posição {pos}\")\n    else:\n        print(f\"{alvo}: não encontrado\")",
+      "hints": [
+        "Merge sort: caso base `len(v) <= 1`; senão divida em `v[:meio]` e `v[meio:]`, ordene cada metade e intercale.",
+        "Na busca, mantenha o intervalo `[ini, fim)`: se `v[meio] < alvo`, faça `ini = meio + 1`; senão `fim = meio`. No fim, confira se `v[ini] == alvo`.",
+        "Cuidado com a lista vazia: `input().split()` de uma linha vazia dá `[]`, e a busca deve responder \"não encontrado\"."
+      ],
+      "tests": [
+        {
+          "input": "6\n5 2 9 2 7 1\n3\n2\n8\n9\n",
+          "expected": "Ordenada: 1 2 2 5 7 9\n2: posição 1\n8: não encontrado\n9: posição 5",
+          "hidden": false
+        },
+        {
+          "input": "1\n42\n2\n42\n41\n",
+          "expected": "Ordenada: 42\n42: posição 0\n41: não encontrado",
+          "hidden": false
+        },
+        {
+          "input": "0\n\n1\n5\n",
+          "expected": "Ordenada: vazia\n5: não encontrado",
+          "hidden": true
+        },
+        {
+          "input": "8\n3 -1 3 3 0 -5 10 3\n4\n3\n-5\n10\n-2\n",
+          "expected": "Ordenada: -5 -1 0 3 3 3 3 10\n3: posição 3\n-5: posição 0\n10: posição 7\n-2: não encontrado",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    }
+  ]
+}

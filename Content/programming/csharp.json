@@ -1,0 +1,365 @@
+{
+  "id": "csharp",
+  "title": "C#",
+  "area": "programming",
+  "language": "csharp",
+  "description": "Aprenda C# do zero: saída, variáveis, entrada, decisões, laços, métodos, arrays e strings, classes, recursão e algoritmos de ordenação e busca com análise de complexidade. A mesma linguagem usada em jogos (Unity), aplicativos Windows e servidores.",
+  "lessons": [
+    {
+      "id": "cs-01",
+      "title": "Olá, mundo!",
+      "theory": "# Seu primeiro programa em C#\n\nC# (lê-se \"cê-sharp\") é uma linguagem **compilada** e **fortemente tipada**, criada pela Microsoft. Antes de rodar, o compilador lê o seu código inteiro e verifica se tudo faz sentido. Se houver um erro de digitação, o programa nem começa: você recebe uma mensagem dizendo a linha do problema. Isso parece chato no início, mas é uma grande ajuda: muitos erros são pegos antes de o programa rodar.\n\n## Escrevendo na tela\n\nPara mostrar texto, usamos `Console.WriteLine`:\n\n```csharp\nConsole.WriteLine(\"Olá, mundo!\");\n```\n\nVamos entender cada pedaço:\n\n- `Console` é a **classe** que representa o terminal (a tela de texto).\n- `.WriteLine` é um **método** dessa classe: escreve o texto e pula para a linha seguinte.\n- O texto entre aspas duplas `\"...\"` é uma **string** (sequência de caracteres).\n- O `;` no final encerra a instrução. Em C#, **toda instrução termina com ponto e vírgula**.\n\nExiste também `Console.Write`, que escreve **sem** pular linha:\n\n```csharp\nConsole.Write(\"Olá, \");\nConsole.WriteLine(\"mundo!\");\n// resultado: Olá, mundo!\n```\n\n## Top-level statements\n\nEm C# moderno (desde a versão 9) você pode escrever as instruções direto no arquivo, sem nenhuma \"cerimônia\". O compilador cria por baixo dos panos uma classe e um método `Main` para você. Nas próximas aulas veremos essa estrutura completa; por enquanto, aproveite a simplicidade.\n\nAs instruções são executadas **de cima para baixo**, uma depois da outra. A ordem das linhas é a ordem do que aparece na tela.\n\n## Comentários\n\nTudo depois de `//` até o fim da linha é ignorado pelo compilador. Use comentários para explicar o **porquê** do código:\n\n```csharp\n// Isto é um comentário\nConsole.WriteLine(\"Isto aparece\"); // comentário no fim da linha\n```\n\n## Erros comuns\n\n- Esquecer o `;` no final: o compilador acusa `; expected`.\n- Usar aspas simples para texto: `'Olá'` é erro. Aspas simples servem para **um único caractere** (`'A'`).\n- Escrever `console.writeline`: C# diferencia maiúsculas de minúsculas. O certo é `Console.WriteLine`.\n- Espaços e acentos dentro das aspas fazem parte do texto: o verificador compara a saída **exatamente**.",
+      "task": "Escreva um programa que mostre exatamente estas três linhas:\n\n```\nOlá, mundo!\nEu estou aprendendo C#.\nCada instrução termina com ;\n```\n\nO programa não lê nada da entrada.",
+      "starter": "// Escreva seu código abaixo usando Console.WriteLine\nConsole.WriteLine(\"Olá, mundo!\");",
+      "solution": "Console.WriteLine(\"Olá, mundo!\");\nConsole.WriteLine(\"Eu estou aprendendo C#.\");\nConsole.WriteLine(\"Cada instrução termina com ;\");",
+      "hints": [
+        "Use um `Console.WriteLine` para cada linha.",
+        "Confira acentos, a vírgula, o ponto final e o `;` dentro do último texto: a comparação é exata."
+      ],
+      "tests": [
+        {
+          "input": "",
+          "expected": "Olá, mundo!\nEu estou aprendendo C#.\nCada instrução termina com ;",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Olá, mundo!\nEu estou aprendendo C#.\nCada instrução termina com ;",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Olá, mundo!\nEu estou aprendendo C#.\nCada instrução termina com ;",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "cs-02",
+      "title": "Variáveis e tipos",
+      "theory": "# Guardando valores em variáveis\n\nNa aula anterior escrevemos textos fixos. Programas de verdade trabalham com **dados** que mudam, e para isso usamos **variáveis**: nomes que guardam um valor na memória.\n\nEm C# toda variável tem um **tipo**, e esse tipo nunca muda. Isso é o que significa \"fortemente tipada\":\n\n```csharp\nint idade = 20;          // número inteiro\ndouble altura = 1.75;    // número com casas decimais\nstring nome = \"Ana\";     // texto\nbool estudante = true;   // verdadeiro ou falso\nchar inicial = 'A';      // um único caractere\n```\n\nA forma geral é `tipo nome = valor;`. Depois de declarada, a variável pode receber novos valores **do mesmo tipo**:\n\n```csharp\nidade = 21;        // ok\nidade = \"vinte\";   // ERRO de compilação: string não é int\n```\n\n## Por que tipos?\n\nO tipo diz ao compilador quanta memória reservar e quais operações fazem sentido. Somar dois `int` é aritmética; \"somar\" duas `string` é concatenar. Se você tentar algo sem sentido, o erro aparece **antes** de rodar o programa, e não no meio do jogo do seu usuário.\n\n## A palavra var\n\nVocê pode deixar o compilador deduzir o tipo pelo valor inicial:\n\n```csharp\nvar pontos = 100;   // o compilador entende: int\n```\n\nA variável continua tendo um tipo fixo (`int`); `var` só economiza digitação.\n\n## Mostrando variáveis: interpolação\n\nPara misturar texto e valores, coloque um `$` antes das aspas e as variáveis entre chaves:\n\n```csharp\nConsole.WriteLine($\"Nome: {nome}\");\nConsole.WriteLine($\"Daqui a 5 anos: {idade + 5}\");\nConsole.WriteLine($\"Altura: {altura:F2}\");\n```\n\nDentro das chaves pode haver qualquer expressão. O `:F2` formata o número com **exatamente 2 casas decimais** (`1.7` vira `1.70`). Neste curso o separador decimal é sempre o **ponto**.\n\nUm detalhe: um `bool` é mostrado como `True` ou `False`, com inicial maiúscula.\n\n## Erros comuns\n\n- Usar uma variável antes de dar um valor a ela: o compilador reclama.\n- Escrever `1,75` em vez de `1.75` no código: em C# o decimal no código é sempre com ponto.\n- Esquecer o `$` antes das aspas: as chaves aparecem literalmente na tela.\n- Nomes de variáveis não podem ter espaços nem começar com número. Use `camelCase`: `alturaEmMetros`.",
+      "task": "Crie as variáveis abaixo com estes valores e tipos:\n\n- `nome` (string) = `Ana`\n- `idade` (int) = `20`\n- `altura` (double) = `1.6`\n- `estudante` (bool) = `true`\n\nDepois mostre exatamente:\n\n```\nNome: Ana\nIdade: 20\nAltura: 1.60\nEstudante: True\nDaqui a 5 anos: 25\n```\n\nA altura deve ter 2 casas decimais e a última linha deve ser calculada com `idade + 5`. O programa não lê entrada.",
+      "starter": "string nome = \"Ana\";\nint idade = 20;\ndouble altura = 1.6;\nbool estudante = true;\n\n// Escreva abaixo os Console.WriteLine usando interpolação ($\"...\")\nConsole.WriteLine($\"Nome: {nome}\");",
+      "solution": "string nome = \"Ana\";\nint idade = 20;\ndouble altura = 1.6;\nbool estudante = true;\n\nConsole.WriteLine($\"Nome: {nome}\");\nConsole.WriteLine($\"Idade: {idade}\");\nConsole.WriteLine($\"Altura: {altura:F2}\");\nConsole.WriteLine($\"Estudante: {estudante}\");\nConsole.WriteLine($\"Daqui a 5 anos: {idade + 5}\");",
+      "hints": [
+        "Use `$\"Idade: {idade}\"` para colocar o valor dentro do texto.",
+        "Para 2 casas decimais escreva `{altura:F2}`.",
+        "A expressão `{idade + 5}` é calculada dentro das chaves."
+      ],
+      "tests": [
+        {
+          "input": "",
+          "expected": "Nome: Ana\nIdade: 20\nAltura: 1.60\nEstudante: True\nDaqui a 5 anos: 25",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Nome: Ana\nIdade: 20\nAltura: 1.60\nEstudante: True\nDaqui a 5 anos: 25",
+          "hidden": false
+        },
+        {
+          "input": "",
+          "expected": "Nome: Ana\nIdade: 20\nAltura: 1.60\nEstudante: True\nDaqui a 5 anos: 25",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "cs-03",
+      "title": "Entrada e aritmética",
+      "theory": "# Lendo dados e fazendo contas\n\nAté agora os valores estavam fixos no código. Agora o programa vai **ler** dados de quem usa.\n\n## Console.ReadLine\n\n`Console.ReadLine()` lê **uma linha inteira** da entrada e devolve uma `string`:\n\n```csharp\nstring nome = Console.ReadLine();\n```\n\n**Importante:** aqui no curso o verificador digita a entrada **automaticamente** para o seu programa, uma linha por vez. Por isso **não** escreva mensagens como \"Digite um número:\" antes de ler: elas apareceriam na saída e o teste falharia.\n\n## Convertendo texto em número\n\nO que vem do teclado é sempre texto. `\"5\" + \"3\"` dá `\"53\"`, não `8`! Para fazer contas, converta:\n\n```csharp\nint a = int.Parse(Console.ReadLine());\ndouble preco = double.Parse(Console.ReadLine());\n```\n\nSe o texto não for um número válido, `int.Parse` lança um erro e o programa para. Nas próximas aulas veremos como lidar com isso; por enquanto, confie que a entrada é válida.\n\n## Operadores aritméticos\n\n```csharp\nint a = 17, b = 5;\nConsole.WriteLine(a + b);  // 22\nConsole.WriteLine(a - b);  // 12\nConsole.WriteLine(a * b);  // 85\nConsole.WriteLine(a / b);  // 3   (divisão inteira!)\nConsole.WriteLine(a % b);  // 2   (resto da divisão)\n```\n\nO ponto mais traiçoeiro: **dividir dois `int` dá um `int`**. A parte decimal é simplesmente descartada (truncada em direção ao zero). Assim, `-17 / 5` dá `-3` e `-17 % 5` dá `-2`: o resto tem o sinal do dividendo.\n\nPara obter a divisão com decimais, pelo menos um dos lados precisa ser `double`:\n\n```csharp\ndouble media = (a + b) / 2.0;      // 2.0 é double\ndouble media2 = (double)(a + b) / 2; // conversão explícita (cast)\n```\n\nO `(double)` na frente é um **cast**: ele converte o valor para outro tipo.\n\n## Precedência\n\nComo na matemática, `*`, `/` e `%` vêm antes de `+` e `-`. Use parênteses quando estiver em dúvida: `(a + b) / 2` é bem diferente de `a + b / 2`.\n\n## Erros comuns\n\n- Somar strings achando que soma números: converta com `int.Parse` antes.\n- Calcular média com `(a + b) / 2` usando `int`: a parte decimal some.\n- Esquecer de formatar: use `{media:F2}` para ter sempre 2 casas.",
+      "task": "Leia dois números inteiros `a` e `b` (um por linha; `b` nunca é zero) e mostre:\n\n```\nSoma: <a+b>\nDiferença: <a-b>\nProduto: <a*b>\nQuociente: <divisão inteira a/b>\nResto: <a%b>\nMédia: <média de a e b com 2 casas>\n```\n\nExemplo: entrada `17` e `5` produz:\n\n```\nSoma: 22\nDiferença: 12\nProduto: 85\nQuociente: 3\nResto: 2\nMédia: 11.00\n```",
+      "starter": "int a = int.Parse(Console.ReadLine());\nint b = int.Parse(Console.ReadLine());\n\n// Escreva os cálculos e as saídas abaixo\nConsole.WriteLine($\"Soma: {a + b}\");",
+      "solution": "int a = int.Parse(Console.ReadLine());\nint b = int.Parse(Console.ReadLine());\n\ndouble media = (a + b) / 2.0;\n\nConsole.WriteLine($\"Soma: {a + b}\");\nConsole.WriteLine($\"Diferença: {a - b}\");\nConsole.WriteLine($\"Produto: {a * b}\");\nConsole.WriteLine($\"Quociente: {a / b}\");\nConsole.WriteLine($\"Resto: {a % b}\");\nConsole.WriteLine($\"Média: {media:F2}\");",
+      "hints": [
+        "Converta cada linha lida com `int.Parse(Console.ReadLine())`.",
+        "Para a média, divida por `2.0` (e não por `2`) e formate com `:F2`."
+      ],
+      "tests": [
+        {
+          "input": "17\n5\n",
+          "expected": "Soma: 22\nDiferença: 12\nProduto: 85\nQuociente: 3\nResto: 2\nMédia: 11.00",
+          "hidden": false
+        },
+        {
+          "input": "4\n2\n",
+          "expected": "Soma: 6\nDiferença: 2\nProduto: 8\nQuociente: 2\nResto: 0\nMédia: 3.00",
+          "hidden": false
+        },
+        {
+          "input": "-7\n2\n",
+          "expected": "Soma: -5\nDiferença: -9\nProduto: -14\nQuociente: -3\nResto: -1\nMédia: -2.50",
+          "hidden": true
+        },
+        {
+          "input": "0\n3\n",
+          "expected": "Soma: 3\nDiferença: -3\nProduto: 0\nQuociente: 0\nResto: 0\nMédia: 1.50",
+          "hidden": true
+        }
+      ],
+      "level": 1
+    },
+    {
+      "id": "cs-04",
+      "title": "Decisões com if e else",
+      "theory": "# Fazendo o programa decidir\n\nNa aula anterior o programa sempre fazia as mesmas contas. Agora ele vai escolher **caminhos diferentes** conforme os dados.\n\n## Comparações e bool\n\nComparações produzem um `bool` (`true` ou `false`):\n\n```csharp\nnota >= 7     // maior ou igual\nnota < 5      // menor\nx == 0        // igual (dois sinais de =)\nx != 0        // diferente\n```\n\nAtenção: `=` **atribui** um valor; `==` **compara**. Em C#, `if (x = 0)` nem compila, o que evita um erro clássico de outras linguagens.\n\n## if, else if, else\n\n```csharp\nif (temperatura > 30)\n{\n    Console.WriteLine(\"Calor\");\n}\nelse if (temperatura > 15)\n{\n    Console.WriteLine(\"Agradável\");\n}\nelse\n{\n    Console.WriteLine(\"Frio\");\n}\n```\n\nAs condições são testadas **em ordem**, de cima para baixo. A primeira verdadeira executa o seu bloco e as outras são **ignoradas**. Por isso a ordem importa: em `else if (temperatura > 15)` já sabemos que a temperatura **não** é maior que 30, então não precisamos repetir isso.\n\nAs chaves `{ }` delimitam o bloco. Com uma única instrução elas são opcionais, mas usá-las sempre evita bugs quando você adicionar uma segunda linha depois.\n\n## Combinando condições\n\n- `&&` (E): verdadeiro só se **as duas** forem verdadeiras.\n- `||` (OU): verdadeiro se **pelo menos uma** for verdadeira.\n- `!` (NÃO): inverte.\n\n```csharp\nif (idade >= 18 && temCarteira)\n    Console.WriteLine(\"Pode dirigir\");\n\nif (nota < 0 || nota > 10)\n    Console.WriteLine(\"Nota inválida\");\n```\n\nO C# usa **curto-circuito**: em `a && b`, se `a` for falso, `b` nem é avaliado. Isso permite escrever com segurança `if (b != 0 && a / b > 2)`.\n\n## Validar primeiro\n\nUm bom hábito é tratar os casos inválidos **primeiro**. Assim o resto do código pode assumir que os dados estão corretos.\n\n## Erros comuns\n\n- Escrever `if (nota >= 7);` com ponto e vírgula: o `;` encerra o `if` e o bloco sempre roda.\n- Ordem errada: testar `nota >= 5` antes de `nota >= 7` faz uma nota 9 cair em \"Recuperação\".\n- Comparar `double` com `==` depois de contas: valores como `0.1 + 0.2` não são exatamente `0.3`. Prefira `>=` e `<`.",
+      "task": "Leia uma nota (número decimal, com ponto, ex.: `6.5`) e mostre **uma** linha:\n\n- `Nota inválida` se a nota for menor que 0 ou maior que 10;\n- `Aprovado` se a nota for maior ou igual a 7;\n- `Recuperação` se for maior ou igual a 5 (e menor que 7);\n- `Reprovado` caso contrário.\n\nExemplo: entrada `6.5` produz `Recuperação`.",
+      "starter": "double nota = double.Parse(Console.ReadLine());\n\n// Use if / else if / else abaixo\nif (nota >= 7)\n{\n    Console.WriteLine(\"Aprovado\");\n}",
+      "solution": "double nota = double.Parse(Console.ReadLine());\n\nif (nota < 0 || nota > 10)\n{\n    Console.WriteLine(\"Nota inválida\");\n}\nelse if (nota >= 7)\n{\n    Console.WriteLine(\"Aprovado\");\n}\nelse if (nota >= 5)\n{\n    Console.WriteLine(\"Recuperação\");\n}\nelse\n{\n    Console.WriteLine(\"Reprovado\");\n}",
+      "hints": [
+        "Teste primeiro se a nota é inválida, usando `||`.",
+        "Depois teste do maior limite para o menor: `>= 7`, depois `>= 5`, e por fim `else`."
+      ],
+      "tests": [
+        {
+          "input": "6.5\n",
+          "expected": "Recuperação",
+          "hidden": false
+        },
+        {
+          "input": "7\n",
+          "expected": "Aprovado",
+          "hidden": false
+        },
+        {
+          "input": "4.9\n",
+          "expected": "Reprovado",
+          "hidden": false
+        },
+        {
+          "input": "10.5\n",
+          "expected": "Nota inválida",
+          "hidden": true
+        },
+        {
+          "input": "5\n",
+          "expected": "Recuperação",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "cs-05",
+      "title": "Repetição com for e while",
+      "theory": "# Repetindo instruções\n\nCom `if` o programa escolhe caminhos. Com **laços** ele repete um bloco várias vezes, sem copiar código.\n\n## while\n\n`while` repete **enquanto** a condição for verdadeira:\n\n```csharp\nint contador = 3;\nwhile (contador > 0)\n{\n    Console.WriteLine(contador);\n    contador--;   // o mesmo que contador = contador - 1\n}\n// 3, 2, 1\n```\n\nSe nada dentro do laço mudar a condição, ele nunca termina (**laço infinito**). Sempre se pergunte: o que faz este laço parar?\n\n## for\n\nQuando você sabe **quantas vezes** repetir, o `for` junta as três partes num lugar só:\n\n```csharp\nfor (int i = 0; i < 5; i++)\n{\n    Console.WriteLine(i);   // 0 1 2 3 4\n}\n```\n\n1. `int i = 0`: roda uma vez, no início.\n2. `i < 5`: testada antes de cada volta; se for falsa, o laço acaba.\n3. `i++`: roda no fim de cada volta.\n\nContar de `0` até `n - 1` é o padrão em C#, porque arrays (aula 7) começam no índice 0.\n\n## Acumuladores\n\nO padrão mais comum com laços é **acumular** um resultado:\n\n```csharp\nint n = int.Parse(Console.ReadLine());\nint soma = 0;\nfor (int i = 0; i < n; i++)\n{\n    int x = int.Parse(Console.ReadLine());\n    soma += x;   // soma = soma + x\n}\n```\n\nRepare: a variável `soma` é declarada **fora** do laço. Se fosse dentro, seria recriada (zerada) a cada volta e não estaria visível depois do laço. Esse é o conceito de **escopo**: uma variável só existe dentro das chaves onde foi declarada.\n\n## Maior e menor\n\nPara encontrar o maior valor, comece com o **primeiro** elemento (e não com 0, que falharia se todos fossem negativos). Outra opção segura é começar com `int.MinValue`, o menor `int` possível:\n\n```csharp\nint maior = int.MinValue;\n// dentro do laço:\nif (x > maior) maior = x;\n```\n\n## break e continue\n\n- `break` sai do laço imediatamente.\n- `continue` pula para a próxima volta.\n\n## Erros comuns\n\n- `i <= n` em vez de `i < n`: uma volta a mais.\n- Inicializar o maior com `0`: errado para listas só de negativos.\n- Esquecer o caso de 0 elementos: o laço não roda e \"maior\" fica com um valor sem sentido. Trate esse caso antes.",
+      "task": "Leia um inteiro `N` (N ≥ 0) e depois `N` inteiros, um por linha. Mostre:\n\n```\nSoma: <soma>\nMaior: <maior valor>\nMenor: <menor valor>\nPares: <quantos são pares>\n```\n\nSe `N` for 0, mostre apenas `Lista vazia`.\n\nExemplo: entrada `4`, `3`, `-2`, `8`, `5` produz:\n\n```\nSoma: 14\nMaior: 8\nMenor: -2\nPares: 2\n```",
+      "starter": "int n = int.Parse(Console.ReadLine());\nint soma = 0;\n\n// Use um laço for para ler os N números e atualizar os acumuladores\nfor (int i = 0; i < n; i++)\n{\n    int x = int.Parse(Console.ReadLine());\n}\n\nConsole.WriteLine($\"Soma: {soma}\");",
+      "solution": "int n = int.Parse(Console.ReadLine());\n\nif (n == 0)\n{\n    Console.WriteLine(\"Lista vazia\");\n}\nelse\n{\n    int soma = 0, pares = 0;\n    int maior = int.MinValue, menor = int.MaxValue;\n    for (int i = 0; i < n; i++)\n    {\n        int x = int.Parse(Console.ReadLine());\n        soma += x;\n        if (x > maior) maior = x;\n        if (x < menor) menor = x;\n        if (x % 2 == 0) pares++;\n    }\n    Console.WriteLine($\"Soma: {soma}\");\n    Console.WriteLine($\"Maior: {maior}\");\n    Console.WriteLine($\"Menor: {menor}\");\n    Console.WriteLine($\"Pares: {pares}\");\n}",
+      "hints": [
+        "Trate `N == 0` antes do laço.",
+        "Comece `maior` com `int.MinValue` e `menor` com `int.MaxValue`.",
+        "Um número é par quando `x % 2 == 0` (isso vale também para negativos)."
+      ],
+      "tests": [
+        {
+          "input": "4\n3\n-2\n8\n5\n",
+          "expected": "Soma: 14\nMaior: 8\nMenor: -2\nPares: 2",
+          "hidden": false
+        },
+        {
+          "input": "1\n7\n",
+          "expected": "Soma: 7\nMaior: 7\nMenor: 7\nPares: 0",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Lista vazia",
+          "hidden": false
+        },
+        {
+          "input": "3\n-5\n-1\n-10\n",
+          "expected": "Soma: -16\nMaior: -1\nMenor: -10\nPares: 1",
+          "hidden": true
+        }
+      ],
+      "level": 2
+    },
+    {
+      "id": "cs-06",
+      "title": "Métodos",
+      "theory": "# Organizando o código em métodos\n\nConforme os programas crescem, repetir o mesmo trecho em vários lugares vira um problema: um bug precisa ser corrigido em todas as cópias. A solução é dar um **nome** a um trecho de código: um **método** (em outras linguagens, \"função\").\n\n## A estrutura completa de um programa\n\nAté agora usamos top-level statements. Por baixo dos panos, todo programa C# é assim:\n\n```csharp\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Começa aqui\");\n    }\n}\n```\n\n- `class Program` agrupa o código (classes são o assunto da aula 8).\n- `static void Main()` é o **ponto de entrada**: o primeiro método que roda.\n- `using System;` permite escrever `Console` em vez de `System.Console` (no .NET moderno ele já vem implícito).\n\n## Declarando um método\n\n```csharp\nstatic int Quadrado(int x)\n{\n    return x * x;\n}\n```\n\n- `static`: pertence à classe, sem precisar criar um objeto (veremos na aula 8).\n- `int` antes do nome: o **tipo de retorno**. Use `void` quando o método não devolve nada.\n- `(int x)`: os **parâmetros**, cada um com seu tipo.\n- `return`: devolve o valor e **encerra** o método na hora.\n\nChamando: `int q = Quadrado(5); // 25`.\n\n## Por que métodos?\n\n1. **Reuso**: escreva uma vez, use muitas.\n2. **Leitura**: `if (EhPrimo(n))` explica a intenção melhor que dez linhas de laço.\n3. **Teste**: um método pequeno é fácil de verificar isoladamente.\n\n## Retorno antecipado\n\nUm `return` no meio do método é uma forma elegante de tratar casos especiais:\n\n```csharp\nstatic bool EhPar(int n)\n{\n    if (n < 0) n = -n;\n    return n % 2 == 0;\n}\n```\n\n## Exemplo: número primo\n\nUm número é **primo** se for maior que 1 e só for divisível por 1 e por ele mesmo. Não precisamos testar todos os divisores até `n`: se `n = a * b`, um dos dois é no máximo a raiz quadrada de `n`. Então basta testar `d` enquanto `d * d <= n`. Para `n = 1 000 003` isso são cerca de 1000 testes em vez de um milhão. Pensar em **quanto trabalho** o algoritmo faz é o começo da análise de complexidade (aula 10).\n\n## Escopo\n\nVariáveis declaradas dentro de um método só existem dentro dele. Os parâmetros recebem **cópias** dos valores (para tipos como `int`): mudar `n` dentro de `EhPar` não muda a variável de quem chamou.\n\n## Erros comuns\n\n- Esquecer o `return` em algum caminho de um método não-`void`: erro de compilação \"not all code paths return a value\".\n- Esquecer `static` ao chamar um método a partir de `Main`.\n- Tratar 0, 1 e negativos como primos: eles **não** são.",
+      "task": "Escreva um método `static bool EhPrimo(int n)` e use-o no `Main`.\n\nLeia um inteiro `N` e depois `N` inteiros, um por linha. Para cada número `x`, mostre `x é primo` ou `x não é primo`.\n\nExemplo: entrada `3`, `7`, `8`, `1` produz:\n\n```\n7 é primo\n8 não é primo\n1 não é primo\n```",
+      "starter": "class Program\n{\n    static bool EhPrimo(int n)\n    {\n        // Escreva aqui: devolva true se n for primo\n        return false;\n    }\n\n    static void Main()\n    {\n        int quantidade = int.Parse(Console.ReadLine());\n        for (int i = 0; i < quantidade; i++)\n        {\n            int x = int.Parse(Console.ReadLine());\n            if (EhPrimo(x))\n                Console.WriteLine($\"{x} é primo\");\n            else\n                Console.WriteLine($\"{x} não é primo\");\n        }\n    }\n}",
+      "solution": "class Program\n{\n    static bool EhPrimo(int n)\n    {\n        if (n < 2) return false;\n        for (int d = 2; d * d <= n; d++)\n        {\n            if (n % d == 0) return false;\n        }\n        return true;\n    }\n\n    static void Main()\n    {\n        int quantidade = int.Parse(Console.ReadLine());\n        for (int i = 0; i < quantidade; i++)\n        {\n            int x = int.Parse(Console.ReadLine());\n            if (EhPrimo(x))\n                Console.WriteLine($\"{x} é primo\");\n            else\n                Console.WriteLine($\"{x} não é primo\");\n        }\n    }\n}",
+      "hints": [
+        "Números menores que 2 nunca são primos: devolva `false` logo no início.",
+        "Teste divisores `d` a partir de 2 enquanto `d * d <= n`; se `n % d == 0`, não é primo."
+      ],
+      "tests": [
+        {
+          "input": "3\n7\n8\n1\n",
+          "expected": "7 é primo\n8 não é primo\n1 não é primo",
+          "hidden": false
+        },
+        {
+          "input": "4\n2\n9\n13\n25\n",
+          "expected": "2 é primo\n9 não é primo\n13 é primo\n25 não é primo",
+          "hidden": false
+        },
+        {
+          "input": "3\n0\n-7\n97\n",
+          "expected": "0 não é primo\n-7 não é primo\n97 é primo",
+          "hidden": true
+        },
+        {
+          "input": "2\n1000003\n1000001\n",
+          "expected": "1000003 é primo\n1000001 não é primo",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "cs-07",
+      "title": "Arrays e strings",
+      "theory": "# Coleções de valores e manipulação de texto\n\nNa aula 5 lemos vários números, mas cada um era esquecido logo depois de usado. Para **guardar** muitos valores usamos **arrays**, e para trabalhar com texto usamos os métodos de `string`.\n\n## Arrays\n\nUm array tem tamanho fixo e todos os elementos do mesmo tipo:\n\n```csharp\nint[] notas = new int[3];       // [0, 0, 0]\nnotas[0] = 8;\nint[] primos = { 2, 3, 5, 7 };  // já com valores\nConsole.WriteLine(primos.Length); // 4\nConsole.WriteLine(primos[3]);     // 7\n```\n\nOs índices vão de `0` a `Length - 1`. Acessar `primos[4]` gera `IndexOutOfRangeException`: o C# **verifica** cada acesso, o que evita bugs silenciosos (em C isso corromperia a memória).\n\nPara percorrer, use `for` (quando precisa do índice) ou `foreach` (quando só precisa dos valores):\n\n```csharp\nforeach (int p in primos)\n    Console.WriteLine(p);\n```\n\nSe o tamanho precisa variar, use `List<int>`, que cresce com `Add`. Veremos mais na aula 8.\n\n## Strings\n\nUma `string` se comporta como um array de `char` somente leitura:\n\n```csharp\nstring s = \"Olá\";\nConsole.WriteLine(s.Length);   // 3\nConsole.WriteLine(s[0]);       // O\nConsole.WriteLine(s.ToUpper()); // OLÁ\n```\n\nStrings são **imutáveis**: `ToUpper()` não altera `s`, ele devolve uma string nova.\n\n## Split e Join\n\n`Split` quebra um texto em pedaços; `string.Join` faz o caminho inverso:\n\n```csharp\nstring frase = \"  um   dois tres \";\nstring[] palavras = frase.Split(' ', StringSplitOptions.RemoveEmptyEntries);\n// [\"um\", \"dois\", \"tres\"]\nConsole.WriteLine(string.Join(\"-\", palavras)); // um-dois-tres\n```\n\nSem `RemoveEmptyEntries`, espaços repetidos gerariam pedaços vazios (`\"\"`) e a contagem de palavras ficaria errada.\n\n`Array.Reverse(palavras)` inverte o array **no lugar** (modifica o próprio array).\n\n## Linha vazia e null\n\nSe a entrada acabar, `Console.ReadLine()` devolve `null`. Uma forma segura de ler é:\n\n```csharp\nstring linha = Console.ReadLine() ?? \"\";\n```\n\nO operador `??` usa o valor da direita quando o da esquerda é `null`.\n\n## Erros comuns\n\n- Laço com `i <= arr.Length`: estoura o índice na última volta.\n- Comparar strings achando que `ToUpper()` mudou a original.\n- Concatenar strings dentro de laços muito grandes: cada `+` cria uma string nova. Para muitos pedaços, prefira `string.Join` ou `StringBuilder`.\n- Em empate de tamanho, decidir qual palavra fica: com `>` (e não `>=`) você mantém a **primeira**.",
+      "task": "Leia **uma linha** de texto. As palavras são separadas por um ou mais espaços. Mostre:\n\n```\nPalavras: <quantidade de palavras>\nMaior: <a palavra mais longa; em caso de empate, a primeira>\nInvertida: <as palavras em ordem inversa, separadas por um espaço>\n```\n\nSe a linha não tiver nenhuma palavra, mostre apenas `Palavras: 0`.\n\nExemplo: entrada `eu gosto de programar` produz:\n\n```\nPalavras: 4\nMaior: programar\nInvertida: programar de gosto eu\n```",
+      "starter": "string linha = Console.ReadLine() ?? \"\";\n\n// Separe as palavras com Split e mostre as três linhas pedidas\nConsole.WriteLine(\"Palavras: 0\");",
+      "solution": "string linha = Console.ReadLine() ?? \"\";\nstring[] palavras = linha.Split(' ', StringSplitOptions.RemoveEmptyEntries);\n\nConsole.WriteLine($\"Palavras: {palavras.Length}\");\nif (palavras.Length > 0)\n{\n    string maior = palavras[0];\n    foreach (string p in palavras)\n    {\n        if (p.Length > maior.Length) maior = p;\n    }\n    Console.WriteLine($\"Maior: {maior}\");\n\n    Array.Reverse(palavras);\n    Console.WriteLine($\"Invertida: {string.Join(\" \", palavras)}\");\n}",
+      "hints": [
+        "Use `linha.Split(' ', StringSplitOptions.RemoveEmptyEntries)` para ignorar espaços repetidos.",
+        "Para a maior palavra, comece com a primeira e troque só quando achar uma estritamente maior (`>`).",
+        "`Array.Reverse` e `string.Join(\" \", ...)` resolvem a última linha."
+      ],
+      "tests": [
+        {
+          "input": "eu gosto de programar\n",
+          "expected": "Palavras: 4\nMaior: programar\nInvertida: programar de gosto eu",
+          "hidden": false
+        },
+        {
+          "input": "sol\n",
+          "expected": "Palavras: 1\nMaior: sol\nInvertida: sol",
+          "hidden": false
+        },
+        {
+          "input": "   casa   bola    gato\n",
+          "expected": "Palavras: 3\nMaior: casa\nInvertida: gato bola casa",
+          "hidden": true
+        },
+        {
+          "input": "",
+          "expected": "Palavras: 0",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "cs-08",
+      "title": "Classes, listas e dicionários",
+      "theory": "# Modelando dados com classes\n\nAté aqui cada dado era uma variável solta. Mas no mundo real os dados andam juntos: um aluno tem **nome** e **notas**. Uma **classe** junta dados (estado) e comportamento (métodos) num só tipo, criado por você.\n\n## Declarando uma classe\n\n```csharp\nclass Aluno\n{\n    public string Nome { get; }          // propriedade só de leitura\n    private List<int> notas = new List<int>(); // campo privado\n\n    public Aluno(string nome)            // construtor\n    {\n        Nome = nome;\n    }\n\n    public void AdicionarNota(int nota)\n    {\n        notas.Add(nota);\n    }\n\n    public double Media()\n    {\n        int soma = 0;\n        foreach (int n in notas) soma += n;\n        return (double)soma / notas.Count;\n    }\n}\n```\n\n- Um **campo** (`notas`) guarda dados dentro do objeto.\n- Uma **propriedade** (`Nome { get; }`) parece um campo por fora, mas controla o acesso: aqui só pode ser lida, e é definida no construtor.\n- O **construtor** tem o nome da classe e roda quando o objeto é criado com `new`.\n- `public` pode ser usado de fora; `private` só dentro da classe. Esconder os detalhes (**encapsulamento**) permite mudar o funcionamento interno sem quebrar quem usa a classe.\n\n```csharp\nAluno a = new Aluno(\"Ana\");\na.AdicionarNota(8);\na.AdicionarNota(7);\nConsole.WriteLine(a.Media()); // 7.5\n```\n\nAgora os métodos **não** são `static`: eles trabalham com os dados de **um objeto específico**. Cada `new Aluno(...)` tem suas próprias notas.\n\n## List<T>\n\n`List<T>` é um array que cresce: `Add`, `Count`, acesso por índice `lista[i]`. O `T` é o tipo dos elementos (`List<int>`, `List<Aluno>`).\n\n## Dictionary<TKey, TValue>\n\nUm dicionário associa **chaves** a **valores** e encontra uma chave em tempo praticamente constante, sem percorrer tudo:\n\n```csharp\nvar porNome = new Dictionary<string, Aluno>();\nif (!porNome.TryGetValue(\"Ana\", out Aluno aluno))\n{\n    aluno = new Aluno(\"Ana\");\n    porNome[\"Ana\"] = aluno;\n}\naluno.AdicionarNota(9);\n```\n\n`TryGetValue` devolve `true` e preenche `aluno` se a chave existe. Acessar `porNome[\"Bia\"]` com uma chave inexistente lança `KeyNotFoundException`.\n\n**Cuidado com a ordem:** a documentação do `Dictionary` **não garante** a ordem em que as chaves são percorridas. Quando a ordem importa, guarde os objetos também numa `List` na ordem em que apareceram, e use o dicionário só para **achar** rapidamente.\n\n## Referências\n\nClasses são **tipos de referência**: a variável guarda um \"endereço\" do objeto. O mesmo `Aluno` pode estar na lista e no dicionário ao mesmo tempo; adicionar uma nota por um caminho aparece pelo outro, porque é o **mesmo** objeto.\n\n## Erros comuns\n\n- Dividir `int` por `int` na média (aula 3): use `(double)soma`.\n- Esquecer o `new` e usar uma variável `null`: `NullReferenceException`.\n- Contar com a ordem do dicionário.",
+      "task": "Leia um inteiro `N` e depois `N` linhas no formato `nome nota` (nota inteira). Um mesmo aluno pode aparecer várias vezes.\n\nUse uma classe `Aluno` (com nome, lista de notas e um método `Media()`) e mostre, **na ordem em que cada aluno apareceu pela primeira vez**, uma linha `nome: média` com 2 casas decimais. Depois mostre `Melhor: <nome>` com o aluno de maior média (em caso de empate, o que apareceu primeiro).\n\nSe `N` for 0, mostre apenas `Nenhum aluno`.\n\nExemplo: entrada `4`, `Ana 8`, `Bia 6`, `Ana 7`, `Caio 9` produz:\n\n```\nAna: 7.50\nBia: 6.00\nCaio: 9.00\nMelhor: Caio\n```",
+      "starter": "using System;\nusing System.Collections.Generic;\n\nclass Aluno\n{\n    public string Nome { get; }\n    private List<int> notas = new List<int>();\n\n    public Aluno(string nome)\n    {\n        Nome = nome;\n    }\n\n    public void AdicionarNota(int nota)\n    {\n        notas.Add(nota);\n    }\n\n    public double Media()\n    {\n        // Escreva aqui: devolva a média das notas\n        return 0;\n    }\n}\n\nclass Program\n{\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        // Leia as N linhas, agrupe por nome e mostre as médias\n        Console.WriteLine(\"Nenhum aluno\");\n    }\n}",
+      "solution": "using System;\nusing System.Collections.Generic;\n\nclass Aluno\n{\n    public string Nome { get; }\n    private List<int> notas = new List<int>();\n\n    public Aluno(string nome)\n    {\n        Nome = nome;\n    }\n\n    public void AdicionarNota(int nota)\n    {\n        notas.Add(nota);\n    }\n\n    public double Media()\n    {\n        int soma = 0;\n        foreach (int nota in notas) soma += nota;\n        return (double)soma / notas.Count;\n    }\n}\n\nclass Program\n{\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        if (n == 0)\n        {\n            Console.WriteLine(\"Nenhum aluno\");\n            return;\n        }\n\n        var ordem = new List<Aluno>();\n        var porNome = new Dictionary<string, Aluno>();\n        for (int i = 0; i < n; i++)\n        {\n            string[] partes = Console.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);\n            string nome = partes[0];\n            int nota = int.Parse(partes[1]);\n            if (!porNome.TryGetValue(nome, out Aluno aluno))\n            {\n                aluno = new Aluno(nome);\n                porNome[nome] = aluno;\n                ordem.Add(aluno);\n            }\n            aluno.AdicionarNota(nota);\n        }\n\n        Aluno melhor = ordem[0];\n        foreach (Aluno a in ordem)\n        {\n            Console.WriteLine($\"{a.Nome}: {a.Media():F2}\");\n            if (a.Media() > melhor.Media()) melhor = a;\n        }\n        Console.WriteLine($\"Melhor: {melhor.Nome}\");\n    }\n}",
+      "hints": [
+        "Guarde os alunos numa `List<Aluno>` (para a ordem) e num `Dictionary<string, Aluno>` (para achar pelo nome).",
+        "Use `TryGetValue`: se o nome ainda não existe, crie o aluno e adicione nos dois lugares.",
+        "Na média, converta para `double` antes de dividir: `(double)soma / notas.Count`."
+      ],
+      "tests": [
+        {
+          "input": "4\nAna 8\nBia 6\nAna 7\nCaio 9\n",
+          "expected": "Ana: 7.50\nBia: 6.00\nCaio: 9.00\nMelhor: Caio",
+          "hidden": false
+        },
+        {
+          "input": "1\nZeca 10\n",
+          "expected": "Zeca: 10.00\nMelhor: Zeca",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Nenhum aluno",
+          "hidden": false
+        },
+        {
+          "input": "5\nLia 5\nRui 7\nLia 9\nRui 6\nRui 8\n",
+          "expected": "Lia: 7.00\nRui: 7.00\nMelhor: Lia",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "cs-09",
+      "title": "Recursão",
+      "theory": "# Métodos que chamam a si mesmos\n\nNa aula 6 vimos que um método pode chamar outro. Ele também pode chamar **a si mesmo**: isso é **recursão**. A ideia é resolver um problema grande usando a solução do **mesmo problema, só que menor**.\n\n## As duas partes obrigatórias\n\n```csharp\nstatic long Fatorial(int n)\n{\n    if (n == 0) return 1;          // caso base\n    return n * Fatorial(n - 1);    // passo recursivo\n}\n```\n\n1. **Caso base**: uma situação simples que responde direto, sem recursão.\n2. **Passo recursivo**: chama o método com uma entrada **menor**, que se aproxima do caso base.\n\nSe faltar o caso base (ou se a entrada não diminuir), as chamadas nunca param e o programa morre com `StackOverflowException`.\n\n## O que acontece por dentro\n\nCada chamada ganha seu próprio espaço na **pilha de chamadas** (call stack), com suas próprias variáveis. `Fatorial(3)` espera `Fatorial(2)`, que espera `Fatorial(1)`, que espera `Fatorial(0)`. Quando o caso base devolve 1, os resultados \"voltam\" multiplicando: 1, 1, 2, 6.\n\nA pilha é limitada (cerca de 1 MB por thread no .NET), então recursões com milhões de níveis estouram. Para problemas lineares simples, um laço costuma ser melhor; a recursão brilha quando o problema se **divide** naturalmente: árvores, pastas dentro de pastas, divisão e conquista (aula 10).\n\n## Torre de Hanói\n\nTrês pinos (A, B, C) e `n` discos de tamanhos diferentes empilhados em A, do maior (embaixo) para o menor. Objetivo: levar todos para C, movendo **um disco por vez** e **nunca** colocando um disco maior sobre um menor.\n\nParece difícil de programar com laços, mas a recursão resolve em três passos. Para mover `n` discos de `origem` para `destino`:\n\n1. mova os `n - 1` discos de cima de `origem` para o pino `auxiliar` (usando `destino` como apoio);\n2. mova o disco `n` (o maior) de `origem` para `destino`;\n3. mova os `n - 1` discos de `auxiliar` para `destino` (usando `origem` como apoio).\n\nO caso base é `n == 0`: não há nada a mover.\n\n```csharp\nstatic void Hanoi(int n, char origem, char destino, char auxiliar)\n{\n    if (n == 0) return;\n    Hanoi(n - 1, origem, auxiliar, destino);\n    Console.WriteLine($\"Mova o disco {n} de {origem} para {destino}\");\n    Hanoi(n - 1, auxiliar, destino, origem);\n}\n```\n\nConfie na recursão: ao escrever o passo 1, **suponha** que `Hanoi(n - 1, ...)` já funciona. Esse \"salto de fé\" é o mesmo raciocínio da **indução matemática**.\n\n## Quantos movimentos?\n\nSeja `M(n)` o número de movimentos: `M(0) = 0` e `M(n) = 2·M(n-1) + 1`. Isso dá `M(n) = 2^n - 1`. Com 20 discos, mais de um milhão de movimentos; com 64, mais tempo que a idade do universo. É um exemplo de crescimento **exponencial**, O(2^n).\n\nEm C#, `1 << n` calcula `2^n` para inteiros (desloca o bit 1 `n` posições para a esquerda).\n\n## Erros comuns\n\n- Trocar a ordem dos pinos nas chamadas recursivas.\n- Esquecer o caso base.\n- Usar `Math.Pow`, que devolve `double`, quando se quer um inteiro exato.",
+      "task": "Leia um inteiro `n` (0 ≤ n ≤ 10), o número de discos da Torre de Hanói, todos começando no pino `A`. Mostre todos os movimentos para levá-los ao pino `C` (usando `B` como auxiliar), um por linha, no formato:\n\n```\nMova o disco <d> de <X> para <Y>\n```\n\nUse a estratégia recursiva da teoria (primeiro os `n - 1` discos de A para B). Na última linha mostre `Movimentos: <total>`.\n\nExemplo: entrada `2` produz:\n\n```\nMova o disco 1 de A para B\nMova o disco 2 de A para C\nMova o disco 1 de B para C\nMovimentos: 3\n```",
+      "starter": "class Program\n{\n    static int movimentos = 0;\n\n    static void Hanoi(int n, char origem, char destino, char auxiliar)\n    {\n        // Escreva aqui: caso base e as duas chamadas recursivas\n    }\n\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        Hanoi(n, 'A', 'C', 'B');\n        Console.WriteLine($\"Movimentos: {movimentos}\");\n    }\n}",
+      "solution": "class Program\n{\n    static int movimentos = 0;\n\n    static void Hanoi(int n, char origem, char destino, char auxiliar)\n    {\n        if (n == 0) return;\n        Hanoi(n - 1, origem, auxiliar, destino);\n        Console.WriteLine($\"Mova o disco {n} de {origem} para {destino}\");\n        movimentos++;\n        Hanoi(n - 1, auxiliar, destino, origem);\n    }\n\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        Hanoi(n, 'A', 'C', 'B');\n        Console.WriteLine($\"Movimentos: {movimentos}\");\n    }\n}",
+      "hints": [
+        "O caso base é `n == 0`: simplesmente `return`.",
+        "Primeiro `Hanoi(n - 1, origem, auxiliar, destino)`, depois mostre o movimento do disco `n`, depois `Hanoi(n - 1, auxiliar, destino, origem)`.",
+        "Some 1 em `movimentos` a cada disco movido; o total deve ser `2^n - 1`."
+      ],
+      "tests": [
+        {
+          "input": "2\n",
+          "expected": "Mova o disco 1 de A para B\nMova o disco 2 de A para C\nMova o disco 1 de B para C\nMovimentos: 3",
+          "hidden": false
+        },
+        {
+          "input": "1\n",
+          "expected": "Mova o disco 1 de A para C\nMovimentos: 1",
+          "hidden": false
+        },
+        {
+          "input": "3\n",
+          "expected": "Mova o disco 1 de A para C\nMova o disco 2 de A para B\nMova o disco 1 de C para B\nMova o disco 3 de A para C\nMova o disco 1 de B para A\nMova o disco 2 de B para C\nMova o disco 1 de A para C\nMovimentos: 7",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Movimentos: 0",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "cs-10",
+      "title": "Ordenação, busca binária e complexidade",
+      "theory": "# Algoritmos e o custo de executá-los\n\nNas aulas anteriores aprendemos a **escrever** programas. Agora vamos aprender a **comparar** programas: dois algoritmos corretos podem ter custos absurdamente diferentes quando a entrada cresce.\n\n## Notação Big-O\n\nMedir em segundos depende da máquina. Em vez disso contamos **operações básicas** em função do tamanho `n` da entrada, e olhamos só o termo que **domina** quando `n` é grande, ignorando constantes. Formalmente, `f(n) = O(g(n))` se existem constantes `c` e `n0` tais que `f(n) <= c·g(n)` para todo `n >= n0`.\n\n- `O(1)`: constante. Acessar `arr[i]`.\n- `O(log n)`: logarítmica. Cada passo **divide** o problema pela metade.\n- `O(n)`: linear. Percorrer o array uma vez.\n- `O(n log n)`: as boas ordenações (merge sort, e `Array.Sort` na prática).\n- `O(n²)`: quadrática. Dois laços aninhados sobre os dados.\n- `O(2^n)`: exponencial, como a Torre de Hanói da aula 9.\n\nPara `n = 1 000 000`: `log n` é cerca de 20, `n log n` cerca de 20 milhões, e `n²` é um trilhão. A escolha do algoritmo importa mais que a velocidade do computador.\n\n## Insertion sort\n\nA ideia é a de quem organiza cartas na mão: mantemos o início do array **ordenado** e inserimos cada novo elemento no lugar certo, deslocando os maiores uma posição para a direita.\n\n```csharp\nstatic void InsertionSort(int[] v)\n{\n    for (int i = 1; i < v.Length; i++)\n    {\n        int atual = v[i];\n        int j = i - 1;\n        while (j >= 0 && v[j] > atual)\n        {\n            v[j + 1] = v[j];\n            j--;\n        }\n        v[j + 1] = atual;\n    }\n}\n```\n\n**Invariante**: no início de cada volta, `v[0..i-1]` está ordenado. Ela vale no começo (um elemento sozinho está ordenado) e cada volta a mantém; ao final, `i == v.Length` e o array inteiro está ordenado. É assim que se **prova** que um algoritmo está correto.\n\n**Custo**: no pior caso (array em ordem decrescente) o laço interno roda `1 + 2 + ... + (n-1) = n(n-1)/2` vezes: **O(n²)**. No melhor caso (já ordenado) é **O(n)**. Ele é **estável** (iguais mantêm a ordem) e ordena **no lugar**, com memória extra O(1). Repare no `>` estrito: com `>=` ele deixaria de ser estável.\n\nArrays em C# são tipos de referência: o método altera o próprio array que recebeu.\n\n## Busca binária\n\nNum array **ordenado**, comparamos o alvo com o elemento do meio e descartamos metade a cada passo:\n\n```csharp\nint ini = 0, fim = v.Length - 1, achou = -1;\nwhile (ini <= fim)\n{\n    int meio = ini + (fim - ini) / 2;\n    if (v[meio] < alvo) ini = meio + 1;\n    else\n    {\n        if (v[meio] == alvo) achou = meio;\n        fim = meio - 1;   // continua procurando à esquerda\n    }\n}\n```\n\nEsta variante encontra a **primeira** ocorrência do alvo, mesmo com repetidos. Após `k` passos restam cerca de `n / 2^k` candidatos, então são no máximo cerca de `log2(n) + 1` passos: **O(log n)**. Um milhão de elementos: uns 20 passos, contra até um milhão da busca linear.\n\nPor que `ini + (fim - ini) / 2` e não `(ini + fim) / 2`? Porque a soma pode **estourar** o `int` em arrays enormes; um bug real que ficou anos em bibliotecas famosas.\n\n## Vale a pena ordenar para buscar?\n\nOrdenar custa O(n log n) (com um bom algoritmo) e cada busca depois custa O(log n). Para **uma** busca, a linear O(n) é mais barata. Para **muitas** buscas, ordenar uma vez compensa. Pensar assim é o coração da análise de algoritmos.\n\n## Erros comuns\n\n- Busca binária em array não ordenado: resultados sem sentido.\n- `while (ini < fim)` em vez de `<=`: perde o caso de um elemento.\n- Esquecer `j >= 0` no insertion sort: `IndexOutOfRangeException`.",
+      "task": "Leia três linhas:\n\n1. um inteiro `N` (N ≥ 0);\n2. os `N` inteiros separados por espaço (linha vazia se `N` for 0);\n3. um inteiro `alvo`.\n\nOrdene os números em ordem crescente **implementando o insertion sort** (não use `Array.Sort` nem LINQ) e mostre-os numa linha, separados por um espaço (se `N` for 0, mostre `(vazio)`). Depois, com **busca binária**, mostre `Posição: <índice>` com o índice (começando em 0) da **primeira** ocorrência do alvo no array ordenado, ou `Não encontrado`.\n\nExemplo: entrada `5`, `9 2 7 2 5`, `7` produz:\n\n```\n2 2 5 7 9\nPosição: 3\n```",
+      "starter": "class Program\n{\n    static void InsertionSort(int[] v)\n    {\n        // Escreva aqui o insertion sort\n    }\n\n    static int BuscaBinaria(int[] v, int alvo)\n    {\n        // Escreva aqui a busca binária (devolva -1 se não achar)\n        return -1;\n    }\n\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        string linha = Console.ReadLine() ?? \"\";\n        int alvo = int.Parse(Console.ReadLine());\n\n        string[] partes = linha.Split(' ', StringSplitOptions.RemoveEmptyEntries);\n        int[] v = new int[n];\n        for (int i = 0; i < n; i++) v[i] = int.Parse(partes[i]);\n\n        InsertionSort(v);\n        Console.WriteLine(n == 0 ? \"(vazio)\" : string.Join(\" \", v));\n\n        int pos = BuscaBinaria(v, alvo);\n        Console.WriteLine(pos >= 0 ? $\"Posição: {pos}\" : \"Não encontrado\");\n    }\n}",
+      "solution": "class Program\n{\n    static void InsertionSort(int[] v)\n    {\n        for (int i = 1; i < v.Length; i++)\n        {\n            int atual = v[i];\n            int j = i - 1;\n            while (j >= 0 && v[j] > atual)\n            {\n                v[j + 1] = v[j];\n                j--;\n            }\n            v[j + 1] = atual;\n        }\n    }\n\n    static int BuscaBinaria(int[] v, int alvo)\n    {\n        int ini = 0, fim = v.Length - 1, achou = -1;\n        while (ini <= fim)\n        {\n            int meio = ini + (fim - ini) / 2;\n            if (v[meio] < alvo)\n            {\n                ini = meio + 1;\n            }\n            else\n            {\n                if (v[meio] == alvo) achou = meio;\n                fim = meio - 1;\n            }\n        }\n        return achou;\n    }\n\n    static void Main()\n    {\n        int n = int.Parse(Console.ReadLine());\n        string linha = Console.ReadLine() ?? \"\";\n        int alvo = int.Parse(Console.ReadLine());\n\n        string[] partes = linha.Split(' ', StringSplitOptions.RemoveEmptyEntries);\n        int[] v = new int[n];\n        for (int i = 0; i < n; i++) v[i] = int.Parse(partes[i]);\n\n        InsertionSort(v);\n        Console.WriteLine(n == 0 ? \"(vazio)\" : string.Join(\" \", v));\n\n        int pos = BuscaBinaria(v, alvo);\n        Console.WriteLine(pos >= 0 ? $\"Posição: {pos}\" : \"Não encontrado\");\n    }\n}",
+      "hints": [
+        "No insertion sort, guarde `v[i]` em `atual` e desloque para a direita todos os anteriores maiores que ele.",
+        "Na busca binária, quando `v[meio] == alvo`, guarde o índice e continue procurando à esquerda (`fim = meio - 1`) para achar a primeira ocorrência.",
+        "Calcule o meio com `ini + (fim - ini) / 2`."
+      ],
+      "tests": [
+        {
+          "input": "5\n9 2 7 2 5\n7\n",
+          "expected": "2 2 5 7 9\nPosição: 3",
+          "hidden": false
+        },
+        {
+          "input": "4\n10 -3 8 1\n4\n",
+          "expected": "-3 1 8 10\nNão encontrado",
+          "hidden": false
+        },
+        {
+          "input": "0\n\n5\n",
+          "expected": "(vazio)\nNão encontrado",
+          "hidden": true
+        },
+        {
+          "input": "7\n4 4 4 1 4 9 4\n4\n",
+          "expected": "1 4 4 4 4 4 9\nPosição: 1",
+          "hidden": true
+        },
+        {
+          "input": "1\n42\n42\n",
+          "expected": "42\nPosição: 0",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    }
+  ]
+}
