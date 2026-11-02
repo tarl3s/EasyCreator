@@ -10,12 +10,12 @@ public static class CStdLib
 
     static void Need(CInterpreter ip, CVal[] a, int n, string fn)
     {
-        if (a.Length < n) throw ip.RtErr(fn + "() precisa de " + n + " argumento(s), mas recebeu " + a.Length);
+        if (a.Length < n) throw ip.RtErr(L.F("{0}() precisa de {1} argumento(s), mas recebeu {2}", fn, n, a.Length));
     }
 
     static long Ptr(CInterpreter ip, CVal v, string fn, int argNo)
     {
-        if (!v.T.IsPtr) throw ip.RtErr(fn + "(): o argumento " + argNo + " precisa ser um ponteiro/texto, mas é " + v.T);
+        if (!v.T.IsPtr) throw ip.RtErr(L.F("{0}(): o argumento {1} precisa ser um ponteiro/texto, mas é {2}", fn, argNo, v.T));
         return v.L;
     }
 
@@ -225,7 +225,7 @@ public static class CStdLib
             if (old != 0 && n != 0)
             {
                 long sz = ip.BlockSize(old);
-                if (sz < 0) throw ip.RtErr("realloc() recebeu um ponteiro que não veio de malloc");
+                if (sz < 0) throw ip.RtErr(L.T("realloc() recebeu um ponteiro que não veio de malloc"));
                 Array.Copy(ip.Mem, old, ip.Mem, n, Math.Min(sz, Math.Max(1, a[1].AsLong)));
                 ip.Free(old);
             }
@@ -233,7 +233,7 @@ public static class CStdLib
         });
         ip.AddNative("free", (ip, a) => { Need(ip, a, 1, "free"); ip.Free(a[0].L); return CVal.VoidV; });
         ip.AddNative("exit", (ip, a) => throw new CExit(a.Length > 0 ? (int)a[0].AsLong : 0));
-        ip.AddNative("abort", (ip, a) => throw ip.RtErr("o programa chamou abort()"));
+        ip.AddNative("abort", (ip, a) => throw ip.RtErr(L.T("o programa chamou abort()")));
         ip.AddNative("atoi", (ip, a) => { Need(ip, a, 1, "atoi"); return CVal.Int(ParseLeadingInt(Str(ip, a[0], "atoi", 1))); });
         ip.AddNative("atol", (ip, a) => { Need(ip, a, 1, "atol"); return CVal.LongV(ParseLeadingInt(Str(ip, a[0], "atol", 1))); });
         ip.AddNative("atof", (ip, a) =>
@@ -257,7 +257,7 @@ public static class CStdLib
         ip.AddNative("assert", (ip, a) =>
         {
             Need(ip, a, 1, "assert");
-            if (!a[0].IsTrue) throw ip.RtErr("assert falhou: a condição testada é falsa");
+            if (!a[0].IsTrue) throw ip.RtErr(L.T("assert falhou: a condição testada é falsa"));
             return CVal.VoidV;
         });
 
@@ -385,6 +385,7 @@ public static class CStdLib
                 case 'i':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
+                        NeedInteger(ip, v, fn, len, conv);
                         long x = v.AsLong;
                         if (len == "h") x = (short)x;
                         else if (len == "hh") x = (sbyte)x;
@@ -400,6 +401,7 @@ public static class CStdLib
                 case 'o':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
+                        NeedInteger(ip, v, fn, len, conv);
                         ulong x = (ulong)v.AsLong;
                         if (len == "h") x = (ushort)x;
                         else if (len == "hh") x = (byte)x;
@@ -423,6 +425,7 @@ public static class CStdLib
                 case 'G':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
+                        if (!v.T.IsFloat) throw ip.RtErr(L.F("{0}: %{1} espera um número com casas decimais (double), mas recebeu {2}. Use %d para inteiros ou converta com (double).", fn, len + conv, v.T));
                         double d = v.AsDouble;
                         if (prec < 0) prec = 6;
                         bool neg = d < 0 || (d == 0 && double.IsNegative(d));
@@ -436,6 +439,7 @@ public static class CStdLib
                 case 'c':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
+                        NeedInteger(ip, v, fn, len, conv);
                         body = ((char)(byte)v.AsLong).ToString();
                         numeric = false;
                         break;
@@ -443,7 +447,7 @@ public static class CStdLib
                 case 's':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
-                        if (!v.T.IsPtr) throw ip.RtErr(fn + ": %s precisa de um texto (char*), mas recebeu " + v.T);
+                        if (!v.T.IsPtr) throw ip.RtErr(L.F("{0}: %s precisa de um texto (char*), mas recebeu {1}", fn, v.T));
                         body = v.L == 0 ? "(null)" : ip.ReadCString(v.L, prec >= 0 ? prec : 1 << 20);
                         if (prec >= 0 && body.Length > prec) body = body[..prec];
                         numeric = false;
@@ -463,7 +467,7 @@ public static class CStdLib
                         continue;
                     }
                 default:
-                    throw ip.RtErr(fn + ": formato desconhecido '%" + conv + "'");
+                    throw ip.RtErr(L.F("{0}: formato desconhecido '%{1}'", fn, conv));
             }
             int total = sign.Length + body.Length;
             if (width > total)
@@ -480,10 +484,18 @@ public static class CStdLib
     static CVal NextArg(CInterpreter ip, CVal[] args, ref int argi, string fn, string fmt)
     {
         if (argi >= args.Length)
-            throw ip.RtErr(fn + ": o formato \"" + Escape(fmt) + "\" pede mais valores do que foram passados");
+            throw ip.RtErr(L.F("{0}: o formato \"{1}\" pede mais valores do que foram passados", fn, Escape(fmt)));
         var v = args[argi++];
-        if (v.T.K == TK.Struct || v.T.K == TK.Void) throw ip.RtErr(fn + ": não é possível imprimir um valor do tipo " + v.T);
+        if (v.T.K == TK.Struct || v.T.K == TK.Void) throw ip.RtErr(L.F("{0}: não é possível imprimir um valor do tipo {1}", fn, v.T));
         return v;
+    }
+
+    /// <summary>Integer conversions (%d %u %x %o %c) with a floating argument print garbage in real C (the bits are read
+    /// from the wrong place); the lessons warn about it, so the interpreter stops with an explanation instead.</summary>
+    static void NeedInteger(CInterpreter ip, CVal v, string fn, string len, char conv)
+    {
+        if (v.T.IsFloat)
+            throw ip.RtErr(L.F("{0}: %{1} espera um número inteiro, mas recebeu {2}. Use %f para números com casas decimais ou converta com (int).", fn, len + conv, v.T));
     }
 
     static string Escape(string s) => s.Replace("\n", "\\n").Replace("\t", "\\t");
@@ -501,33 +513,39 @@ public static class CStdLib
             case 'e':
                 {
                     var s = ExpFormat(ad, prec);
+                    if (alt && prec == 0) s = s.Insert(1, ".");
                     return char.IsUpper(conv) ? s.ToUpperInvariant() : s;
                 }
             default:
                 {
                     int p = prec == 0 ? 1 : prec;
-                    if (ad == 0) return alt ? "0." + new string('0', p - 1) : "0";
-                    string es = ExpFormat(ad, p - 1);
-                    int x = int.Parse(es[(es.IndexOf('e') + 1)..], Inv);
                     string r;
-                    if (x < p && x >= -4) r = ad.ToString("F" + (p - 1 - x), Inv);
-                    else r = es;
-                    if (!alt)
+                    if (ad == 0) r = p > 1 ? "0." + new string('0', p - 1) : "0";
+                    else
                     {
-                        int ePos = r.IndexOf('e');
-                        string mant = ePos >= 0 ? r[..ePos] : r, exp = ePos >= 0 ? r[ePos..] : "";
-                        if (mant.Contains('.')) mant = mant.TrimEnd('0').TrimEnd('.');
-                        r = mant + exp;
+                        // the exponent X is the one %e would show with P-1 digits (after rounding, as C requires)
+                        string es = ExpFormat(ad, p - 1);
+                        int x = int.Parse(es[(es.IndexOf('e') + 1)..], Inv);
+                        r = x < p && x >= -4 ? ad.ToString("F" + (p - 1 - x), Inv) : es;
                     }
+                    int ePos = r.IndexOf('e');
+                    string mant = ePos >= 0 ? r[..ePos] : r, exp = ePos >= 0 ? r[ePos..] : "";
+                    if (!alt) { if (mant.Contains('.')) mant = mant.TrimEnd('0').TrimEnd('.'); }
+                    else if (!mant.Contains('.')) mant += ".";
+                    r = mant + exp;
                     return char.IsUpper(conv) ? r.ToUpperInvariant() : r;
                 }
         }
     }
 
+    /// <summary>%e body "d.ddde+XX". The standard "e" format rounds the exact binary value (ties to even) like printf;
+    /// custom formats such as "0.00e+00" round a 15-digit approximation instead (2.675 gave 2.68e+00; C prints 2.67e+00).</summary>
     static string ExpFormat(double ad, int prec)
     {
-        var s = ad.ToString((prec > 0 ? "0." + new string('0', Math.Min(prec, 300)) : "0") + "e+00", Inv);
-        return s;
+        var s = ad.ToString("e" + Math.Min(prec, 300).ToString(Inv), Inv);   // d.ddde+XXX
+        int e = s.IndexOf('e');
+        string digits = s[(e + 2)..].TrimStart('0').PadLeft(2, '0');
+        return s[..(e + 2)] + digits;
     }
 
     // ======================= scanf =======================
@@ -623,17 +641,19 @@ public static class CStdLib
             int width = 0;
             while (i < fmt.Length && char.IsDigit(fmt[i])) { width = width * 10 + (fmt[i] - '0'); i++; }
             if (width == 0) width = int.MaxValue;
-            while (i < fmt.Length && "hlLzjq".IndexOf(fmt[i]) >= 0) i++;
+            string len = "";
+            while (i < fmt.Length && "hlLzjq".IndexOf(fmt[i]) >= 0) { len += fmt[i]; i++; }
             if (i >= fmt.Length) break;
             char conv = fmt[i];
             if (conv != 'c' && conv != '[' && conv != 'n') r.SkipWs();
             CVal target = default;
             if (!suppress && conv != 'n')
             {
-                if (argi >= args.Length) throw ip.RtErr(fn + ": o formato \"" + Escape(fmt) + "\" pede mais variáveis do que foram passadas");
+                if (argi >= args.Length) throw ip.RtErr(L.F("{0}: o formato \"{1}\" pede mais variáveis do que foram passadas", fn, Escape(fmt)));
                 target = args[argi++];
                 if (!target.T.IsPtr || target.L == 0)
-                    throw ip.RtErr(fn + ": o argumento " + argi + " precisa ser um endereço — você esqueceu o & antes da variável? (ex.: scanf(\"%d\", &x))");
+                    throw ip.RtErr(L.F("{0}: o argumento {1} precisa ser um endereço — você esqueceu o & antes da variável? (ex.: scanf(\"%d\", &x))", fn, argi));
+                CheckScanTarget(ip, fn, len, conv, target.T.Elem!);
             }
             if (r.AtEnd && conv != 'n') return count == 0 && !anyInput ? -1 : count;
             switch (conv)
@@ -689,7 +709,7 @@ public static class CStdLib
                 case '[':
                     {
                         int close = fmt.IndexOf(']', i + 2);
-                        if (close < 0) throw ip.RtErr(fn + ": %[ sem ]");
+                        if (close < 0) throw ip.RtErr(L.F("{0}: %[ sem ]", fn));
                         string set = fmt[(i + 1)..close];
                         i = close;
                         bool negate = set.StartsWith("^");
@@ -711,11 +731,63 @@ public static class CStdLib
                     if (!suppress && argi < args.Length) { var t = args[argi++]; if (t.T.IsPtr) StoreScanned(ip, t, CVal.LongV(r.Pos), fn); }
                     break;
                 default:
-                    throw ip.RtErr(fn + ": formato desconhecido '%" + conv + "'");
+                    throw ip.RtErr(L.F("{0}: formato desconhecido '%{1}'", fn, conv));
             }
         }
         return count;
     }
+
+    /// <summary>A scanf conversion that doesn't match the variable writes the wrong number of bytes in real C (the
+    /// value comes out as garbage, or a neighbour is overwritten). The lessons teach the matching pairs
+    /// (%d int, %ld long, %f float, %lf double, %c char, %s char[]), so a mismatch stops the program with the fix.</summary>
+    static void CheckScanTarget(CInterpreter ip, string fn, string len, char conv, CType et)
+    {
+        if (et.K == TK.Array) et = et.Elem!;
+        string spec = "%" + len + conv;
+        switch (conv)
+        {
+            case 'd': case 'i': case 'u': case 'x': case 'X': case 'o':
+                {
+                    if (!et.IsArith || et.K == TK.Bool) return;
+                    var want = len switch { "" => TK.Int, "h" => TK.Short, "hh" => TK.Char, _ => TK.Long };
+                    if (et.IsFloat)
+                        throw ip.RtErr(L.F("{0}: {1} lê um número inteiro, mas a variável é {2}. Para {2} use {3}.", fn, spec, et, ScanSpecFor(et, conv)));
+                    if (et.K != want)
+                        throw ip.RtErr(L.F("{0}: {1} não combina com uma variável {2}. Para {2} use {3}.", fn, spec, et, ScanSpecFor(et, conv)));
+                    return;
+                }
+            case 'f': case 'e': case 'g': case 'E': case 'G': case 'a':
+                {
+                    if (!et.IsArith || et.K == TK.Bool) return;
+                    if (et.IsInteger)
+                        throw ip.RtErr(L.F("{0}: {1} lê um número com casas decimais, mas a variável é {2}. Para {2} use {3}.", fn, spec, et, ScanSpecFor(et, 'd')));
+                    bool wantDouble = len is "l" or "L";
+                    if (et.K == TK.Double && !wantDouble)
+                        throw ip.RtErr(L.F("{0}: {1} lê um float, mas a variável é double. Para double use %l{2} (no printf, %f serve para os dois).", fn, spec, conv));
+                    if (et.K == TK.Float && wantDouble)
+                        throw ip.RtErr(L.F("{0}: {1} lê um double, mas a variável é float. Para float use %{2}.", fn, spec, conv));
+                    return;
+                }
+            case 'c':
+            case 's':
+            case '[':
+                if (et.K != TK.Char)
+                    throw ip.RtErr(conv == 'c'
+                        ? L.F("{0}: %c lê um caractere e precisa de uma variável char, mas a variável é {1}.", fn, et)
+                        : L.F("{0}: {1} lê um texto e precisa de um vetor de char (ex.: char nome[50];), mas recebeu {2}.", fn, "%" + conv, et));
+                return;
+        }
+    }
+
+    static string ScanSpecFor(CType t, char conv) => t.K switch
+    {
+        TK.Double => "%lf",
+        TK.Float => "%f",
+        TK.Char => "%c",
+        TK.Short => "%h" + conv,
+        TK.Long => "%l" + conv,
+        _ => "%" + conv
+    };
 
     static bool InSet(string set, char c)
     {
@@ -730,7 +802,7 @@ public static class CStdLib
     static void StoreScanned(CInterpreter ip, CVal ptr, CVal v, string fn)
     {
         var et = ptr.T.Elem!;
-        if (!et.IsArith) throw ip.RtErr(fn + ": não é possível ler um número para uma variável do tipo " + et);
+        if (!et.IsArith) throw ip.RtErr(L.F("{0}: não é possível ler um número para uma variável do tipo {1}", fn, et));
         ip.Store(ptr.L, et, v);
     }
 }

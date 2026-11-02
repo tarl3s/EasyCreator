@@ -117,6 +117,12 @@ public static partial class ArduinoTests
         new("rand com semente fixa é determinístico", "#include <stdlib.h>\nint main(){ srand(7); int a = rand(); srand(7); int b = rand(); printf(\"%d %d\\n\", a == b, a >= 0 && a <= RAND_MAX); return 0; }", "", "1 1"),
         new("exit", "#include <stdlib.h>\nint main(){ printf(\"antes\\n\"); exit(0); printf(\"depois\\n\"); return 0; }", "", "antes"),
         new("main sem return", "int main(){ printf(\"oi\\n\"); }", "", "oi"),
+        // printf rounds the exact binary value, ties to even (glibc and the Windows UCRT agree): 2.675 is really 2.67499…
+        new("printf %f/%e/%g arredondam como o C", "int main(){ printf(\"%.2f %.1f %.0f %.0f %.2f|%.2e %.1e %.0e %#.0e|%.3g %#g %g %.2g\\n\", 0.125, 2.25, 2.5, 3.5, 2.675, 2.675, 0.125, 2.5, 3.0, 1.005, 1.0, 0.0001, 99.5); return 0; }", "",
+            "0.12 2.2 2 4 2.67|2.67e+00 1.2e-01 2e+00 3.e+00|1 1.00000 0.0001 1e+02"),
+        // a local declared without a value holds garbage (like a real compiler), globals and statics start at zero
+        new("variável local sem valor tem lixo", "int g; int main(){ int x; char c; static int s; int v[2]; printf(\"%d %d %d %d %d\\n\", x, c, s, g, v[1]); return 0; }", "", "-858993460 -52 0 0 -858993460"),
+        new("variável no laço recebe valor antes de usar", "int main(){ int s = 0; for (int i = 0; i < 4; i++) { int t; t = i * 2; s += t; } printf(\"%d\\n\", s); return 0; }", "", "12"),
 
         // ---- errors (friendly messages) ----
         new("erro: ponto e vírgula", "int main(){\n  int x = 5\n  printf(\"%d\", x);\n  return 0;\n}", "", null, "linha 2"),
@@ -135,6 +141,14 @@ public static partial class ArduinoTests
         new("erro: printf com valores de menos", "int main(){ printf(\"%d %d\\n\", 1); return 0; }", "", null, "mais valores"),
         new("erro: string sem fechar", "int main(){ printf(\"oi); return 0; }", "", null, "não foi fechado"),
         new("erro: sem main", "int soma(int a, int b){ return a + b; }", "", null, "main"),
+        // format / variable mismatches print garbage in real C (the lessons warn about them): the interpreter explains
+        new("erro: printf %d com double", "int main(){ double m = 7.5; printf(\"%d\\n\", m); return 0; }", "", null, "%d espera um número inteiro"),
+        new("erro: printf %f com int", "int main(){ int a = 7, b = 2; printf(\"%.2f\\n\", a / b); return 0; }", "", null, "%f espera um número com casas decimais"),
+        new("erro: scanf %f em double", "int main(){ double d; scanf(\"%f\", &d); return 0; }", "1.5", null, "use %lf"),
+        new("erro: scanf %d em double", "int main(){ double d; scanf(\"%d\", &d); return 0; }", "1", null, "Para double use %lf"),
+        new("erro: scanf %d em long", "int main(){ long n; scanf(\"%d\", &n); return 0; }", "1", null, "use %ld"),
+        new("erro: scanf %s em int", "int main(){ int n; scanf(\"%s\", &n); return 0; }", "abc", null, "vetor de char"),
+        new("erro: ponteiro não inicializado", "int main(){ int *p; *p = 5; return 0; }", "", null, "não inicializado"),
     };
 
     static void RunCTests()

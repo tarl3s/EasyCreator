@@ -6,7 +6,7 @@ namespace EasyCreator.CInterp;
 public sealed class CRunner : ILanguageRunner
 {
     public string LanguageId => "c";
-    public string DisplayName => "C (embutido)";
+    public string DisplayName => L.T("C (embutido)");
     public bool IsExternal => false;
     public bool IsAvailable => true;
 
@@ -36,7 +36,7 @@ public sealed class CRunner : ILanguageRunner
         {
             ip.Compile(code ?? "");
             int exit = ip.RunMain();
-            string err = exit == 0 ? "" : "O programa terminou com código " + exit + " (return " + exit + " no main ou exit(" + exit + ")).";
+            string err = exit == 0 ? "" : L.F("O programa terminou com código {0} (return {0} no main ou exit({0})).", exit);
             return new RunResult(exit == 0, ip.Out.ToString(), err, sw.Elapsed);
         }
         catch (CError e)
@@ -45,20 +45,20 @@ public sealed class CRunner : ILanguageRunner
         }
         catch (CExit e)
         {
-            return new RunResult(e.Code == 0, ip.Out.ToString(), e.Code == 0 ? "" : "O programa terminou com código " + e.Code + ".", sw.Elapsed);
+            return new RunResult(e.Code == 0, ip.Out.ToString(), e.Code == 0 ? "" : L.F("O programa terminou com código {0}.", e.Code), sw.Elapsed);
         }
         catch (CHalt)
         {
-            return new RunResult(false, ip.Out.ToString(), "Execução interrompida.", sw.Elapsed);
+            return new RunResult(false, ip.Out.ToString(), L.T("Execução interrompida."), sw.Elapsed);
         }
         catch (InsufficientExecutionStackException)
         {
-            return new RunResult(false, ip.Out.ToString(), "Erro de execução (linha " + ip.Line + "): recursão profunda demais (estouro de pilha).", sw.Elapsed);
+            return new RunResult(false, ip.Out.ToString(), L.F("Erro de execução (linha {0}): recursão profunda demais (estouro de pilha).", ip.Line), sw.Elapsed);
         }
         catch (Exception e)
         {
             return new RunResult(false, ip.Out.ToString(),
-                "Erro interno do interpretador perto da linha " + ip.Line + ": " + e.Message + " (o seu programa pode usar algo ainda não suportado).", sw.Elapsed);
+                L.F("Erro interno do interpretador perto da linha {0}: {1} (o seu programa pode usar algo ainda não suportado).", ip.Line, e.Message), sw.Elapsed);
         }
     }
 }

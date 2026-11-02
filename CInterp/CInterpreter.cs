@@ -144,7 +144,7 @@ public sealed class CInterpreter
         var toks = CLexer.Tokenize(source ?? "", macros);
         var parser = new CParser(toks, this);
         try { parser.ParseProgram(); }
-        catch (InsufficientExecutionStackException) { throw new CError(Line, "o código tem blocos ou expressões aninhados demais", false); }
+        catch (InsufficientExecutionStackException) { throw new CError(Line, L.T("o código tem blocos ou expressões aninhados demais"), false); }
         StackBase = GlobalTop;
         StackLimit = StackBase + StackCells;
         SP = FP = StackBase;
@@ -168,7 +168,7 @@ public sealed class CInterpreter
     {
         InitGlobals();
         if (!Funcs.TryGetValue(name, out var f) || f.Body == null)
-            throw new CError(0, "a função " + name + "() não foi encontrada", false);
+            throw new CError(0, L.F("a função {0}() não foi encontrada", name), false);
         return CallFunc(f, args, f.Line);
     }
 
@@ -177,7 +177,7 @@ public sealed class CInterpreter
     {
         InitGlobals();
         if (!Funcs.TryGetValue("main", out var f) || f.Body == null)
-            throw new CError(0, "o programa precisa de uma função main()", false);
+            throw new CError(0, L.T("o programa precisa de uma função main()"), false);
         try
         {
             CVal[] args;
@@ -225,20 +225,18 @@ public sealed class CInterpreter
         _nextCheck = Steps + PeriodicEvery;
         Periodic?.Invoke();
         if (++_checkCount % 64 != 0) return;
-        if (Cancel.IsCancellationRequested) throw RtErr("execução cancelada");
+        if (Cancel.IsCancellationRequested) throw RtErr(L.T("execução cancelada"));
         if (Steps > MaxSteps)
-            throw RtErr("o programa executou passos demais (" + MaxSteps.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) +
-                        ") — provavelmente um laço infinito");
+            throw RtErr(L.F("o programa executou passos demais ({0}) — provavelmente um laço infinito", MaxSteps.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo(L.Lang == "en" ? "en-US" : L.Lang == "es" ? "es-ES" : "pt-BR"))));
         if (_clock.IsRunning && _clock.Elapsed > Timeout)
-            throw RtErr("o programa demorou demais (mais de " + Timeout.TotalSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) +
-                        " s) — provavelmente um laço infinito");
+            throw RtErr(L.F("o programa demorou demais (mais de {0} s) — provavelmente um laço infinito", Timeout.TotalSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)));
     }
 
     // ================= memory =================
     public void EnsureMem(long top)
     {
         if (top <= Mem.Length) return;
-        if (top > MemLimit) throw RtErr("memória esgotada (o programa usou memória demais)");
+        if (top > MemLimit) throw RtErr(L.T("memória esgotada (o programa usou memória demais)"));
         long n = Math.Max(top, Math.Min(MemLimit, (long)Mem.Length * 2));
         Array.Resize(ref Mem, (int)n);
     }
@@ -248,7 +246,7 @@ public sealed class CInterpreter
     {
         long a = GlobalTop;
         if (cells > MemLimit / 2 || GlobalTop + cells > MemLimit / 2)
-            throw new CError(Line, "variáveis globais grandes demais (o limite é de uns " + (MemLimit / 2 / 1_000_000) + " milhões de elementos)", false);
+            throw new CError(Line, L.F("variáveis globais grandes demais (o limite é de uns {0} milhões de elementos)", (MemLimit / 2 / 1_000_000)), false);
         GlobalTop += Math.Max(1, cells);
         EnsureMem(GlobalTop + 1);
         return a;
@@ -259,7 +257,7 @@ public sealed class CInterpreter
     {
         long a = SP;
         SP += Math.Max(1, cells);
-        if (SP > StackLimit) throw RtErr("estouro de pilha: variáveis locais grandes demais (use variáveis globais ou malloc)");
+        if (SP > StackLimit) throw RtErr(L.T("estouro de pilha: variáveis locais grandes demais (use variáveis globais ou malloc)"));
         EnsureMem(SP + 1);
         Array.Clear(Mem, (int)a, (int)(SP - a));
         return a;
@@ -281,8 +279,10 @@ public sealed class CInterpreter
 
     void BadAddr(long a)
     {
-        if (a == 0) throw RtErr("acesso a um ponteiro NULL (o ponteiro não aponta para nada)");
-        throw RtErr("acesso a um endereço de memória inválido (ponteiro ou índice fora da área válida)");
+        if (a == 0) throw RtErr(L.T("acesso a um ponteiro NULL (o ponteiro não aponta para nada)"));
+        if (Math.Abs(a - Junk) < 1 << 20)
+            throw RtErr(L.T("acesso por um ponteiro que nunca recebeu um endereço (ponteiro não inicializado: faça ele apontar para uma variável, um vetor ou um malloc antes de usar)"));
+        throw RtErr(L.T("acesso a um endereço de memória inválido (ponteiro ou índice fora da área válida)"));
     }
 
     public void CheckRange(long a, long cells)
@@ -300,7 +300,7 @@ public sealed class CInterpreter
             case TK.Struct: Read(a); return new CVal { T = t, L = a };
             case TK.Float:
             case TK.Double: return new CVal { T = t, D = BitConverter.Int64BitsToDouble(Read(a)) };
-            case TK.Void: throw RtErr("não é possível ler um valor do tipo void");
+            case TK.Void: throw RtErr(L.T("não é possível ler um valor do tipo void"));
             default: return new CVal { T = t, L = Read(a) };
         }
     }
@@ -311,13 +311,13 @@ public sealed class CInterpreter
         {
             case TK.Struct:
                 if (v.T.K != TK.Struct || v.T.S != t.S)
-                    throw RtErr("não é possível atribuir " + v.T + " a uma variável do tipo " + t);
+                    throw RtErr(L.F("não é possível atribuir {0} a uma variável do tipo {1}", v.T, t));
                 CheckRange(a, t.Cells);
                 CheckRange(v.L, t.Cells);
                 if (a != v.L) Array.Copy(Mem, v.L, Mem, a, t.Cells);
                 return new CVal { T = t, L = a };
             case TK.Array:
-                throw RtErr("não é possível atribuir um vetor inteiro de uma vez (copie elemento por elemento ou use strcpy)");
+                throw RtErr(L.T("não é possível atribuir um vetor inteiro de uma vez (copie elemento por elemento ou use strcpy)"));
             case TK.Float:
             case TK.Double:
                 {
@@ -329,17 +329,53 @@ public sealed class CInterpreter
                 Write(a, v.L);
                 return new CVal { T = t, L = v.L };
             case TK.Void:
-                throw RtErr("não é possível guardar um valor void");
+                throw RtErr(L.T("não é possível guardar um valor void"));
             default:
                 {
                     if (!v.T.IsScalar)
-                        throw RtErr("não é possível converter " + v.T + " para " + t);
+                        throw RtErr(L.F("não é possível converter {0} para {1}", v.T, t));
                     var c = Conv.To(v, t);
                     Write(a, c.L);
                     return c;
                 }
         }
     }
+
+    /// <summary>A local variable declared without a value holds whatever was in memory ("lixo"). Zeroed memory would
+    /// let a forgotten <c>int soma;</c> pass every test here and fail with a real compiler, so locals get the junk
+    /// pattern a Visual Studio debug build uses (0xCC bytes: int -858993460, char 'Ì', double -9.26e+61), and an
+    /// uninitialised pointer points nowhere valid.</summary>
+    public void FillGarbage(long a, CType t)
+    {
+        switch (t.K)
+        {
+            case TK.Array:
+                {
+                    long n = Math.Max(0, t.Len), cells = t.Elem!.Cells;
+                    if (n == 0 || cells == 0) return;
+                    CheckRange(a, n * cells);
+                    if (t.Elem.IsScalar) { Array.Fill(Mem, GarbageFor(t.Elem), (int)a, (int)(n * cells)); return; }
+                    for (long i = 0; i < n; i++) FillGarbage(a + i * cells, t.Elem);
+                    return;
+                }
+            case TK.Struct:
+                foreach (var f in t.S!.Fields) FillGarbage(a + f.Offset, f.T);
+                return;
+            default:
+                if (t.IsScalar) Write(a, GarbageFor(t));
+                return;
+        }
+    }
+
+    const long Junk = unchecked((long)0xCCCCCCCCCCCCCCCCUL);
+
+    static long GarbageFor(CType t) => t.K switch
+    {
+        TK.Float => BitConverter.DoubleToInt64Bits(BitConverter.Int32BitsToSingle(unchecked((int)0xCCCCCCCC))),
+        TK.Double or TK.Ptr => Junk,
+        TK.Bool => 1,
+        _ => Conv.Norm(Junk, t)
+    };
 
     // ---------- heap ----------
     public long Malloc(long bytes)
@@ -371,7 +407,7 @@ public sealed class CInterpreter
     {
         if (a == 0) return;
         if (!_heapBlocks.Remove(a, out long cells))
-            throw RtErr("free() recebeu um ponteiro que não veio de malloc (ou que já foi liberado)");
+            throw RtErr(L.T("free() recebeu um ponteiro que não veio de malloc (ou que já foi liberado)"));
         _freeBlocks.Add((a, cells));
     }
 
@@ -390,7 +426,7 @@ public sealed class CInterpreter
 
     public string ReadCString(long a, int max = 1 << 20)
     {
-        if (a == 0) throw RtErr("texto (char*) é NULL");
+        if (a == 0) throw RtErr(L.T("texto (char*) é NULL"));
         var sb = new StringBuilder();
         for (int i = 0; i < max; i++)
         {
@@ -418,7 +454,7 @@ public sealed class CInterpreter
 
     public void Print(string s)
     {
-        if (Out.Length + s.Length > MaxOutput) throw RtErr("o programa escreveu texto demais na saída");
+        if (Out.Length + s.Length > MaxOutput) throw RtErr(L.T("o programa escreveu texto demais na saída"));
         Out.Append(s);
         OnOutput?.Invoke(s);
     }
@@ -426,25 +462,25 @@ public sealed class CInterpreter
     // ================= calls =================
     internal CVal CallFunc(FuncDef f, CVal[] args, int line)
     {
-        if (f.Body == null) throw RtErr(line, "a função " + f.Name + "() foi declarada mas não foi escrita (falta o corpo { })");
+        if (f.Body == null) throw RtErr(line, L.F("a função {0}() foi declarada mas não foi escrita (falta o corpo {{ }})", f.Name));
         if (args.Length != f.Params.Count && !(f.Params.Count == 0 && f.OldStyle))
-            throw RtErr(line, "a função " + f.Name + "() espera " + f.Params.Count + " argumento(s), mas recebeu " + args.Length);
+            throw RtErr(line, L.F("a função {0}() espera {1} argumento(s), mas recebeu {2}", f.Name, f.Params.Count, args.Length));
         Step(line);
         if (!RuntimeHelpers.TryEnsureSufficientExecutionStack())
         {
             Depth = 0;
-            throw RtErr(line, "recursão profunda demais (estouro de pilha) — a função " + f.Name + "() chama a si mesma sem parar?");
+            throw RtErr(line, L.F("recursão profunda demais (estouro de pilha) — a função {0}() chama a si mesma sem parar?", f.Name));
         }
         if (++Depth > MaxDepth)
         {
             Depth = 0;
-            throw RtErr(line, "recursão profunda demais (estouro de pilha) — a função " + f.Name + "() chama a si mesma sem parar?");
+            throw RtErr(line, L.F("recursão profunda demais (estouro de pilha) — a função {0}() chama a si mesma sem parar?", f.Name));
         }
         long savedFP = FP, savedSP = SP;
         int savedLine = Line;
         FP = SP;
         SP += Math.Max(1, f.FrameCells);
-        if (SP > StackLimit) throw RtErr(line, "estouro de pilha: variáveis locais grandes demais ou recursão profunda");
+        if (SP > StackLimit) throw RtErr(line, L.T("estouro de pilha: variáveis locais grandes demais ou recursão profunda"));
         EnsureMem(SP + 1);
         Array.Clear(Mem, (int)FP, (int)(SP - FP));
         for (int i = 0; i < f.Params.Count && i < args.Length; i++)
@@ -460,14 +496,14 @@ public sealed class CInterpreter
         else if (f.Ret.K == TK.Struct)
         {
             if (ret.T == null || ret.T.K != TK.Struct || ret.T.S != f.Ret.S)
-                throw RtErr(line, "a função " + f.Name + "() deveria retornar " + f.Ret);
+                throw RtErr(line, L.F("a função {0}() deveria retornar {1}", f.Name, f.Ret));
             structCopy = new long[f.Ret.Cells];
             Array.Copy(Mem, ret.L, structCopy, 0, structCopy.Length);
         }
         else if (ret.T == null || ret.T.K == TK.Void) ret = Conv.To(CVal.Int(0), f.Ret);
         else
         {
-            if (!ret.T.IsScalar) throw RtErr(line, "a função " + f.Name + "() retornou um valor de tipo errado (" + ret.T + ")");
+            if (!ret.T.IsScalar) throw RtErr(line, L.F("a função {0}() retornou um valor de tipo errado ({1})", f.Name, ret.T));
             ret = Conv.To(ret, f.Ret);
         }
         FP = savedFP;
@@ -486,9 +522,9 @@ public sealed class CInterpreter
     // ================= operators =================
     public CVal BinOp(BinKind op, CVal a, CVal b, int line)
     {
-        if (a.T.K == TK.Void || b.T.K == TK.Void) throw RtErr(line, "não é possível usar um valor void em uma conta");
+        if (a.T.K == TK.Void || b.T.K == TK.Void) throw RtErr(line, L.T("não é possível usar um valor void em uma conta"));
         if (!a.T.IsScalar || !b.T.IsScalar)
-            throw RtErr(line, "operador " + BinText(op) + " não funciona com " + (!a.T.IsScalar ? a.T : b.T));
+            throw RtErr(line, L.F("operador {0} não funciona com {1}", BinText(op), (!a.T.IsScalar ? a.T : b.T)));
 
         // pointer arithmetic / comparison
         if (a.T.IsPtr || b.T.IsPtr)
@@ -498,24 +534,24 @@ public sealed class CInterpreter
                 case BinKind.Add:
                     if (a.T.IsPtr && b.T.IsInteger) return new CVal { T = a.T, L = a.L + b.L * ElemCells(a.T, line) };
                     if (b.T.IsPtr && a.T.IsInteger) return new CVal { T = b.T, L = b.L + a.L * ElemCells(b.T, line) };
-                    throw RtErr(line, "não é possível somar dois ponteiros");
+                    throw RtErr(line, L.T("não é possível somar dois ponteiros"));
                 case BinKind.Sub:
                     if (a.T.IsPtr && b.T.IsInteger) return new CVal { T = a.T, L = a.L - b.L * ElemCells(a.T, line) };
                     if (a.T.IsPtr && b.T.IsPtr) return new CVal { T = CType.Long, L = (a.L - b.L) / Math.Max(1, ElemCells(a.T, line)) };
-                    throw RtErr(line, "subtração inválida com ponteiro");
+                    throw RtErr(line, L.T("subtração inválida com ponteiro"));
                 case BinKind.Eq: return CVal.BoolV(a.L == b.L);
                 case BinKind.Ne: return CVal.BoolV(a.L != b.L);
                 case BinKind.Lt: return CVal.BoolV(a.L < b.L);
                 case BinKind.Le: return CVal.BoolV(a.L <= b.L);
                 case BinKind.Gt: return CVal.BoolV(a.L > b.L);
                 case BinKind.Ge: return CVal.BoolV(a.L >= b.L);
-                default: throw RtErr(line, "operador " + BinText(op) + " não funciona com ponteiros");
+                default: throw RtErr(line, L.F("operador {0} não funciona com ponteiros", BinText(op)));
             }
         }
 
         if (op == BinKind.Shl || op == BinKind.Shr)
         {
-            if (a.T.IsFloat || b.T.IsFloat) throw RtErr(line, "operadores << e >> só funcionam com inteiros");
+            if (a.T.IsFloat || b.T.IsFloat) throw RtErr(line, L.T("operadores << e >> só funcionam com inteiros"));
             var rt = a.T.Promoted;
             int n = (int)(b.L & 63);
             long r;
@@ -541,8 +577,8 @@ public sealed class CInterpreter
                 case BinKind.Le: return CVal.BoolV(x <= y);
                 case BinKind.Gt: return CVal.BoolV(x > y);
                 case BinKind.Ge: return CVal.BoolV(x >= y);
-                case BinKind.Mod: throw RtErr(line, "o operador % só funciona com inteiros (para float use fmod)");
-                default: throw RtErr(line, "o operador " + BinText(op) + " só funciona com inteiros");
+                case BinKind.Mod: throw RtErr(line, L.T("o operador % só funciona com inteiros (para float use fmod)"));
+                default: throw RtErr(line, L.F("o operador {0} só funciona com inteiros", BinText(op)));
             }
             if (t.K == TK.Float) r = (float)r;
             return new CVal { T = t, D = r };
@@ -558,12 +594,12 @@ public sealed class CInterpreter
                 case BinKind.Sub: r = unchecked(x - y); break;
                 case BinKind.Mul: r = unchecked(x * y); break;
                 case BinKind.Div:
-                    if (y == 0) throw RtErr(line, "divisão por zero");
+                    if (y == 0) throw RtErr(line, L.T("divisão por zero"));
                     if (u) r = (long)((ulong)x / (ulong)y);
                     else r = y == -1 ? unchecked(-x) : x / y;
                     break;
                 case BinKind.Mod:
-                    if (y == 0) throw RtErr(line, "resto da divisão (%) por zero");
+                    if (y == 0) throw RtErr(line, L.T("resto da divisão (%) por zero"));
                     if (u) r = (long)((ulong)x % (ulong)y);
                     else r = y == -1 ? 0 : x % y;
                     break;
@@ -576,7 +612,7 @@ public sealed class CInterpreter
                 case BinKind.Le: return CVal.BoolV(u ? (ulong)x <= (ulong)y : x <= y);
                 case BinKind.Gt: return CVal.BoolV(u ? (ulong)x > (ulong)y : x > y);
                 case BinKind.Ge: return CVal.BoolV(u ? (ulong)x >= (ulong)y : x >= y);
-                default: throw RtErr(line, "operador desconhecido");
+                default: throw RtErr(line, L.T("operador desconhecido"));
             }
             return new CVal { T = t, L = Conv.Norm(r, t) };
         }

@@ -170,15 +170,15 @@ public sealed class CircuitLab : ILab
         var stack = new StackPanel();
 
         var header = new DockPanel { Margin = new Thickness(0, 0, 0, 6), LastChildFill = true };
-        var run = Ui.Button(_mode == "tran" ? "▶ Simular" : "▶ Medir", Ui.Accent);
+        var run = Ui.Button(_mode == "tran" ? L.T("▶ Simular") : L.T("▶ Medir"), Ui.Accent);
         run.Padding = new Thickness(12, 5, 12, 5);
         run.Margin = new Thickness(8, 0, 0, 0);
         run.Click += (_, _) => Recompute(_mode == "tran", true);
         DockPanel.SetDock(run, Dock.Right);
         header.Children.Add(run);
         var titles = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
-        string mode = _mode switch { "tran" => "transitório", "ac" => $"corrente alternada", _ => "corrente contínua" };
-        var title = new TextBlock { FontSize = 14.5, Foreground = Ui.Text, FontWeight = FontWeights.SemiBold, Text = $"⚡ Simulador de circuitos · {mode}" };
+        string mode = _mode switch { "tran" => L.T("transitório"), "ac" => L.T("corrente alternada"), _ => L.T("corrente contínua") };
+        var title = new TextBlock { FontSize = 14.5, Foreground = Ui.Text, FontWeight = FontWeights.SemiBold, Text = L.F("⚡ Simulador de circuitos · {0}", mode) };
         titles.Children.Add(title);
         titles.Children.Add(_status);
         header.Children.Add(titles);
@@ -209,7 +209,7 @@ public sealed class CircuitLab : ILab
         _root.Child = stack;
     }
 
-    string AdjustLabel(Adjust a) => a.Elem == null ? "Frequência" : a.Elem.DisplayName;
+    string AdjustLabel(Adjust a) => a.Elem == null ? L.T("Frequência") : a.Elem.DisplayName;
 
     FrameworkElement Control(Adjust a)
     {
@@ -230,13 +230,13 @@ public sealed class CircuitLab : ILab
             b.Padding = new Thickness(10, 4, 10, 4);
             b.HorizontalAlignment = HorizontalAlignment.Left;
             b.Click += (_, _) => { Set(a, Get(a) != 0 ? 0 : 1); a.Refresh?.Invoke(); Changed(true); };
-            a.Refresh = () => b.Content = Get(a) != 0 ? "● fechada (conduz)" : "○ aberta (não conduz)";
+            a.Refresh = () => b.Content = Get(a) != 0 ? L.T("● fechada (conduz)") : L.T("○ aberta (não conduz)");
             body = b;
         }
         else if (a.Kind == "choice")
         {
             var combo = new ComboBox { FontSize = 13, MinWidth = 160, HorizontalAlignment = HorizontalAlignment.Stretch };
-            foreach (var (v, l) in a.Choices) combo.Items.Add(new ComboBoxItem { Content = l, Tag = v });
+            foreach (var (v, l) in a.Choices) combo.Items.Add(new ComboBoxItem { Content = L.T(l), Tag = v });
             bool quiet = false;
             combo.SelectionChanged += (_, _) =>
             {
@@ -356,13 +356,13 @@ public sealed class CircuitLab : ILab
         var m = new Dictionary<string, double>();
         try
         {
-            if (_net.Errors.Count > 0) _error = "Erro no circuito da lição: " + _net.Errors[0];
-            else if (_net.Elems.Count == 0) _error = "Esta lição não tem circuito.";
+            if (_net.Errors.Count > 0) _error = L.F("Erro no circuito da lição: {0}", _net.Errors[0]);
+            else if (_net.Elems.Count == 0) _error = L.T("Esta lição não tem circuito.");
             else if (_mode == "ac") RunAc(m);
             else if (_mode == "tran") RunTran(m);
             else RunDc(m);
         }
-        catch (Exception ex) { _error = "A simulação falhou: " + ex.Message; }
+        catch (Exception ex) { _error = L.F("A simulação falhou: {0}", ex.Message); }
         if (_error.Length > 0) m.Clear();
         _metrics = m;
         UpdateView();
@@ -455,7 +455,7 @@ public sealed class CircuitLab : ILab
         foreach (var t in _traces)
         {
             var f = Probe(sim, t, out var u);
-            if (f == null) { _error = $"Sonda desconhecida: {t}"; return; }
+            if (f == null) { _error = L.F("Sonda desconhecida: {0}", t); return; }
             series.Add((t, u, f, new List<double>(_steps + 1)));
         }
         var pf = _probe.Length > 0 ? Probe(sim, _probe, out _) : null;
@@ -474,24 +474,57 @@ public sealed class CircuitLab : ILab
         for (int i = 0; i < series.Count; i++)
             _scope.Data.Add(new ScopeView.Series { Name = series[i].name, Unit = series[i].unit, Color = ScopeView.Colors[i], Y = series[i].y.ToArray() });
         FillReal(sim, m);
-        if (py.Count > 2) ProbeMetrics(time, py, m);
+        _tauFit = false;
+        if (py.Count > 2) ProbeMetrics(time, py, m, out _tauFit);
     }
 
-    static void ProbeMetrics(List<double> t, List<double> y, Dictionary<string, double> m)
+    /// <summary>True when the last τ came from fitting an exponential (the curve had not settled yet).</summary>
+    bool _tauFit;
+
+    /// <summary>τ, Vfinal and, over the last 30 % of the run, Vmax/Vmin/Vavg/ripple of the probe trace.
+    /// τ is the time to 63.2 % of the change only when the trace has settled by the end; otherwise 63.2 % of an
+    /// unfinished change would give a τ that is too short (an RC of 0.47 s cut at 1 s read 0.38 s), so τ comes from the
+    /// exponential through the points at 0, T/2 and T — exact for a first-order step — and is left out when the curve is
+    /// not such an exponential.</summary>
+    static void ProbeMetrics(List<double> t, List<double> y, Dictionary<string, double> m, out bool fitted)
     {
-        double y0 = y[0], yF = y[^1];
+        fitted = false;
+        double y0 = y[0], yF = y[^1], T = t[^1];
         m["Vfinal"] = yF;
-        if (Math.Abs(yF - y0) > 1e-9 * (1 + Math.Abs(yF)))
+        double At(double time)
         {
-            double target = y0 + 0.632 * (yF - y0), sgn = Math.Sign(yF - y0);
-            for (int i = 1; i < y.Count; i++)
-                if ((y[i] - target) * sgn >= 0)
+            int i = t.FindIndex(x => x >= time);
+            if (i <= 0) return i == 0 ? y[0] : y[^1];
+            return y[i - 1] + (time - t[i - 1]) / (t[i] - t[i - 1]) * (y[i] - y[i - 1]);
+        }
+        double swing = yF - y0;
+        if (Math.Abs(swing) > 1e-9 * (1 + Math.Abs(yF)))
+        {
+            bool settled = Math.Abs(yF - At(0.9 * T)) <= 1e-3 * Math.Abs(swing);
+            if (settled)
+            {
+                double target = y0 + 0.632 * swing, sgn = Math.Sign(swing);
+                for (int i = 1; i < y.Count; i++)
+                    if ((y[i] - target) * sgn >= 0)
+                    {
+                        double a = y[i - 1], b = y[i];
+                        double frac = Math.Abs(b - a) < 1e-300 ? 0 : (target - a) / (b - a);
+                        m["tau"] = t[i - 1] + frac * (t[i] - t[i - 1]);
+                        break;
+                    }
+            }
+            else
+            {
+                // y = y∞ + (y0 − y∞)·e^(−t/τ): with q = e^(−T/2τ), (y(T) − y0) / (y(T/2) − y0) = 1 + q.
+                double half = At(T / 2) - y0, q = Math.Abs(half) < 1e-300 ? -1 : swing / half - 1;
+                if (q > 1e-9 && q < 1)
                 {
-                    double a = y[i - 1], b = y[i];
-                    double frac = Math.Abs(b - a) < 1e-300 ? 0 : (target - a) / (b - a);
-                    m["tau"] = t[i - 1] + frac * (t[i] - t[i - 1]);
-                    break;
+                    double tau = -T / 2 / Math.Log(q), full = half / (1 - q);
+                    // Only a first-order curve: the fit must also pass through the trace at T/4 and 3T/4.
+                    bool fits = new[] { 0.25, 0.75 }.All(k => Math.Abs(y0 + full * (1 - Math.Exp(-k * T / tau)) - At(k * T)) <= 0.01 * Math.Abs(full));
+                    if (fits) { m["tau"] = tau; fitted = true; }
                 }
+            }
         }
         int start = (int)(y.Count * 0.7);
         double max = double.MinValue, min = double.MaxValue, sum = 0;
@@ -506,7 +539,7 @@ public sealed class CircuitLab : ILab
         if (_sweep.Length > 0)
         {
             var pr = ProbeAc(sim, _sweep, out var unit);
-            if (pr == null) { _error = $"Sonda desconhecida: {_sweep}"; return; }
+            if (pr == null) { _error = L.F("Sonda desconhecida: {0}", _sweep); return; }
             const int N = 241;
             var xs = new double[N]; var ys = new double[N];
             double lmin = Math.Log10(Math.Max(_fmin, 1e-3)), lmax = Math.Log10(Math.Max(_fmax, _fmin * 10));
@@ -517,7 +550,7 @@ public sealed class CircuitLab : ILab
                 ys[i] = Complex.Abs(pr());
             }
             _scope.X = xs; _scope.LogX = true; _scope.XUnit = "Hz"; _scope.Marker = _f;
-            _scope.Data.Add(new ScopeView.Series { Name = _sweep + " × frequência", Unit = unit, Color = ScopeView.Colors[0], Y = ys });
+            _scope.Data.Add(new ScopeView.Series { Name = L.F("{0} × frequência", _sweep), Unit = unit, Color = ScopeView.Colors[0], Y = ys });
         }
         if (!sim.SolveAc(_f)) { _error = sim.Error; return; }
         FillAc(sim, m);
@@ -531,7 +564,7 @@ public sealed class CircuitLab : ILab
             for (int k = 0; k < _traces.Count; k++)
             {
                 var pr = ProbeAc(sim, _traces[k], out var unit);
-                if (pr == null) { _error = $"Sonda desconhecida: {_traces[k]}"; return; }
+                if (pr == null) { _error = L.F("Sonda desconhecida: {0}", _traces[k]); return; }
                 var ph = pr();
                 var ys = xs.Select(t => Math.Sqrt(2) * ph.Magnitude * Math.Cos(w * t + ph.Phase)).ToArray();
                 _scope.Data.Add(new ScopeView.Series { Name = _traces[k], Unit = unit, Color = ScopeView.Colors[k], Y = ys });
@@ -587,12 +620,12 @@ public sealed class CircuitLab : ILab
             case ElemKind.A: return _error.Length > 0 ? "—" : ac ? SI.Format(e.Iac.Magnitude, "A") : SI.Format(e.Id, "A");
             case ElemKind.V:
                 if (ac) return SI.Format(e.Value, "V") + (Math.Abs(e.PhaseDeg) > 0.01 ? $" ∠{e.PhaseDeg:0}°" : " ~");
-                if (e.Wave == "sin") return $"{SI.Format(e.Value, "V")} pico · {SI.Format(e.Freq, "Hz")}";
+                if (e.Wave == "sin") return L.F("{0} pico · {1}", SI.Format(e.Value, "V"), SI.Format(e.Freq, "Hz"));
                 if (e.Wave == "sq") return $"0–{SI.Format(e.Value, "V")} · {SI.Format(e.Freq, "Hz")}";
                 return SI.Format(e.Value, "V");
             case ElemKind.I: return SI.Format(e.Value, "A");
             case ElemKind.D: return e.Led ? "LED" : "";
-            case ElemKind.S: return e.On ? "fechada" : "aberta";
+            case ElemKind.S: return e.On ? L.T("fechada") : L.T("aberta");
             case ElemKind.W: return "";
             default: return SI.Format(e.Value, e.Unit);
         }
@@ -619,11 +652,11 @@ public sealed class CircuitLab : ILab
         }
         else
         {
-            _readout.Inlines.Add(new System.Windows.Documents.Run("🔎 Multímetro  ") { Foreground = Ui.TextDim });
+            _readout.Inlines.Add(new System.Windows.Documents.Run(L.T("🔎 Multímetro") + "  ") { Foreground = Ui.TextDim });
             _readout.Inlines.Add(new System.Windows.Documents.Run(MeterText()) { FontWeight = FontWeights.SemiBold });
         }
         _sch.InvalidateVisual();
-        _scope.Empty = _error.Length > 0 ? "⚠ sem resultado" : "Clique em ▶ para simular.";
+        _scope.Empty = _error.Length > 0 ? L.T("⚠ sem resultado") : L.T("Clique em ▶ para simular.");
         _scope.InvalidateVisual();
     }
 
@@ -632,23 +665,33 @@ public sealed class CircuitLab : ILab
         double Get(string k) => _metrics.TryGetValue(k, out var v) ? v : double.NaN;
         return _mode switch
         {
-            "ac" => $"f = {SI.Format(_f, "Hz")} · fator de potência {SI.Plain(Get("pf"))} · P = {SI.Format(Get("Ptotal"), "W")} · Q = {SI.Format(Get("Qtotal"), "var")}",
+            "ac" => L.F("f = {0} · fator de potência {1} · P = {2} · Q = {3}", SI.Format(_f, "Hz"), PfText(Get("pf"), Get("Qtotal")),
+                SI.Format(Get("Ptotal"), "W"), SI.Format(Get("Qtotal"), "var")),
             "tran" => TranStatus(),
-            _ => $"Potência fornecida pelas fontes: {SI.Format(Get("Ptotal"), "W")}",
+            _ => L.F("Potência fornecida pelas fontes: {0}", SI.Format(Get("Ptotal"), "W")),
         };
+    }
+
+    /// <summary>"0,80 indutivo" (current lagging, Q &gt; 0), "0,95 capacitivo" (leading, Q &lt; 0) or just "1,00".</summary>
+    static string PfText(double pf, double q)
+    {
+        string v = SI.Plain(pf);
+        if (double.IsNaN(pf) || pf > 0.9995) return v;
+        return q > 0 ? L.F("{0} indutivo", v) : L.F("{0} capacitivo", v);
     }
 
     /// <summary>Step responses (only DC sources) report τ; circuits driven by waves report average and ripple.</summary>
     string TranStatus()
     {
         double Get(string k) => _metrics.TryGetValue(k, out var v) ? v : double.NaN;
-        if (_probe.Length == 0) return $"Simulado de 0 a {SI.Format(_tstop, "s")}";
+        if (_probe.Length == 0) return L.F("Simulado de 0 a {0}", SI.Format(_tstop, "s"));
         string u = UnitOf(_probe);
         bool waves = _net.Elems.Any(e => e.IsSource && e.Wave != "dc");
-        if (waves) return $"{_probe} no fim: média {SI.Format(Get("Vavg"), u)} · ondulação {SI.Format(Get("ripple"), u)} (máx − mín)";
-        return _metrics.ContainsKey("tau")
-            ? $"{_probe}: τ (63,2 %) = {SI.Format(Get("tau"), "s")} · valor final {SI.Format(Get("Vfinal"), u)}"
-            : $"{_probe}: valor final {SI.Format(Get("Vfinal"), u)}";
+        if (waves) return L.F("{0} no fim: média {1} · ondulação {2} (máx − mín)", _probe, SI.Format(Get("Vavg"), u), SI.Format(Get("ripple"), u));
+        if (!_metrics.ContainsKey("tau")) return L.F("{0}: valor final {1}", _probe, SI.Format(Get("Vfinal"), u));
+        return _tauFit
+            ? L.F("{0}: τ ≈ {1} (estimado pela curva: ainda não estabilizou) · valor no fim {2}", _probe, SI.Format(Get("tau"), "s"), SI.Format(Get("Vfinal"), u))
+            : L.F("{0}: τ (63,2 %) = {1} · valor final {2}", _probe, SI.Format(Get("tau"), "s"), SI.Format(Get("Vfinal"), u));
     }
 
     /// <summary>" ∠-37,0°", or nothing for a (practically) zero phasor.</summary>
@@ -660,25 +703,26 @@ public sealed class CircuitLab : ILab
     {
         var sel = _sch.Selected ?? "";
         bool ac = _mode == "ac";
-        string when = _mode == "tran" ? $"  (em t = {SI.Format(_tstop, "s")})" : "";
+        string when = _mode == "tran" ? "  " + L.F("(em t = {0})", SI.Format(_tstop, "s")) : "";
         if (sel.StartsWith('@'))
         {
             var n = sel[1..];
             if (ac)
                 return _metrics.TryGetValue($"V({n})", out var vm)
-                    ? $"Nó {n}: {SI.Format(vm, "V")}{(vm < 1e-9 ? "" : $" ∠{SI.Plain(_metrics[$"ph({n})"], 1)}°")} (em relação ao terra)"
-                    : $"Nó {n}";
-            return _metrics.TryGetValue($"V({n})", out var v) ? $"Nó {n}: {SI.Format(v, "V")} em relação ao terra{when}" : $"Nó {n}";
+                    ? L.F("Nó {0}: {1} (em relação ao terra)", n, SI.Format(vm, "V") + (vm < 1e-9 ? "" : $" ∠{SI.Plain(_metrics[$"ph({n})"], 1)}°"))
+                    : L.F("Nó {0}", n);
+            return _metrics.TryGetValue($"V({n})", out var v) ? L.F("Nó {0}: {1} em relação ao terra", n, SI.Format(v, "V")) + when : L.F("Nó {0}", n);
         }
         var e = _net.Find(sel);
-        if (e == null) return "clique num nó ou componente do circuito para medir.";
+        if (e == null) return L.T("clique num nó ou componente do circuito para medir.");
+        // Sources report what they deliver (current out of +); every other part, what it absorbs.
+        string p = e.IsSource ? L.T("P fornecida") : "P", q = e.IsSource ? L.T("Q fornecida") : "Q";
         if (ac)
         {
             var s = e.Vac * Complex.Conjugate(e.Iac);
             return $"{e.DisplayName}: V = {SI.Format(e.Vac.Magnitude, "V")}{Ang(e.Vac)} · I = {SI.Format(e.Iac.Magnitude, "A")}{Ang(e.Iac)}"
-                + $" · P = {SI.Format(s.Real, "W")} · Q = {SI.Format(s.Imaginary, "var")}";
+                + $" · {p} = {SI.Format(s.Real, "W")} · {q} = {SI.Format(s.Imaginary, "var")}";
         }
-        string power = e.IsSource ? "P fornecida" : "P";
-        return $"{e.DisplayName}: V = {SI.Format(e.Vd, "V")} · I = {SI.Format(e.Id, "A")} · {power} = {SI.Format(e.Vd * e.Id, "W")}{when}";
+        return $"{e.DisplayName}: V = {SI.Format(e.Vd, "V")} · I = {SI.Format(e.Id, "A")} · {p} = {SI.Format(e.Vd * e.Id, "W")}{when}";
     }
 }

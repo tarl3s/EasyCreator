@@ -23,7 +23,7 @@ public sealed class Token
 
     public override string ToString() => K switch
     {
-        TokKind.EOF => "fim do arquivo",
+        TokKind.EOF => L.T("fim do arquivo"),
         TokKind.String => "\"" + Text + "\"",
         TokKind.Char => "'" + Text + "'",
         _ => Text
@@ -43,7 +43,9 @@ public sealed class CError : Exception
     }
 
     public string Friendly =>
-        (Runtime ? "Erro de execução" : "Erro de compilação") + (Line > 0 ? " (linha " + Line + ")" : "") + ": " + Msg;
+        Line > 0
+            ? L.F(Runtime ? "Erro de execução (linha {0}): {1}" : "Erro de compilação (linha {0}): {1}", Line, Msg)
+            : L.F(Runtime ? "Erro de execução: {0}" : "Erro de compilação: {0}", Msg);
 
     public override string ToString() => Friendly;
 }
@@ -96,7 +98,7 @@ public static class CLexer
             LexLine(line, lineNo, lineToks);
             Expand(lineToks, output, new HashSet<string>(), macros, lineNo);
         }
-        if (cond.Count > 0) throw Err(rawLines.Length, "faltou um #endif");
+        if (cond.Count > 0) throw Err(rawLines.Length, L.T("faltou um #endif"));
 
         // merge adjacent string literals
         var merged = new List<Token>(output.Count + 1);
@@ -139,7 +141,7 @@ public static class CLexer
                 }
             case "elif":
                 {
-                    if (cond.Count == 0) throw Err(line, "#elif sem #if");
+                    if (cond.Count == 0) throw Err(line, L.T("#elif sem #if"));
                     var top = cond.Pop();
                     bool v = !top.taken && top.parent && EvalIf(rest, line, macros) != 0;
                     cond.Push((top.parent, top.parent && v, top.taken || v));
@@ -147,13 +149,13 @@ public static class CLexer
                 }
             case "else":
                 {
-                    if (cond.Count == 0) throw Err(line, "#else sem #if");
+                    if (cond.Count == 0) throw Err(line, L.T("#else sem #if"));
                     var top = cond.Pop();
                     cond.Push((top.parent, top.parent && !top.taken, true));
                     return;
                 }
             case "endif":
-                if (cond.Count == 0) throw Err(line, "#endif sem #if");
+                if (cond.Count == 0) throw Err(line, L.T("#endif sem #if"));
                 cond.Pop();
                 return;
         }
@@ -166,7 +168,7 @@ public static class CLexer
             case "warning":
                 return;
             case "error":
-                throw Err(line, "#error " + rest);
+                throw Err(line, L.F("#error {0}", rest));
             case "undef":
                 macros.Remove(FirstIdent(rest));
                 return;
@@ -175,13 +177,13 @@ public static class CLexer
                     int j = 0;
                     while (j < rest.Length && (char.IsLetterOrDigit(rest[j]) || rest[j] == '_')) j++;
                     string mname = rest[..j];
-                    if (mname.Length == 0) throw Err(line, "#define precisa de um nome");
+                    if (mname.Length == 0) throw Err(line, L.T("#define precisa de um nome"));
                     var m = new Macro { Name = mname };
                     string body;
                     if (j < rest.Length && rest[j] == '(')
                     {
                         int close = rest.IndexOf(')', j);
-                        if (close < 0) throw Err(line, "#define com parênteses não fechados");
+                        if (close < 0) throw Err(line, L.T("#define com parênteses não fechados"));
                         m.Params = rest[(j + 1)..close].Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
                         body = rest[(close + 1)..];
                     }
@@ -191,7 +193,7 @@ public static class CLexer
                     return;
                 }
             default:
-                throw Err(line, "diretiva desconhecida #" + name);
+                throw Err(line, L.F("diretiva desconhecida #{0}", name));
         }
     }
 
@@ -311,10 +313,10 @@ public static class CLexer
                 if (depth == 0 && a.K == TokKind.Punct && a.Text == ",") { args.Add(cur); cur = new List<Token>(); continue; }
                 cur.Add(a);
             }
-            if (j >= src.Count) throw Err(t.Line, "chamada da macro " + m.Name + " sem ')' na mesma linha");
+            if (j >= src.Count) throw Err(t.Line, L.F("chamada da macro {0} sem ')' na mesma linha", m.Name));
             if (cur.Count > 0 || args.Count > 0) args.Add(cur);
             if (args.Count != m.Params.Count && !(m.Params.Count == 0 && args.Count == 0))
-                throw Err(t.Line, "a macro " + m.Name + " espera " + m.Params.Count + " argumento(s)");
+                throw Err(t.Line, L.F("a macro {0} espera {1} argumento(s)", m.Name, m.Params.Count));
             var expandedArgs = args.Select(a => { var o = new List<Token>(); Expand(a, o, active, macros, line); return o; }).ToList();
             var body = new List<Token>();
             foreach (var b in m.Body)
@@ -369,7 +371,7 @@ public static class CLexer
                     if (s[i] == '\n') { sb.Append('\n'); line++; }
                     i++;
                 }
-                if (i >= s.Length) throw Err(start, "comentário /* não foi fechado com */");
+                if (i >= s.Length) throw Err(start, L.T("comentário /* não foi fechado com */"));
                 i++;
                 continue;
             }
@@ -403,9 +405,9 @@ public static class CLexer
                 i++;
                 var sb = new StringBuilder();
                 while (i < s.Length && s[i] != '\'') sb.Append(ReadChar(s, ref i, line));
-                if (i >= s.Length) throw Err(line, "caractere entre aspas simples não foi fechado (falta ')");
+                if (i >= s.Length) throw Err(line, L.T("caractere entre aspas simples não foi fechado (falta ')"));
                 i++;
-                if (sb.Length == 0) throw Err(line, "caractere vazio ''");
+                if (sb.Length == 0) throw Err(line, L.T("caractere vazio ''"));
                 outList.Add(new Token { K = TokKind.Char, Text = sb.ToString(), I = (sbyte)(byte)sb[0], Line = line });
                 continue;
             }
@@ -414,7 +416,7 @@ public static class CLexer
                 i++;
                 var sb = new StringBuilder();
                 while (i < s.Length && s[i] != '"') sb.Append(ReadChar(s, ref i, line));
-                if (i >= s.Length) throw Err(line, "texto entre aspas não foi fechado (falta \")");
+                if (i >= s.Length) throw Err(line, L.T("texto entre aspas não foi fechado (falta \")"));
                 i++;
                 outList.Add(new Token { K = TokKind.String, Text = sb.ToString(), Line = line });
                 continue;
@@ -424,8 +426,8 @@ public static class CLexer
                 if (string.CompareOrdinal(s, i, cand, 0, cand.Length) == 0) { p = cand; break; }
             if (p == null)
             {
-                string hint = c is '“' or '”' or '‘' or '’' ? " (use aspas retas \" ou ')" : "";
-                throw Err(line, "caractere inválido '" + c + "'" + hint);
+                string hint = c is '“' or '”' or '‘' or '’' ? L.T(" (use aspas retas \" ou ')") : "";
+                throw Err(line, L.F("caractere inválido '{0}'{1}", c, hint));
             }
             outList.Add(new Token { K = TokKind.Punct, Text = p, Line = line });
             i += p.Length;
@@ -479,7 +481,7 @@ public static class CLexer
             i += 2;
             int ds = i;
             while (i < s.Length && Uri.IsHexDigit(s[i])) i++;
-            if (ds == i) throw Err(line, "número hexadecimal inválido");
+            if (ds == i) throw Err(line, L.T("número hexadecimal inválido"));
             t.I = (long)ulong.Parse(s[ds..i], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
         }
         else if (s[i] == '0' && i + 1 < s.Length && (s[i + 1] == 'b' || s[i + 1] == 'B'))
@@ -487,7 +489,7 @@ public static class CLexer
             i += 2;
             int ds = i;
             while (i < s.Length && (s[i] == '0' || s[i] == '1')) i++;
-            if (ds == i) throw Err(line, "número binário inválido");
+            if (ds == i) throw Err(line, L.T("número binário inválido"));
             t.I = Convert.ToInt64(s[ds..i], 2);
         }
         else
@@ -509,13 +511,13 @@ public static class CLexer
             }
             else if (num.Length > 1 && num[0] == '0')
             {
-                foreach (char ch in num) if (ch > '7') throw Err(line, "número octal inválido '" + num + "' (números começando com 0 são octais)");
+                foreach (char ch in num) if (ch > '7') throw Err(line, L.F("número octal inválido '{0}' (números começando com 0 são octais)", num));
                 t.I = Convert.ToInt64(num, 8);
             }
             else
             {
                 if (!ulong.TryParse(num, NumberStyles.None, CultureInfo.InvariantCulture, out var u))
-                    throw Err(line, "número grande demais: " + num);
+                    throw Err(line, L.F("número grande demais: {0}", num));
                 t.I = (long)u;
             }
         }
@@ -532,7 +534,7 @@ public static class CLexer
             i++;
         }
         if (i < s.Length && (char.IsLetterOrDigit(s[i]) || s[i] == '_'))
-            throw Err(line, "número mal escrito: '" + s[st..(i + 1)] + "'");
+            throw Err(line, L.F("número mal escrito: '{0}'", s[st..(i + 1)]));
         t.K = isFloat ? TokKind.Float : TokKind.Int;
         t.Text = s[st..i];
         return t;
