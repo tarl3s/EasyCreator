@@ -368,6 +368,344 @@
           "explanation": "The logarithm grows more and more slowly; besides, the heavier aeroplane stalls faster and needs more runway."
         }
       ]
+    },
+    "aero-11-planador": {
+      "title": "Glider: the best glide",
+      "theory": "# Flying without an engine\n\nA glider is always **descending** relative to the air: it trades height for speed. How far it goes for each metre it descends is the **glide ratio**, equal to the lift-to-drag ratio:\n\n```\ndistance = height × (L/D)\nsink rate = speed / (L/D)\n```\n\nWith L/D = 25, from 2000 m you can glide **50 km** in still air. Competition gliders exceed L/D 50; an ordinary plane manages 10–15.\n\n## The maximum L/D\n\nFrom the parabolic polar CD = CD0 + CL²/(π e AR):\n\n```\n(L/D)max = ½ × √(π × e × AR / CD0)\n```\n\nThree routes: high **aspect ratio** (long, slender wings → less induced drag), high **Oswald** factor (good lift distribution, well-made tips) and low **CD0** (smooth surfaces, slim fuselage, retracted gear).\n\n## But it must also fly slowly\n\nGliders climb in **thermals** — columns of warm air, sometimes only a few hundred metres across. To circle inside them, they must fly **slowly** without stalling: low **wing loading** (mass/area), which gives a low stall speed.\n\n## In this lab\n\nA **350 kg** glider (with pilot), 10 m² wing and CLmax 1.4. You can change the wing geometry and the area.",
+      "task": "Design the glider's wing to have a **(L/D)max of at least 25** and a **stall speed of up to 70 km/h** (to circle in thermals).",
+      "hints": [
+        "Aspect ratio matters most: take it near the maximum (16). Then improve Oswald and CD0.",
+        "With 10 m² the stall is at ~72 km/h. A bit more area solves it."
+      ],
+      "goals": [
+        "(L/D)max of at least 25",
+        "Stall at up to 70 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "A glider with **L/D = 25** is at **2000 m**, in still air. How far can it glide?",
+          "explanation": "2000 × 25 = 50 000 m = 50 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "Flying at **90 km/h** with L/D = **30**, what is the sink rate (how many m/s does it descend)?",
+          "explanation": "90 km/h = 25 m/s. 25 / 30 ≈ 0.83 m/s — any thermal stronger than that makes the glider climb.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "What is the (L/D)max of a wing with AR = **16**, e = **0.9** and CD0 = **0.016**?",
+          "explanation": "½ × √(π × 0.9 × 16 / 0.016) = ½ × √2827 ≈ 26.6.",
+          "unit": ""
+        }
+      ]
+    },
+    "aero-12-curvas-fator-carga": {
+      "title": "Turns and load factor",
+      "theory": "# Bank to turn\n\nA plane turns by **banking its wings** (bank angle φ). The lift, which was vertical, now has a horizontal part — that's what makes the turn. To keep its height, the vertical part must still equal the weight, so the total lift **increases**:\n\n```\nload factor  n = L / W = 1 / cos φ\n```\n\nAt 60° of bank, n = 2: the wings hold up **twice the weight**, and the pilot feels \"2 g\".\n\n## Stall speed rises in a turn\n\nThe stall speed grows with the square root of n:\n\n```\nV_stall,turn = V_stall × √n\n```\n\nA plane that stalls at 100 km/h in straight flight stalls at **~141 km/h** in a 60° turn. Tight, slow turns near the ground (as on the approach to land) are a classic cause of accidents.\n\n## Radius and rate of turn\n\n```\nradius   r = v² / (g × tan φ)\nrate     ω = g × tan φ / v\n```\n\nAt 50 m/s and 30° of bank: r ≈ **441 m** and ω ≈ **6.5 °/s**. The instruments' \"standard rate turn\" is **3 °/s** (360° in 2 minutes).\n\n## Structural limits\n\nEach plane has a certified maximum load factor: ~3.8 g for normal-category planes, 6 g for aerobatic ones. Going beyond can bend or break the structure. Gusts also produce load factor: that's why there is a maximum speed for turbulent air.",
+      "questions": [
+        {
+          "prompt": "What is the load factor in a level turn at **60°** of bank?",
+          "explanation": "n = 1 / cos 60° = 1 / 0.5 = 2.",
+          "unit": "g"
+        },
+        {
+          "prompt": "A plane stalls at **100 km/h** in straight flight. At what speed does it stall in a **60°** turn?",
+          "explanation": "V = 100 × √2 ≈ 141 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "What is the radius of a turn at **50 m/s** with **30°** of bank? (g = 9.81 m/s²)",
+          "explanation": "r = 50² / (9.81 × tan 30°) = 2500 / (9.81 × 0.577) ≈ 441 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "In that turn (50 m/s, 30°), what is the rate of turn in degrees per second?",
+          "explanation": "ω = 9.81 × 0.577 / 50 = 0.113 rad/s ≈ 6.5 °/s.",
+          "unit": "°/s"
+        },
+        {
+          "prompt": "Why is a tight, slow turn near the ground dangerous?",
+          "options": [
+            "Because the engine loses power",
+            "Because the wind is always stronger near the ground",
+            "Because the bank raises the stall speed, and there's no height to recover",
+            "Because the plane becomes heavier"
+          ],
+          "explanation": "With n > 1 the stall happens at a higher speed; if it comes near the ground, there's no height left to recover from the spin."
+        }
+      ]
+    },
+    "aero-13-teto": {
+      "title": "Rate of climb and service ceiling",
+      "theory": "# Climbing is spare power\n\nA plane climbs when the available power exceeds the power needed for level flight. The **rate of climb** is the excess divided by the weight:\n\n```\nRC = (P_available − P_required) / W\n```\n\nWith 30 kW of excess and 1100 kg: RC = 30 000 / (1100 × 9.81) ≈ **2.8 m/s**.\n\n## Why the climb runs out\n\nWith altitude the air becomes less dense (σ = ρ/ρ0):\n\n- A normally aspirated piston engine loses power roughly in proportion to σ. At 6000 m, σ ≈ 0.54: of 120 kW, ~65 kW remain.\n- The plane has to fly **faster** for the same lift, and induced drag (which dominates in slow flight) weighs more.\n\nAt some point the excess reaches zero: that's the **absolute ceiling**. In practice one uses the **service ceiling**, where the rate of climb falls to **0.5 m/s** (100 ft/min).\n\n## How to climb higher\n\n- **More power** (or a turbocharger, which keeps the power up to a certain altitude).\n- **High-aspect-ratio wing**: up high the flight is \"slow\" for the density, and induced drag rules — long wings reduce it. That's why high-altitude aircraft (U-2, wave gliders) have huge, slender wings.\n- **Less weight**.\n\n## In this lab\n\nA 1000 kg plane + 100 kg of fuel, 16 m² wing, propeller efficiency 0.8, 120 kW normally aspirated engine. The ceiling is computed with the engine losing power with density.",
+      "task": "The plane must cross a mountain range: **service ceiling of at least 8500 m** and **rate of climb of at least 8 m/s** at sea level. Adjust the **power**, the **aspect ratio**, the **mass** and the **wing area**.",
+      "hints": [
+        "Power alone works, but it's expensive: with 180 kW the ceiling passes 8500 m. See how much aspect ratio helps.",
+        "With AR 10, about 150 kW is enough."
+      ],
+      "goals": [
+        "Service ceiling of at least 8500 m",
+        "Rate of climb of at least 8 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "An **1100 kg** plane has **30 kW** of spare power. What is its rate of climb? (g = 9.81 m/s²)",
+          "explanation": "RC = 30 000 / (1100 × 9.81) ≈ 2.78 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "By the standard atmosphere, at 6000 m σ = ((288.15 − 0.0065 × 6000) / 288.15)^4.256. How much power is left of a **120 kW** normally aspirated engine (power ∝ σ)?",
+          "explanation": "T = 249.15 K; σ = (249.15/288.15)^4.256 ≈ 0.539. P ≈ 120 × 0.539 ≈ 64.6 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "Why do high-aspect-ratio wings help to climb higher?",
+          "options": [
+            "Because they weigh less",
+            "Because in thin air induced drag dominates, and long wings reduce it",
+            "Because they increase engine power",
+            "Because they cut the stall speed to zero"
+          ],
+          "explanation": "Up high the plane needs a high CL to stay up, and induced drag ∝ CL²/AR grows: more AR, less power required."
+        }
+      ]
+    },
+    "aero-14-curva-potencia": {
+      "title": "The power curve: minimum drag and minimum power",
+      "theory": "# U-shaped drag\n\nTotal drag in level flight has two parts that go in opposite directions:\n\n- **Parasite** (friction, form): grows with v².\n- **Induced** (the cost of making lift): falls with 1/v² — flying slowly requires a high CL.\n\nThe sum has a **minimum**. With the polar CD = CD0 + k CL² (k = 1/(π e AR)):\n\n```\n(L/D)max = 1 / (2 √(k × CD0))\nD_min = W / (L/D)max\nV_md = √(2W / (ρ S)) × (k / CD0)^(1/4)\n```\n\nAt the **minimum-drag** speed V_md, parasite and induced drag are **equal**. It's the speed of **best glide** and of **maximum range** for jet aircraft (with thrust, fuel burn follows drag).\n\n## Power is not drag\n\nThe power required is P = D × v. Since v multiplies, the minimum of power happens **slower**:\n\n```\nV_mp = V_md / 3^(1/4) ≈ 0.76 × V_md\n```\n\nAt the **minimum-power** speed the plane stays aloft longest on the same fuel (**maximum endurance** for a propeller plane) and sinks slowest when gliding.\n\n## The back side of the curve\n\nBelow V_mp, flying **slower takes more power** — counter-intuitive. On a slow approach, if the pilot pulls the nose up to \"stretch\" the glide, the plane slows down, needs more power and sinks more.\n\n## Example\n\nW = 10 000 N, S = 15 m², CD0 = 0.03, k = 0.05, ρ = 1.225: (L/D)max ≈ 12.9; D_min ≈ 775 N; V_md ≈ 37.5 m/s; P ≈ 29 kW; V_mp ≈ 28.5 m/s.",
+      "questions": [
+        {
+          "prompt": "What is the (L/D)max of a plane with CD0 = **0.03** and k = **0.05**?",
+          "explanation": "1 / (2 √(0.05 × 0.03)) = 1 / (2 × 0.0387) ≈ 12.9.",
+          "unit": ""
+        },
+        {
+          "prompt": "With a weight of **10 000 N**, what is this plane's minimum drag?",
+          "explanation": "D = W / (L/D)max = 10 000 / 12.91 ≈ 775 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "With S = **15 m²** and ρ = **1.225 kg/m³**, at what speed does that minimum drag occur? (V_md = √(2W/(ρS)) × (k/CD0)^(1/4))",
+          "explanation": "√(20 000 / 18.375) = 32.99 m/s; (0.05/0.03)^0.25 = 1.136. V_md ≈ 37.5 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "And the **minimum-power** speed (V_mp = V_md / 3^(1/4))?",
+          "explanation": "37.49 / 1.316 ≈ 28.5 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Below the minimum-power speed (\"back side of the curve\"), flying slower…",
+          "options": [
+            "Takes **more** power",
+            "Takes less power",
+            "Doesn't change the power",
+            "Reduces induced drag"
+          ],
+          "explanation": "There, induced drag grows faster than the speed falls. Pulling the nose up on a slow approach only makes it worse."
+        }
+      ]
+    },
+    "aero-15-alcance-jato": {
+      "title": "Jet: range, altitude and cruise speed",
+      "theory": "# Breguet for jets\n\nIn a jet, fuel burn is proportional to **thrust** (TSFC: kg of fuel per N of thrust per second). Breguet's range equation becomes:\n\n```\nR = (V / (g × TSFC)) × (L/D) × ln(W0 / W1)\n```\n\nNote the **V multiplying**: unlike the propeller plane, the jet gains range by flying **faster**, as long as L/D doesn't drop too much. The optimum is a bit above the minimum-drag speed.\n\n## Why jets fly high\n\nIn thin air, the same CL (and the same L/D) happens at a higher **true** speed: V ∝ 1/√ρ. At 11 000 m, ρ ≈ 0.36 kg/m³ — the plane flies ~1.8 times faster with the same drag. Since R ∝ V × L/D, range grows. Also, the jet engine becomes more efficient in cold air.\n\nThe limit is the **speed of sound**: near Mach 0.8–0.85 shock waves appear and drag soars. That's why airliners cruise at ~10–12 km, at ~850 km/h.\n\n## Example\n\nV = 200 m/s, TSFC = 18 g/(kN·s) = 1.8 × 10⁻⁵ kg/(N·s), L/D = 15, W0/W1 = 1.3:\n\nR = 200 / (9.81 × 1.8 × 10⁻⁵) × 15 × ln 1.3 ≈ **4457 km**.\n\n## In this lab\n\nA business jet of 6000 kg empty with **3000 kg** of fuel, 30 m² wing, AR 8, TSFC 18 g/(kN·s). The range only counts if the plane can cruise (enough thrust and CL below 90% of the maximum).",
+      "task": "Cruising at 500 km/h and 3000 m the jet doesn't reach 4000 km. Choose the cruise **altitude** and **speed** to exceed **6500 km** of range.",
+      "hints": [
+        "Climb first: near 11 000 m the range grows a lot.",
+        "Up there, try speeds between 600 and 800 km/h and see where the range is largest."
+      ],
+      "goals": [
+        "Range of at least 6500 km",
+        "Can hold the cruise"
+      ],
+      "questions": [
+        {
+          "prompt": "Breguet for a jet with V = **200 m/s**, TSFC = **1.8 × 10⁻⁵ kg/(N·s)**, L/D = **15** and W0/W1 = **1.3**. What is the range? (g = 9.81 m/s²)",
+          "explanation": "200 / (9.81 × 1.8 × 10⁻⁵) = 1 132 600 m; × 15 × ln 1.3 (0.2624) ≈ 4 457 000 m ≈ 4457 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "How many hours does the jet take to fly **6000 km** at **700 km/h**?",
+          "explanation": "6000 / 700 ≈ 8.57 h.",
+          "unit": "h"
+        },
+        {
+          "prompt": "Why does a jet gain range by flying high?",
+          "options": [
+            "Because gravity is weaker",
+            "Because the fuel weighs less",
+            "Because in thin air it flies faster at the same L/D, and range is proportional to V × L/D",
+            "Because there is no wind up there"
+          ],
+          "explanation": "Same CL and same drag, but a higher true V: more kilometres for the same fuel (up to the Mach limit)."
+        }
+      ]
+    },
+    "aero-16-peso-balanceamento": {
+      "title": "Weight and balance: the loaded CG and the tail",
+      "theory": "# Where is the CG after loading?\n\nThe CG changes with **passengers, baggage and fuel**. Before each flight the pilot computes the CG by the **moment** method (mass × arm, measured from a datum):\n\n```\nx_CG = Σ (m × x) / Σ m\n```\n\nA 600 kg empty plane at 2.0 m, an 80 kg pilot at 1.5 m and 100 kg of fuel at 2.2 m:\n\nx_CG = (1200 + 120 + 220) / 780 ≈ **1.974 m**.\n\n## As % of the mean chord (MAC)\n\nIf the MAC starts at 1.5 m and is 1.5 m long: (1.974 − 1.5) / 1.5 ≈ **31.6% MAC**.\n\n## The neutral point and the tail\n\nThe plane is stable if the CG is **ahead of the neutral point** (lesson 6). In this model the neutral point is at 25% MAC (the wing's aerodynamic centre) plus the effect of the tail:\n\n```\nneutral point = 25% + 40.5% × VH\nstatic margin = neutral point − CG\n```\n\nVH is the **tail volume** (stabiliser area × arm / (wing area × MAC)). A bigger or farther tail → neutral point further back → more margin.\n\n## A good margin\n\n- **Below ~5%**: barely stable, tiring to fly (and unstable if negative).\n- **Above ~15–20%**: too stable, the elevator may lack the authority to flare for landing.\n\n## In this lab\n\nWith today's load, the CG ended up at **40% MAC** — further aft than the original design expected. Resize the tail.",
+      "task": "With the CG at **40% MAC**, the plane became unstable. Adjust the **tail volume** so the static margin ends up **between 5% and 15%**.",
+      "hints": [
+        "Neutral point = 25 + 40.5 × VH. For a 10% margin, it must sit at 50%.",
+        "VH between ~0.50 and ~0.74 works."
+      ],
+      "goals": [
+        "Static margin between 5% and 15%"
+      ],
+      "questions": [
+        {
+          "prompt": "A **600 kg** empty plane with its CG at **2.0 m**, an **80 kg** pilot at **1.5 m** and **100 kg** of fuel at **2.2 m** from the datum. Where is the CG?",
+          "explanation": "(600 × 2.0 + 80 × 1.5 + 100 × 2.2) / 780 = 1540 / 780 ≈ 1.974 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "The MAC starts at **1.5 m** from the datum and is **1.5 m** long. At what percentage of the MAC is that CG?",
+          "explanation": "(1.974 − 1.5) / 1.5 ≈ 0.316 → 31.6% MAC.",
+          "unit": "%"
+        },
+        {
+          "prompt": "With VH = **0.6** and the CG at **40%**, what is the static margin? (neutral point = 25% + 40.5% × VH)",
+          "explanation": "Neutral point = 25 + 24.3 = 49.3%. Margin = 49.3 − 40 = 9.3%.",
+          "unit": "%"
+        }
+      ]
+    },
+    "aero-17-helicoptero-altitude": {
+      "title": "Helicopter in the mountains: hover ceiling",
+      "theory": "# Thin air charges you twice\n\nTo hover, the rotor throws air downwards. By momentum theory, the ideal power is:\n\n```\nP_ideal = T^1.5 / √(2 ρ A)\n```\n\nWith altitude, ρ falls and the **required** power grows with 1/√ρ: at 3000 m (σ ≈ 0.742), ~**16% more**. At the same time, the normally aspirated engine loses **available** power roughly in proportion to σ: 200 kW become ~**148 kW**. The two curves cross at the **hover ceiling**.\n\n## The blades have a limit too\n\nRotor thrust is also limited by **blade stall**: the thrust coefficient per solidity CT/σ doesn't go above ~0.13. In thin air, the blades need more pitch for the same thrust and stall earlier.\n\n```\nsolidity σ = (number of blades × chord) / (π × R)\n```\n\nMore blades or wider blades = more blade area = more thrust before stall.\n\n## What raises the ceiling\n\n- **A bigger rotor** (larger A → less power per newton of thrust, as in lesson 8).\n- **More power** (or turbines, which lose less with altitude).\n- **More solidity** (blades) against stall.\n- But the **blade tip** must not exceed ~0.65–0.7 Mach (noise, shock waves).\n\n## Mountain rescue\n\nRescue helicopters operate at 3000–5000 m in the Andes and the Himalayas — and that's why they fly light, with minimum fuel, and prefer to land \"running\" (with forward speed) rather than hover.\n\n## In this lab\n\nAn 1100 kg helicopter with a 4 m rotor, 2 blades, 400 rpm and a 150 kW engine.",
+      "task": "The helicopter will do rescues in a mountain range: **hover ceiling of at least 2500 m**, **vertical climb of at least 5 m/s** at sea level and blade tip **up to Mach 0.65**. Adjust the **engine**, the **rotor**, the **blades** and the **rpm**.",
+      "hints": [
+        "With a 4 m rotor it can't even hover: the small rotor needs too much power and the blades stall. Increase the radius to 5 m.",
+        "Then use 3 blades and ~200 kW. Check the tip Mach: 400 rpm with 5 m gives ~0.62."
+      ],
+      "goals": [
+        "Hover ceiling of at least 2500 m",
+        "Vertical climb of at least 5 m/s",
+        "Blade tip up to Mach 0.65"
+      ],
+      "questions": [
+        {
+          "prompt": "A rotor needs **100 kW** (ideal) to hover at sea level. How much does it need at 3000 m, where σ = ρ/ρ0 = **0.742**? (P ∝ 1/√ρ)",
+          "explanation": "100 / √0.742 ≈ 116 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "And how much is left at 3000 m of a **200 kW** normally aspirated engine (available power ∝ σ)?",
+          "explanation": "200 × 0.742 = 148.4 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "What is the solidity of a **3-blade** rotor with a **0.25 m** chord and a **2.5 m** radius? (σ = b × c / (π R))",
+          "explanation": "σ = 3 × 0.25 / (π × 2.5) = 0.75 / 7.854 ≈ 0.0955.",
+          "unit": ""
+        }
+      ]
+    },
+    "aero-18-rotor-avanco": {
+      "title": "The rotor in forward flight: the advancing and the retreating blade",
+      "theory": "# Two blades, two speeds\n\nIn a hover, every blade sees the same wind: Ω × R at the tip. Flying forward at speed V:\n\n- The **advancing blade** sees Ω R **+** V.\n- The **retreating blade** sees Ω R **−** V.\n\nWith the tip at 220 m/s and V = 70 m/s (252 km/h), the advancing tip reaches **290 m/s (Mach 0.85)** and the retreating one drops to **150 m/s**.\n\n## Dissymmetry of lift\n\nIf the blades had a fixed pitch, the advancing side would lift much more and the helicopter would **roll over**. The solution, by Juan de la Cierva (autogyro, 1920s), is the **flapping hinge**: the advancing blade rises (flaps up), which lowers its effective angle of attack; the retreating one drops and gains angle. The **cyclic swashplate** also adjusts each blade's pitch around the revolution.\n\n## Advance ratio\n\n```\nμ = V / (Ω R)\n```\n\nWith μ ≈ 0.3, the helicopter is already near its limit.\n\n## Speed limits\n\n- **Retreating-blade stall**: to make up for its low speed, it needs a lot of pitch — and stalls. Strong vibration, roll towards the retreating side.\n- **Compressibility on the advancing blade**: near Mach 0.9 shock waves, noise and drag appear.\n- At the root of the retreating blade there is even a region of **reverse flow**.\n\nThat's why conventional helicopters stay below ~300 km/h. To go further: **rigid coaxial rotors with a pusher propeller** (X3, SB-1), or the **tilt-rotor** (V-22), which becomes an aeroplane in cruise.\n\n## Solidity\n\nσ = b c / (π R): 4 blades of 0.5 m on a 7 m rotor give σ ≈ 0.091.",
+      "questions": [
+        {
+          "prompt": "The blade tip spins at **220 m/s** and the helicopter flies at **70 m/s**. What is the advancing tip's Mach number? (sound at 340 m/s)",
+          "explanation": "(220 + 70) / 340 = 290 / 340 ≈ 0.85.",
+          "unit": "Mach"
+        },
+        {
+          "prompt": "And the airspeed at the tip of the **retreating** blade?",
+          "explanation": "220 − 70 = 150 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "What is the advance ratio μ = V / (ΩR) in that flight?",
+          "explanation": "μ = 70 / 220 ≈ 0.32.",
+          "unit": ""
+        },
+        {
+          "prompt": "What is the solidity of a **4-blade** rotor with a **0.5 m** chord and a **7 m** radius?",
+          "explanation": "σ = 4 × 0.5 / (π × 7) = 2 / 21.99 ≈ 0.091.",
+          "unit": ""
+        },
+        {
+          "prompt": "What limits the top speed of a conventional helicopter?",
+          "options": [
+            "The weight of the tail rotor",
+            "Retreating-blade stall and compressibility on the advancing blade",
+            "Always a lack of engine power",
+            "The drag of the cabin"
+          ],
+          "explanation": "Too fast, the retreating blade needs too much pitch and stalls, while the advancing tip nears the speed of sound."
+        }
+      ]
+    },
+    "aero-19-autorrotacao": {
+      "title": "Autorotation: designing a rotor that saves lives",
+      "theory": "# Without an engine, the rotor becomes a parachute\n\nIf the engine quits, the pilot **lowers the collective**: the air coming up through the disc keeps the rotor turning (lesson 9), and the rotor brakes the descent like a parachute. The descent rate settles at:\n\n```\nv_descent ≈ √(2 W / (ρ × A × 1.2))\n```\n\nA 1600 kg helicopter with a 5.6 m rotor comes down at ~**14.7 m/s** (almost 53 km/h): too fast to touch the ground.\n\n## The flare\n\nNear the ground, the pilot **raises the collective**: the blades gain pitch and use the **rotational energy** stored in the rotor to brake the descent. The available energy is:\n\n```\nE = ½ × I × Ω² × (1 − 0.7²)\n```\n\n(the rotor can lose up to ~30% of its rpm before the blades stall; with I = 8 × blades × chord × R³ in this model). If this energy exceeds the descent's kinetic energy (½ m v²), the touchdown is soft.\n\n## What makes a good autorotation rotor\n\n- **A large rotor**: descends more slowly (larger A) **and** stores much more energy (I ∝ R³).\n- **Heavy/wide blades** and more blades: more inertia.\n- **High rpm**: energy ∝ Ω², but the **tip** must not exceed ~Mach 0.65.\n\nThere's a trade-off: high inertia makes the rotor slow to spin up and respond; light rotors are agile but lose rpm quickly after a failure.\n\n## In this lab\n\nA **1600 kg** helicopter, 4.5 m rotor, 2 blades of 0.25 m at 450 rpm. It comes down too fast and has no energy for the flare.",
+      "task": "Redesign the rotor so an engine failure ends in a **safe landing** (touchdown at up to 3 m/s), with an **autorotation descent of up to 15 m/s** and blade tip **up to Mach 0.65**.",
+      "safety": "- Practice autorotations are done **with an instructor**, at a safe height and over a prepared landing area; most end with a \"power recovery\" before touchdown.\n- Know the model's **height–velocity diagram** (\"dead man's curve\"): some combinations of low height and low speed don't allow a safe landing after an engine failure.",
+      "hints": [
+        "To come down at 15 m/s with 1600 kg the rotor needs ~95 m² of disc: a radius of ~5.5 m.",
+        "With a bigger radius, lower the rpm so the tip stays under Mach 0.65 (5.6 m at ~370 rpm)."
+      ],
+      "goals": [
+        "Safe landing (touchdown at up to 3 m/s)",
+        "Autorotation descent of up to 15 m/s",
+        "Blade tip up to Mach 0.65"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the autorotation descent rate of a **1600 kg** helicopter with a **5.6 m** rotor radius? (v = √(2W/(ρ A 1.2)), ρ = 1.225, g = 9.81)",
+          "explanation": "W = 15 696 N; A = π × 5.6² = 98.5 m². v = √(31 392 / (1.225 × 98.5 × 1.2)) ≈ 14.7 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "That rotor has 2 blades with a **0.25 m** chord and spins at **370 rpm**. What is its rotational energy ½ I Ω², with I = 8 × blades × chord × R³?",
+          "explanation": "I = 8 × 2 × 0.25 × 5.6³ = 702.5 kg·m². Ω = 370 × 2π/60 = 38.75 rad/s. E = ½ × 702.5 × 38.75² ≈ 527 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "If the rotor can lose up to **30%** of its rpm during the flare, what percentage of its rotational energy can be used?",
+          "explanation": "Energy goes with Ω²: 0.7² = 49% remains. 1 − 0.49 = 51% can be used.",
+          "unit": "%"
+        }
+      ]
+    },
+    "aero-20-projeto-mato": {
+      "title": "Final project: a short-field plane for remote regions",
+      "theory": "# The plane that connects places with no road\n\n**Short-field** planes (\"bush planes\") carry doctors, vaccines and cargo to isolated places — in the Amazon, the Andes, Alaska. The requirements pull in opposite directions:\n\n- **Take off short and at altitude** (lessons 4, 5): low **wing loading**, **flaps**, power.\n- **Go far** (lesson 10): high **L/D** — a high-aspect-ratio wing —, enough fuel and an efficient cruise.\n- **Climb well** after takeoff to clear hills (lesson 13).\n- **Land slowly** and safely: low stall speed.\n\n## Wing loading\n\n```\nwing loading = mass / wing area\n```\n\nA 920 kg plane with a 16 m² wing has 57.5 kg/m². The stall speed comes from V = √(2W / (ρ S CLmax)); with 20° flaps (CLmax 1.5 + 0.45 = 1.95): **~78 km/h**.\n\n## The trade-offs\n\n- A **bigger** wing lowers the stall and the ground roll, but adds wetted area and lowers the cruise L/D.\n- **Full** flaps (30°) give the highest CL, but also lots of drag: on takeoff, acceleration drops. 10–20° is usually best for takeoff; 30° for landing.\n- **More fuel** increases range, but weighs: higher stall, longer roll.\n\n## In this lab\n\nA 700 kg empty plane, **130 kW** engine (fixed), CLmax 1.5, a **300 m** runway at **1500 m** altitude, cruise at 200 km/h and 2000 m.",
+      "task": "Close the design: take off and clear 15 m **within 220 m** on the runway at 1500 m, **stall at up to 80 km/h**, **range of at least 2200 km** and **climb of at least 7 m/s**. Choose the **wing area and aspect ratio**, the **takeoff flaps** and the **fuel**.",
+      "hints": [
+        "Start with the stall: with 14 m² and no flaps it's above 90 km/h. About 16 m² and 20° of flaps fix the stall and the takeoff.",
+        "For range, raise the aspect ratio (~9) and carry ~220 kg of fuel. Check the stall stays below 80 km/h."
+      ],
+      "goals": [
+        "Takes off within the runway",
+        "Clears 15 m within 220 m",
+        "Stall at up to 80 km/h",
+        "Range of at least 2200 km",
+        "Climb of at least 7 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the wing loading of a **920 kg** plane with a **16 m²** wing?",
+          "explanation": "920 / 16 = 57.5 kg/m².",
+          "unit": "kg/m²"
+        },
+        {
+          "prompt": "With a CLmax of **1.95** (20° flaps), what is this plane's stall speed (920 kg, 16 m², ρ = 1.225, g = 9.81)?",
+          "explanation": "V = √(2 × 9025 / (1.225 × 16 × 1.95)) = √472.3 ≈ 21.7 m/s ≈ 78.2 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "Why are 20° flaps usually better than the full 30° for takeoff?",
+          "options": [
+            "Because 30° reduces lift",
+            "Because 30° adds a lot of drag and the plane accelerates and climbs worse",
+            "Because flaps only work for landing",
+            "Because 30° raises the stall speed"
+          ],
+          "explanation": "The last stage of flap adds little extra CL and a lot of drag: great for slowing down on landing, bad for accelerating and climbing."
+        }
+      ]
     }
   }
 }

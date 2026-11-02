@@ -390,6 +390,383 @@
         "El paracaídas se abre a 50 m/s como máximo",
         "Aterrizaje a 10 m/s como máximo"
       ]
+    },
+    "rkt-11-agua-otima": {
+      "title": "Cohete de agua: botella más grande y el punto óptimo",
+      "theory": "# La energía está en el aire, la masa está en el agua\n\nEn un cohete de agua, el **aire comprimido guarda la energía** y el **agua es la masa que se lanza hacia atrás**. Ambos compiten por el mismo espacio dentro de la botella:\n\n- **Poca agua**: sobra aire, pero el agua se acaba en centésimas de segundo y el cohete recibe poco \"empujón\".\n- **Demasiada agua**: el aire se expande poco antes de que caiga la presión, y el cohete aún carga agua pesada que apenas salió.\n\nEl punto óptimo está cerca de **1/3 del volumen** — y cambia con el tamaño de la botella, la presión y la tobera.\n\n## Empuje y velocidad de salida\n\nCon la presión manométrica ΔP en una tobera de área A:\n\n```\nvelocidad del agua  v = √(2 × ΔP / ρ)\nempuje              F = 2 × A × ΔP\n```\n\nCon 5 bar en una tobera de 22 mm: v ≈ 31,6 m/s y F ≈ 380 N — ¡más de 100 g de aceleración en un cohete ligero!\n\n## Por qué la botella más grande sube más\n\nLa energía guardada en el aire crece con **presión × volumen**. Una botella de 3 L a la misma presión guarda un 50% más de energía, y el aire pierde presión más despacio mientras empuja el agua. La aceleración máxima, sin embargo, llega al **final** del empuje, cuando la botella está ligera — por eso también hay que cuidar la **carga** (un huevo, una cámara) que va en la nariz.\n\n## En este laboratorio\n\nLa botella ahora es de **3 L** (misma tobera de 22 mm). La masa vacía, la nariz y las aletas son las mismas de la lección 1.",
+      "task": "Con la botella de **3 L**, supera los **60 m** de apogeo sin que la aceleración máxima pase de **100 g** (la cámara en la nariz no aguanta más). Ajusta la **presión** y el **agua**.",
+      "safety": "- Las botellas de **3 L** guardan más energía: las mismas reglas valen con aún más rigor — solo PET de refresco con gas, **como máximo 6 bar**, disparador a distancia y **gafas**.\n- Nunca presurices una botella empalmada (dos botellas unidas) sin una prueba hidrostática con agua antes.\n- Todos a **al menos 10 m**, fuera de la línea de vuelo.",
+      "hints": [
+        "Empieza con 5 bar y prueba el agua de 0,2 en 0,2 L. Anota el apogeo y la aceleración máxima de cada intento.",
+        "Un tercio de 3 L es 1 L. Más agua hace el cohete más pesado al final del empuje — y la aceleración máxima baja."
+      ],
+      "goals": [
+        "Apogeo de al menos 60 m",
+        "Aceleración máxima de hasta 100 g"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es el empuje inicial de un cohete de agua con tobera de **22 mm** de diámetro a **5 bar** (F = 2 × A × ΔP)?",
+          "explanation": "A = π × 0,011² = 3,80 × 10⁻⁴ m². F = 2 × 3,80 × 10⁻⁴ × 500 000 ≈ 380 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Con **5 bar** de presión manométrica, ¿a qué velocidad sale el agua de la tobera? (v = √(2 × ΔP / ρ), ρ = 1000 kg/m³)",
+          "explanation": "v = √(2 × 500 000 / 1000) = √1000 ≈ 31,6 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Por qué la aceleración máxima **disminuye** cuando pones más agua (con la misma presión)?",
+          "options": [
+            "Porque el agua baja la presión inicial",
+            "Porque, mientras el empuje aún es fuerte, todavía hay mucha agua pesada a bordo",
+            "Porque el agua agranda la tobera",
+            "Porque la gravedad es mayor con más agua"
+          ],
+          "explanation": "a = F / m. Con más agua, el aire se ha expandido más y la presión ya bajó cuando la botella queda ligera; el pico de F/m es menor."
+        }
+      ]
+    },
+    "rkt-12-estavel-demais": {
+      "title": "Demasiado estable: el efecto veleta y el precio de las aletas",
+      "theory": "# Más estabilidad no siempre es mejor\n\nEn la lección de estabilidad vimos que el **CG debe estar delante del CP**, con un margen de **1 a 2 calibres**. ¿Por qué no poner de una vez aletas enormes y mucho peso en la nariz, \"para asegurar\"?\n\n## El efecto veleta (weathercocking)\n\nCuando el cohete sale de la base con viento lateral, el aire llega un poco de lado. Las aletas giran la nariz **hacia el viento**, como una veleta. Cuanto **mayor el margen**, más fuerte esa corrección: un cohete con 4 calibres de margen puede girar 20° o 30° contra el viento, volar bajo y caer lejos.\n\n## El costo de las aletas y del lastre\n\n- **Aletas grandes** aumentan el área mojada y el arrastre de fricción (sube el Cd).\n- **Peso en la nariz** es masa extra que el motor tiene que levantar.\n\nAmbos **roban altura**. El buen diseño tiene el margen **suficiente**, no el máximo.\n\n## Calibres\n\n```\nmargen (calibres) = (CP − CG) / diámetro\n```\n\nUn cohete de 30 mm con el CP a 380 mm y el CG a 290 mm de la punta tiene un margen de 90 / 30 = **3 calibres** — demasiado estable para la mayoría de los vuelos.\n\n## En este laboratorio\n\nEl cohete (25 mm, 400 mm, motor C6) vino de otro club con aletas enormes y 20 g de plastilina en la nariz. Devuelve el margen al rango bueno y recupera la altura.",
+      "task": "Deja el margen de estabilidad **entre 1 y 2 calibres** y haz que el cohete supere los **400 m** de apogeo, cambiando la **envergadura de las aletas** y el **peso en la nariz**.",
+      "safety": "- Un cohete **demasiado estable** gira contra el viento (\"veleta\") y puede volar bajo y lejos: **no lances con viento de más de ~30 km/h** e inclina la base como mucho unos pocos grados **a favor** del viento.\n- Mantén la zona de caída libre de personas y coches.",
+      "hints": [
+        "Quita primero el peso de la nariz: solo cuesta altura si el cohete ya es estable.",
+        "Después reduce las aletas poco a poco y observa el margen: por debajo de ~22 mm cae bajo 1 calibre."
+      ],
+      "goals": [
+        "Margen de estabilidad entre 1 y 2 calibres",
+        "Apogeo de al menos 400 m"
+      ],
+      "questions": [
+        {
+          "prompt": "Un cohete de **30 mm** tiene el CP a **380 mm** y el CG a **290 mm** de la punta. ¿Cuál es el margen de estabilidad?",
+          "explanation": "(380 − 290) / 30 = 3 calibres: demasiado estable, hará efecto veleta con viento lateral.",
+          "unit": "calibres"
+        },
+        {
+          "prompt": "Con viento lateral, un cohete demasiado estable…",
+          "options": [
+            "Vuela recto, sin notar el viento",
+            "Gira a favor del viento",
+            "Gira la nariz contra el viento y vuela inclinado",
+            "Empieza a dar vueltas sobre sí mismo y cae"
+          ],
+          "explanation": "Las aletas alinean el cohete con el viento relativo, que llega un poco de lado: la nariz apunta al viento. Cuanto mayor el margen, mayor el desvío."
+        },
+        {
+          "prompt": "Un cohete de **41 mm** de diámetro debe tener **1,5 calibres** de margen. ¿Cuántos milímetros por delante del CP debe estar el CG?",
+          "explanation": "1,5 × 41 = 61,5 mm.",
+          "unit": "mm"
+        }
+      ]
+    },
+    "rkt-13-bocal": {
+      "title": "La tobera: convertir presión en velocidad",
+      "theory": "# Para qué sirve la tobera\n\nEn la cámara de combustión los gases están **calientes y a alta presión**, pero casi quietos. La tobera convierte esa presión en **velocidad de salida**: cuanto más rápido sale el gas, mayor el empuje por kilo de propulsante (el Isp).\n\n## Convergente–divergente (de Laval)\n\nLa tobera de un cohete se **estrecha** hasta la **garganta** y después se **abre** de nuevo:\n\n- En la parte convergente el gas acelera hasta la **velocidad del sonido** justo en la garganta (flujo **bloqueado** — el caudal depende solo de la presión de cámara y del área de la garganta).\n- En la parte divergente, un gas **supersónico** hace lo contrario de lo que dice la intuición: al **abrirse** el tubo **acelera** aún más, mientras la presión y la temperatura bajan.\n\nLa **relación de expansión** es ε = A_salida / A_garganta.\n\n## El empuje completo\n\n```\nF = ṁ × ve + (pe − pa) × Ae\n```\n\n- ṁ: caudal másico; ve: velocidad de salida;\n- pe: presión a la salida de la tobera; pa: presión ambiente; Ae: área de salida.\n\nEl segundo término es el **empuje de presión**. A nivel del mar (pa ≈ 1 bar), una tobera que suelta el gas a 0,5 bar pierde empuje (**sobreexpandida**); en el vacío (pa = 0) la misma tobera gana empuje. Por eso un motor tiene un **Isp a nivel del mar** menor que su **Isp en el vacío**, y los motores de etapas superiores usan toberas enormes.\n\n## Diseño ideal\n\nLa tobera ideal tiene pe = pa. Como la presión del aire baja durante el ascenso, ninguna tobera fija es ideal todo el tiempo: las de la 1ª etapa son un compromiso; las de la 2ª, optimizadas para el vacío. Una tobera demasiado sobreexpandida en tierra puede sufrir **desprendimiento del flujo** y vibrar.",
+      "questions": [
+        {
+          "prompt": "En la parte **divergente** de la tobera (después de la garganta), el gas supersónico…",
+          "options": [
+            "Se frena, porque el tubo se ensancha",
+            "Acelera, mientras la presión y la temperatura bajan",
+            "Mantiene la velocidad y solo se enfría",
+            "Vuelve a ser subsónico"
+          ],
+          "explanation": "En flujo supersónico, aumentar el área hace que el gas acelere (lo contrario del subsónico). Por eso la tobera se abre después de la garganta."
+        },
+        {
+          "prompt": "Un motor tiene ṁ = **100 kg/s**, ve = **2500 m/s**, presión de salida **0,5 bar** y área de salida **0,5 m²**. ¿Cuál es el empuje a nivel del mar (pa = 101 325 Pa)?",
+          "explanation": "F = 100 × 2500 + (50 000 − 101 325) × 0,5 = 250 000 − 25 662 ≈ 224 300 N. La tobera está sobreexpandida a nivel del mar.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Y el mismo motor en el **vacío** (pa = 0)?",
+          "explanation": "F = 250 000 + 50 000 × 0,5 = 275 000 N. Sin aire fuera, el empuje de presión pasa a ayudar.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Cuál es el **Isp en el vacío** de este motor? (Isp = F / (ṁ × g0), g0 = 9,80665 m/s²)",
+          "explanation": "Isp = 275 000 / (100 × 9,80665) ≈ 280 s. A nivel del mar sería solo ≈ 229 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "La garganta tiene **0,2 m** de diámetro y la salida **0,8 m**. ¿Cuál es la relación de expansión ε = A_salida / A_garganta?",
+          "explanation": "El área crece con el cuadrado del diámetro: (0,8 / 0,2)² = 4² = 16.",
+          "unit": ""
+        }
+      ]
+    },
+    "rkt-14-propelentes": {
+      "title": "Propulsantes: sólidos, líquidos e híbridos",
+      "theory": "# Qué se quema en un cohete\n\nUn cohete lleva **combustible y oxidante** (no usa el oxígeno del aire). Hay tres familias:\n\n- **Sólido**: combustible y oxidante mezclados en un bloque (el \"grano\"). Simple, se guarda por años, mucho empuje — pero **no se puede apagar ni regular** una vez encendido. Ej.: motores de cohetería modelo, boosters laterales. Isp típico 250–270 s.\n- **Líquido**: dos tanques y bombas (o presurización). Se puede **regular, apagar y volver a encender**. Ej.: queroseno + oxígeno líquido (RP-1/LOX, Isp ~300–340 s), metano/LOX (~330–360 s), hidrógeno/LOX (~450 s).\n- **Híbrido**: combustible sólido (caucho, parafina) y oxidante líquido o gaseoso. Más seguro que el sólido y más simple que el líquido; Isp intermedio.\n\n## Relación de mezcla O/F\n\nEs la relación entre la masa de **oxidante** y la de **combustible** que entra por segundo. RP-1/LOX usa O/F ≈ 2,56: de cada 3,56 kg, 2,56 kg son oxígeno.\n\n## Por qué el hidrógeno tiene un Isp tan alto\n\nLa velocidad de salida crece con la **temperatura** de la cámara y baja con la **masa molar** del gas:\n\n```\nve ∝ √(T / M)\n```\n\nLos gases ligeros (vapor de agua + hidrógeno, M ≈ 10–12 g/mol) salen mucho más rápido. Si M baja a la mitad a la misma temperatura, ve aumenta √2 ≈ 1,41 veces.\n\n## El precio: la densidad\n\nEl hidrógeno líquido tiene solo **71 kg/m³** (RP-1: ~810 kg/m³). Tanques enormes = estructura pesada y mucho arrastre. Por eso el hidrógeno brilla en las **etapas superiores**, y la primera etapa prefiere propulsantes **densos** (queroseno, metano, sólidos) — mucho empuje con un tanque pequeño.\n\n## Seguridad\n\nLos propulsantes reales son **tóxicos, criogénicos o explosivos**: trabajo solo para profesionales con licencia e instalaciones propias. En casa, solo motores comerciales certificados.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es la principal desventaja de un motor de propulsante **sólido**?",
+          "options": [
+            "Necesita bombas complicadas",
+            "No se puede guardar mucho tiempo",
+            "Una vez encendido, no se puede regular ni apagar",
+            "Da poco empuje"
+          ],
+          "explanation": "El grano se quema hasta el final. Por eso los sólidos son excelentes como boosters, pero la inserción precisa en órbita suele quedar para motores líquidos."
+        },
+        {
+          "prompt": "Un motor RP-1/LOX consume **100 kg/s** de propulsante con O/F = **2,56**. ¿Cuántos kg/s son de oxígeno?",
+          "explanation": "Oxidante = 100 × 2,56 / (1 + 2,56) = 100 × 2,56 / 3,56 ≈ 71,9 kg/s; el resto (28,1 kg/s) es queroseno.",
+          "unit": "kg/s"
+        },
+        {
+          "prompt": "Si la masa molar de los gases de escape baja a **la mitad** y la temperatura de la cámara no cambia, ¿por cuánto se multiplica la velocidad de salida? (ve ∝ √(T/M))",
+          "explanation": "√(1 / 0,5) = √2 ≈ 1,414.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Qué volumen de tanque ocupan **10 toneladas** de hidrógeno líquido (ρ = **71 kg/m³**)?",
+          "explanation": "V = 10 000 / 71 ≈ 140,8 m³. La misma masa de RP-1 cabría en ~12,3 m³.",
+          "unit": "m³"
+        },
+        {
+          "prompt": "¿Por qué el hidrógeno, que tiene el mayor Isp, suele usarse en las **etapas superiores**?",
+          "options": [
+            "Porque no funciona a nivel del mar",
+            "Porque es poco denso: tanques enormes pesan y frenan en el aire; arriba, el Isp alto compensa",
+            "Porque es más barato",
+            "Porque produce más empuje por tobera"
+          ],
+          "explanation": "En la 1ª etapa importa mucho empuje y tanques compactos (propulsantes densos); en el vacío, cada segundo de Isp vale mucho Δv."
+        }
+      ]
+    },
+    "rkt-15-estagios-otimos": {
+      "title": "Etapas óptimas y la fracción estructural",
+      "theory": "# Por qué dividir el cohete\n\nPor la ecuación de Tsiolkovsky, Δv = ve × ln(m0 / mf). El problema es la **estructura**: tanques, motores y fuselaje pesan. En un cohete de una etapa, esa masa va hasta el final, y la relación de masas queda limitada.\n\nAl **descartar** el tanque vacío, la etapa superior empieza \"desde cero\" con otra relación de masas — y los Δv **se suman**:\n\n```\nΔv total = Σ ve,i × ln(m0,i / mf,i)\n```\n\n## Fracción estructural\n\nEl **coeficiente estructural** ε = m_estructura / (m_estructura + m_propulsante) dice cuánto de la etapa es \"peso muerto\". Los cohetes reales tienen ε ≈ 0,05–0,10. Con ε = 0,1 y sin carga útil, la mejor relación de masas posible de una etapa es 1/ε = 10 — y con Isp 300 s eso da como máximo ~6,8 km/s, menos que los ~9,4 km/s para la órbita. **Una sola etapa no llega a la órbita con margen**; dos o tres sí.\n\n## La división óptima\n\nPara etapas **iguales** (mismo Isp y mismo ε), la división óptima da **el mismo Δv a cada etapa**. Dos etapas con relación de masas 3 e Isp 300 s dan 2 × 300 × 9,81 × ln 3 ≈ **6,46 km/s**.\n\n## La fracción de carga útil\n\nLa carga útil suele ser solo del **1 al 4%** de la masa de despegue. Cada etapa extra mejora el Δv, pero añade motores, separaciones y puntos de fallo — las ganancias se reducen después de 3 o 4 etapas.\n\n## Relación de masas necesaria\n\nInvirtiendo Tsiolkovsky:\n\n```\nm0 / mf = e^(Δv / ve)\n```\n\nCon Isp 350 s (ve ≈ 3432 m/s), para Δv = 4,5 km/s: m0/mf = e^1,311 ≈ 3,71.",
+      "questions": [
+        {
+          "prompt": "Dos etapas, cada una con **Isp = 300 s** y relación de masas **3**. ¿Cuál es el Δv ideal total? (g0 = 9,80665 m/s²)",
+          "explanation": "Cada etapa: 300 × 9,80665 × ln 3 ≈ 3232 m/s. Total ≈ 6464 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Qué relación de masas m0/mf necesita una etapa con **Isp = 350 s** para dar **Δv = 4500 m/s**?",
+          "explanation": "ve = 350 × 9,80665 ≈ 3432 m/s. m0/mf = e^(4500/3432) = e^1,311 ≈ 3,71.",
+          "unit": ""
+        },
+        {
+          "prompt": "Una etapa tiene coeficiente estructural **ε = 0,1** y ninguna carga útil. ¿Cuál es la mayor relación de masas m0/mf posible?",
+          "explanation": "m0 = estructura + propulsante; mf = estructura. m0/mf = 1/ε = 10.",
+          "unit": ""
+        },
+        {
+          "prompt": "Para etapas **iguales** (mismo Isp y misma fracción estructural), ¿qué división da el mayor Δv total?",
+          "options": [
+            "El mismo Δv para cada etapa",
+            "Casi todo el propulsante en la 1ª etapa",
+            "Casi todo el propulsante en la última etapa",
+            "Da igual"
+          ],
+          "explanation": "Es el resultado clásico de la optimización con multiplicadores de Lagrange: etapas iguales deben repartir el Δv por igual."
+        },
+        {
+          "prompt": "¿Por qué los lanzadores rara vez tienen más de 3 o 4 etapas?",
+          "options": [
+            "Porque la ley lo prohíbe",
+            "Porque la ganancia de Δv disminuye y cada etapa añade costo, masa y riesgo de fallo",
+            "Porque más etapas reducen el Δv",
+            "Porque el cohete quedaría inestable"
+          ],
+          "explanation": "El Δv extra de cada nueva etapa es cada vez menor, mientras que separaciones, igniciones e interfaces son puntos de fallo caros."
+        }
+      ]
+    },
+    "rkt-16-perdas-gravidade": {
+      "title": "Pérdidas por gravedad y por arrastre: el caudal ideal",
+      "theory": "# El Δv ideal y el Δv que queda\n\nTsiolkovsky da el Δv **ideal**: sin gravedad y sin aire. En un vuelo real, parte se gasta solo en **sostener el cohete contra la gravedad** y en **empujar el aire**:\n\n```\nΔv útil ≈ Δv ideal − pérdida por gravedad − pérdida por arrastre\npérdida por gravedad ≈ g × tiempo de combustión   (ascenso vertical)\n```\n\n## Quemar despacio: pérdida por gravedad\n\nSi el motor tiene poco caudal, la relación empuje/peso queda cerca de 1 y la combustión tarda. Cada segundo de combustión vertical \"gasta\" ~9,8 m/s solo para no caer. ¡Una combustión de 100 s pierde ~**981 m/s**!\n\n## Quemar rápido: pérdida por arrastre (y por aceleración)\n\nCon un caudal muy alto, el cohete llega muy rápido aún **en el aire denso** de abajo. El arrastre ½·ρ·v²·Cd·A crece con el cuadrado de la velocidad, y la aceleración puede superar lo que aguantan la carga y la estructura.\n\n## El término medio\n\nExiste un caudal (o un empuje/peso) **óptimo**, típicamente con T/W de 1,5 a 2,5 para cohetes de sondeo. Los lanzadores orbitales despegan con T/W ≈ 1,2–1,5 y **reducen el empuje** cerca del punto de presión dinámica máxima (\"Max Q\").\n\n## En este laboratorio\n\nUn cohete de sondeo guiado (Isp 230 s, 150 kg de propulsante, 50 kg de masa seca, 300 mm de diámetro). El Δv ideal es el mismo en todos los intentos — solo cambia **qué tan rápido** se quema el propulsante.",
+      "task": "Con un caudal de 8 kg/s el cohete apenas supera los 36 km y soporta 24 g. Ajusta el **caudal másico** para superar los **130 km** de apogeo con una aceleración máxima de hasta **8 g**.",
+      "hints": [
+        "Baja el caudal: menos arrastre y menos g. Pero mira lo que pasa por debajo de 1,5 kg/s.",
+        "Observa el empuje/peso: el mejor apogeo se da con T/W cerca de 2."
+      ],
+      "goals": [
+        "Apogeo de al menos 130 km",
+        "Aceleración máxima de hasta 8 g"
+      ],
+      "questions": [
+        {
+          "prompt": "Un cohete sube en vertical quemando durante **100 s**. ¿Cuál es la pérdida por gravedad aproximada? (g = 9,81 m/s²)",
+          "explanation": "Pérdida ≈ g × t = 9,81 × 100 = 981 m/s de Δv gastados solo para no caer.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "A 10 km de altitud (ρ = **0,38 kg/m³**), el cohete vuela a **1000 m/s** con Cd = **0,5** y área frontal **0,07 m²**. ¿Cuál es el arrastre?",
+          "explanation": "D = ½ × 0,38 × 1000² × 0,5 × 0,07 = 6650 N — ¡más que el peso de 600 kg!",
+          "unit": "N"
+        },
+        {
+          "prompt": "Con la misma cantidad de propulsante, ¿por qué un T/W de **1,15** da un apogeo malo?",
+          "options": [
+            "Porque el Δv ideal se hace menor",
+            "Porque el arrastre es mucho mayor",
+            "Porque casi todo el empuje se gasta en sostener el peso durante una combustión larga",
+            "Porque el motor se calienta demasiado"
+          ],
+          "explanation": "El Δv ideal no cambia (mismo Isp y masas). Con T/W cerca de 1, la aceleración neta es pequeña y la pérdida por gravedad (g × tiempo de combustión) es enorme."
+        }
+      ]
+    },
+    "rkt-17-reentrada": {
+      "title": "Reentrada: volver del espacio de una pieza",
+      "theory": "# Toda la energía tiene que desaparecer\n\nUna nave en órbita baja vuela a ~7,8 km/s. Cada kilo tiene ½·v² ≈ **30 MJ** de energía cinética — más que la energía química de 7 kg de TNT. Para aterrizar, casi todo eso tiene que convertirse en **calor en el aire** delante de la nave.\n\n## Coeficiente balístico\n\n```\nβ = m / (Cd × A)\n```\n\nβ dice qué tan \"perforante\" es el objeto. **β bajo** (ligero y ancho) frena **arriba**, donde el aire está enrarecido — calentamiento menor y más repartido. **β alto** (pesado y delgado) se hunde mucho antes de frenar — picos enormes de calor y de g. La velocidad terminal cerca del suelo es:\n\n```\nv = √(2 × β × g / ρ)\n```\n\n## Cuerpos romos\n\nParece extraño, pero las cápsulas son **romas**, no puntiagudas: el frente achatado crea una **onda de choque desprendida** que queda lejos de la superficie, y buena parte del calor va al aire en vez de entrar en la nave (idea de H. Julian Allen, 1951).\n\n## Escudos térmicos\n\n- **Ablativos** (resinas fenólicas, PICA): el material se carboniza y se desprende, llevándose el calor. Un solo uso.\n- **Reutilizables** (las placas cerámicas del transbordador, carbono-carbono en la nariz y los bordes): irradian el calor de vuelta.\n\n## El corredor de entrada\n\nEntrar **demasiado empinado** genera g y calor letales; **demasiado rasante**, la nave \"rebota\" en la atmósfera y vuelve al espacio. Las cápsulas tripuladas mantienen la desaceleración en ~4–8 g usando un poco de sustentación (el CG está desplazado del eje).\n\n## Por último: paracaídas\n\nPor debajo de ~10 km, ya subsónica, la cápsula abre el **paracaídas de arrastre** (drogue) y después los **principales**.",
+      "questions": [
+        {
+          "prompt": "¿Cuánta energía cinética tiene **1 kg** a **7800 m/s**? Responde en MJ.",
+          "explanation": "E = ½ × 1 × 7800² = 30 420 000 J ≈ 30,4 MJ.",
+          "unit": "MJ"
+        },
+        {
+          "prompt": "Una cápsula de **1000 kg**, **2 m** de diámetro y Cd = **1,2**. ¿Cuál es el coeficiente balístico β = m / (Cd × A)?",
+          "explanation": "A = π × 1² = 3,1416 m². β = 1000 / (1,2 × 3,1416) ≈ 265 kg/m².",
+          "unit": "kg/m²"
+        },
+        {
+          "prompt": "Sin paracaídas, ¿cuál sería la velocidad terminal de esta cápsula cerca del suelo? (v = √(2βg/ρ), g = 9,81, ρ = 1,225 kg/m³)",
+          "explanation": "v = √(2 × 265,3 × 9,81 / 1,225) ≈ 65 m/s (~235 km/h): por eso los paracaídas son indispensables.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Por qué las cápsulas de reentrada tienen el frente **romo** en vez de puntiagudo?",
+          "options": [
+            "Para que quepa más gente",
+            "La onda de choque queda desprendida y lejos de la superficie, y mucho calor queda en el aire",
+            "Porque las puntas se calientan menos",
+            "Para reducir el arrastre"
+          ],
+          "explanation": "Un cuerpo puntiagudo concentra el calor en la punta; el romo aleja el choque y aumenta el arrastre, frenando más arriba."
+        },
+        {
+          "prompt": "¿Qué pasa si la nave entra en la atmósfera con un ángulo **demasiado rasante**?",
+          "options": [
+            "Se calienta mucho más y se desintegra",
+            "Aterriza más lejos, pero sin problema",
+            "Puede \"rebotar\" en la atmósfera y volver al espacio",
+            "Los paracaídas se abren demasiado pronto"
+          ],
+          "explanation": "Fuera del corredor de entrada: demasiado empinado = g y calor letales; demasiado rasante = la nave no pierde suficiente velocidad y sale de la atmósfera."
+        }
+      ]
+    },
+    "rkt-18-mecanica-orbital": {
+      "title": "Mecánica orbital: Kepler, escape y órbita geoestacionaria",
+      "theory": "# Las leyes que gobiernan las órbitas\n\nUna órbita es una **caída libre que nunca toca el suelo**: la nave cae todo el tiempo, pero se mueve de lado lo bastante rápido para que la Tierra se \"curve\" debajo de ella.\n\n## Leyes de Kepler\n\n1. Las órbitas son **elipses** con la Tierra en uno de los focos.\n2. La nave barre **áreas iguales en tiempos iguales**: va más rápido en el **perigeo** (punto más bajo) y más despacio en el **apogeo**.\n3. El período solo depende del **semieje mayor** a:\n\n```\nT = 2π × √(a³ / GM)\n```\n\nCon GM de la Tierra = 3,986 × 10¹⁴ m³/s² y radio R = 6371 km, una órbita a 400 km (a = 6771 km) tiene T ≈ **92 minutos** — la ISS da ~15,5 vueltas al día.\n\n## Vis-viva\n\nLa velocidad en cualquier punto de la órbita, a una distancia r del centro:\n\n```\nv = √(GM × (2/r − 1/a))\n```\n\nPara órbita circular (r = a): v = √(GM/r). Para escapar (a → ∞): **v_escape = √(2GM/r)** — desde la superficie de la Tierra, ~**11,2 km/s**.\n\n## Órbita geoestacionaria\n\nCon período igual a **un día sideral** (86 164 s), sobre el ecuador, el satélite parece quieto en el cielo. Por la 3ª ley: a = ∛(GM × T² / 4π²) ≈ **42 164 km** del centro (~35 786 km de altitud).\n\n## Transferencia de Hohmann (repaso)\n\nPara ir de la órbita baja a la geoestacionaria, el primer encendido eleva el apogeo hasta 42 164 km. La velocidad en el perigeo de la elipse de transferencia sale de la vis-viva con a = (r1 + r2)/2.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es el período de una órbita circular a **400 km** de altitud? (GM = 3,986 × 10¹⁴ m³/s², R = 6371 km). Responde en minutos.",
+          "explanation": "a = 6 771 000 m. T = 2π√(a³/GM) ≈ 5545 s ≈ 92,4 min.",
+          "unit": "min"
+        },
+        {
+          "prompt": "¿Cuál es la velocidad de escape en la superficie de la Tierra? (v = √(2GM/R))",
+          "explanation": "v = √(2 × 3,986 × 10¹⁴ / 6 371 000) ≈ 11 186 m/s ≈ 11,2 km/s (sin contar el aire).",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Cuál es el radio de la órbita geoestacionaria (distancia al centro de la Tierra)? Usa T = **86 164 s**.",
+          "explanation": "a = ∛(GM × T² / 4π²) = ∛(3,986 × 10¹⁴ × 86 164² / 39,48) ≈ 42 164 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "Para salir de la órbita circular de **400 km** (r1 = 6771 km) a una elipse con apogeo en la geoestacionaria (r2 = 42 164 km), ¿cuál es el Δv del primer encendido? Usa vis-viva.",
+          "explanation": "a = (6771 + 42 164)/2 = 24 467,5 km. v_perigeo = √(GM(2/r1 − 1/a)) ≈ 10 072 m/s; v_circular = √(GM/r1) ≈ 7673 m/s. Δv ≈ 2399 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "En una órbita elíptica, ¿dónde va más rápido la nave?",
+          "options": [
+            "En el perigeo (el punto más cercano a la Tierra)",
+            "En el apogeo (el punto más lejano)",
+            "La velocidad es la misma en toda la órbita",
+            "Depende de la masa de la nave"
+          ],
+          "explanation": "2ª ley de Kepler (áreas iguales en tiempos iguales), o vis-viva: r menor → v mayor. La masa de la nave no influye."
+        }
+      ]
+    },
+    "rkt-19-competicao": {
+      "title": "Competición: apogeo y tiempo de vuelo exactos",
+      "theory": "# Acertar el objetivo, no ir lo más alto posible\n\nEn las competiciones de cohetería modelo para estudiantes (como la American Rocketry Challenge y sus versiones en otros países), el desafío **no** es subir lo máximo: es llegar a una **altura exacta** y volver al suelo en un **tiempo exacto**, con una carga frágil (un huevo) entera. Fallar por arriba o por abajo cuesta puntos.\n\n## Las palancas del diseño\n\n- **Motor**: define el rango de alturas posibles (la clase de impulso).\n- **Masa**: el ajuste fino del apogeo. Lastre (plastilina) cerca del CG cambia la altura sin estropear la estabilidad.\n- **Retardo de eyección**: debe abrir el paracaídas **cerca del apogeo**, cuando la velocidad es mínima (demasiado pronto rompe el paracaídas; demasiado tarde, el cohete ya está cayendo).\n- **Paracaídas**: define la **velocidad de descenso** y, por tanto, el tiempo de vuelo:\n\n```\ntiempo de vuelo ≈ tiempo hasta el apogeo + apogeo / velocidad de descenso\nvelocidad de descenso = √(2 m g / (ρ Cd A))\n```\n\nUn paracaídas más grande baja más despacio (más tiempo de vuelo, aterrizaje suave), pero el viento lleva el cohete más lejos.\n\n## Método de ingeniería\n\nEn la práctica los equipos hacen **vuelos de prueba**, anotan el apogeo del altímetro y corrigen la masa: cada gramo extra quita unos metros. Aquí haces lo mismo en el simulador.\n\n## En este laboratorio\n\nCohete de 41 mm × 650 mm, ojiva, aletas de 45 mm. La masa seca incluye el huevo y el altímetro.",
+      "task": "Reglas de la prueba: apogeo **entre 240 y 260 m**, tiempo de vuelo **entre 41 y 46 s**, paracaídas abriéndose **por debajo de 10 m/s** y aterrizaje **hasta 7,5 m/s** (el huevo no puede romperse). Elige el **motor**, la **masa seca**, el **paracaídas** y el **retardo**.",
+      "safety": "- Las competiciones de cohetería modelo siguen el **código de seguridad** del organizador: motores certificados, inspección del cohete antes del vuelo, un oficial de seguridad al mando.\n- Si la carga es un **huevo crudo**, va dentro de una protección acolchada — y el cohete debe volver con paracaídas, nunca en caída libre.\n- Nadie se acerca a un motor que **falló** antes de 60 s.",
+      "hints": [
+        "Con el D12, solo un cohete muy ligero (menos de 150 g) llega a 240 m. Prueba el E9 y ajusta la masa de 5 en 5 g.",
+        "Elige el retardo para que el paracaídas se abra cerca del apogeo (tiempo del apogeo − tiempo de combustión). Después ajusta el paracaídas para acertar el tiempo de vuelo."
+      ],
+      "goals": [
+        "Apogeo entre 240 y 260 m",
+        "Tiempo de vuelo entre 41 y 46 s",
+        "El paracaídas se abre a hasta 10 m/s",
+        "Aterrizaje a hasta 7,5 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "Un cohete baja de **250 m** a **6 m/s** constantes bajo el paracaídas. ¿Cuánto dura el descenso?",
+          "explanation": "t = 250 / 6 ≈ 41,7 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "El cohete llega al apogeo de **240 m** a los **8 s** y baja a **7 m/s**. ¿Cuál es el tiempo de vuelo aproximado?",
+          "explanation": "8 + 240 / 7 = 8 + 34,3 ≈ 42,3 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "El cohete pasó el objetivo por 20 m. ¿Cuál es el ajuste más simple, sin tocar el motor ni el paracaídas?",
+          "options": [
+            "Aumentar el retardo de eyección",
+            "Añadir unos gramos de lastre cerca del CG",
+            "Quitar las aletas",
+            "Lanzar con la base más inclinada"
+          ],
+          "explanation": "Más masa reduce el apogeo de forma predecible. Cerca del CG, casi no cambia el margen de estabilidad."
+        }
+      ]
+    },
+    "rkt-20-lancador-orbital": {
+      "title": "Proyecto final: un lanzador orbital ligero",
+      "theory": "# Juntándolo todo\n\nUn lanzador orbital es un compromiso entre todas las lecciones de esta ruta:\n\n- **Δv**: ~9,4 km/s para la órbita baja (7,8 km/s de velocidad orbital + pérdidas por gravedad, arrastre y maniobra). Sale de Tsiolkovsky, etapa por etapa.\n- **Empuje/peso al despegar**: al menos ~1,3. Por debajo, la pérdida por gravedad se come el Δv (y con T/W < 1 el cohete ni sale de la base).\n- **Aceleración máxima**: al final de la combustión el cohete está ligero y la aceleración se dispara. Cargas y tripulación la limitan a ~4–6 g; los motores reales **reducen el empuje** al final.\n- **Masa de despegue**: cuesta dinero. Cada kilo de carga en órbita exige decenas de kilos en la plataforma.\n\n## El reparto entre etapas\n\nLa 1ª etapa necesita **mucho empuje** (caudal alto) para vencer el peso de todo. La 2ª etapa es ligera: puede tener **menos caudal** (menos g al final) y un **Isp mayor** (tobera de vacío). Poner más propulsante en la 2ª etapa da más Δv por kilo — hasta que la 1ª etapa ya no puede levantar el conjunto.\n\n## En este laboratorio\n\n- Carga útil + estructura de la 2ª etapa: **1500 kg** (masa seca).\n- Estructura de la 1ª etapa: **4000 kg** (descartada en la separación).\n- Isp: **280 s** (1ª etapa, nivel del mar) y **330 s** (2ª, tobera de vacío).\n- Vuelo guiado por empuje vectorial; el simulador vuela en vertical, así que mira el **Δv ideal**, el **T/W** y la **aceleración** — el apogeo no es la meta aquí.",
+      "task": "Diseña las dos etapas: **Δv ideal de al menos 9400 m/s**, **empuje/peso de al menos 1,3** al despegar, aceleración máxima de **hasta 6 g** y masa de despegue de **hasta 56 t**. Controlas el propulsante y el caudal de cada etapa.",
+      "hints": [
+        "Primero pasa propulsante de la 1ª a la 2ª etapa (manteniendo la masa total) y mira cómo sube el Δv.",
+        "Después aumenta el caudal de la 1ª etapa hasta que el T/W pase de 1,3, y baja el de la 2ª si la aceleración pasa de 6 g."
+      ],
+      "goals": [
+        "Δv ideal de al menos 9400 m/s",
+        "Empuje/peso al despegar de al menos 1,3",
+        "Aceleración máxima de hasta 6 g",
+        "Masa de despegue de hasta 56 t"
+      ],
+      "questions": [
+        {
+          "prompt": "Una 1ª etapa con **Isp 300 s** pasa de **50 t** a **20 t** durante la combustión. ¿Cuál es su Δv ideal? (g0 = 9,80665 m/s²)",
+          "explanation": "Δv = 300 × 9,80665 × ln(50/20) = 2942 × 0,916 ≈ 2696 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Un cohete de **53,5 t** despega con **250 kg/s** de caudal e **Isp 280 s**. ¿Cuál es su empuje/peso? (g0 = 9,80665 m/s²)",
+          "explanation": "Empuje = 280 × 9,80665 × 250 ≈ 686 466 N. Peso = 53 500 × 9,80665 ≈ 524 656 N. T/W ≈ 1,31.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Por qué la aceleración máxima suele ocurrir al **final** de la combustión de la 2ª etapa?",
+          "options": [
+            "Porque el motor aumenta el empuje solo",
+            "Porque el aire ayuda a empujar",
+            "Porque el empuje es casi constante y la masa se ha hecho mucho menor",
+            "Porque la gravedad desaparece en el espacio"
+          ],
+          "explanation": "a = F/m: con el tanque casi vacío, la misma fuerza acelera una masa mucho menor. Por eso los motores reales reducen el empuje al final."
+        }
+      ]
     }
   }
 }

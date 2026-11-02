@@ -368,6 +368,344 @@
           "explanation": "El logaritmo crece cada vez más despacio; además, el avión más pesado entra en pérdida antes y necesita más pista."
         }
       ]
+    },
+    "aero-11-planador": {
+      "title": "Planeador: el mejor planeo",
+      "theory": "# Volar sin motor\n\nUn planeador siempre está **bajando** respecto al aire: cambia altura por velocidad. Cuánto avanza por cada metro que baja es la **relación de planeo**, igual a la relación sustentación/arrastre:\n\n```\ndistancia = altura × (L/D)\ntasa de descenso = velocidad / (L/D)\n```\n\nCon L/D = 25, desde 2000 m se pueden planear **50 km** sin viento. Los planeadores de competición superan L/D 50; un avión común queda en 10–15.\n\n## El L/D máximo\n\nPor la polar parabólica CD = CD0 + CL²/(π e AR):\n\n```\n(L/D)máx = ½ × √(π × e × AR / CD0)\n```\n\nTres caminos: **alargamiento** alto (alas largas y finas → menos arrastre inducido), **Oswald** alto (buena distribución de sustentación, puntas bien hechas) y **CD0** bajo (superficies lisas, fuselaje fino, tren retraído).\n\n## Pero también hay que volar despacio\n\nLos planeadores suben en **térmicas** — columnas de aire caliente, a veces de pocos cientos de metros de diámetro. Para girar dentro de ellas, deben volar **despacio** sin entrar en pérdida: **carga alar** baja (masa/área), que da baja velocidad de pérdida.\n\n## En este laboratorio\n\nUn planeador de **350 kg** (con piloto), ala de 10 m² y CLmáx 1,4. Puedes cambiar la geometría del ala y el área.",
+      "task": "Diseña el ala del planeador para tener un **(L/D)máx de al menos 25** y una **velocidad de pérdida de hasta 70 km/h** (para girar en las térmicas).",
+      "hints": [
+        "El alargamiento es lo que más pesa: llévalo cerca del máximo (16). Después mejora el Oswald y el CD0.",
+        "Con 10 m² la pérdida queda en ~72 km/h. Un poco más de área lo resuelve."
+      ],
+      "goals": [
+        "(L/D)máx de al menos 25",
+        "Pérdida a hasta 70 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "Un planeador con **L/D = 25** está a **2000 m** de altura, sin viento. ¿Hasta qué distancia puede planear?",
+          "explanation": "2000 × 25 = 50 000 m = 50 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "Volando a **90 km/h** con L/D = **30**, ¿cuál es la tasa de descenso (cuántos m/s baja)?",
+          "explanation": "90 km/h = 25 m/s. 25 / 30 ≈ 0,83 m/s — cualquier térmica más fuerte que eso hace subir al planeador.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Cuál es el (L/D)máx de un ala con AR = **16**, e = **0,9** y CD0 = **0,016**?",
+          "explanation": "½ × √(π × 0,9 × 16 / 0,016) = ½ × √2827 ≈ 26,6.",
+          "unit": ""
+        }
+      ]
+    },
+    "aero-12-curvas-fator-carga": {
+      "title": "Virajes y factor de carga",
+      "theory": "# Inclinar para virar\n\nUn avión vira **inclinando las alas** (ángulo de alabeo φ). La sustentación, que era vertical, pasa a tener una parte horizontal — es la que hace el viraje. Para no perder altura, la parte vertical aún tiene que igualar el peso, así que la sustentación total **aumenta**:\n\n```\nfactor de carga  n = L / W = 1 / cos φ\n```\n\nCon 60° de alabeo, n = 2: las alas sostienen **el doble del peso**, y el piloto siente \"2 g\".\n\n## La pérdida sube en el viraje\n\nLa velocidad de pérdida crece con la raíz de n:\n\n```\nV_pérdida,viraje = V_pérdida × √n\n```\n\nUn avión que entra en pérdida a 100 km/h en vuelo recto lo hace a **~141 km/h** en un viraje de 60°. Los virajes cerrados y lentos cerca del suelo (como en la aproximación para aterrizar) son una causa clásica de accidentes.\n\n## Radio y régimen de viraje\n\n```\nradio     r = v² / (g × tan φ)\nrégimen   ω = g × tan φ / v\n```\n\nA 50 m/s y 30° de alabeo: r ≈ **441 m** y ω ≈ **6,5 °/s**. El \"viraje estándar\" de los instrumentos es de **3 °/s** (360° en 2 minutos).\n\n## Límites estructurales\n\nCada avión tiene un factor de carga máximo certificado: ~3,8 g para aviones normales, 6 g para acrobáticos. Pasarse puede deformar o romper la estructura. Las ráfagas también generan factor de carga: por eso hay una velocidad máxima para aire turbulento.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es el factor de carga en un viraje nivelado con **60°** de alabeo?",
+          "explanation": "n = 1 / cos 60° = 1 / 0,5 = 2.",
+          "unit": "g"
+        },
+        {
+          "prompt": "Un avión entra en pérdida a **100 km/h** en vuelo recto. ¿A qué velocidad entra en pérdida en un viraje de **60°**?",
+          "explanation": "V = 100 × √2 ≈ 141 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "¿Cuál es el radio de un viraje a **50 m/s** con **30°** de alabeo? (g = 9,81 m/s²)",
+          "explanation": "r = 50² / (9,81 × tan 30°) = 2500 / (9,81 × 0,577) ≈ 441 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "En ese viraje (50 m/s, 30°), ¿cuál es el régimen de viraje en grados por segundo?",
+          "explanation": "ω = 9,81 × 0,577 / 50 = 0,113 rad/s ≈ 6,5 °/s.",
+          "unit": "°/s"
+        },
+        {
+          "prompt": "¿Por qué es peligroso un viraje cerrado y lento cerca del suelo?",
+          "options": [
+            "Porque el motor pierde potencia",
+            "Porque el viento siempre es más fuerte cerca del suelo",
+            "Porque el alabeo aumenta la velocidad de pérdida, y no hay altura para recuperar",
+            "Porque el avión se vuelve más pesado"
+          ],
+          "explanation": "Con n > 1 la pérdida ocurre a mayor velocidad; si sucede cerca del suelo, no queda altura para salir de la barrena."
+        }
+      ]
+    },
+    "aero-13-teto": {
+      "title": "Régimen de ascenso y techo de servicio",
+      "theory": "# Subir es potencia sobrante\n\nUn avión sube cuando la potencia disponible supera la necesaria para volar nivelado. El **régimen de ascenso** es el sobrante dividido por el peso:\n\n```\nRC = (P_disponible − P_necesaria) / W\n```\n\nCon 30 kW de sobra y 1100 kg: RC = 30 000 / (1100 × 9,81) ≈ **2,8 m/s**.\n\n## Por qué se acaba el ascenso\n\nCon la altitud el aire es menos denso (σ = ρ/ρ0):\n\n- Un motor de pistón atmosférico pierde potencia más o menos en proporción a σ. A 6000 m, σ ≈ 0,54: de 120 kW quedan ~65 kW.\n- El avión tiene que volar **más rápido** para tener la misma sustentación, y el arrastre inducido (que domina en vuelo lento) pesa más.\n\nEn algún momento el sobrante llega a cero: es el **techo absoluto**. En la práctica se usa el **techo de servicio**, donde el régimen de ascenso baja a **0,5 m/s** (100 pies/min).\n\n## Cómo subir más alto\n\n- **Más potencia** (o turbo, que mantiene la potencia hasta cierta altitud).\n- **Ala de gran alargamiento**: allá arriba el vuelo es \"lento\" para la densidad, y manda el arrastre inducido — las alas largas lo reducen. Por eso los aviones de gran altitud (U-2, planeadores de onda) tienen alas enormes y finas.\n- **Menos peso**.\n\n## En este laboratorio\n\nAvión de 1000 kg + 100 kg de combustible, ala de 16 m², hélice con eficiencia 0,8, motor atmosférico de 120 kW. El techo se calcula con el motor perdiendo potencia con la densidad.",
+      "task": "El avión tiene que cruzar una cordillera: **techo de servicio de al menos 8500 m** y **régimen de ascenso de al menos 8 m/s** a nivel del mar. Ajusta la **potencia**, el **alargamiento**, la **masa** y el **área del ala**.",
+      "hints": [
+        "Solo con potencia se logra, pero sale caro: con 180 kW el techo supera 8500 m. Mira cuánto ayuda el alargamiento.",
+        "Con AR 10, unos 150 kW bastan."
+      ],
+      "goals": [
+        "Techo de servicio de al menos 8500 m",
+        "Régimen de ascenso de al menos 8 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "Un avión de **1100 kg** tiene **30 kW** de potencia sobrante. ¿Cuál es su régimen de ascenso? (g = 9,81 m/s²)",
+          "explanation": "RC = 30 000 / (1100 × 9,81) ≈ 2,78 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Por la atmósfera estándar, a 6000 m σ = ((288,15 − 0,0065 × 6000) / 288,15)^4,256. ¿Cuánta potencia queda de un motor atmosférico de **120 kW** (potencia ∝ σ)?",
+          "explanation": "T = 249,15 K; σ = (249,15/288,15)^4,256 ≈ 0,539. P ≈ 120 × 0,539 ≈ 64,6 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "¿Por qué las alas de gran alargamiento ayudan a subir más alto?",
+          "options": [
+            "Porque pesan menos",
+            "Porque en el aire enrarecido domina el arrastre inducido, y las alas largas lo reducen",
+            "Porque aumentan la potencia del motor",
+            "Porque reducen la velocidad de pérdida a cero"
+          ],
+          "explanation": "Allá arriba el avión necesita un CL alto para sostenerse, y el arrastre inducido ∝ CL²/AR crece: más AR, menos potencia necesaria."
+        }
+      ]
+    },
+    "aero-14-curva-potencia": {
+      "title": "La curva de potencia: arrastre mínimo y potencia mínima",
+      "theory": "# Arrastre en forma de U\n\nEl arrastre total en vuelo nivelado tiene dos partes que van en sentidos opuestos:\n\n- **Parásito** (fricción, forma): crece con v².\n- **Inducido** (el costo de generar sustentación): cae con 1/v² — volar despacio exige un CL alto.\n\nLa suma tiene un **mínimo**. Con la polar CD = CD0 + k CL² (k = 1/(π e AR)):\n\n```\n(L/D)máx = 1 / (2 √(k × CD0))\nD_mín = W / (L/D)máx\nV_md = √(2W / (ρ S)) × (k / CD0)^(1/4)\n```\n\nA la velocidad de **arrastre mínimo** V_md, el arrastre parásito y el inducido son **iguales**. Es la velocidad de **mejor planeo** y de **máximo alcance** para aviones a reacción (con empuje, el consumo sigue al arrastre).\n\n## La potencia no es el arrastre\n\nLa potencia necesaria es P = D × v. Como v multiplica, el mínimo de potencia ocurre **más despacio**:\n\n```\nV_mp = V_md / 3^(1/4) ≈ 0,76 × V_md\n```\n\nA la velocidad de **potencia mínima** el avión pasa más tiempo en el aire con el mismo combustible (**máxima autonomía** para avión de hélice) y baja más despacio planeando.\n\n## El lado de atrás de la curva\n\nPor debajo de V_mp, volar **más despacio exige más potencia** — lo contrario de la intuición. En una aproximación lenta, si el piloto levanta el morro para \"estirar\" el planeo, el avión desacelera, necesita más potencia y se hunde más.\n\n## Ejemplo\n\nW = 10 000 N, S = 15 m², CD0 = 0,03, k = 0,05, ρ = 1,225: (L/D)máx ≈ 12,9; D_mín ≈ 775 N; V_md ≈ 37,5 m/s; P ≈ 29 kW; V_mp ≈ 28,5 m/s.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es el (L/D)máx de un avión con CD0 = **0,03** y k = **0,05**?",
+          "explanation": "1 / (2 √(0,05 × 0,03)) = 1 / (2 × 0,0387) ≈ 12,9.",
+          "unit": ""
+        },
+        {
+          "prompt": "Con un peso de **10 000 N**, ¿cuál es el arrastre mínimo de este avión?",
+          "explanation": "D = W / (L/D)máx = 10 000 / 12,91 ≈ 775 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Con S = **15 m²** y ρ = **1,225 kg/m³**, ¿a qué velocidad ocurre ese arrastre mínimo? (V_md = √(2W/(ρS)) × (k/CD0)^(1/4))",
+          "explanation": "√(20 000 / 18,375) = 32,99 m/s; (0,05/0,03)^0,25 = 1,136. V_md ≈ 37,5 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Y la velocidad de **potencia mínima** (V_mp = V_md / 3^(1/4))?",
+          "explanation": "37,49 / 1,316 ≈ 28,5 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Por debajo de la velocidad de potencia mínima (\"lado de atrás de la curva\"), volar más despacio…",
+          "options": [
+            "Exige **más** potencia",
+            "Exige menos potencia",
+            "No cambia la potencia",
+            "Reduce el arrastre inducido"
+          ],
+          "explanation": "Ahí el arrastre inducido crece más rápido de lo que baja la velocidad. Levantar el morro en una aproximación lenta solo empeora las cosas."
+        }
+      ]
+    },
+    "aero-15-alcance-jato": {
+      "title": "Reactor: alcance, altitud y velocidad de crucero",
+      "theory": "# Breguet para reactores\n\nEn un reactor, el consumo es proporcional al **empuje** (TSFC: kg de combustible por N de empuje por segundo). La ecuación de alcance de Breguet queda:\n\n```\nR = (V / (g × TSFC)) × (L/D) × ln(W0 / W1)\n```\n\nFíjate en la **V multiplicando**: a diferencia del avión de hélice, el reactor gana alcance volando **más rápido**, mientras el L/D no caiga mucho. El óptimo queda un poco por encima de la velocidad de arrastre mínimo.\n\n## Por qué los reactores vuelan alto\n\nEn el aire enrarecido, el mismo CL (y el mismo L/D) se da a una velocidad **verdadera** mayor: V ∝ 1/√ρ. A 11 000 m, ρ ≈ 0,36 kg/m³ — el avión vuela ~1,8 veces más rápido con el mismo arrastre. Como R ∝ V × L/D, el alcance crece. Además, el motor a reacción es más eficiente en el aire frío.\n\nEl límite es la **velocidad del sonido**: cerca de Mach 0,8–0,85 aparecen ondas de choque y el arrastre se dispara. Por eso los aviones comerciales vuelan a ~10–12 km, a ~850 km/h.\n\n## Ejemplo\n\nV = 200 m/s, TSFC = 18 g/(kN·s) = 1,8 × 10⁻⁵ kg/(N·s), L/D = 15, W0/W1 = 1,3:\n\nR = 200 / (9,81 × 1,8 × 10⁻⁵) × 15 × ln 1,3 ≈ **4457 km**.\n\n## En este laboratorio\n\nReactor ejecutivo de 6000 kg vacío con **3000 kg** de combustible, ala de 30 m², AR 8, TSFC 18 g/(kN·s). El alcance solo vale si el avión puede mantener el crucero (empuje suficiente y CL por debajo del 90% del máximo).",
+      "task": "Volando a 500 km/h y 3000 m el reactor no llega a 4000 km. Elige la **altitud** y la **velocidad** de crucero para superar los **6500 km** de alcance.",
+      "hints": [
+        "Sube primero: cerca de 11 000 m el alcance crece mucho.",
+        "Allá arriba, prueba velocidades entre 600 y 800 km/h y mira dónde el alcance es mayor."
+      ],
+      "goals": [
+        "Alcance de al menos 6500 km",
+        "Puede mantener el crucero"
+      ],
+      "questions": [
+        {
+          "prompt": "Breguet para reactor con V = **200 m/s**, TSFC = **1,8 × 10⁻⁵ kg/(N·s)**, L/D = **15** y W0/W1 = **1,3**. ¿Cuál es el alcance? (g = 9,81 m/s²)",
+          "explanation": "200 / (9,81 × 1,8 × 10⁻⁵) = 1 132 600 m; × 15 × ln 1,3 (0,2624) ≈ 4 457 000 m ≈ 4457 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "¿Cuántas horas tarda el reactor en volar **6000 km** a **700 km/h**?",
+          "explanation": "6000 / 700 ≈ 8,57 h.",
+          "unit": "h"
+        },
+        {
+          "prompt": "¿Por qué un reactor gana alcance volando alto?",
+          "options": [
+            "Porque la gravedad es menor",
+            "Porque el combustible pesa menos",
+            "Porque en el aire enrarecido vuela más rápido con el mismo L/D, y el alcance es proporcional a V × L/D",
+            "Porque allá arriba no hay viento"
+          ],
+          "explanation": "Mismo CL y mismo arrastre, pero mayor V verdadera: más kilómetros con el mismo combustible (hasta el límite de Mach)."
+        }
+      ]
+    },
+    "aero-16-peso-balanceamento": {
+      "title": "Peso y centrado: el CG cargado y la cola",
+      "theory": "# ¿Dónde está el CG después de cargar?\n\nEl CG cambia con **pasajeros, equipaje y combustible**. Antes de cada vuelo el piloto calcula el CG por el método de los **momentos** (masa × brazo, medido desde una referencia):\n\n```\nx_CG = Σ (m × x) / Σ m\n```\n\nAvión vacío de 600 kg a 2,0 m, piloto de 80 kg a 1,5 m y 100 kg de combustible a 2,2 m:\n\nx_CG = (1200 + 120 + 220) / 780 ≈ **1,974 m**.\n\n## En % de la cuerda media (CAM)\n\nSi la CAM empieza en 1,5 m y mide 1,5 m: (1,974 − 1,5) / 1,5 ≈ **31,6% de la CAM**.\n\n## El punto neutro y la cola\n\nEl avión es estable si el CG está **delante del punto neutro** (lección 6). En este modelo el punto neutro está en el 25% de la CAM (centro aerodinámico del ala) más el efecto de la cola:\n\n```\npunto neutro = 25% + 40,5% × VH\nmargen estático = punto neutro − CG\n```\n\nVH es el **volumen de cola** (área del estabilizador × brazo / (área del ala × CAM)). Cola mayor o más lejos → punto neutro más atrás → más margen.\n\n## Un buen margen\n\n- **Por debajo de ~5%**: poco estable, cansado de pilotar (e inestable si es negativo).\n- **Por encima de ~15–20%**: demasiado estable, el timón de profundidad puede no tener fuerza para redondear el aterrizaje.\n\n## En este laboratorio\n\nCon la carga del día, el CG quedó en el **40% de la CAM** — más atrás de lo que preveía el diseño original. Redimensiona la cola.",
+      "task": "Con el CG en el **40% de la CAM**, el avión quedó inestable. Ajusta el **volumen de cola** para que el margen estático quede **entre el 5% y el 15%**.",
+      "hints": [
+        "Punto neutro = 25 + 40,5 × VH. Para un margen del 10%, debe quedar en el 50%.",
+        "VH entre ~0,50 y ~0,74 funciona."
+      ],
+      "goals": [
+        "Margen estático entre el 5% y el 15%"
+      ],
+      "questions": [
+        {
+          "prompt": "Avión vacío de **600 kg** con CG a **2,0 m**, piloto de **80 kg** a **1,5 m** y **100 kg** de combustible a **2,2 m** de la referencia. ¿Dónde queda el CG?",
+          "explanation": "(600 × 2,0 + 80 × 1,5 + 100 × 2,2) / 780 = 1540 / 780 ≈ 1,974 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "La CAM empieza a **1,5 m** de la referencia y mide **1,5 m**. ¿En qué porcentaje de la CAM está ese CG?",
+          "explanation": "(1,974 − 1,5) / 1,5 ≈ 0,316 → 31,6% de la CAM.",
+          "unit": "%"
+        },
+        {
+          "prompt": "Con VH = **0,6** y el CG en el **40%**, ¿cuál es el margen estático? (punto neutro = 25% + 40,5% × VH)",
+          "explanation": "Punto neutro = 25 + 24,3 = 49,3%. Margen = 49,3 − 40 = 9,3%.",
+          "unit": "%"
+        }
+      ]
+    },
+    "aero-17-helicoptero-altitude": {
+      "title": "Helicóptero en la montaña: techo en estacionario",
+      "theory": "# El aire fino cobra dos veces\n\nPara mantenerse en estacionario, el rotor lanza aire hacia abajo. Por la teoría de la cantidad de movimiento, la potencia ideal es:\n\n```\nP_ideal = T^1,5 / √(2 ρ A)\n```\n\nCon la altitud, ρ baja y la potencia **necesaria** sube con 1/√ρ: a 3000 m (σ ≈ 0,742), ~**16% más**. Al mismo tiempo, el motor atmosférico pierde potencia **disponible** más o menos en proporción a σ: 200 kW se convierten en ~**148 kW**. Las dos curvas se cruzan en el **techo en estacionario**.\n\n## Las palas también tienen límite\n\nEl empuje de un rotor también está limitado por la **pérdida de las palas**: el coeficiente de empuje por solidez CT/σ no pasa de ~0,13. En el aire fino, las palas necesitan más ángulo para el mismo empuje y entran en pérdida antes.\n\n```\nsolidez σ = (nº de palas × cuerda) / (π × R)\n```\n\nMás palas o palas más anchas = más área de pala = más empuje antes de la pérdida.\n\n## Qué aumenta el techo\n\n- **Rotor más grande** (A mayor → menos potencia por newton de empuje, como en la lección 8).\n- **Más potencia** (o turbinas, que pierden menos con la altitud).\n- **Más solidez** (palas) contra la pérdida.\n- Pero la **punta de la pala** no puede pasar de ~0,65–0,7 Mach (ruido, ondas de choque).\n\n## Rescate en montaña\n\nLos helicópteros de rescate operan a 3000–5000 m en los Andes y el Himalaya — y por eso vuelan ligeros, con el mínimo de combustible, y prefieren aterrizar \"corriendo\" (con velocidad) en vez de quedarse en estacionario.\n\n## En este laboratorio\n\nHelicóptero de 1100 kg con rotor de 4 m, 2 palas, 400 rpm y motor de 150 kW.",
+      "task": "El helicóptero va a hacer rescates en una sierra: **techo en estacionario de al menos 2500 m**, **ascenso vertical de al menos 5 m/s** a nivel del mar y punta de pala **hasta Mach 0,65**. Ajusta el **motor**, el **rotor**, las **palas** y las **rpm**.",
+      "hints": [
+        "Con un rotor de 4 m ni siquiera se sostiene: el rotor pequeño pide demasiada potencia y las palas entran en pérdida. Aumenta el radio a 5 m.",
+        "Después usa 3 palas y ~200 kW. Revisa el Mach de la punta: 400 rpm con 5 m da ~0,62."
+      ],
+      "goals": [
+        "Techo en estacionario de al menos 2500 m",
+        "Ascenso vertical de al menos 5 m/s",
+        "Punta de pala hasta Mach 0,65"
+      ],
+      "questions": [
+        {
+          "prompt": "Un rotor necesita **100 kW** ideales para el estacionario a nivel del mar. ¿Cuánto necesita a 3000 m, donde σ = ρ/ρ0 = **0,742**? (P ∝ 1/√ρ)",
+          "explanation": "100 / √0,742 ≈ 116 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "¿Y cuánto queda, a 3000 m, de un motor atmosférico de **200 kW** (potencia disponible ∝ σ)?",
+          "explanation": "200 × 0,742 = 148,4 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "¿Cuál es la solidez de un rotor de **3 palas** con cuerda de **0,25 m** y radio de **2,5 m**? (σ = b × c / (π R))",
+          "explanation": "σ = 3 × 0,25 / (π × 2,5) = 0,75 / 7,854 ≈ 0,0955.",
+          "unit": ""
+        }
+      ]
+    },
+    "aero-18-rotor-avanco": {
+      "title": "El rotor en vuelo hacia delante: la pala que avanza y la que retrocede",
+      "theory": "# Dos palas, dos velocidades\n\nEn estacionario, todas las palas ven el mismo viento: Ω × R en la punta. Volando hacia delante con velocidad V:\n\n- La **pala que avanza** ve Ω R **+** V.\n- La **pala que retrocede** ve Ω R **−** V.\n\nCon la punta a 220 m/s y V = 70 m/s (252 km/h), la punta que avanza llega a **290 m/s (Mach 0,85)** y la que retrocede baja a **150 m/s**.\n\n## Disimetría de sustentación\n\nSi las palas tuvieran un ángulo fijo, el lado que avanza sustentaría mucho más y el helicóptero **volcaría** de lado. La solución, de Juan de la Cierva (autogiro, años 1920), es la **articulación de batimiento**: la pala que avanza sube (bate), lo que reduce su ángulo de ataque efectivo; la que retrocede baja y gana ángulo. El **plato cíclico** también ajusta el paso de cada pala a lo largo de la vuelta.\n\n## Relación de avance\n\n```\nμ = V / (Ω R)\n```\n\nCon μ ≈ 0,3, el helicóptero ya está cerca de su límite.\n\n## Los límites de velocidad\n\n- **Pérdida de la pala que retrocede**: para compensar su poca velocidad necesita mucho ángulo — y entra en pérdida. Vibración fuerte, alabeo hacia el lado de la pala que retrocede.\n- **Compresibilidad en la pala que avanza**: cerca de Mach 0,9 aparecen ondas de choque, ruido y arrastre.\n- En la raíz de la pala que retrocede hay incluso una región de **flujo inverso**.\n\nPor eso los helicópteros convencionales se quedan por debajo de ~300 km/h. Para ir más allá: **rotores coaxiales rígidos con hélice propulsora** (X3, SB-1), o el **convertiplano** (V-22), que se convierte en avión en crucero.\n\n## Solidez\n\nσ = b c / (π R): 4 palas de 0,5 m en un rotor de 7 m dan σ ≈ 0,091.",
+      "questions": [
+        {
+          "prompt": "La punta de la pala gira a **220 m/s** y el helicóptero vuela a **70 m/s**. ¿Cuál es el Mach de la punta que avanza? (sonido a 340 m/s)",
+          "explanation": "(220 + 70) / 340 = 290 / 340 ≈ 0,85.",
+          "unit": "Mach"
+        },
+        {
+          "prompt": "¿Y la velocidad del aire en la punta de la pala que **retrocede**?",
+          "explanation": "220 − 70 = 150 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "¿Cuál es la relación de avance μ = V / (ΩR) en ese vuelo?",
+          "explanation": "μ = 70 / 220 ≈ 0,32.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Cuál es la solidez de un rotor de **4 palas** con cuerda de **0,5 m** y radio de **7 m**?",
+          "explanation": "σ = 4 × 0,5 / (π × 7) = 2 / 21,99 ≈ 0,091.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Qué limita la velocidad máxima de un helicóptero convencional?",
+          "options": [
+            "El peso del rotor de cola",
+            "La pérdida de la pala que retrocede y la compresibilidad en la pala que avanza",
+            "Siempre la falta de potencia del motor",
+            "El arrastre de la cabina"
+          ],
+          "explanation": "Demasiado rápido, la pala que retrocede necesita demasiado ángulo y entra en pérdida, mientras la punta que avanza se acerca al sonido."
+        }
+      ]
+    },
+    "aero-19-autorrotacao": {
+      "title": "Autorrotación: diseñar un rotor que salva vidas",
+      "theory": "# Sin motor, el rotor se convierte en un paracaídas\n\nSi el motor se para, el piloto **baja el colectivo**: el aire que sube por el disco mantiene el rotor girando (lección 9), y el rotor frena el descenso como un paracaídas. La velocidad de descenso se estabiliza en:\n\n```\nv_descenso ≈ √(2 W / (ρ × A × 1,2))\n```\n\nUn helicóptero de 1600 kg con rotor de 5,6 m baja a ~**14,7 m/s** (casi 53 km/h): demasiado rápido para tocar el suelo.\n\n## El redondeo (flare)\n\nCerca del suelo, el piloto **sube el colectivo**: las palas ganan ángulo y usan la **energía de rotación** guardada en el rotor para frenar el descenso. La energía disponible es:\n\n```\nE = ½ × I × Ω² × (1 − 0,7²)\n```\n\n(el rotor puede perder hasta ~30% de las rpm antes de que las palas entren en pérdida; con I = 8 × palas × cuerda × R³ en este modelo). Si esa energía es mayor que la energía cinética del descenso (½ m v²), el toque es suave.\n\n## Qué hace bueno a un rotor en autorrotación\n\n- **Rotor grande**: baja más despacio (A mayor) **y** guarda mucha más energía (I ∝ R³).\n- **Palas pesadas/anchas** y más palas: más inercia.\n- **Rpm altas**: energía ∝ Ω², pero la **punta** no puede pasar de ~Mach 0,65.\n\nHay un compromiso: mucha inercia hace que el rotor tarde en acelerar y responder; los rotores ligeros son ágiles, pero pierden rpm rápido en una falla.\n\n## En este laboratorio\n\nHelicóptero de **1600 kg**, rotor de 4,5 m, 2 palas de 0,25 m a 450 rpm. Baja demasiado rápido y no tiene energía para el redondeo.",
+      "task": "Rediseña el rotor para que una falla de motor termine en un **aterrizaje seguro** (toque a hasta 3 m/s), con **descenso en autorrotación de hasta 15 m/s** y punta de pala **hasta Mach 0,65**.",
+      "safety": "- Las autorrotaciones de práctica se hacen **con instructor**, a altura segura y sobre una zona de aterrizaje preparada; la mayoría termina \"recuperando potencia\" antes del toque.\n- Conoce el **diagrama altura–velocidad** (\"curva del hombre muerto\") del modelo: hay combinaciones de poca altura y poca velocidad en las que una falla de motor no permite aterrizar con seguridad.",
+      "hints": [
+        "Para bajar a 15 m/s con 1600 kg el rotor necesita ~95 m² de disco: un radio de ~5,5 m.",
+        "Con un radio mayor, baja las rpm para que la punta no pase de Mach 0,65 (5,6 m a ~370 rpm)."
+      ],
+      "goals": [
+        "Aterrizaje seguro (toque a hasta 3 m/s)",
+        "Descenso en autorrotación de hasta 15 m/s",
+        "Punta de pala hasta Mach 0,65"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la velocidad de descenso en autorrotación de un helicóptero de **1600 kg** con rotor de radio **5,6 m**? (v = √(2W/(ρ A 1,2)), ρ = 1,225, g = 9,81)",
+          "explanation": "W = 15 696 N; A = π × 5,6² = 98,5 m². v = √(31 392 / (1,225 × 98,5 × 1,2)) ≈ 14,7 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Ese rotor tiene 2 palas de cuerda **0,25 m** y gira a **370 rpm**. ¿Cuál es su energía de rotación ½ I Ω², con I = 8 × palas × cuerda × R³?",
+          "explanation": "I = 8 × 2 × 0,25 × 5,6³ = 702,5 kg·m². Ω = 370 × 2π/60 = 38,75 rad/s. E = ½ × 702,5 × 38,75² ≈ 527 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "Si el rotor puede perder hasta el **30%** de sus rpm en el redondeo, ¿qué porcentaje de su energía de rotación se puede usar?",
+          "explanation": "La energía va con Ω²: queda 0,7² = 49%. Se usa 1 − 0,49 = 51%.",
+          "unit": "%"
+        }
+      ]
+    },
+    "aero-20-projeto-mato": {
+      "title": "Proyecto final: un avión de pista corta para el interior",
+      "theory": "# El avión que une lugares sin carretera\n\nLos aviones de **pista corta** (\"bush planes\") llevan médicos, vacunas y carga a lugares aislados — en la Amazonía, los Andes, Alaska. Las exigencias tiran en sentidos opuestos:\n\n- **Despegar corto y en altitud** (lecciones 4, 5): baja **carga alar**, **flaps**, potencia.\n- **Ir lejos** (lección 10): alto **L/D** — ala de gran alargamiento —, combustible suficiente y un crucero eficiente.\n- **Subir bien** después del despegue para librar cerros (lección 13).\n- **Aterrizar despacio** con seguridad: baja velocidad de pérdida.\n\n## Carga alar\n\n```\ncarga alar = masa / área del ala\n```\n\nUn avión de 920 kg con ala de 16 m² tiene 57,5 kg/m². La velocidad de pérdida sale de V = √(2W / (ρ S CLmáx)); con flaps de 20° (CLmáx 1,5 + 0,45 = 1,95): **~78 km/h**.\n\n## Los compromisos\n\n- Un ala **más grande** reduce la pérdida y la carrera, pero añade área mojada y baja el L/D en crucero.\n- Flaps **totalmente abajo** (30°) dan el mayor CL, pero también mucho arrastre: en el despegue, la aceleración cae. 10–20° suele ser lo mejor para despegar; 30° para aterrizar.\n- **Más combustible** aumenta el alcance, pero pesa: más pérdida, carrera más larga.\n\n## En este laboratorio\n\nAvión de 700 kg vacío, motor de **130 kW** (fijo), CLmáx 1,5, pista de **300 m** a **1500 m** de altitud, crucero a 200 km/h y 2000 m.",
+      "task": "Cierra el diseño: despegar y superar los 15 m en **hasta 220 m** en la pista a 1500 m, **pérdida de hasta 80 km/h**, **alcance de al menos 2200 km** y **ascenso de al menos 7 m/s**. Elige el **área y el alargamiento del ala**, los **flaps de despegue** y el **combustible**.",
+      "hints": [
+        "Empieza por la pérdida: con 14 m² y sin flaps pasa de 90 km/h. Unos 16 m² y flaps de 20° resuelven la pérdida y el despegue.",
+        "Para el alcance, aumenta el alargamiento (~9) y lleva ~220 kg de combustible. Comprueba que la pérdida siga por debajo de 80 km/h."
+      ],
+      "goals": [
+        "Despega dentro de la pista",
+        "Supera los 15 m en hasta 220 m",
+        "Pérdida a hasta 80 km/h",
+        "Alcance de al menos 2200 km",
+        "Ascenso de al menos 7 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la carga alar de un avión de **920 kg** con ala de **16 m²**?",
+          "explanation": "920 / 16 = 57,5 kg/m².",
+          "unit": "kg/m²"
+        },
+        {
+          "prompt": "Con un CLmáx de **1,95** (flaps de 20°), ¿cuál es la velocidad de pérdida de este avión (920 kg, 16 m², ρ = 1,225, g = 9,81)?",
+          "explanation": "V = √(2 × 9025 / (1,225 × 16 × 1,95)) = √472,3 ≈ 21,7 m/s ≈ 78,2 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "¿Por qué, en el despegue, los flaps de 20° suelen ser mejores que los 30° máximos?",
+          "options": [
+            "Porque 30° reduce la sustentación",
+            "Porque 30° añade mucho arrastre y el avión acelera y sube peor",
+            "Porque los flaps solo funcionan al aterrizar",
+            "Porque 30° aumenta la velocidad de pérdida"
+          ],
+          "explanation": "El último tramo de flap da poco CL extra y mucho arrastre: excelente para frenar al aterrizar, malo para acelerar y subir."
+        }
+      ]
     }
   }
 }

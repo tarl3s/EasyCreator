@@ -418,6 +418,376 @@
         "Cruising at at least 0.8 m/s",
         "Propulsion using at most 40 W"
       ]
+    },
+    "sub-11-espuma-carga": {
+      "title": "Compensating payload with buoyancy foam",
+      "theory": "# New payload, new buoyancy\n\nEvery time an ROV gains a camera, a gripper or a sensor, it becomes **heavier without getting bigger** — and starts to sink. If there is no lead left to remove, the fix is to **add volume that weighs little**: a block of **buoyancy foam**.\n\n## How much foam?\n\nA block of volume V and density ρ_foam, under water, gives a **net** lift (buoyancy minus its own weight) of:\n\n```\nnet lift = V × (ρ_water − ρ_foam) × g\n```\n\nTo compensate a mass excess Δm:\n\n```\nV = Δm / (ρ_water − ρ_foam)\n```\n\nWith **400 kg/m³** syntactic foam in fresh water, each litre holds up 0.6 kg; for 1 kg of excess you need **1.67 L**. In sea water (1025 kg/m³) 1.6 L is enough.\n\n## Why syntactic foam?\n\nStyrofoam and ordinary foams are full of air bubbles that **crush** under pressure: the volume (and the buoyancy) disappears with depth. **Syntactic foam** is made of **hollow glass microspheres** in a resin: it withstands hundreds or thousands of metres without changing volume.\n\n## Where to put it\n\nFoam goes **on top** (raises the centre of buoyancy) and ballast **at the bottom** (lowers the CG): this also improves stability, as in lesson 7.\n\n## In this lab\n\nThe ROV (20 L, 18 kg) gained **3 kg** of camera and gripper. Adding foam increases the **volume** of the vehicle **and** its **mass** (0.4 kg per litre). Change both consistently.",
+      "task": "With the 3 kg payload the ROV sinks. Add foam (400 kg/m³) by changing the **volume** and the **hull mass** consistently, until it is **neutral** (net force between −0.3 and +0.3 N) and holds still near **5 m**.",
+      "hints": [
+        "The ROV is 1 kg heavier than the water it displaces (18 + 3 = 21 kg against 20 L).",
+        "1 kg / (1000 − 400) kg/m³ ≈ 1.7 L of foam, weighing 0.68 kg: volume 21.7 L and hull mass 18.7 kg."
+      ],
+      "goals": [
+        "Net force between −0.3 and +0.3 N (neutral)",
+        "Ends between 4 and 6 m deep"
+      ],
+      "questions": [
+        {
+          "prompt": "How many litres of **400 kg/m³** foam compensate **1 kg** of excess in **fresh water**?",
+          "explanation": "V = 1 / (1000 − 400) = 0.001667 m³ ≈ 1.67 L.",
+          "unit": "L"
+        },
+        {
+          "prompt": "And in **sea water** (1025 kg/m³)?",
+          "explanation": "V = 1 / (1025 − 400) = 1 / 625 = 0.0016 m³ = 1.6 L.",
+          "unit": "L"
+        },
+        {
+          "prompt": "Why not use ordinary styrofoam as buoyancy on an ROV that dives to 500 m?",
+          "options": [
+            "Because it is too heavy",
+            "Because it dissolves in sea water",
+            "Because the air bubbles crush under pressure and the buoyancy disappears",
+            "Because it increases drag"
+          ],
+          "explanation": "At 500 m the pressure is over 50 bar: closed-cell air foams shrink. Syntactic foam uses glass microspheres, which don't crush."
+        }
+      ]
+    },
+    "sub-12-velocidade-vertical": {
+      "title": "Going down calmly: vertical terminal speed",
+      "theory": "# Constant force, constant speed\n\nA **neutral** ROV pushed down by a thruster with force F only accelerates at first. Soon the water **drag**, which grows with the square of the speed, matches the force — and the speed stops growing. That is the **terminal speed**:\n\n```\nF = ½ × ρ × Cd × A × v²   →   v = √(2F / (ρ × Cd × A))\n```\n\nGoing down, the ROV \"shows its belly\" to the water: A is the side area (length × diameter) and Cd ≈ 1.1 (cylinder side-on).\n\n## The square root is deceiving\n\nSince v ∝ √F, to **double** the speed you need to **quadruple** the force. Conversely, a thruster 4 times weaker still goes down at half the speed.\n\n## Why go down slowly\n\n- Hitting the bottom fast stirs up sediment (the camera sees nothing anymore) and can damage the ROV or what is down there.\n- The **umbilical cable** must be paid out at the pace of the descent.\n- Human pilots have ascent limits (decompression); crewed vehicles go up and down a few metres per minute.\n\n## Added mass\n\nTo accelerate a body in water you also have to accelerate part of the surrounding water — the **added mass** (for a cylinder side-on, ~ the mass of displaced water). That's why the ROV takes longer to reach terminal speed than in air.\n\n## In this lab\n\nA neutral 20 L ROV (cylinder ~16 cm × 97 cm, side area ≈ 0.157 m²), starting at 2 m, bottom at 30 m.",
+      "task": "With 20 N downwards the ROV goes down at almost 0.5 m/s. Adjust the **vertical thruster** to go down **without exceeding 0.3 m/s** and still reach **at least 25 m** within the 2-minute dive.",
+      "hints": [
+        "To drop from 0.48 to 0.3 m/s, the force has to drop by the ratio (0.3/0.48)² ≈ 0.39.",
+        "Too little force and the ROV doesn't reach 25 m in 120 s. Something between 5 and 7 N works."
+      ],
+      "goals": [
+        "Peak vertical speed up to 0.3 m/s",
+        "Reaches at least 25 m"
+      ],
+      "questions": [
+        {
+          "prompt": "A neutral ROV is pushed down with **10 N**. With ρ = 1000 kg/m³, Cd = **1.1** and side area **0.16 m²**, what is the terminal speed?",
+          "explanation": "v = √(2 × 10 / (1000 × 1.1 × 0.16)) = √0.1136 ≈ 0.337 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "With 10 N the ROV goes down at 0.34 m/s. What force would make it go down at **twice** that speed?",
+          "explanation": "F ∝ v²: doubling the speed takes 2² = 4 times the force: 40 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Why does the ROV take longer to reach terminal speed in water than a similar object in air?",
+          "options": [
+            "Because water is colder",
+            "Because it also has to accelerate the surrounding water (added mass)",
+            "Because gravity is weaker under water",
+            "Because the thruster loses force in water"
+          ],
+          "explanation": "The added mass (here, ~20 kg of water) adds to the ROV's when accelerating, so the same force gives less acceleration."
+        }
+      ]
+    },
+    "sub-13-espessura-casco": {
+      "title": "Sizing the hull: thickness, sphere and cylinder",
+      "theory": "# From pressure to thickness\n\nFor a thin-walled hull (radius r, thickness t) under pressure P, the wall stresses are:\n\n```\ncylinder (hoop stress):  σ = P × r / t\nsphere:                  σ = P × r / (2t)\n```\n\nThe **sphere** has half the stress of a cylinder with the same radius and thickness: it is the most efficient shape against pressure. That's why the cabin of deep submersibles is spherical.\n\n## Designing the thickness\n\nInverting, with the **allowable stress** σ_allow (material strength divided by the safety factor):\n\n```\ncylinder:  t = P × r / σ_allow\nsphere:    t = P × r / (2 σ_allow)\n```\n\nExample: at 6000 m in the sea, P ≈ 60 MPa. A titanium sphere of radius 1 m, with σ_allow = 900 MPa, needs t = 60 × 1 / 1800 ≈ **33 mm**.\n\n## Design pressure\n\n```\nP = ρ × g × h        (gauge)\nh = P / (ρ × g)      (depth for a given pressure)\n```\n\n60 MPa in the sea corresponds to 60 × 10⁶ / (1025 × 9.81) ≈ **5967 m**.\n\n## Weight vs displacement\n\nA thick hull is heavy. A submarine needs the **hull mass to be less than the mass of water it displaces** — otherwise it sinks even when empty. For great depths, this weight/displacement ratio gets worse fast, and materials with **high strength per density** (titanium, composites, ceramics) become essential.\n\n## And buckling\n\nThe formulas above are for the material **yielding**. Thin hulls under **external** pressure usually fail earlier, by **buckling**: that's why there are stiffening rings and real tests in a pressure chamber.",
+      "questions": [
+        {
+          "prompt": "A titanium sphere of radius **1 m** must withstand **60 MPa** with an allowable stress of **900 MPa**. What is the minimum wall thickness? (t = P × r / (2σ))",
+          "explanation": "t = 60 × 1 / (2 × 900) = 0.0333 m ≈ 33.3 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "At what depth in the **sea** (ρ = 1025 kg/m³, g = 9.81 m/s²) does the gauge pressure reach **60 MPa**?",
+          "explanation": "h = 60 × 10⁶ / (1025 × 9.81) ≈ 5967 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "An aluminium tube of radius **0.1 m** must withstand **1 MPa** (~100 m). Aluminium resists 250 MPa and the safety factor is **2**. What is the minimum thickness by hoop stress?",
+          "explanation": "σ_allow = 250 / 2 = 125 MPa. t = 1 × 0.1 / 125 = 0.0008 m = 0.8 mm — and, in practice, much thicker because of buckling.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "With the same radius, thickness and pressure, the wall stress of a **sphere** compared with a **cylinder** is…",
+          "options": [
+            "Twice as much",
+            "Half",
+            "The same",
+            "A quarter"
+          ],
+          "explanation": "σ_sphere = P r / (2t) and σ_cylinder = P r / t: the sphere splits the load in two directions."
+        },
+        {
+          "prompt": "Why are materials with **high strength per density** essential for very deep vehicles?",
+          "options": [
+            "Because they are cheaper",
+            "Because they conduct heat better",
+            "Because the thick hull must still be lighter than the water it displaces",
+            "Because they don't rust"
+          ],
+          "explanation": "Thickness grows with pressure; if the hull becomes heavier than its displacement, the vehicle sinks even when empty."
+        }
+      ]
+    },
+    "sub-14-sonar": {
+      "title": "Sonar: seeing with sound",
+      "theory": "# Sound is the ocean's light\n\nLight and radio waves vanish in a few metres of water; **sound** travels kilometres, at ~**1500 m/s** (over 4 times faster than in air). That's why navigation, mapping and communication under water use **sonar** (SOund NAvigation and Ranging).\n\n## Active and passive\n\n- **Active**: sends a pulse (\"ping\") and measures the **echo time**. The distance is **c × t / 2** (there and back).\n- **Passive**: only listens (propellers, machinery, animals). It doesn't give away the listener — the preferred mode of military submarines.\n\n## Frequency: range vs detail\n\nThe wavelength is λ = c / f. **High frequencies** (hundreds of kHz) have millimetre wavelengths: detailed images, but a range of tens of metres (water absorbs more). **Low frequencies** (a few kHz) reach tens of km, with little resolution.\n\n## Losses along the way\n\nSound spreads as a sphere: intensity falls with 1/R², which in decibels is a loss of **20 log₁₀(R)** (60 dB at 1000 m). Add to that **absorption**, which grows with frequency.\n\n## Doppler effect\n\nIf the target (or the ROV) moves with speed v towards the sonar, the echo comes back with its frequency shifted by:\n\n```\nΔf ≈ 2 × v × f / c\n```\n\nThat's how a **DVL** (Doppler Velocity Log) measures the ROV's speed over the seabed.\n\n## Layers and shadow zones\n\nThe speed of sound changes with temperature, salinity and pressure. The **thermocline** bends sound rays and creates **shadow zones** where a submarine can hide.",
+      "questions": [
+        {
+          "prompt": "A sonar ping's echo comes back **0.8 s** later. With sound at **1500 m/s**, how far is the target?",
+          "explanation": "d = 1500 × 0.8 / 2 = 600 m (the sound goes there and back).",
+          "unit": "m"
+        },
+        {
+          "prompt": "What is the wavelength of a **200 kHz** imaging sonar in water (c = 1500 m/s)?",
+          "explanation": "λ = 1500 / 200 000 = 0.0075 m = 7.5 mm: centimetre-level detail, short range.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "An ROV approaches a target at **5 m/s** using a **10 kHz** sonar. What is the Doppler shift of the echo? (Δf ≈ 2vf/c, c = 1500 m/s)",
+          "explanation": "Δf = 2 × 5 × 10 000 / 1500 ≈ 66.7 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "How much does sound lose by spherical spreading over **1000 m**? (loss = 20 log₁₀ R)",
+          "explanation": "20 × log₁₀(1000) = 20 × 3 = 60 dB (one way only; the echo loses it again on the way back).",
+          "unit": "dB"
+        },
+        {
+          "prompt": "Why does a military submarine prefer **passive** sonar?",
+          "options": [
+            "Because sending a ping reveals its own position",
+            "Because passive always has more range",
+            "Because active doesn't work in the sea",
+            "Because passive measures distance more precisely"
+          ],
+          "explanation": "A ping can be heard very far away — farther than its own echo returns. Listening in silence gives nothing away."
+        }
+      ]
+    },
+    "sub-15-energia-autonomia": {
+      "title": "Energy and endurance: the maximum-range speed",
+      "theory": "# Where the battery goes\n\nThe power of an electric underwater vehicle has two parts:\n\n- **Hotel load** H: electronics, cameras, lights, sensors, heating — it costs the same **standing still or moving**.\n- **Propulsion**: overcomes drag. Since drag ∝ v² and power = drag × v, propulsion grows with **v³**:\n\n```\nP(v) = H + k × v³\nendurance (h) = E / P(v)\nrange = v × endurance = E × v / (H + k v³)\n```\n\n## Too slow, too fast\n\n- **Too slow**: propulsion is small, but the hotel keeps draining for hours — and the vehicle barely moves.\n- **Too fast**: propulsion (v³) dominates and the battery runs out early.\n\n**Maximum range** happens when propulsion uses **half** of the hotel load:\n\n```\nk v³ = H / 2   →   v_best = ∛(H / (2k))\n```\n\n## Example\n\nAn AUV with a **2 kWh** battery, **50 W** hotel and **150 W of propulsion at 1 m/s** (k = 150 W/(m/s)³):\n\n- at 1 m/s: P = 200 W → 10 h → **36 km**;\n- at 2 m/s: P = 50 + 1200 = 1250 W → 1.6 h → **11.5 km**;\n- v_best = ∛(50/300) ≈ **0.55 m/s**.\n\n## Energy sources\n\nAUVs use **lithium-ion** (~150–250 Wh/kg); military submarines use **diesel-electric** (they must come up to breathe through the snorkel), **AIP** (air-independent propulsion, weeks submerged) or a **nuclear reactor** (months, limited by the crew's food).",
+      "questions": [
+        {
+          "prompt": "A **2 kWh** battery, **50 W** hotel and **150 W** of propulsion at 1 m/s. What is the endurance at 1 m/s?",
+          "explanation": "P = 50 + 150 = 200 W. 2000 Wh / 200 W = 10 h.",
+          "unit": "h"
+        },
+        {
+          "prompt": "What is the range at that speed (1 m/s)?",
+          "explanation": "10 h × 3600 s/h × 1 m/s = 36 000 m = 36 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "And the range at **2 m/s**? (propulsion grows with v³)",
+          "explanation": "Propulsion = 150 × 2³ = 1200 W; total 1250 W → 1.6 h. Range = 1.6 × 3600 × 2 = 11 520 m ≈ 11.5 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "What is this AUV's **maximum-range** speed? (v = ∛(H / (2k)), k = 150 W/(m/s)³)",
+          "explanation": "v = ∛(50 / 300) = ∛0.1667 ≈ 0.55 m/s. At it, the range goes above 42 km.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "If the AUV gets cameras and lights that **increase the hotel load**, the maximum-range speed…",
+          "options": [
+            "Decreases",
+            "Increases: it's worth going faster to spend less time",
+            "Doesn't change",
+            "Goes to zero"
+          ],
+          "explanation": "v_best = ∛(H/2k) grows with H: if standing still is expensive, it pays to get there sooner."
+        }
+      ]
+    },
+    "sub-16-pid-saturacao": {
+      "title": "PID with a heavy ROV: saturation and anti-windup",
+      "theory": "# When the thruster can't keep up\n\nIn lesson 9 the ROV was nearly neutral. Now it carries **2 kg** of tools: it is **19.6 N heavier** than neutral, and the vertical thruster has only **30 N**. Two things change:\n\n## 1. The P controller's error becomes large\n\nWith P only, the ROV stops where the controller's force balances the extra weight:\n\n```\nerror = ΔF / Kp = 19.6 / Kp\n```\n\nWith Kp = 5 N/m, that's ~4 m of error (it sits **below** the target). The **I** term accumulates that error and ends up supplying the 19.6 N on its own.\n\n## 2. Saturation\n\nThe controller may ask for 100 N, but the thruster delivers 30 N at most: the output **saturates**. Worse: of those 30 N, 19.6 N already go just to holding the weight — there's little left to **climb**, and plenty to **descend** (gravity helps). The response becomes **asymmetric**.\n\n## Integrator wind-up\n\nDuring saturation the error stays large and the integrator **keeps accumulating**. When the ROV finally reaches the target, the \"full\" integrator pushes too hard and causes a huge overshoot. The defence is **anti-windup**: freeze the integral while the output is saturated (the simulator already does this).\n\n## Tuning recipe\n\n1. Generous Kd for damping (water dissipates little in the vertical).\n2. Kp until the response is fast without oscillating.\n3. Small Ki, only to remove the final error — too big a Ki brings back oscillation.\n\n## In this lab\n\nA 20 L ROV with 2 kg of payload, 30 N thruster, target at **25 m**, a 3-minute dive.",
+      "task": "Tune the PID so the heavy ROV stops **between 24.5 and 25.5 m**, with an overshoot of **up to 5%** and settling within **70 s**.",
+      "hints": [
+        "Start with a high Kd (100 or more) and raise Kp until the descent is firm.",
+        "P alone leaves the ROV below the target. A Ki of ~1 removes that error without upsetting the rest."
+      ],
+      "goals": [
+        "Ends between 24.5 and 25.5 m",
+        "Overshoot up to 5%",
+        "Settles within 70 s"
+      ],
+      "questions": [
+        {
+          "prompt": "The ROV is **2 kg** heavier than neutral and uses only **P** with **Kp = 30 N/m**. How many metres below the target does it stop? (g = 9.81 m/s²)",
+          "explanation": "ΔF = 2 × 9.81 = 19.62 N. error = 19.62 / 30 ≈ 0.65 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "The thruster gives at most **30 N** and the ROV is **19.62 N** heavier than neutral. How much **upward** force is left to make it climb?",
+          "explanation": "30 − 19.62 = 10.38 N. To descend, on the other hand, there's 30 + 19.62 ≈ 49.6 N: the response is asymmetric.",
+          "unit": "N"
+        },
+        {
+          "prompt": "What is integrator **wind-up**?",
+          "options": [
+            "The integrator resets itself when the error is small",
+            "The motor overheats from using the I term a lot",
+            "With the output saturated, the integral keeps growing and later causes a large overshoot",
+            "The D term amplifies sensor noise"
+          ],
+          "explanation": "While the actuator is at its limit, accumulating error does nothing useful — it only stores a \"push\" that comes out at the wrong time. Anti-windup freezes the integral during that period."
+        }
+      ]
+    },
+    "sub-17-mergulho-profundo": {
+      "title": "Deep dive: ballast, timing and safety factor",
+      "theory": "# Down to the bottom and back\n\nA ballast vehicle (no vertical thruster) does a deep mission like this:\n\n1. **Floods the tank**: becomes heavy and sinks at terminal speed.\n2. Reaches the bottom and works.\n3. **Blows the tank** with compressed air: becomes light and rises.\n\nThe pilot has to decide **when** to blow: too early, it doesn't reach the bottom; too late, the battery or the time runs out.\n\n## Descent time\n\n```\ntime ≈ depth / terminal speed\n```\n\nAt 0.42 m/s, 90 m take ~214 s (plus a little to accelerate).\n\n## Hull safety factor\n\nThe pressure at 90 m in the sea is P = 1025 × 9.81 × 90 ≈ **9.05 bar** (gauge). A hull that withstands exactly that is at its limit: any flaw, fatigue or measurement error and it implodes. Serious designs use a **safety factor** of 1.5 or more:\n\n```\nrequired rating = SF × ρ × g × h_max\n```\n\nFor 90 m and SF = 1.5: **13.6 bar**.\n\n## Compressed air at depth\n\nTo push the water out of the tank, the air must be above the outside pressure — at 90 m, over 10 bar absolute. The deeper, the more air (and more bottles) each blow uses.\n\n## In this lab\n\nA 20 L, 19 kg vehicle, full 3 L tank, **sea water**, bottom at **90 m**, 500 s mission.",
+      "task": "Make the vehicle **touch the bottom** (at least 89 m), **return to the surface** before the mission ends, and dive with a **safety factor of at least 1.5** — without imploding. Choose the **hull rating** and **when to blow the ballast**.",
+      "safety": "- Real deep dives require a hull **tested in a pressure chamber** above the working pressure, with third-party certification.\n- Pressure tests of amateur projects: **with water** (never air), behind protection, with nobody in front of viewports and end caps.",
+      "hints": [
+        "The descent takes about 220 s. Blowing before that leaves the vehicle far from the bottom.",
+        "1.5 × 9.05 bar ≈ 13.6 bar: pick a rating a bit above that."
+      ],
+      "goals": [
+        "Reaches at least 89 m",
+        "Ends at the surface",
+        "Hull safety factor of at least 1.5",
+        "The hull doesn't implode"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **gauge** pressure at **90 m** in the sea? (ρ = 1025 kg/m³, g = 9.81 m/s²)",
+          "explanation": "P = 1025 × 9.81 × 90 = 904 973 Pa ≈ 9.05 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "What minimum rating does the hull need to go to 90 m with a **safety factor of 1.5**?",
+          "explanation": "1.5 × 9.05 ≈ 13.57 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "Going down at a constant **0.42 m/s**, how long does the vehicle take to reach **90 m**?",
+          "explanation": "t = 90 / 0.42 ≈ 214 s — that's why blowing the ballast before ~220 s won't let it reach the bottom.",
+          "unit": "s"
+        }
+      ]
+    },
+    "sub-18-hidrodinamica": {
+      "title": "Hydrodynamics: Reynolds, power and cavitation",
+      "theory": "# The Reynolds number\n\nHow the flow behaves around a hull depends on the ratio between **inertial** and **viscous** forces:\n\n```\nRe = v × L / ν\n```\n\n(v: speed; L: length; ν: kinematic viscosity, ~1.0 × 10⁻⁶ m²/s for water at 20 °C). Below ~5 × 10⁵ the boundary layer tends to be **laminar**; above, **turbulent** (more friction, but separates less). A 1 m ROV at 2 m/s has Re = 2 × 10⁶: turbulent.\n\n## Drag and power\n\n```\nD = ½ × ρ × Cd × A × v²\nP = D × v = ½ × ρ × Cd × A × v³\n```\n\nA hull with Cd = 0.1 and A = 0.03 m², at 3 m/s in the sea, needs ½ × 1025 × 0.1 × 0.03 × 27 ≈ **41.5 W** of useful power.\n\n## Shapes that slip through\n\nThe **teardrop/torpedo** shape (rounded nose, slowly tapering tail) avoids flow separation at the back — the **pressure** drag almost vanishes and only **friction** drag remains. The best length/diameter ratio is around 6–8.\n\n## Cavitation\n\nOn the blades of a fast propeller the local pressure can drop below the water's **vapour pressure**: bubbles form and implode, making **noise** (the enemy of a quiet submarine), eroding the metal and stealing thrust. Cavitation appears more **near the surface** (less pressure) and on **fast propellers**; at depth, the higher pressure suppresses it.\n\n## Free surface\n\nNear the surface, the hull makes **waves**, which cost energy (wave resistance). That's why submarines are faster **submerged** than on the surface.",
+      "questions": [
+        {
+          "prompt": "What is the Reynolds number of a **1 m** long ROV at **2 m/s** (ν = 1.0 × 10⁻⁶ m²/s)?",
+          "explanation": "Re = 2 × 1 / 10⁻⁶ = 2 × 10⁶ — turbulent flow.",
+          "unit": ""
+        },
+        {
+          "prompt": "What useful power overcomes the drag of a hull with Cd = **0.1** and A = **0.03 m²** at **3 m/s** in the sea (ρ = 1025 kg/m³)?",
+          "explanation": "P = ½ × 1025 × 0.1 × 0.03 × 3³ ≈ 41.5 W.",
+          "unit": "W"
+        },
+        {
+          "prompt": "If the speed **doubles**, the power to overcome drag is multiplied by how much?",
+          "explanation": "P ∝ v³: 2³ = 8.",
+          "unit": ""
+        },
+        {
+          "prompt": "Where is a propeller **more** likely to cavitate?",
+          "options": [
+            "At 300 m depth, turning slowly",
+            "Near the surface, turning fast",
+            "In very cold water",
+            "The same anywhere"
+          ],
+          "explanation": "Cavitation = local pressure below the vapour pressure. Low ambient pressure (surface) and fast blades (big pressure drop) favour it."
+        },
+        {
+          "prompt": "Why is a submarine usually **faster submerged** than on the surface?",
+          "options": [
+            "Because submerged it spends no energy making waves",
+            "Because deep water is less dense",
+            "Because the engine works better under pressure",
+            "Because gravity pulls less"
+          ],
+          "explanation": "On the surface part of the power becomes waves (wave resistance). Well below the surface, only friction and form drag remain."
+        }
+      ]
+    },
+    "sub-19-fadiga-seguranca": {
+      "title": "Fatigue, certification and lessons from real accidents",
+      "theory": "# A hull doesn't fail only from too much pressure\n\nA hull can withstand the maximum pressure on the first dive and fail on the tenth. Each descent and ascent is a **load cycle**; micro-cracks grow a little each cycle — that is **fatigue**.\n\n## Miner's rule\n\nIf a material withstands N₁ cycles at a certain load, each cycle \"uses up\" 1/N₁ of its life. Adding up the fractions of several kinds of dive:\n\n```\nD = n₁/N₁ + n₂/N₂ + ...\n```\n\nWhen D reaches 1, failure is expected. In practice the hull is retired well before (D ≈ 0.3–0.5), because the scatter is large.\n\n## Design and test pressure\n\nAt 4000 m in the sea the pressure is 1025 × 9.81 × 4000 ≈ **40.2 MPa**. With a safety factor of 1.5, the hull is designed for **60.3 MPa**, and classification society rules (DNV, ABS, Lloyd's) require **pressure-chamber testing** above the working pressure, periodic inspection and material traceability.\n\n## Composites and monitoring\n\nMetals give warning: they deform and crack detectably. **Carbon-fibre composites** under cyclic compression can build up **internal** damage (delamination) invisible from outside. Acoustic sensors that \"hear\" fibres snapping help, but they **don't replace** a validated, certified design.\n\n## The Titan case (2023)\n\nThe Titan submersible imploded on its way to the Titanic (~3800 m). Investigations pointed to: a **carbon-fibre** cylindrical hull (a poor material for cyclic compression), earlier signs of damage after dives, **no independent certification** and internal warnings ignored. The engineering lesson: **margin, testing, certification and a safety culture** are not red tape.",
+      "questions": [
+        {
+          "prompt": "What is the gauge pressure at **4000 m** in the sea? (ρ = 1025 kg/m³, g = 9.81 m/s²)",
+          "explanation": "P = 1025 × 9.81 × 4000 = 40 221 000 Pa ≈ 40.2 MPa (~400 atmospheres).",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "With a **safety factor of 1.5**, what pressure should the hull be designed for?",
+          "explanation": "1.5 × 40.22 ≈ 60.3 MPa.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "A hull made **50** dives of a kind it could withstand **200** times and **30** of another kind it could withstand **100** times. What is the accumulated damage D by Miner's rule?",
+          "explanation": "D = 50/200 + 30/100 = 0.25 + 0.30 = 0.55: more than half of the estimated life is already used up.",
+          "unit": ""
+        },
+        {
+          "prompt": "Why are **carbon-fibre** hulls under repeated compression especially dangerous?",
+          "options": [
+            "Because they are too heavy",
+            "Because they rust",
+            "Because internal damage (delamination) grows without showing outside",
+            "Because they can't take even one dive"
+          ],
+          "explanation": "The composite may pass the first dives and build up hidden damage; metals usually give visible signs first."
+        },
+        {
+          "prompt": "Which of these practices is the **most** important for a crewed submersible?",
+          "options": [
+            "Use the lightest possible material",
+            "A design with margin, testing above working pressure and independent certification",
+            "Make many dives to \"break in\" the hull",
+            "Rely only on monitoring sensors"
+          ],
+          "explanation": "Monitoring helps, but doesn't replace design margin, testing and independent verification — the main lesson of accidents like Titan."
+        }
+      ]
+    },
+    "sub-20-projeto-auv": {
+      "title": "Final project: a sea inspection AUV",
+      "theory": "# Every requirement at once\n\nAn **AUV** (autonomous vehicle) will inspect a pipeline at **60 m** in the sea. It carries **3 kg** of sensors mounted **on top** of the hull (the CG of the fixed part is 0.5 cm above the centre of buoyancy). The requirements come from every lesson of this track:\n\n1. **Buoyancy**: nearly neutral in sea water (net force between −1 and +1 N). Lead at the centre does the fine trim.\n2. **Stability**: CG at least **0.5 cm below** the centre of buoyancy — lead in the **keel**. But lead is heavy: to stay neutral you need **more volume**.\n3. **Hull**: no implosion and a **safety factor ≥ 1.5** at 60 m.\n4. **Control**: PID reaching 60 m within 150 s, with up to 5% overshoot.\n5. **Propulsion**: cruise at least **2 m/s** using **up to 40 W** — shape and thruster force.\n\n## An order that works\n\n1. Work out how much keel lead gives BG ≥ 0.5 cm (the moment of the lead down low must beat that of the payload up high).\n2. Increase the volume until buoyancy covers hull + payload + lead; trim the rest with the centre lead.\n3. Choose the hull rating: 1.5 × 1025 × 9.81 × 60 ≈ 9 bar, with some margin.\n4. Tune the PID (high Kd, then Kp, small Ki).\n5. Choose the shape and reduce the forward thruster until the power fits the budget.\n\n## Endurance\n\nWith a 500 Wh battery, 30 W of propulsion and 20 W of hotel load, the AUV runs for 10 h — at 2 m/s, **72 km** of pipeline inspected.",
+      "task": "Close the design: **neutral** (−1 to +1 N), **BG ≥ 0.5 cm**, no implosion and **safety factor ≥ 1.5**, PID settling within **150 s** with overshoot **up to 5%**, cruise **≥ 2 m/s** using **up to 40 W**.",
+      "hints": [
+        "About 3.6 kg of keel lead gives BG ≈ 0.6 cm. Then there are 30 + 3.6 = 33.6 kg to hold up: a 33 L hull and about 200 g at the centre.",
+        "A torpedo with ~6 N of forward thrust passes 2 m/s using ~30 W. For the PID, try Kp 30, Ki 1 and Kd 120 with a 30 N vertical thruster."
+      ],
+      "goals": [
+        "Net force between −1 and +1 N",
+        "CG at least 0.5 cm below the centre of buoyancy",
+        "The hull doesn't implode",
+        "Safety factor of at least 1.5",
+        "Settles within 150 s",
+        "Overshoot up to 5%",
+        "Cruise of at least 2 m/s",
+        "Propulsion power up to 40 W"
+      ],
+      "questions": [
+        {
+          "prompt": "What minimum rating does the hull need for **60 m** in the sea with a **safety factor of 1.5**? (ρ = 1025 kg/m³, g = 9.81 m/s²)",
+          "explanation": "1.5 × 1025 × 9.81 × 60 = 904 973 Pa ≈ 9.05 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "Hull + payload add up to **30 kg** and the volume is **33 L** in the sea (1025 kg/m³). How much lead, in total, makes the AUV neutral?",
+          "explanation": "Displaced water = 33 × 1.025 = 33.825 kg. Lead = 33.825 − 30 = 3.825 kg (keel + centre).",
+          "unit": "kg"
+        },
+        {
+          "prompt": "A **500 Wh** battery, **30 W** of propulsion and **20 W** of hotel load, at **2 m/s**. How many km of pipeline does the AUV inspect?",
+          "explanation": "500 / (30 + 20) = 10 h. 10 × 3600 × 2 = 72 000 m = 72 km.",
+          "unit": "km"
+        }
+      ]
     }
   }
 }

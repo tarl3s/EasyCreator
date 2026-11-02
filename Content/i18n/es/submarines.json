@@ -418,6 +418,376 @@
         "Crucero de al menos 0,8 m/s",
         "Propulsión gastando como máximo 40 W"
       ]
+    },
+    "sub-11-espuma-carga": {
+      "title": "Compensar la carga útil con espuma de flotación",
+      "theory": "# Carga nueva, flotabilidad nueva\n\nCada vez que un ROV gana una cámara, una pinza o un sensor, se vuelve **más pesado sin hacerse más grande** — y empieza a hundirse. Si ya no queda plomo que quitar, la solución es **añadir volumen que pese poco**: un bloque de **espuma de flotación**.\n\n## ¿Cuánta espuma?\n\nUn bloque de volumen V y densidad ρ_espuma, bajo el agua, da una sustentación **neta** (empuje menos su propio peso) de:\n\n```\nsustentación neta = V × (ρ_agua − ρ_espuma) × g\n```\n\nPara compensar un exceso de masa Δm:\n\n```\nV = Δm / (ρ_agua − ρ_espuma)\n```\n\nCon espuma sintáctica de **400 kg/m³** en agua dulce, cada litro sostiene 0,6 kg; para 1 kg de exceso hacen falta **1,67 L**. En agua salada (1025 kg/m³) bastan 1,6 L.\n\n## ¿Por qué espuma sintáctica?\n\nEl poliestireno y las espumas comunes están llenos de burbujas de aire que se **aplastan** con la presión: el volumen (y el empuje) desaparece con la profundidad. La **espuma sintáctica** está hecha de **microesferas de vidrio huecas** en una resina: aguanta cientos o miles de metros sin cambiar de volumen.\n\n## Dónde ponerla\n\nLa espuma va **arriba** (sube el centro de empuje) y el lastre **abajo** (baja el CG): esto también mejora la estabilidad, como en la lección 7.\n\n## En este laboratorio\n\nEl ROV (20 L, 18 kg) ganó **3 kg** de cámara y pinza. Añadir espuma aumenta el **volumen** del conjunto **y** su **masa** (0,4 kg por litro). Cambia ambos de forma coherente.",
+      "task": "Con la carga de 3 kg el ROV se hunde. Añade espuma (400 kg/m³) cambiando el **volumen** y la **masa del casco** de forma coherente, hasta que quede **neutro** (saldo entre −0,3 y +0,3 N) y quieto cerca de los **5 m**.",
+      "hints": [
+        "El ROV está 1 kg más pesado que el agua que desplaza (18 + 3 = 21 kg contra 20 L).",
+        "1 kg / (1000 − 400) kg/m³ ≈ 1,7 L de espuma, que pesan 0,68 kg: volumen 21,7 L y masa del casco 18,7 kg."
+      ],
+      "goals": [
+        "Saldo entre −0,3 y +0,3 N (neutro)",
+        "Termina entre 4 y 6 m de profundidad"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuántos litros de espuma de **400 kg/m³** compensan **1 kg** de exceso en **agua dulce**?",
+          "explanation": "V = 1 / (1000 − 400) = 0,001667 m³ ≈ 1,67 L.",
+          "unit": "L"
+        },
+        {
+          "prompt": "¿Y en **agua salada** (1025 kg/m³)?",
+          "explanation": "V = 1 / (1025 − 400) = 1 / 625 = 0,0016 m³ = 1,6 L.",
+          "unit": "L"
+        },
+        {
+          "prompt": "¿Por qué no usar poliestireno común como flotación en un ROV que baja a 500 m?",
+          "options": [
+            "Porque es demasiado pesado",
+            "Porque se disuelve en el agua salada",
+            "Porque las burbujas de aire se aplastan con la presión y el empuje desaparece",
+            "Porque aumenta el arrastre"
+          ],
+          "explanation": "A 500 m la presión supera 50 bar: las espumas de aire cerrado se encogen. La espuma sintáctica usa microesferas de vidrio, que no se aplastan."
+        }
+      ]
+    },
+    "sub-12-velocidade-vertical": {
+      "title": "Bajar con calma: velocidad terminal en vertical",
+      "theory": "# Fuerza constante, velocidad constante\n\nUn ROV **neutro** empujado hacia abajo por un propulsor con fuerza F solo acelera al principio. Pronto el **arrastre** del agua, que crece con el cuadrado de la velocidad, iguala la fuerza — y la velocidad deja de crecer. Es la **velocidad terminal**:\n\n```\nF = ½ × ρ × Cd × A × v²   →   v = √(2F / (ρ × Cd × A))\n```\n\nAl bajar, el ROV \"muestra la panza\" al agua: A es el área lateral (largo × diámetro) y Cd ≈ 1,1 (cilindro de lado).\n\n## La raíz cuadrada engaña\n\nComo v ∝ √F, para **duplicar** la velocidad hay que **cuadruplicar** la fuerza. Y al revés, un propulsor 4 veces más débil todavía baja a la mitad de la velocidad.\n\n## Por qué bajar despacio\n\n- Chocar con el fondo rápido levanta sedimento (la cámara ya no ve nada) y puede dañar el ROV o lo que hay abajo.\n- El **cable umbilical** debe soltarse al ritmo del descenso.\n- Los pilotos humanos tienen límites de ascenso (descompresión); los vehículos tripulados suben y bajan pocos metros por minuto.\n\n## Masa añadida\n\nPara acelerar un cuerpo dentro del agua hay que acelerar también parte del agua de alrededor — la **masa añadida** (para un cilindro de lado, ~ la masa de agua desplazada). Por eso el ROV tarda más en llegar a la velocidad terminal que en el aire.\n\n## En este laboratorio\n\nROV neutro de 20 L (cilindro de ~16 cm × 97 cm, área lateral ≈ 0,157 m²), empezando a 2 m, fondo a 30 m.",
+      "task": "Con 20 N hacia abajo el ROV baja a casi 0,5 m/s. Ajusta el **propulsor vertical** para bajar **sin pasar de 0,3 m/s** y aun así llegar a **al menos 25 m** en los 2 minutos de la inmersión.",
+      "hints": [
+        "Para bajar de 0,48 a 0,3 m/s, la fuerza tiene que bajar en la razón (0,3/0,48)² ≈ 0,39.",
+        "Con muy poca fuerza el ROV no llega a 25 m en 120 s. Algo entre 5 y 7 N funciona."
+      ],
+      "goals": [
+        "Velocidad vertical máxima de hasta 0,3 m/s",
+        "Llega a al menos 25 m"
+      ],
+      "questions": [
+        {
+          "prompt": "Un ROV neutro es empujado hacia abajo con **10 N**. Con ρ = 1000 kg/m³, Cd = **1,1** y área lateral **0,16 m²**, ¿cuál es la velocidad terminal?",
+          "explanation": "v = √(2 × 10 / (1000 × 1,1 × 0,16)) = √0,1136 ≈ 0,337 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Con 10 N el ROV baja a 0,34 m/s. ¿Qué fuerza lo haría bajar al **doble** de esa velocidad?",
+          "explanation": "F ∝ v²: duplicar la velocidad pide 2² = 4 veces la fuerza: 40 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Por qué el ROV tarda más en llegar a la velocidad terminal en el agua que un objeto parecido en el aire?",
+          "options": [
+            "Porque el agua está más fría",
+            "Porque también tiene que acelerar el agua de alrededor (masa añadida)",
+            "Porque la gravedad es menor bajo el agua",
+            "Porque el propulsor pierde fuerza en el agua"
+          ],
+          "explanation": "La masa añadida (aquí, ~20 kg de agua) se suma a la del ROV al acelerar, así que la misma fuerza da menos aceleración."
+        }
+      ]
+    },
+    "sub-13-espessura-casco": {
+      "title": "Dimensionar el casco: espesor, esfera y cilindro",
+      "theory": "# De la presión al espesor\n\nPara un casco de pared delgada (radio r, espesor t) bajo presión P, las tensiones en la pared son:\n\n```\ncilindro (tensión circunferencial):  σ = P × r / t\nesfera:                              σ = P × r / (2t)\n```\n\nLa **esfera** tiene la mitad de la tensión del cilindro con el mismo radio y espesor: es la forma más eficiente contra la presión. Por eso la cabina de los sumergibles de gran profundidad es esférica.\n\n## Diseñar el espesor\n\nInvirtiendo, con la **tensión admisible** σ_adm (resistencia del material dividida por el factor de seguridad):\n\n```\ncilindro:  t = P × r / σ_adm\nesfera:    t = P × r / (2 σ_adm)\n```\n\nEjemplo: a 6000 m en el mar, P ≈ 60 MPa. Una esfera de titanio de radio 1 m, con σ_adm = 900 MPa, necesita t = 60 × 1 / 1800 ≈ **33 mm**.\n\n## La presión de diseño\n\n```\nP = ρ × g × h        (manométrica)\nh = P / (ρ × g)      (profundidad para una presión)\n```\n\n60 MPa en el mar corresponden a 60 × 10⁶ / (1025 × 9,81) ≈ **5967 m**.\n\n## Peso × desplazamiento\n\nUn casco grueso pesa. Un submarino necesita que la **masa del casco sea menor que la masa de agua que desplaza** — si no, se hunde aun vacío. Para grandes profundidades, esa razón peso/desplazamiento empeora rápido, y los materiales con **alta resistencia por densidad** (titanio, compuestos, cerámicas) se vuelven esenciales.\n\n## Y el pandeo\n\nLas fórmulas de arriba valen para la **fluencia** del material. Los cascos delgados bajo presión **externa** suelen fallar antes, por **pandeo**: por eso hay anillos de refuerzo y pruebas reales en cámara hiperbárica.",
+      "questions": [
+        {
+          "prompt": "Una esfera de titanio de radio **1 m** debe aguantar **60 MPa** con tensión admisible de **900 MPa**. ¿Cuál es el espesor mínimo de la pared? (t = P × r / (2σ))",
+          "explanation": "t = 60 × 1 / (2 × 900) = 0,0333 m ≈ 33,3 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "¿A qué profundidad en el **mar** (ρ = 1025 kg/m³, g = 9,81 m/s²) la presión manométrica llega a **60 MPa**?",
+          "explanation": "h = 60 × 10⁶ / (1025 × 9,81) ≈ 5967 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Un tubo de aluminio de radio **0,1 m** debe aguantar **1 MPa** (~100 m). El aluminio resiste 250 MPa y el factor de seguridad es **2**. ¿Cuál es el espesor mínimo por tensión circunferencial?",
+          "explanation": "σ_adm = 250 / 2 = 125 MPa. t = 1 × 0,1 / 125 = 0,0008 m = 0,8 mm — y, en la práctica, mucho más grueso por el pandeo.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "Con el mismo radio, espesor y presión, la tensión en la pared de una **esfera** comparada con la de un **cilindro** es…",
+          "options": [
+            "El doble",
+            "La mitad",
+            "Igual",
+            "Un cuarto"
+          ],
+          "explanation": "σ_esfera = P r / (2t) y σ_cilindro = P r / t: la esfera reparte la carga en dos direcciones."
+        },
+        {
+          "prompt": "¿Por qué los materiales con **alta resistencia por densidad** son esenciales para vehículos muy profundos?",
+          "options": [
+            "Porque son más baratos",
+            "Porque conducen mejor el calor",
+            "Porque el casco grueso tiene que seguir siendo más ligero que el agua que desplaza",
+            "Porque no se oxidan"
+          ],
+          "explanation": "El espesor crece con la presión; si el casco pesa más que su desplazamiento, el vehículo se hunde aun vacío."
+        }
+      ]
+    },
+    "sub-14-sonar": {
+      "title": "Sonar: ver con sonido",
+      "theory": "# El sonido es la luz del océano\n\nLa luz y las ondas de radio desaparecen en pocos metros de agua; el **sonido** viaja kilómetros, a ~**1500 m/s** (más de 4 veces más rápido que en el aire). Por eso la navegación, el mapeo y la comunicación bajo el agua usan **sonar** (SOund NAvigation and Ranging).\n\n## Activo y pasivo\n\n- **Activo**: emite un pulso (\"ping\") y mide el **tiempo del eco**. La distancia es **c × t / 2** (ida y vuelta).\n- **Pasivo**: solo escucha (hélices, máquinas, animales). No delata a quien escucha — es el modo preferido de los submarinos militares.\n\n## Frecuencia: alcance × detalle\n\nLa longitud de onda es λ = c / f. Las **frecuencias altas** (cientos de kHz) tienen λ de milímetros: imágenes detalladas, pero alcance de decenas de metros (el agua absorbe más). Las **frecuencias bajas** (pocos kHz) llegan a decenas de km, con poca resolución.\n\n## Pérdidas en el camino\n\nEl sonido se expande en esfera: la intensidad cae con 1/R², lo que en decibelios es una pérdida de **20 log₁₀(R)** (60 dB a 1000 m). Súmale la **absorción**, que crece con la frecuencia.\n\n## Efecto Doppler\n\nSi el blanco (o el ROV) se mueve con velocidad v hacia el sonar, el eco vuelve con la frecuencia desplazada en:\n\n```\nΔf ≈ 2 × v × f / c\n```\n\nAsí es como el **DVL** (Doppler Velocity Log) mide la velocidad del ROV respecto al fondo.\n\n## Capas y zonas de sombra\n\nLa velocidad del sonido cambia con la temperatura, la salinidad y la presión. La **termoclina** curva los rayos sonoros y crea **zonas de sombra** donde un submarino puede esconderse.",
+      "questions": [
+        {
+          "prompt": "El eco de un pulso de sonar vuelve **0,8 s** después. Con el sonido a **1500 m/s**, ¿a qué distancia está el blanco?",
+          "explanation": "d = 1500 × 0,8 / 2 = 600 m (el sonido va y vuelve).",
+          "unit": "m"
+        },
+        {
+          "prompt": "¿Cuál es la longitud de onda de un sonar de imagen de **200 kHz** en el agua (c = 1500 m/s)?",
+          "explanation": "λ = 1500 / 200 000 = 0,0075 m = 7,5 mm: detalles de centímetros, alcance corto.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "Un ROV se acerca a **5 m/s** a un blanco y usa un sonar de **10 kHz**. ¿Cuál es el desplazamiento Doppler del eco? (Δf ≈ 2vf/c, c = 1500 m/s)",
+          "explanation": "Δf = 2 × 5 × 10 000 / 1500 ≈ 66,7 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "¿Cuánto pierde el sonido por expansión esférica hasta **1000 m**? (pérdida = 20 log₁₀ R)",
+          "explanation": "20 × log₁₀(1000) = 20 × 3 = 60 dB (solo la ida; el eco vuelve a perderlo en la vuelta).",
+          "unit": "dB"
+        },
+        {
+          "prompt": "¿Por qué un submarino militar prefiere el sonar **pasivo**?",
+          "options": [
+            "Porque emitir un ping revela su propia posición",
+            "Porque el pasivo siempre tiene más alcance",
+            "Porque el activo no funciona en el mar",
+            "Porque el pasivo mide la distancia con más precisión"
+          ],
+          "explanation": "Un ping se puede oír muy lejos — más lejos de lo que vuelve su propio eco. Escuchar en silencio no delata a nadie."
+        }
+      ]
+    },
+    "sub-15-energia-autonomia": {
+      "title": "Energía y autonomía: la velocidad de máximo alcance",
+      "theory": "# Adónde va la batería\n\nLa potencia de un vehículo submarino eléctrico tiene dos partes:\n\n- **Carga de hotel** H: electrónica, cámaras, luces, sensores, calefacción — gasta lo mismo **parado o en marcha**.\n- **Propulsión**: vence el arrastre. Como el arrastre ∝ v² y la potencia = arrastre × v, la propulsión crece con **v³**:\n\n```\nP(v) = H + k × v³\nautonomía (h) = E / P(v)\nalcance = v × autonomía = E × v / (H + k v³)\n```\n\n## Demasiado lento, demasiado rápido\n\n- **Muy lento**: la propulsión es pequeña, pero el hotel sigue gastando durante horas — y el vehículo casi no avanza.\n- **Muy rápido**: la propulsión (v³) domina y la batería se acaba pronto.\n\nEl **alcance máximo** ocurre cuando la propulsión gasta **la mitad** de la carga de hotel:\n\n```\nk v³ = H / 2   →   v_óptima = ∛(H / (2k))\n```\n\n## Ejemplo\n\nUn AUV con batería de **2 kWh**, hotel de **50 W** y propulsión de **150 W a 1 m/s** (k = 150 W/(m/s)³):\n\n- a 1 m/s: P = 200 W → 10 h → **36 km**;\n- a 2 m/s: P = 50 + 1200 = 1250 W → 1,6 h → **11,5 km**;\n- v_óptima = ∛(50/300) ≈ **0,55 m/s**.\n\n## Fuentes de energía\n\nLos AUV usan **ion-litio** (~150–250 Wh/kg); los submarinos militares, **diésel-eléctrico** (deben subir a respirar por el snórquel), **AIP** (propulsión independiente del aire, semanas sumergidos) o **reactor nuclear** (meses, limitados por la comida de la tripulación).",
+      "questions": [
+        {
+          "prompt": "Batería de **2 kWh**, hotel de **50 W** y propulsión de **150 W** a 1 m/s. ¿Cuál es la autonomía a 1 m/s?",
+          "explanation": "P = 50 + 150 = 200 W. 2000 Wh / 200 W = 10 h.",
+          "unit": "h"
+        },
+        {
+          "prompt": "¿Cuál es el alcance a esa velocidad (1 m/s)?",
+          "explanation": "10 h × 3600 s/h × 1 m/s = 36 000 m = 36 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "¿Y el alcance a **2 m/s**? (la propulsión crece con v³)",
+          "explanation": "Propulsión = 150 × 2³ = 1200 W; total 1250 W → 1,6 h. Alcance = 1,6 × 3600 × 2 = 11 520 m ≈ 11,5 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "¿Cuál es la velocidad de **alcance máximo** de este AUV? (v = ∛(H / (2k)), k = 150 W/(m/s)³)",
+          "explanation": "v = ∛(50 / 300) = ∛0,1667 ≈ 0,55 m/s. A esa velocidad el alcance supera los 42 km.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Si el AUV recibe cámaras y luces que **aumentan la carga de hotel**, la velocidad de máximo alcance…",
+          "options": [
+            "Disminuye",
+            "Aumenta: conviene ir más rápido para gastar menos tiempo",
+            "No cambia",
+            "Llega a cero"
+          ],
+          "explanation": "v_óptima = ∛(H/2k) crece con H: si estar parado sale caro, conviene llegar antes."
+        }
+      ]
+    },
+    "sub-16-pid-saturacao": {
+      "title": "PID con un ROV pesado: saturación y anti-windup",
+      "theory": "# Cuando el propulsor no da abasto\n\nEn la lección 9 el ROV era casi neutro. Ahora lleva **2 kg** de herramientas: queda **19,6 N más pesado** que neutro, y el propulsor vertical tiene solo **30 N**. Cambian dos cosas:\n\n## 1. El error del control P se hace grande\n\nSolo con P, el ROV se para donde la fuerza del controlador equilibra el exceso de peso:\n\n```\nerror = ΔF / Kp = 19,6 / Kp\n```\n\nCon Kp = 5 N/m, son ~4 m de error (queda **por debajo** del objetivo). El término **I** acumula ese error y pasa a dar los 19,6 N por sí solo.\n\n## 2. Saturación\n\nEl controlador puede pedir 100 N, pero el propulsor entrega como máximo 30 N: la salida se **satura**. Peor: de esos 30 N, 19,6 N ya se van solo en sostener el peso — para **subir** queda poco, para **bajar** sobra (la gravedad ayuda). La respuesta se vuelve **asimétrica**.\n\n## Wind-up del integrador\n\nDurante la saturación el error sigue grande y el integrador **acumula sin parar**. Cuando el ROV por fin llega al objetivo, el integrador \"lleno\" empuja de más y causa un sobreimpulso enorme. La defensa es el **anti-windup**: congelar la integral mientras la salida está saturada (el simulador ya lo hace).\n\n## Receta de sintonía\n\n1. Kd generoso para amortiguar (el agua disipa poco en la vertical).\n2. Kp hasta que la respuesta sea rápida sin oscilar.\n3. Ki pequeño, solo para quitar el error final — un Ki demasiado grande vuelve a oscilar.\n\n## En este laboratorio\n\nROV de 20 L con 2 kg de carga, propulsor de 30 N, objetivo a **25 m**, 3 minutos de inmersión.",
+      "task": "Sintoniza el PID para que el ROV pesado se pare **entre 24,5 y 25,5 m**, con sobreimpulso de **hasta 5%** y asentamiento en **hasta 70 s**.",
+      "hints": [
+        "Empieza con un Kd alto (100 o más) y sube Kp hasta que el descenso sea firme.",
+        "Solo P deja el ROV por debajo del objetivo. Un Ki de ~1 quita ese error sin desordenar lo demás."
+      ],
+      "goals": [
+        "Termina entre 24,5 y 25,5 m",
+        "Sobreimpulso de hasta 5%",
+        "Se asienta en hasta 70 s"
+      ],
+      "questions": [
+        {
+          "prompt": "El ROV está **2 kg** más pesado que neutro y usa solo **P** con **Kp = 30 N/m**. ¿Cuántos metros por debajo del objetivo se para? (g = 9,81 m/s²)",
+          "explanation": "ΔF = 2 × 9,81 = 19,62 N. error = 19,62 / 30 ≈ 0,65 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "El propulsor da como máximo **30 N** y el ROV está **19,62 N** más pesado que neutro. ¿Cuánta fuerza **hacia arriba** queda para hacerlo subir?",
+          "explanation": "30 − 19,62 = 10,38 N. Para bajar, en cambio, quedan 30 + 19,62 ≈ 49,6 N: la respuesta es asimétrica.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Qué es el **wind-up** del integrador?",
+          "options": [
+            "El integrador se pone a cero solo cuando el error es pequeño",
+            "El motor se calienta por usar mucho el término I",
+            "Con la salida saturada, la integral sigue creciendo y luego causa un gran sobreimpulso",
+            "El término D amplifica el ruido del sensor"
+          ],
+          "explanation": "Mientras el actuador está al límite, acumular error no sirve de nada — solo guarda un \"empujón\" que sale en el momento equivocado. El anti-windup congela la integral en ese periodo."
+        }
+      ]
+    },
+    "sub-17-mergulho-profundo": {
+      "title": "Inmersión profunda: lastre, tiempo y factor de seguridad",
+      "theory": "# Bajar hasta el fondo y volver\n\nUn vehículo de lastre (sin propulsor vertical) hace una misión profunda así:\n\n1. **Inunda el tanque** de lastre: queda pesado y baja a la velocidad terminal.\n2. Llega al fondo y trabaja.\n3. **Vacía el tanque** con aire comprimido: queda ligero y sube.\n\nEl piloto tiene que decidir **cuándo** vaciar: demasiado pronto, no llega al fondo; demasiado tarde, se acaban la batería o el tiempo.\n\n## Tiempo de descenso\n\n```\ntiempo ≈ profundidad / velocidad terminal\n```\n\nA 0,42 m/s, 90 m llevan ~214 s (más un poco para acelerar).\n\n## Factor de seguridad del casco\n\nLa presión a 90 m en el mar es P = 1025 × 9,81 × 90 ≈ **9,05 bar** (manométrica). Un casco que aguanta exactamente eso está al límite: cualquier defecto, fatiga o error de medida y implosiona. Los diseños serios usan un **factor de seguridad** de 1,5 o más:\n\n```\nresistencia necesaria = FS × ρ × g × h_max\n```\n\nPara 90 m y FS = 1,5: **13,6 bar**.\n\n## Aire comprimido en profundidad\n\nPara expulsar el agua del tanque, el aire debe estar por encima de la presión exterior — a 90 m, más de 10 bar absolutos. Cuanto más hondo, más aire (y más botellas) consume cada vaciado.\n\n## En este laboratorio\n\nVehículo de 20 L, 19 kg, tanque de 3 L lleno, **agua salada**, fondo a **90 m**, 500 s de misión.",
+      "task": "Haz que el vehículo **toque el fondo** (al menos 89 m), **vuelva a la superficie** antes del fin de la misión y se sumerja con **factor de seguridad de al menos 1,5** — sin implosionar. Elige la **resistencia del casco** y **cuándo vaciar el lastre**.",
+      "safety": "- Las inmersiones profundas de verdad exigen un casco **probado en cámara hiperbárica** por encima de la presión de trabajo, con certificación de terceros.\n- Pruebas de presión de proyectos aficionados: **con agua** (nunca aire), detrás de una protección, sin nadie delante de visores y tapas.",
+      "hints": [
+        "El descenso lleva unos 220 s. Vaciar antes deja el vehículo lejos del fondo.",
+        "1,5 × 9,05 bar ≈ 13,6 bar: elige una resistencia un poco por encima."
+      ],
+      "goals": [
+        "Llega a al menos 89 m",
+        "Termina en la superficie",
+        "Factor de seguridad del casco de al menos 1,5",
+        "El casco no implosiona"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la presión **manométrica** a **90 m** en el mar? (ρ = 1025 kg/m³, g = 9,81 m/s²)",
+          "explanation": "P = 1025 × 9,81 × 90 = 904 973 Pa ≈ 9,05 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "¿Qué resistencia mínima necesita el casco para ir a 90 m con **factor de seguridad 1,5**?",
+          "explanation": "1,5 × 9,05 ≈ 13,57 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "Bajando a **0,42 m/s** constantes, ¿cuánto tarda el vehículo en llegar a **90 m**?",
+          "explanation": "t = 90 / 0,42 ≈ 214 s — por eso vaciar el lastre antes de ~220 s no deja llegar al fondo.",
+          "unit": "s"
+        }
+      ]
+    },
+    "sub-18-hidrodinamica": {
+      "title": "Hidrodinámica: Reynolds, potencia y cavitación",
+      "theory": "# El número de Reynolds\n\nEl comportamiento del flujo alrededor de un casco depende de la razón entre fuerzas de **inercia** y de **viscosidad**:\n\n```\nRe = v × L / ν\n```\n\n(v: velocidad; L: longitud; ν: viscosidad cinemática, ~1,0 × 10⁻⁶ m²/s en agua a 20 °C). Por debajo de ~5 × 10⁵ la capa límite tiende a ser **laminar**; por encima, **turbulenta** (más fricción, pero se desprende menos). Un ROV de 1 m a 2 m/s tiene Re = 2 × 10⁶: turbulento.\n\n## Arrastre y potencia\n\n```\nD = ½ × ρ × Cd × A × v²\nP = D × v = ½ × ρ × Cd × A × v³\n```\n\nUn casco con Cd = 0,1 y A = 0,03 m², a 3 m/s en el mar, necesita ½ × 1025 × 0,1 × 0,03 × 27 ≈ **41,5 W** de potencia útil.\n\n## Formas que se deslizan\n\nLa forma de **gota/torpedo** (nariz redondeada, cola que se afina despacio) evita el desprendimiento del flujo en la parte trasera — el arrastre de **presión** casi desaparece y queda solo el de **fricción**. La razón longitud/diámetro óptima está alrededor de 6–8.\n\n## Cavitación\n\nEn las palas de una hélice rápida la presión local puede bajar de la **presión de vapor** del agua: se forman burbujas que implosionan, hacen **ruido** (el enemigo del submarino silencioso), erosionan el metal y roban empuje. La cavitación aparece más **cerca de la superficie** (menos presión) y en **hélices rápidas**; en profundidad, la mayor presión la suprime.\n\n## Superficie libre\n\nCerca de la superficie, el casco genera **olas**, que cuestan energía (resistencia por olas). Por eso los submarinos son más rápidos **sumergidos** que en superficie.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es el número de Reynolds de un ROV de **1 m** de largo a **2 m/s** (ν = 1,0 × 10⁻⁶ m²/s)?",
+          "explanation": "Re = 2 × 1 / 10⁻⁶ = 2 × 10⁶ — flujo turbulento.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Qué potencia útil vence el arrastre de un casco con Cd = **0,1** y A = **0,03 m²** a **3 m/s** en el mar (ρ = 1025 kg/m³)?",
+          "explanation": "P = ½ × 1025 × 0,1 × 0,03 × 3³ ≈ 41,5 W.",
+          "unit": "W"
+        },
+        {
+          "prompt": "Si la velocidad se **duplica**, ¿por cuánto se multiplica la potencia para vencer el arrastre?",
+          "explanation": "P ∝ v³: 2³ = 8.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Dónde tiene una hélice **más** probabilidad de cavitar?",
+          "options": [
+            "A 300 m de profundidad, girando despacio",
+            "Cerca de la superficie, girando rápido",
+            "En agua muy fría",
+            "Igual en cualquier lugar"
+          ],
+          "explanation": "Cavitación = presión local por debajo de la presión de vapor. Poca presión ambiente (superficie) y palas rápidas (gran caída de presión) la favorecen."
+        },
+        {
+          "prompt": "¿Por qué un submarino suele ser **más rápido sumergido** que en superficie?",
+          "options": [
+            "Porque sumergido no gasta energía haciendo olas",
+            "Porque el agua profunda es menos densa",
+            "Porque el motor funciona mejor bajo presión",
+            "Porque la gravedad tira menos"
+          ],
+          "explanation": "En superficie parte de la potencia se convierte en olas (resistencia por olas). Bien por debajo de la superficie, solo quedan fricción y arrastre de forma."
+        }
+      ]
+    },
+    "sub-19-fadiga-seguranca": {
+      "title": "Fatiga, certificación y lecciones de accidentes reales",
+      "theory": "# Un casco no falla solo por demasiada presión\n\nUn casco puede aguantar la presión máxima en la primera inmersión y fallar en la décima. Cada bajada y subida es un **ciclo de carga**; las microgrietas crecen un poco en cada ciclo — es la **fatiga**.\n\n## Regla de Miner\n\nSi un material aguanta N₁ ciclos a cierta carga, cada ciclo \"consume\" 1/N₁ de su vida. Sumando las fracciones de varios tipos de inmersión:\n\n```\nD = n₁/N₁ + n₂/N₂ + ...\n```\n\nCuando D llega a 1, se espera el fallo. En la práctica el casco se retira mucho antes (D ≈ 0,3–0,5), porque la dispersión es grande.\n\n## Presión de diseño y de prueba\n\nA 4000 m en el mar la presión es 1025 × 9,81 × 4000 ≈ **40,2 MPa**. Con factor de seguridad 1,5, el casco se diseña para **60,3 MPa**, y las normas de las sociedades de clasificación (DNV, ABS, Lloyd's) exigen **prueba en cámara hiperbárica** por encima de la presión de trabajo, inspección periódica y trazabilidad de los materiales.\n\n## Compuestos y monitoreo\n\nLos metales avisan: se deforman y agrietan de forma detectable. Los **compuestos de fibra de carbono** bajo compresión cíclica pueden acumular daño **interno** (delaminación) invisible desde fuera. Los sensores acústicos que \"oyen\" fibras rompiéndose ayudan, pero **no sustituyen** un diseño validado y certificado.\n\n## El caso Titan (2023)\n\nEl sumergible Titan implosionó camino del Titanic (~3800 m). Las investigaciones señalaron: casco cilíndrico de **fibra de carbono** (material malo para compresión cíclica), señales previas de daño tras inmersiones, **falta de certificación** independiente y advertencias internas ignoradas. La lección de ingeniería: **margen, pruebas, certificación y cultura de seguridad** no son burocracia.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es la presión manométrica a **4000 m** en el mar? (ρ = 1025 kg/m³, g = 9,81 m/s²)",
+          "explanation": "P = 1025 × 9,81 × 4000 = 40 221 000 Pa ≈ 40,2 MPa (~400 atmósferas).",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "Con **factor de seguridad 1,5**, ¿para qué presión debe diseñarse el casco?",
+          "explanation": "1,5 × 40,22 ≈ 60,3 MPa.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "Un casco hizo **50** inmersiones de un tipo que aguantaría **200** veces y **30** de otro tipo que aguantaría **100** veces. ¿Cuál es el daño acumulado D según la regla de Miner?",
+          "explanation": "D = 50/200 + 30/100 = 0,25 + 0,30 = 0,55: más de la mitad de la vida estimada ya se consumió.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Por qué los cascos de **fibra de carbono** bajo compresión repetida son especialmente peligrosos?",
+          "options": [
+            "Porque son demasiado pesados",
+            "Porque se oxidan",
+            "Porque el daño interno (delaminación) crece sin verse por fuera",
+            "Porque no aguantan ni una inmersión"
+          ],
+          "explanation": "El compuesto puede pasar las primeras inmersiones y acumular daño oculto; los metales suelen dar señales visibles antes."
+        },
+        {
+          "prompt": "¿Cuál de estas prácticas es la **más** importante para un sumergible tripulado?",
+          "options": [
+            "Usar el material más ligero posible",
+            "Diseño con margen, prueba por encima de la presión de trabajo y certificación independiente",
+            "Hacer muchas inmersiones para \"asentar\" el casco",
+            "Confiar solo en sensores de monitoreo"
+          ],
+          "explanation": "El monitoreo ayuda, pero no sustituye el margen de diseño, las pruebas y una verificación independiente — la principal lección de accidentes como el del Titan."
+        }
+      ]
+    },
+    "sub-20-projeto-auv": {
+      "title": "Proyecto final: un AUV de inspección en el mar",
+      "theory": "# Todas las exigencias a la vez\n\nUn **AUV** (vehículo autónomo) va a inspeccionar un ducto a **60 m** en el mar. Lleva **3 kg** de sensores montados **encima** del casco (el CG de la parte fija queda 0,5 cm por encima del centro de empuje). Los requisitos vienen de todas las lecciones de la ruta:\n\n1. **Flotabilidad**: casi neutro en agua salada (saldo entre −1 y +1 N). El plomo en el centro hace el ajuste fino.\n2. **Estabilidad**: CG al menos **0,5 cm por debajo** del centro de empuje — plomo en la **quilla**. Pero el plomo pesa: para seguir neutro hace falta **más volumen**.\n3. **Casco**: no implosionar y tener **factor de seguridad ≥ 1,5** a 60 m.\n4. **Control**: PID llegando a 60 m en hasta 150 s, con sobreimpulso de hasta 5%.\n5. **Propulsión**: crucero de al menos **2 m/s** gastando **hasta 40 W** — forma y fuerza del propulsor.\n\n## Un orden que funciona\n\n1. Calcula cuánto plomo de quilla da BG ≥ 0,5 cm (el momento del plomo abajo debe vencer al de la carga arriba).\n2. Aumenta el volumen hasta que el empuje cubra casco + carga + plomo; ajusta el resto con el plomo del centro.\n3. Elige la resistencia del casco: 1,5 × 1025 × 9,81 × 60 ≈ 9 bar, con holgura.\n4. Sintoniza el PID (Kd alto, después Kp, Ki pequeño).\n5. Elige la forma y reduce el propulsor de avance hasta que la potencia quepa en el presupuesto.\n\n## Autonomía\n\nCon una batería de 500 Wh, 30 W de propulsión y 20 W de hotel, el AUV funciona 10 h — a 2 m/s, **72 km** de ducto inspeccionado.",
+      "task": "Cierra el diseño: **neutro** (−1 a +1 N), **BG ≥ 0,5 cm**, sin implosionar y con **factor de seguridad ≥ 1,5**, PID con asentamiento en **hasta 150 s** y sobreimpulso **hasta 5%**, crucero **≥ 2 m/s** con **hasta 40 W**.",
+      "hints": [
+        "Unos 3,6 kg de plomo en la quilla dan BG ≈ 0,6 cm. Entonces hay 30 + 3,6 = 33,6 kg que sostener: 33 L de casco y unos 200 g en el centro.",
+        "Un torpedo con ~6 N de avance supera 2 m/s gastando ~30 W. En el PID, prueba Kp 30, Ki 1 y Kd 120 con un propulsor vertical de 30 N."
+      ],
+      "goals": [
+        "Saldo entre −1 y +1 N",
+        "CG al menos 0,5 cm por debajo del centro de empuje",
+        "El casco no implosiona",
+        "Factor de seguridad de al menos 1,5",
+        "Se asienta en hasta 150 s",
+        "Sobreimpulso de hasta 5%",
+        "Crucero de al menos 2 m/s",
+        "Potencia de propulsión de hasta 40 W"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Qué resistencia mínima necesita el casco para **60 m** en el mar con **factor de seguridad 1,5**? (ρ = 1025 kg/m³, g = 9,81 m/s²)",
+          "explanation": "1,5 × 1025 × 9,81 × 60 = 904 973 Pa ≈ 9,05 bar.",
+          "unit": "bar"
+        },
+        {
+          "prompt": "Casco + carga suman **30 kg** y el volumen es **33 L** en el mar (1025 kg/m³). ¿Cuánto plomo, en total, deja el AUV neutro?",
+          "explanation": "Agua desplazada = 33 × 1,025 = 33,825 kg. Plomo = 33,825 − 30 = 3,825 kg (quilla + centro).",
+          "unit": "kg"
+        },
+        {
+          "prompt": "Batería de **500 Wh**, propulsión de **30 W** y hotel de **20 W**, a **2 m/s**. ¿Cuántos km de ducto inspecciona el AUV?",
+          "explanation": "500 / (30 + 20) = 10 h. 10 × 3600 × 2 = 72 000 m = 72 km.",
+          "unit": "km"
+        }
+      ]
     }
   }
 }
