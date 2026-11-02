@@ -1,6 +1,6 @@
 {
   "title": "Electrical Engineering: from Ohm to power systems",
-  "description": "From Ohm's Law to three-phase systems: voltage, current, Kirchhoff, Thévenin, capacitors, alternating current, power factor and rectifiers — all in a circuit simulator with a virtual multimeter and oscilloscope.",
+  "description": "From Ohm's Law to power systems: voltage, current, Kirchhoff, superposition, Thévenin, capacitors and inductors, alternating current, filters and resonance, power factor, diodes and LEDs, transformers, operational amplifiers, motors, cable sizing and protection — all in a circuit simulator with a virtual multimeter and oscilloscope.",
   "lessons": {
     "ele-01-ohm": {
       "hints": [
@@ -392,6 +392,518 @@
       "theory": "# Why three phases?\n\nEnergy is generated and transmitted in **three phases**: three sinusoidal voltages of equal value, shifted by **120°** from each other (A, B and C). Compared to single-phase, three-phase:\n\n- transmits the same power with **less copper** in the cables;\n- delivers **constant power** over time (the three waves complement each other) — motors turn smoothly;\n- creates a **rotating magnetic field**, which lets the induction motor start by itself.\n\n# Star (Y) connection\n\nThe three sources (or loads) have a common point, the **neutral**.\n\n- **Phase voltage** (Vp): between a phase and the neutral.\n- **Line voltage** (VL): between two phases. From the phasors, `VL = √3 × Vp`. That is where the **127/220 V** pair comes from (220 = √3 × 127) and the **220/380 V**.\n- In star, the line current equals the phase current.\n\n```\nVa = 127∠0°   Vb = 127∠−120°   Vc = 127∠120°\nVab = Va − Vb = 220∠30°\n```\n\n# Balanced load and neutral current\n\nBy the Current Law at the load's star point, the neutral current is the **phasor sum** of the three phase currents:\n\n```\nIn = Ia + Ib + Ic\n```\n\nIf the three loads are **equal** (a **balanced** load), the three currents have the same magnitude and are 120° apart: the sum is **zero**. With different loads, current is left over in the neutral, which heats the conductor and unbalances the voltages. That's why electricians spread a building's circuits among the phases.\n\n# Three-phase power\n\n```\nP = 3 × Vp × Ip × cos φ = √3 × VL × IL × cos φ\n```\n\n# The circuit\n\nThree 127 V sources (60 Hz, 0°, −120°, +120°) feed loads Ra, Rb and Rc connected in star. The star point returns to the source neutral through conductor **Rn** (0.5 Ω), and voltmeter **M1** measures the line voltage between B and C. The oscilloscope shows the three phase voltages.",
       "task": "The phase C load (**Rc**) is different from the others and makes current flow in the neutral. **Balance the load**: the neutral current must fall below **0.5 A** and the total power must be between **4.6 and 5.1 kW**.",
       "safety": "Three-phase networks (220/380 V in industries, 13.8 kV or more in distribution) are **deadly**. Only qualified and authorized professionals (NR-10), with protective equipment, work on them. Here everything is simulated."
+    },
+    "ele-11-superposicao": {
+      "hints": [
+        "If no current flows through R1 there is no drop across it: V(n2) must equal the battery's 12 V.",
+        "Superposition: V(n2) = 8 + I1 × 666.7. To reach 12 V you need 4 V more = I1 × 666.7 Ω.",
+        "Another way: with 12 V at n2, all of R2's current (12 V / 2 kΩ) must come from I1."
+      ],
+      "questions": [
+        {
+          "prompt": "In the lab circuit, with only the **12 V battery** (I1 off = open circuit), what is **V(n2)**?",
+          "options": [],
+          "explanation": "Without I1 what is left is a voltage divider: 12 × 2k / (1k + 2k) = 8 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "Now with only **I1 = 6 mA** (battery off = short circuit). What is **V(n2)**?",
+          "options": [],
+          "explanation": "With the battery shorted, R1 and R2 are in parallel: 1k ∥ 2k = 666.7 Ω. V = 0.006 × 666.7 = 4 V. Adding both effects: 8 + 4 = 12 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "In superposition, when computing the effect of one source alone, the other **voltage** sources become ___ and the **current** sources become ___.",
+          "options": [
+            "short circuits; open circuits",
+            "open circuits; short circuits",
+            "1 Ω resistors; short circuits",
+            "they are removed together with their resistors"
+          ],
+          "explanation": "A zeroed voltage source = 0 V = a wire (short). A zeroed current source = 0 A = an open circuit."
+        },
+        {
+          "prompt": "In the mesh example of the theory (10 V; R1 = 2 Ω; R2 = 2 Ω; shared R3 = 4 Ω), what is the current in **R3**?",
+          "options": [],
+          "explanation": "Ia = 3 A and Ib = 2 A; in R3 the two mesh currents flow in opposite directions: 3 − 2 = 1 A. Check: Req = 2 + (4 ∥ 2) = 3.33 Ω, I = 3 A, and the parallel splits 2 A into R2 and 1 A into R3.",
+          "unit": "A"
+        },
+        {
+          "prompt": "Why can't you add the powers computed with each source separately?",
+          "options": [
+            "Because current sources don't dissipate power",
+            "Because power only exists in alternating current",
+            "Because P = R·I² is not linear: (I₁ + I₂)² ≠ I₁² + I₂²",
+            "Because superposition only works with one source"
+          ],
+          "explanation": "Superposition holds for linear quantities (voltage and current). Power depends on the square of the current: add the currents and only then compute P."
+        }
+      ],
+      "goals": [
+        "Current in R1 practically zero (between −0.1 mA and +0.1 mA)",
+        "Voltage at node n2 equal to 12 V"
+      ],
+      "title": "Superposition, current sources and mesh analysis",
+      "theory": "# Circuits with several sources\n\nUntil now almost every circuit had a single source. Real life has several: two batteries in parallel, a solar panel and the grid, a sensor powered by one supply and read by another. There are three classic tools to solve them.\n\n# 1. Superposition\n\nIn a **linear** circuit (resistors, capacitors, inductors and sources), the effect of several sources together is the **sum** of the effects of each source alone:\n\n1. Pick one source and \"turn off\" the others:\n   - a **voltage** source turned off = a **short circuit** (0 V across it);\n   - a **current** source turned off = an **open circuit** (0 A).\n2. Compute the voltage or current you want.\n3. Repeat for each source and **add** the results (with their signs!).\n\n⚠ Superposition works for **voltages and currents**, never for **power**: P = R·I² is not linear. Add the currents first and only then compute the power.\n\n# 2. The current source\n\nAn ideal **current source** always pushes the **same current**, whatever the voltage across its terminals (the symbol is a circle with an arrow). It appears in the **Norton equivalent** and is a good model for sensors (photodiodes), transistors and battery chargers in their constant-current phase.\n\n# 3. Nodal and mesh analysis\n\n- **Nodal**: one Kirchhoff current law (KCL) equation per node. For node n2 of this lab:\n\n```\n(V − 12)/1k + V/2k = I1   →   V = 8 + 666.7 × I1\n```\n\n- **Mesh**: a current \"circulating\" in each window of the circuit and one Kirchhoff voltage law (KVL) equation per mesh. Example: a 10 V source, R1 = 2 Ω only in mesh 1, R2 = 2 Ω only in mesh 2 and R3 = 4 Ω shared:\n\n```\nMesh 1:  10 = (2 + 4)·Ia − 4·Ib\nMesh 2:   0 = −4·Ia + (4 + 2)·Ib\n→ Ia = 3 A, Ib = 2 A; R3 carries Ia − Ib = 1 A\n```\n\nCircuit simulators (like SPICE and this one) build these equations as a matrix and solve everything at once.\n\n# In the simulator\n\nThe 12 V battery feeds node n2 through R1 = 1 kΩ; R2 = 2 kΩ goes to ground; the current source **I1** injects current into the same node. By superposition, V(n2) = **8 V** (effect of the battery) **+ I1 × 666.7 Ω** (effect of I1, with the battery shorted: R1 ∥ R2 = 666.7 Ω).",
+      "task": "Adjust the current source **I1** so that **no current flows through R1** (between −0.1 mA and +0.1 mA): the battery is \"balanced\" and node n2 reaches **12 V**."
+    },
+    "ele-12-rl": {
+      "hints": [
+        "τ = L / (R1 + Rb). For τ = 2.5 ms with L = 0.5 H, the total resistance must be 0.5 / 0.0025.",
+        "The total resistance is 200 Ω, but 50 Ω already belong to the coil itself.",
+        "Check the final current: 12 V / 200 Ω."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the time constant of a circuit with **L = 200 mH** and **R = 40 Ω**?",
+          "options": [],
+          "explanation": "τ = L / R = 0.2 / 40 = 0.005 s = 5 ms.",
+          "unit": "ms"
+        },
+        {
+          "prompt": "How much energy is stored in the lab's coil (**L = 0.5 H**) at **60 mA**?",
+          "options": [],
+          "explanation": "E = ½ × L × I² = 0.5 × 0.5 × 0.06² = 0.0009 J = 0.9 mJ.",
+          "unit": "mJ"
+        },
+        {
+          "prompt": "After **3 τ**, the current has reached what percentage of its final value?",
+          "options": [],
+          "explanation": "1 − e^(−3) = 1 − 0.0498 = 0.950 → about 95%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "What is the **diode in parallel** with a relay coil for?",
+          "options": [
+            "To increase the coil current",
+            "To give the current a path when the transistor turns off, avoiding the voltage spike v = L·di/dt",
+            "To rectify the coil's alternating current",
+            "To make the relay switch on more slowly"
+          ],
+          "explanation": "Without the diode, the coil current would be cut in microseconds and the voltage spike would kill the transistor. The diode lets the current circulate until the energy ½·L·I² is dissipated."
+        }
+      ],
+      "goals": [
+        "Time constant τ = 2.5 ms (between 2.4 and 2.6 ms)",
+        "Final coil current of at least 57 mA"
+      ],
+      "title": "Inductors, the RL transient and magnetic energy",
+      "theory": "# The inductor\n\nAn **inductor** is a wire wound in turns (sometimes around an iron core). The current creates a **magnetic field** that stores energy. The property that measures this is the **inductance L**, in **henrys (H)**.\n\nThe fundamental rule is **Faraday's/Lenz's law**: the inductor reacts to any **change** in current by producing an opposing voltage:\n\n```\nv = L × di/dt\n```\n\nThat is why the current in an inductor **cannot change suddenly** — it behaves like an electrical \"inertia\" (just as a capacitor's voltage cannot jump).\n\n# The RL transient\n\nConnecting a source V to a resistor R in series with an inductor L, the current rises exponentially to its final value V/R:\n\n```\ni(t) = (V / R) × (1 − e^(−t/τ))        τ = L / R\n```\n\n- At **1 τ** the current reaches **63.2%** of its final value; at **3 τ**, 95%; at **5 τ**, 99.3% (\"settled\").\n- The inductor voltage starts at V and falls to zero: at steady DC, an ideal inductor is **a wire**.\n- Compare with RC: there τ = R × C; here τ = L / R. **More resistance** makes RC **slower** but RL **faster**.\n\nA real coil has the resistance of its own wire (here **Rb = 50 Ω**), which goes in series in the calculation: τ = L / (R1 + Rb).\n\n# Magnetic energy\n\n```\nE = ½ × L × I²\n```\n\nWhen the switch opens, this energy has to go somewhere. Since di/dt becomes huge, v = L·di/dt turns into a **voltage spike**: it makes the spark of a spark plug (hundreds of volts become ~20 kV in the ignition coil) and it **kills transistors** driving relays. The fix is the **flyback diode** in parallel with the coil, which gives the current a path to keep circulating and die out slowly.\n\n# In the simulator\n\nA relay coil has **L = 0.5 H** and **Rb = 50 Ω**, fed from 12 V through the resistor **R1**. The oscilloscope shows the current I(L1) rising and the voltage V(L1) falling.",
+      "task": "The relay must switch on fast: adjust **R1** so the time constant is **τ = 2.5 ms** (between 2.4 and 2.6 ms) and the final current is at least **57 mA** (the relay's pick-up current).",
+      "safety": "Coils (relays, solenoids, motors, a car's ignition coil) produce **spikes of hundreds or thousands of volts** when their current is suddenly interrupted. Never disconnect an energized coil by hand, and in relay circuits always use a **flyback diode**."
+    },
+    "ele-13-led-zener": {
+      "hints": [
+        "There are 12 − 3 × 2.0 = 6 V left to share between R1 and the three LED internal resistances (3 × 10 Ω).",
+        "R1 + 30 Ω = 6 V / 0.020 A = 300 Ω.",
+        "Power in the resistor: P = R × I² = 270 × 0.02²."
+      ],
+      "questions": [
+        {
+          "prompt": "A red LED (**Vf = 2 V**, **15 mA**) will run from a **5 V** supply. What series resistor?",
+          "options": [],
+          "explanation": "R = (5 − 2) / 0.015 = 200 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "A Zener regulator gets **Vin = 12 V**, uses a **5.1 V** Zener and feeds a **20 mA** load; the Zener needs at least **5 mA**. What series resistor?",
+          "options": [],
+          "explanation": "R = (12 − 5.1) / (0.020 + 0.005) = 6.9 / 0.025 = 276 Ω (in practice, 270 Ω from the E24 series).",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "In that regulator (R = 276 Ω), what is the Zener's power if the **load is disconnected**?",
+          "options": [],
+          "explanation": "With no load, all of the resistor current, 6.9 / 276 = 25 mA, goes through the Zener: Pz = 5.1 × 0.025 = 0.1275 W. Choose a Zener of at least 0.25 W (with margin, 0.5 W).",
+          "unit": "W"
+        },
+        {
+          "prompt": "Why **not** connect several LEDs in parallel with a single resistor?",
+          "options": [
+            "Because LEDs in parallel don't light",
+            "Because each LED's voltage would add up",
+            "Because the LED with a slightly lower Vf draws almost all the current, heats up and burns (thermal runaway)",
+            "Because the resistor would be shorted"
+          ],
+          "explanation": "A diode's current is exponential in its voltage: small Vf differences become large current differences. Each parallel branch needs its own resistor."
+        }
+      ],
+      "goals": [
+        "LED current between 19 mA and 21 mA",
+        "Power in R1 of at most 0.125 W"
+      ],
+      "title": "LEDs, the Zener diode and voltage regulators",
+      "theory": "# The real diode\n\nA silicon diode only conducts when the **forward** voltage (anode more positive than cathode) exceeds about **0.6–0.7 V**; below that the current is practically zero. Above it, the current grows **exponentially** (Shockley's equation): a few tenths of a volt more multiply the current by tens. That is why **a diode is never connected straight across a supply**: something must limit the current.\n\nThe simulator uses the most common engineering model: an ideal switch with a **knee voltage Vf** and a small **resistance Ron** after it.\n\n# LEDs\n\nAn **LED** is a diode that emits light. Its forward voltage depends on the colour (on the semiconductor's band gap):\n\n- red / yellow: **~2 V**;\n- green, blue and white: **~3 V**.\n\nThe typical current of an indicator LED is **10–20 mA**. The series resistor comes from Ohm's Law applied to the **leftover** voltage:\n\n```\nR = (Vsupply − n × Vf) / I        (n LEDs in series)\n```\n\nConnecting LEDs **in series** with a single resistor saves energy (the same current lights all of them). Connecting LEDs **in parallel** without a resistor for each one is a bad idea: the one with a slightly lower Vf draws almost all the current, heats up, its Vf drops further… and it burns (**thermal runaway**).\n\n# The Zener diode\n\nEvery diode, reverse-biased, breaks down at a high voltage. A **Zener** is made to break down at a **precise, low** voltage (3.3 V, 5.1 V, 12 V…) without damage. In the breakdown region the voltage barely changes with the current: it becomes a **voltage reference**.\n\n## The Zener regulator\n\n```\nVin ── R ──┬── Vout = Vz\n           │      │\n         Zener   load\n```\n\nThe resistor must supply the load current **plus** a minimum Zener current (so it keeps regulating):\n\n```\nR = (Vin − Vz) / (Iload + Iz,min)\nZener worst case (no load):  Pz = Vz × (Vin − Vz) / R\n```\n\n**Integrated regulators** (7805, LM317, LDOs) do the same with an amplifier and a transistor: much more stable, with short-circuit and over-temperature protection. And **switching supplies** (buck, boost) convert voltage at 85–95% efficiency instead of burning the excess as heat.\n\n# In the simulator\n\nThree red LEDs (Vf = 2.0 V and Ron = 10 Ω each) are in series with **R1**, fed from 12 V. The current shows on the multimeter when you click an LED, and the drawing's glow follows the current.",
+      "task": "Adjust **R1** so the three LEDs run at **20 mA** (between 19 and 21 mA) without exceeding **0.125 W** in the resistor (a 1/8 W resistor)."
+    },
+    "ele-14-filtros": {
+      "hints": [
+        "R = 1 / (2π fc C) = 1 / (2π × 1000 × 100 × 10⁻⁹).",
+        "It gives ≈ 1592 Ω. The closest E24 value is 1.6 kΩ.",
+        "Turn the control and watch the curve's \"knee\" cross the dashed line."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the cutoff frequency of a low-pass with **R = 10 kΩ** and **C = 10 nF**?",
+          "options": [],
+          "explanation": "fc = 1 / (2π × 10 000 × 10 × 10⁻⁹) = 1 / (6.283 × 10⁻⁴) ≈ 1592 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "A filter reduces the signal from 1 V to **0.1 V**. How much is that in decibels?",
+          "options": [],
+          "explanation": "G = 20 × log10(0.1) = 20 × (−1) = −20 dB.",
+          "unit": "dB"
+        },
+        {
+          "prompt": "An RC low-pass with **fc = 1 kHz** receives a **10 kHz** signal. What is the gain?",
+          "options": [],
+          "explanation": "|H| = 1 / √(1 + (10 000/1000)²) = 1/√101 ≈ 0.0995 (≈ −20 dB: one decade above the cutoff).",
+          "unit": ""
+        },
+        {
+          "prompt": "Above the cutoff frequency, a **1st-order** RC filter attenuates…",
+          "options": [
+            "−3 dB per decade",
+            "−20 dB per decade",
+            "−40 dB per decade",
+            "nothing: the gain stays constant"
+          ],
+          "explanation": "The gain becomes proportional to fc/f: ten times the frequency, ten times less signal = −20 dB per decade."
+        },
+        {
+          "prompt": "How do you turn this low-pass into a **high-pass**?",
+          "options": [
+            "By increasing the resistor",
+            "By using an electrolytic capacitor",
+            "By taking the output before the resistor",
+            "By swapping R and C: capacitor in series and resistor to ground"
+          ],
+          "explanation": "With the capacitor in series, low frequencies (high XC) are blocked and high ones pass. fc is still 1/(2πRC)."
+        }
+      ],
+      "goals": [
+        "Gain at 1 kHz between 0.69 and 0.72 (≈ −3 dB)",
+        "Output phase between −50° and −40°"
+      ],
+      "title": "RC filters, decibels and the Bode plot",
+      "theory": "# Why filter?\n\nEvery real signal comes with \"dirt\": the high-frequency hiss of a microphone, motor noise in a robot's sensor, the mains 60 Hz in a measurement. A **filter** lets the frequencies you care about through and attenuates the others.\n\n# The RC low-pass filter\n\nA resistor in series and a capacitor to ground. At low frequency the capacitor is almost an open circuit (huge XC) and the output copies the input; at high frequency it becomes almost a short and the output drops.\n\n```\nGain   |H| = Vout / Vin = 1 / √(1 + (f / fc)²)\nPhase  φ   = −arctan(f / fc)\nCutoff fc  = 1 / (2π R C)\n```\n\nAt the **cutoff frequency** fc: gain = 1/√2 = **0.707** and phase = **−45°**. Above fc the gain falls **10 times per decade** of frequency.\n\n# Decibels\n\nSince gains range from 1 to 0.0001, engineers use a logarithmic scale, the **decibel**:\n\n```\nG(dB) = 20 × log10(Vout / Vin)\n```\n\n- gain 1 → 0 dB; 0.707 → **−3 dB**; 0.1 → −20 dB; 0.01 → −40 dB; 10 → +20 dB.\n- That is why fc is also called the **−3 dB frequency** (the power halves).\n- Above fc the RC low-pass falls **−20 dB per decade** (1st-order filter). Two stages give −40 dB/decade (2nd order).\n\nThe plot of gain (in dB) and phase against frequency on a log scale is the **Bode plot**.\n\n# Other filters\n\n- **High-pass**: swap R and C (capacitor in series, resistor to ground). It blocks DC and low frequencies — it is the \"coupling capacitor\" of audio inputs.\n- **Band-pass** and **band-stop**: combine both, or use a resonant LC (next lesson).\n- **Active filters** (with operational amplifiers) have gain and high orders without inductors.\n\nExamples: the anti-aliasing filter before an analog-to-digital converter, the crossover that splits bass and treble in a speaker, the RC on a button pin to clean its bounce.\n\n# In the simulator\n\nThe plot shows **V(n2)** (the output) against frequency, from 10 Hz to 100 kHz, with 1 V at the input — so V(n2) is already the gain. The dashed line marks 1 kHz, the source frequency. The metric **ph(n2)** is the output phase.",
+      "task": "Design a low-pass with a **1 kHz cutoff** using C = 100 nF: adjust **R1** until the gain at 1 kHz is between **0.69 and 0.72** (≈ −3 dB) with a phase between **−50° and −40°**."
+    },
+    "ele-15-ressonancia-paralela": {
+      "hints": [
+        "Compute f0 = 1 / (2π √(L C)) with L = 0.01 H and C = 2.2 × 10⁻⁶ F.",
+        "√(2.2 × 10⁻⁸) ≈ 1.483 × 10⁻⁴ → f0 ≈ 1073 Hz.",
+        "The resonance is narrow: use ◀ ▶ in 10 Hz steps near 1070 Hz."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the resonant frequency of the lab's tank (**L = 10 mH**, **C = 2.2 µF**)?",
+          "options": [],
+          "explanation": "f0 = 1 / (2π √(0.01 × 2.2 × 10⁻⁶)) = 1 / (2π × 1.483 × 10⁻⁴) ≈ 1073 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "A resonant circuit with **f0 = 1000 Hz** has **Q = 50**. What is its bandwidth?",
+          "options": [],
+          "explanation": "BW = f0 / Q = 1000 / 50 = 20 Hz (from ~990 to ~1010 Hz).",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "A parallel tank has **R = 10 kΩ** in parallel and **XL = 100 Ω** at resonance. What is its **Q**?",
+          "options": [],
+          "explanation": "In parallel, Q = R / XL = 10 000 / 100 = 100.",
+          "unit": ""
+        },
+        {
+          "prompt": "At resonance, an ideal **parallel** LC circuit has an impedance that is…",
+          "options": [
+            "maximum (ideally infinite)",
+            "minimum (ideally zero)",
+            "equal to XL + XC",
+            "equal to a 1 Ω resistor"
+          ],
+          "explanation": "The L and C currents cancel on the outside: the source does not have to supply any current, so the impedance is infinite (in a real tank, equal to Rp)."
+        }
+      ],
+      "goals": [
+        "Tank voltage V(n2) of at least 9.0 V (tuned)"
+      ],
+      "title": "Parallel resonance, quality factor and selectivity",
+      "theory": "# The tank circuit\n\nIn the phasor lesson, the **series** RLC had **minimum** impedance at resonance. Now the inductor and the capacitor are **in parallel** — the so-called **tank circuit**. At the resonant frequency the inductor current (lagging 90°) and the capacitor current (leading 90°) are equal and opposite: they **cancel** on the outside, and the energy keeps \"swapping\" between them inside.\n\n```\nf0 = 1 / (2π √(L C))      (the same formula as the series one)\n```\n\n- **Series LC** at resonance: minimum impedance (≈ short) → lets f0 through.\n- **Parallel LC** at resonance: **maximum** impedance (ideally infinite) → **blocks** f0.\n\nIn a real tank the maximum impedance is finite: the losses (wire and core resistance) show up as a parallel resistor, **Rp**. At resonance the tank is exactly **Rp**.\n\n# Quality factor (Q) and bandwidth\n\n**Q** measures how \"sharp\" the resonance is: how much energy is stored compared with what is lost per cycle.\n\n```\nParallel:  Q = R / XL = R / (2π f0 L)      (R = resistance in parallel with the tank)\nSeries:    Q = XL / R\nBandwidth: BW = f0 / Q      (between the −3 dB points)\n```\n\n- High Q (50–500): narrow, **selective** resonance — it tunes one station and rejects its neighbours.\n- Low Q: a wide, \"soft\" response.\n- Anything in parallel **loads** the tank: here the source sees R1 ∥ Rp = 909 Ω, so the loaded Q is 909 / 67.4 ≈ 13.5 (much lower than the tank's own Q, 10 000 / 67.4 ≈ 148).\n\n# Where it shows up\n\n- Tuning AM/FM radios and NFC (13.56 MHz) — the tank selects one frequency.\n- LC **oscillators**: the tank sets the frequency and an amplifier makes up the losses.\n- Filters that **reject** one frequency (the tank in series with the line), e.g. harmonics in power systems.\n\n# In the simulator\n\nThe 10 V source feeds the tank (**L = 10 mH**, **C = 2.2 µF**, losses **Rp = 10 kΩ**) through **R1 = 1 kΩ**. The plot shows V(n2), the tank voltage, against frequency. Far from resonance the tank \"shorts\" the signal; near f0 it opens up and the voltage rises to 10 × 10k/11k ≈ 9.09 V.",
+      "task": "Adjust the source **frequency** to tune the tank: the voltage **V(n2)** must reach at least **9.0 V** (the maximum is 9.09 V, at resonance)."
+    },
+    "ele-16-transformador": {
+      "questions": [
+        {
+          "prompt": "A transformer has **1100 turns** on the primary, connected to **220 V**, and **60 turns** on the secondary. What is the secondary voltage?",
+          "options": [],
+          "explanation": "V2 = V1 × N2 / N1 = 220 × 60 / 1100 = 12 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "This (ideal) transformer feeds a load drawing **2 A** from the secondary. What is the primary current?",
+          "options": [],
+          "explanation": "I1 = I2 × N2 / N1 = 2 × 60 / 1100 ≈ 0.109 A. Check with the power: 12 V × 2 A = 24 W = 220 V × 0.109 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "An **8 Ω** speaker is on the secondary of a transformer with a **10:1** ratio (N1/N2 = 10). What impedance does the amplifier \"see\" on the primary?",
+          "options": [],
+          "explanation": "Z1 = (N1/N2)² × Z2 = 10² × 8 = 800 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "A line carries the same power first at **1 kV** and then at **10 kV**. How many times does the R·I² line loss drop?",
+          "options": [],
+          "explanation": "With 10× the voltage, the current drops 10× (I = P/V). The loss depends on I²: it drops 10² = 100 times.",
+          "unit": "times"
+        },
+        {
+          "prompt": "Why does a transformer **not work** (and may burn) on direct current?",
+          "options": [
+            "Because DC has too high a voltage",
+            "Because the iron core blocks DC",
+            "Because the flux stays constant (dΦ/dt = 0): nothing is induced, and the primary is just the wire's resistance",
+            "Because DC only flows in the secondary"
+          ],
+          "explanation": "Induction depends on a changing flux. With DC, after the transient there is no change and no induced voltage; the current is limited only by the winding's small resistance."
+        },
+        {
+          "prompt": "Why is a transformer core made of **thin insulated sheets** instead of a solid iron block?",
+          "options": [
+            "To make it lighter",
+            "To reduce the eddy currents that heat the core",
+            "To increase the turns ratio",
+            "So the transformer works on DC"
+          ],
+          "explanation": "The changing flux induces currents circulating inside the core itself. Thin insulated sheets cut those paths and greatly reduce that loss."
+        }
+      ],
+      "title": "Transformers and electromagnetic induction",
+      "theory": "# Induction: the field that makes voltage\n\nIn 1831 Michael Faraday discovered that a **changing magnetic field** passing through a coil induces a voltage in it:\n\n```\nv = N × dΦ/dt        (N turns, Φ = magnetic flux)\n```\n\nThe sign (**Lenz's law**) says the induced voltage tries to oppose the change that created it. It is the principle of generators, motors, wireless chargers, metal detectors… and **transformers**.\n\n# The transformer\n\nTwo coils wound on the **same iron core**. The alternating current in the **primary** creates a flux that changes 60 (or 50) times a second; that flux passes through the **secondary** and induces a voltage in it. Since the flux is the same, so is the voltage per turn:\n\n```\nV1 / V2 = N1 / N2          (turns ratio, a)\nI1 / I2 = N2 / N1          (the current does the opposite)\nP1 = P2  →  V1·I1 = V2·I2  (ideal transformer)\n```\n\n- **Step-down** (N2 < N1): 220 V → 12 V in an old charger, 13.8 kV → 220/127 V on the pole.\n- **Step-up** (N2 > N1): at the power plant, from ~13.8 kV to 138, 500 or 765 kV.\n- **Isolation** (N1 = N2): same voltage, but the secondary is **isolated** from the grid — safer.\n\n## Why it only works on AC\n\nA **direct** current creates a **constant** flux: dΦ/dt = 0, no voltage is induced. Worse: the primary becomes just the wire's resistance, the current shoots up and the transformer burns.\n\n## Reflected impedance\n\nA load Z on the secondary \"appears\" on the primary multiplied by a²:\n\n```\nZ1 = (N1/N2)² × Z2\n```\n\nThat is how an output transformer matches an 8 Ω speaker to a valve amplifier of a few kΩ (maximum power transfer!).\n\n# The real transformer\n\n- **Copper losses**: R·I² in the windings (they grow with the load).\n- **Iron losses**: **hysteresis** (the iron \"resists\" reversing its magnetization) and **eddy currents** circulating inside the core — that is why the core is made of **thin insulated sheets** (laminated) of silicon steel.\n- Efficiency: 95% (small ones) to over 99% (power transformers).\n- The nameplate gives the rating in **VA** or **kVA** (apparent power), not in W.\n\n# Why transmit at high voltage\n\nFor the same power, P = V × I: **10 times the voltage = 10 times less current**. The line loss is R × I², so it falls **100 times**. Without transformers (and therefore without AC), every neighbourhood would need its own power plant — that argument made Tesla and Westinghouse's AC beat Edison's DC in the \"war of the currents\".",
+      "safety": "The primary of a transformer plugged into the wall is at **127/220 V** (or 230 V), and distribution transformers reach **13.8 kV or more**: they are lethal. A transformer that is switched off may still be energized from the other side (backfeed). Don't open power supplies, chargers or panels; work on installations is for qualified professionals."
+    },
+    "ele-17-ampop": {
+      "questions": [
+        {
+          "prompt": "An **inverting** amplifier has **Rf = 47 kΩ** and **Rin = 4.7 kΩ**. With **0.3 V** at the input, what is the output?",
+          "options": [],
+          "explanation": "Gain = −Rf/Rin = −47k/4.7k = −10. Vout = −10 × 0.3 = −3 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "What is the gain of a **non-inverting** amplifier with **Rf = 9 kΩ** and **Rg = 1 kΩ**?",
+          "options": [],
+          "explanation": "G = 1 + Rf/Rg = 1 + 9 = 10 (and without inverting the signal).",
+          "unit": ""
+        },
+        {
+          "prompt": "This gain-10 non-inverting amplifier, powered from **±12 V**, gets **2 V** at its input. The output is…",
+          "options": [
+            "+20 V",
+            "close to +12 V (saturated)",
+            "−20 V",
+            "0 V"
+          ],
+          "explanation": "The math would give 20 V, but the output can't go beyond the supply: it saturates near +12 V (a bit below, on a common op-amp)."
+        },
+        {
+          "prompt": "A voltage gain of **100 times** is how many decibels?",
+          "options": [],
+          "explanation": "20 × log10(100) = 20 × 2 = 40 dB.",
+          "unit": "dB"
+        },
+        {
+          "prompt": "An **inverting summer** has Rf = R1 = R2 = 10 kΩ and receives **V1 = 1 V** and **V2 = 0.5 V**. What is the output?",
+          "options": [],
+          "explanation": "Vout = −Rf × (V1/R1 + V2/R2) = −10k × (1/10k + 0.5/10k) = −(1 + 0.5) = −1.5 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "An op-amp has a **1 MHz gain-bandwidth product**. Wired for a **gain of 100**, up to what frequency does it amplify well?",
+          "options": [],
+          "explanation": "Bandwidth = GBW / gain = 1,000,000 / 100 = 10,000 Hz (10 kHz).",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "When analysing an ideal op-amp with negative feedback, the rules are:",
+          "options": [
+            "The output is always zero and the inputs draw a lot of current",
+            "The output current equals the input current",
+            "The gain is always 1",
+            "No current flows into the inputs and the output makes V+ = V− (virtual short)"
+          ],
+          "explanation": "These are the two \"golden rules\": infinite input impedance and, with negative feedback, the output adjusts until both inputs are at the same voltage."
+        }
+      ],
+      "title": "Operational amplifiers",
+      "theory": "# The \"building block\" of analog electronics\n\nThe **operational amplifier** (op-amp) is an integrated circuit with two inputs — **non-inverting (+)** and **inverting (−)** — and one output. It amplifies the **difference** between the inputs with a huge gain (10⁵ to 10⁶):\n\n```\nVout = A × (V+ − V−)        A ≈ 100,000 or more\n```\n\nWith such a gain, any millivolt of difference drives the output close to the supply (**saturation**). The trick is **negative feedback**: connecting the output back to the inverting input through resistors. Then the circuit depends **only on the resistors**, not on the chip's gain.\n\n# The golden rules (ideal op-amp with negative feedback)\n\n1. **No current** flows into the inputs (infinite input impedance).\n2. The output does whatever it takes to make **V+ = V−** (the \"virtual short\").\n\nWith them, every classic circuit comes out in two lines.\n\n# Classic circuits\n\n```\nInverting:          Vout = −(Rf / Rin) × Vin\nNon-inverting:      Vout = (1 + Rf / Rg) × Vin\nFollower (buffer):  Vout = Vin        (gain 1, isolates a weak source from a load)\nInverting summer:   Vout = −Rf × (V1/R1 + V2/R2 + …)\n```\n\n- **Inverting**: the + input goes to ground; by the virtual short the − input also sits at 0 V (\"virtual ground\"). The current Vin/Rin all flows through Rf (rule 1), so Vout = −Rf·Vin/Rin.\n- **Non-inverting**: Vin enters at +; Rf and Rg form a divider of the output that must reproduce Vin at the − input.\n- **Summer**: it is the audio mixer and the basis of digital-to-analog converters.\n- **Integrator** (a capacitor in place of Rf): the output is the integral of the input — the \"I\" of an analog PID controller.\n- **Comparator** (no feedback): the output goes to its positive or negative maximum depending on whether V+ > V−. With **positive** feedback it becomes a **Schmitt trigger** (hysteresis against noise).\n\n# Limits of the real op-amp\n\n- **Saturation**: the output can't go beyond the supply voltages (a rail-to-rail op-amp gets close to them; a 741 stays ~1.5–2 V below).\n- **Gain-bandwidth product (GBW)**: an op-amp with a 1 MHz GBW gives a gain of 10 up to 100 kHz, a gain of 100 only up to 10 kHz.\n- **Slew rate**: the output's maximum speed (V/µs). Large, fast signals turn \"triangular\".\n- Offset voltage, bias currents and noise matter in precision instrumentation.\n\n# Gain in decibels\n\n```\nG(dB) = 20 × log10(|Vout / Vin|)      gain 10 → 20 dB, 100 → 40 dB, 1000 → 60 dB\n```"
+    },
+    "ele-18-motores": {
+      "questions": [
+        {
+          "prompt": "What is the synchronous speed of a **4-pole** induction motor at **60 Hz**?",
+          "options": [],
+          "explanation": "ns = 120 × f / p = 120 × 60 / 4 = 1800 rpm.",
+          "unit": "rpm"
+        },
+        {
+          "prompt": "This motor's nameplate says **1740 rpm**. What is the slip?",
+          "options": [],
+          "explanation": "s = (1800 − 1740) / 1800 = 60 / 1800 = 0.0333 = 3.33%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "The motor delivers **7.5 kW** at the shaft at **1740 rpm**. What is the torque?",
+          "options": [],
+          "explanation": "ω = 2π × 1740 / 60 = 182.2 rad/s. T = P / ω = 7500 / 182.2 ≈ 41.2 N·m.",
+          "unit": "N·m"
+        },
+        {
+          "prompt": "Connected to **380 V** three-phase, it draws **15 A** at a **power factor of 0.85**, delivering **7.5 kW**. What is its efficiency?",
+          "options": [],
+          "explanation": "Pin = √3 × 380 × 15 × 0.85 ≈ 8392 W. η = 7500 / 8392 ≈ 0.894 = 89.4%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "How do you **reverse the direction** of a three-phase induction motor?",
+          "options": [
+            "By swapping any two phases",
+            "By reversing the neutral's polarity",
+            "By halving the frequency",
+            "It cannot be reversed"
+          ],
+          "explanation": "Swapping two phases reverses the sequence (A-B-C becomes A-C-B) and the rotating field turns the other way."
+        },
+        {
+          "prompt": "A **frequency inverter** changes the speed of an induction motor because it…",
+          "options": [
+            "increases the rotor resistance",
+            "changes the motor's number of poles",
+            "changes the frequency (and the voltage, keeping V/f), and with it the synchronous speed ns = 120·f/p",
+            "lowers the power factor"
+          ],
+          "explanation": "The rotating field's speed is proportional to the frequency. The inverter produces an adjustable-frequency AC and keeps V/f constant so the motor's flux doesn't change."
+        }
+      ],
+      "title": "Electric motors: DC, induction and drives",
+      "theory": "# The force that turns the world\n\nAbout **half of the world's electrical energy** is used by motors. All of them use the same physics: a current-carrying conductor inside a magnetic field feels a force (the **Lorentz force**, F = B·I·L). Arrange several conductors around a shaft and you have **torque**.\n\n```\nMechanical power:  P = T × ω        ω (rad/s) = 2π × n (rpm) / 60\n```\n\n# The DC motor\n\n- Magnets (or field coils) on the **stator**; the **rotor** coil gets its current through **brushes and a commutator**, which reverse the current every half turn.\n- As it spins, the rotor generates a **back EMF** E = k·ω that opposes the applied voltage: the speed rises until E ≈ V. That is why **speed is almost proportional to voltage** and **torque to current** (T = k·I).\n- At start-up E = 0: the current is huge (only the winding resistance limits it).\n- Variants: **brushless (BLDC)** — no brushes, commutated by an electronic controller (drones, fans, electric cars); **stepper motor** — turns in exact steps (3D printers); **servo motor** — motor + position sensor + control.\n\n# The three-phase induction motor\n\nIndustry's workhorse: simple, rugged, brushless.\n\n- The three phases in the stator create a **rotating magnetic field**, which turns at the **synchronous speed**:\n\n```\nns = 120 × f / p        (f in Hz, p = number of poles)\n60 Hz: 2 poles → 3600 rpm; 4 poles → 1800 rpm; 6 poles → 1200 rpm\n```\n\n- The field induces currents in the rotor (the \"squirrel cage\") and these are dragged along by the field. But the rotor never reaches ns — if it did, there would be no induction and no torque. The difference is the **slip**:\n\n```\ns = (ns − n) / ns        (typically 2–5% at rated load)\n```\n\n- **Reversing the direction**: swap **any two phases**.\n- **Starting**: direct-on-line, the current reaches 6–8× the rated value. **Star-delta** starting cuts that current to 1/3; a **soft starter** controls it electronically.\n\n## Nameplate and efficiency\n\nThe nameplate gives the **mechanical power at the shaft** (kW or hp), voltage, current, power factor and efficiency. The electrical input power of a three-phase motor is:\n\n```\nPin = √3 × V × I × PF          efficiency η = Pout / Pin\n```\n\n# Drives\n\nA **frequency inverter** (VFD) rectifies the mains and \"builds\" a new AC with a variable frequency (PWM): changing f changes ns, and the induction motor becomes a **variable-speed** motor, keeping V/f constant. It saves a lot of energy in pumps and fans, where power falls with the cube of the speed.",
+      "safety": "Industrial motors are **three-phase (220/380 V or more)** and turn with enough torque to crush hands. Before any maintenance: **switch off, lock out and tag out** (LOTO) the supply and wait for the shaft to stop; frequency inverters keep dangerous voltage in their capacitors for minutes after being switched off. Work on panels and motors is for qualified professionals."
+    },
+    "ele-19-condutores": {
+      "hints": [
+        "Compute each option's resistance: R = 0.0172 × 80 / A.",
+        "With 2.5 mm² (Rc = 0.55 Ω) the current is 220 / 9.35 = 23.5 A and only 207 V reach the shower — and 25 A rated is already above the 24 A a 2.5 mm² cable carries.",
+        "Use the smallest cross-section that passes both criteria: a thicker cable works, but costs more."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the resistance of **50 m** of **2.5 mm²** copper cable?",
+          "options": [],
+          "explanation": "R = ρ × L / A = 0.0172 × 50 / 2.5 = 0.344 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "A **127 V** circuit draws **20 A** through a cable whose loop (go and return) is **0.4 Ω**. What is the voltage drop in %?",
+          "options": [],
+          "explanation": "ΔV = R × I = 0.4 × 20 = 8 V. 8 / 127 = 0.063 = 6.3% — above the 4% allowed: it needs a thicker cable.",
+          "unit": "%"
+        },
+        {
+          "prompt": "How many watts turn into heat in a cable with a **0.344 Ω** loop carrying **25 A**?",
+          "options": [],
+          "explanation": "P = R × I² = 0.344 × 25² = 0.344 × 625 = 215 W — like a big incandescent bulb hidden in the wall.",
+          "unit": "W"
+        },
+        {
+          "prompt": "Why is a **2.5 mm²** cable not suitable for a **25 A** shower in an embedded conduit, even if the voltage drop were fine?",
+          "options": [
+            "Because 2.5 mm² is only for lighting",
+            "Because the current exceeds the cable's capacity (≈ 24 A): the insulation heats above 70 °C",
+            "Because 2.5 mm² cables can't be copper",
+            "Because the voltage drop would always be zero"
+          ],
+          "explanation": "Ampacity is an independent criterion: a current above the capacity heats the conductor beyond what the PVC insulation withstands, ageing it and creating a risk of short circuit and fire."
+        },
+        {
+          "prompt": "A circuit's breaker must be chosen to protect, above all…",
+          "options": [
+            "the appliance plugged into the socket",
+            "the utility's meter",
+            "people against electric shock",
+            "the cable: In ≤ the conductor's current-carrying capacity"
+          ],
+          "explanation": "The thermal-magnetic breaker protects the conductors against overload and short circuit (Ib ≤ In ≤ Iz). Protecting people against shock is the job of the RCD (residual-current device)."
+        }
+      ],
+      "goals": [
+        "Shower voltage of at least 211.2 V (drop ≤ 4%)",
+        "Cable loss of at most 220 W"
+      ],
+      "title": "Conductor sizing and voltage drop",
+      "theory": "# The wire is a resistor too\n\nThe cables of an installation have a small but non-zero resistance:\n\n```\nR = ρ × L / A\nρ (copper, 20 °C) ≈ 0.0172 Ω·mm²/m      L in metres, A in mm²\n```\n\nA circuit has a **go and return** path (phase and neutral, or two phases): the electrical length is **2 × the distance**. Example: 25 m of 2.5 mm² cable → R = 0.0172 × 50 / 2.5 = **0.344 Ω** for the whole loop.\n\nThis resistance causes two problems:\n\n- **Voltage drop**: ΔV = R × I. The appliance gets less voltage — the shower heats less, the motor loses torque and runs hot, the lamp flickers.\n- **Heating**: P = R × I² turns into heat inside the conduit.\n\n# The two criteria of the wiring code\n\nYou choose the **smallest cross-section** that meets **all** criteria (the main ones):\n\n1. **Current-carrying capacity** (ampacity): PVC insulation withstands 70 °C. Typical values for 2 loaded conductors in a conduit embedded in a wall (method B1, NBR 5410 / IEC 60364-5-52):\n\n```\n1.5 mm² → 17.5 A    2.5 mm² → 24 A    4 mm² → 32 A\n6 mm²   → 41 A      10 mm²  → 57 A\n```\n\n2. **Voltage drop**: at most **4%** on final circuits (from the distribution board).\n\nThere are also **minimum cross-sections** (1.5 mm² for lighting, 2.5 mm² for sockets) and **coordination with the protection**: the breaker's current must lie between the circuit current and the cable's capacity (Ib ≤ In ≤ Iz).\n\n# In the simulator\n\nA **5500 W / 220 V** electric shower (resistance **Rch = 8.8 Ω**, 25 A rated) is **40 m** from the board. The resistor **Rc** stands for the whole cable, go and return (80 m of copper): choose the cross-section and read the current on the ammeter, the voltage reaching the shower on the voltmeter and the heat lost in the cable by clicking Rc. Since the shower is a pure resistance, the AC RMS values can be computed as if it were DC.",
+      "task": "Choose the shower's **cable cross-section**: the shower voltage must be at least **211.2 V** (drop ≤ 4% of 220 V) and the cable loss at most **220 W**. Also check in the theory's table that the cable can carry the current.",
+      "safety": "Sizing and installing circuits is work for a **qualified electrician or engineer**, following the wiring code (NBR 5410 in Brazil, IEC 60364, the NEC…). A cable that is too thin heats up, melts its insulation and is one of the main causes of **house fires**. Never replace a breaker with a bigger one \"because it kept tripping\": the breaker protects the cable."
+    },
+    "ele-20-protecao": {
+      "hints": [
+        "Ifault = 127 / (0.1 + 0.172 + Rpe) and Vtouch = Ifault × Rpe.",
+        "With a 2.5 mm² PE (0.275 Ω) the current exceeds 200 A, but the enclosure sits at almost 64 V.",
+        "The code's rule: up to 16 mm², the PE has the same cross-section as the phase."
+      ],
+      "questions": [
+        {
+          "prompt": "A fault loop has a total impedance of **0.5 Ω** on a **127 V** grid. What is the short-circuit current?",
+          "options": [],
+          "explanation": "I = V / Z = 127 / 0.5 = 254 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "What is the difference between the **circuit breaker** and the **RCD**?",
+          "options": [
+            "None: both measure the same thing",
+            "The RCD protects the cable and the breaker protects people",
+            "The breaker only works on DC",
+            "The breaker protects the cable against overload and short circuit; the RCD detects leakage current (30 mA) and protects people against shock"
+          ],
+          "explanation": "The breaker reacts to large currents (tens to thousands of amperes). A 50 mA shock doesn't trip any breaker, but it trips the RCD, which compares the outgoing and returning currents."
+        },
+        {
+          "prompt": "A person with a resistance of **1000 Ω** (hand to foot) touches an unearthed enclosure at **127 V**. What current flows through the body?",
+          "options": [],
+          "explanation": "I = 127 / 1000 = 0.127 A = 127 mA — far above the 30 mA that can cause fibrillation. That is why earthing and RCDs exist.",
+          "unit": "mA"
+        },
+        {
+          "prompt": "To guarantee the **instantaneous trip** of a **20 A curve-C** breaker, the fault current must exceed…",
+          "options": [
+            "20 A",
+            "200 A",
+            "40 A",
+            "1000 A"
+          ],
+          "explanation": "Curve C trips magnetically between 5 and 10 × In. Only above 10 × 20 A = 200 A is the instantaneous trip guaranteed."
+        },
+        {
+          "prompt": "Why must the protective conductor (PE) have the **same cross-section** as the phase conductor (up to 16 mm²)?",
+          "options": [
+            "Because a low-resistance PE raises the fault current and lowers the touch voltage on the enclosure",
+            "Because the PE carries the appliance's normal current",
+            "For looks: the wires match",
+            "Because the PE replaces the neutral"
+          ],
+          "explanation": "With a small Rpe, the fault loop has less resistance (the breaker trips faster) and the part of the voltage left on the enclosure (Ifault × Rpe) gets smaller."
+        }
+      ],
+      "goals": [
+        "Fault current of at least 200 A (instantaneous trip of the C20 breaker)",
+        "Touch voltage on the enclosure of at most 50 V"
+      ],
+      "title": "Short circuits, protection and earthing",
+      "theory": "# Overload and short circuit\n\n- **Overload**: a current somewhat above normal for a long time (too many appliances on a circuit). The cable heats up slowly.\n- **Short circuit**: the phase touches the neutral, another phase or an earthed enclosure. The current is limited only by the resistance of the cables and the grid: **hundreds or thousands of amperes** within milliseconds.\n\n# The thermal-magnetic circuit breaker\n\n- **Thermal trip** (bimetallic strip): takes seconds to minutes; it handles **overload**.\n- **Magnetic trip** (coil): instantaneous (≈ 10 ms), it handles **short circuits**. It only acts above a multiple of the rated current In, according to the **curve**:\n\n```\nCurve B: 3 to 5 × In      (resistive circuits, long cables)\nCurve C: 5 to 10 × In     (general use, small motors)\nCurve D: 10 to 20 × In    (motors and transformers with large inrush)\n```\n\nTo **guarantee** an instantaneous trip, the fault current must exceed the **upper limit** of the band (10 × In for curve C).\n\n# A fault to the enclosure and the protective conductor (PE)\n\nIf the phase touches the metal enclosure of a washing machine, the enclosure becomes live. In the **TN-S** system (the most common in buildings), the **protective conductor PE** (green/yellow wire) connects the enclosure back to the transformer's neutral. The **fault loop** is formed:\n\n```\nIfault = V / (Rsource + Rphase + Rpe)\nTouch voltage on the enclosure:  Vtouch = Ifault × Rpe\n```\n\nTwo things must happen: the fault current must be **large enough** for the breaker to trip **at once**, and the enclosure voltage meanwhile must stay **low**. The reference conventional touch-voltage limit in dry locations is **50 V** (AC). That is why the codes require the PE to have the **same cross-section as the phase** up to 16 mm²: a thin PE raises Rpe — and with it the touch voltage — and lowers the fault current.\n\n# The RCD (residual-current device)\n\nThe RCD compares the current going out on the phase with the one returning on the neutral. If the difference exceeds **30 mA** (someone getting a shock, or leakage to earth), it trips in ~30 ms. **The breaker protects the cable; the RCD protects people.** Codes require RCDs in bathrooms, kitchens, outdoor areas and sockets in wet areas.\n\n## Other elements\n\n- **Equipotential bonding**: connecting all metal parts (pipes, structures) to the same earth bar.\n- **SPD** (surge protective device): protects against surges from lightning and switching.\n- **TT system**: the PE goes to its own earth electrode; the fault current is small and only the **RCD** guarantees disconnection.\n\n# In the simulator\n\nA fault connects the phase to an appliance's enclosure on 127 V. **Rs = 0.1 Ω** is the grid impedance, **Rf = 0.172 Ω** is the phase conductor (40 m of 4 mm²) and **Rpe** is the protective conductor, which you choose. The ammeter shows the fault current; the voltmeter, the enclosure voltage. The breaker is **20 A, curve C**.",
+      "task": "Choose the cross-section of the **protective conductor (PE)** so that the fault current exceeds **200 A** (10 × 20 A: the curve-C breaker trips at once) and the **touch voltage** on the enclosure is at most **50 V**.",
+      "safety": "Electric shock **kills**: **30 mA** through the chest can already cause fibrillation. Never touch live boards, sockets or earthing; never \"test\" an enclosure with your hand. Installations, earthing and protection are designed and built by **qualified professionals** (wiring code and electrical-safety rules), with proper measuring equipment."
     }
   }
 }

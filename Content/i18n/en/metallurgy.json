@@ -1,6 +1,6 @@
 {
   "title": "Metallurgy and Welding: from the atom to the weld bead",
-  "description": "Why steel hardens in water, what happens inside the metal when you weld and how to choose current, voltage and travel speed — from crystals and grains to heat input, carbon equivalent and welding procedures (WPS). The simulators teach the parameters, but real welding is learned with your hands: take a hands-on course with a qualified instructor (for example at SENAI in Brazil, or a technical school or welding program in your country) and always wear full PPE.",
+  "description": "Why steel hardens in water, what happens inside the metal when you weld and how to choose current, voltage and travel speed — from crystals and grains to TTT curves, hardenability, the HAZ, stainless steel and aluminium, fatigue and fracture, procedure qualification (WPS/PQR) and post-weld heat treatment. The simulators teach the parameters, but real welding is learned with your hands: take a hands-on course with a qualified instructor (for example at SENAI in Brazil, or a technical school or welding program in your country) and always wear full PPE.",
   "lessons": {
     "met-01-estrutura": {
       "title": "Inside the metal: atoms, crystals and grains",
@@ -304,6 +304,617 @@
           "explanation": "The PQR records the actual parameters used and the test results; the WPS is the instruction based on it."
         }
       ]
+    },
+    "met-11-ttt": {
+      "hints": [
+        "First heat above A3 (≈ 839 °C) — for example 870–900 °C — to get 100% austenite.",
+        "Water is too fast (only martensite); air and furnace are too slow (ferrite + pearlite).",
+        "The in-between medium, oil, passes through the bainite region."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the difference between the **TTT** and **CCT** diagrams?",
+          "options": [
+            "There is no difference: they are the same diagram",
+            "TTT is for transformation at constant temperature (isothermal); CCT is for continuous cooling",
+            "TTT is for steels and CCT for aluminium",
+            "TTT shows equilibrium and CCT shows melting"
+          ],
+          "explanation": "TTT = cool suddenly and hold the temperature; CCT = cool continuously, as in a real quench in water, oil or air."
+        },
+        {
+          "prompt": "Why does martensite form **without diffusion**?",
+          "options": [
+            "Because it forms at high temperatures, where carbon is very fast",
+            "Because it needs many hours to grow",
+            "Because it is a shear transformation of the lattice, too fast for carbon to move: it gets trapped and distorts the lattice",
+            "Because carbon leaves the steel during quenching"
+          ],
+          "explanation": "Below Ms the austenite's FCC lattice \"shears\" into a tetragonal lattice in microseconds. Carbon is trapped, distorts the lattice, and that is what makes martensite so hard."
+        },
+        {
+          "prompt": "Estimate **Ms** with Andrews' formula for a **1045** steel (C = 0.45%, Mn = 0.75%, no Ni, Cr or Mo).",
+          "options": [],
+          "explanation": "Ms = 539 − 423 × 0.45 − 30.4 × 0.75 = 539 − 190.4 − 22.8 ≈ 326 °C.",
+          "unit": "°C"
+        },
+        {
+          "prompt": "**Austempering** mainly produces…",
+          "options": [
+            "bainite",
+            "martensite",
+            "coarse pearlite",
+            "retained austenite"
+          ],
+          "explanation": "In austempering the part sits in a bath between ~250 and 400 °C until all the austenite becomes bainite: medium-high hardness with excellent toughness and without quenching stresses."
+        },
+        {
+          "prompt": "At the nose of a carbon steel's TTT curve (~550 °C), the transformation is…",
+          "options": [
+            "the slowest of all",
+            "impossible",
+            "martensite only",
+            "the fastest: to get martensite, cooling must pass to the left of the nose"
+          ],
+          "explanation": "At the nose the driving force and diffusion balance out and pearlite/bainite starts within a fraction of a second. That is why carbon steels need very fast cooling (water) to harden."
+        }
+      ],
+      "goals": [
+        "Heated to 100% austenite",
+        "At least 60% bainite",
+        "Without overheating or burning the steel"
+      ],
+      "title": "TTT and CCT curves: bainite, martensite and cooling rate",
+      "theory": "# The Fe–C diagram is not enough\n\nThe iron–carbon diagram shows **equilibrium**: what forms with very slow cooling. In practice a part cools in seconds or minutes, and **time** starts deciding the microstructure. That is what two other diagrams are for.\n\n# TTT: isothermal transformation\n\nThe **TTT** diagram (time–temperature–transformation) shows what happens if austenite is cooled **suddenly** to a temperature and **held** there. It has the shape of a **\"C\"** (or a \"nose\"):\n\n- **Above the nose** (~550–700 °C): **pearlite** forms — coarse near A1, fine lower down. The transformation depends on carbon **diffusion**, so it takes time.\n- **At the nose** (~550 °C in carbon steels): the transformation is **fastest** (under 1 s in a 1080 steel!). To avoid pearlite, cooling must pass to the left of the nose.\n- **Below the nose** (~250–550 °C): **bainite** forms — ferrite needles or laths with fine carbides. Harder and tougher than pearlite.\n- **Below Ms** (martensite start): austenite turns into **martensite** by **shear**, with no diffusion, practically instantly. The amount depends only on how far the temperature drops below Ms (it ends at Mf).\n\nA classic estimate of Ms (**Andrews'** formula, weight %):\n\n```\nMs (°C) = 539 − 423·C − 30.4·Mn − 17.7·Ni − 12.1·Cr − 7.5·Mo\n```\n\n# CCT: continuous cooling\n\nIn real life a part cools **continuously** (water, oil, air, furnace). The **CCT** diagram (continuous cooling transformation) has the cooling curves drawn on top; each crosses the ferrite, pearlite, bainite and martensite fields at different places:\n\n- **Furnace** (very slow): ferrite + coarse pearlite — **annealing**.\n- **Air** (slow): ferrite + fine pearlite — **normalizing**.\n- **Oil** (fast): partly bainite, partly martensite — depends on the steel and the thickness.\n- **Water** (very fast): martensite.\n\nThe **critical cooling rate** is the slowest one that still gives 100% martensite. Alloying elements (Cr, Mo, Ni, Mn) **push the curves to the right**: the steel hardens with slower cooling (next lesson).\n\n## Isothermal treatments\n\n- **Austempering**: cool fast to 250–400 °C (salt bath), wait for the whole transformation into **bainite** and only then cool down. Tough, crack-free parts: springs, washers, farm tools.\n- **Martempering**: cool to just above Ms, let the core and surface temperatures even out and then cool in air: martensite with **less distortion and cracking**.\n\n# In the simulator\n\nThe steel is an **SAE 1030** (0.30% C, A3 ≈ 839 °C). The simulator's simplified model decides the structure from the quench severity: air and furnace give ferrite + pearlite; oil and water give martensite, and whatever doesn't become martensite becomes bainite.",
+      "task": "With the **SAE 1030** steel, produce a **mostly bainitic** part: austenitize completely (without overheating) and choose the cooling medium that gives **at least 60% bainite**.",
+      "safety": "Hot quenching oil **catches fire**: plunge the part in quickly and completely, use a tank with a lid, keep a **class B extinguisher** nearby and never use water on an oil fire. Wear **heat-resistant gloves, an apron, a face shield** and long tongs. Real heat treatment is learned with a **qualified instructor**."
+    },
+    "met-12-temperabilidade": {
+      "hints": [
+        "With 0.45% C, oil is too slow for this carbon steel: it lacks hardenability.",
+        "Raise the carbon: around 0.65–0.75% C, oil already gives more than 90% martensite.",
+        "Don't overdo it: too much carbon raises the crack risk. Heat about 50 °C above the steel's A3/A1 line (≈ 800 °C)."
+      ],
+      "questions": [
+        {
+          "prompt": "**Hardenability** is…",
+          "options": [
+            "the maximum hardness a steel reaches",
+            "the tensile strength after tempering",
+            "how easily martensite forms: the hardening depth and the quenchant needed",
+            "the steel's melting temperature"
+          ],
+          "explanation": "Maximum hardness depends on carbon; hardenability says how far (and with what cooling rate) martensite forms — and it depends mainly on alloying elements."
+        },
+        {
+          "prompt": "In the **Jominy** test, the bar is…",
+          "options": [
+            "cooled by a water jet on one end, and the hardness is measured along its length",
+            "plunged entirely into water and cut in half",
+            "heated at one end and cooled in air",
+            "pulled to fracture at several temperatures"
+          ],
+          "explanation": "Each point of the bar cools at a different rate; the hardness vs. distance-from-the-end curve sums up the steel's hardenability."
+        },
+        {
+          "prompt": "Compute the **CE(IIW)** of a **4140** steel with C = 0.40; Mn = 0.85; Cr = 1.0; Mo = 0.20 (%).",
+          "options": [],
+          "explanation": "CE = 0.40 + 0.85/6 + (1.0 + 0.20)/5 = 0.40 + 0.142 + 0.240 ≈ 0.78 — poor weldability: preheat and post-weld heat treatment.",
+          "unit": ""
+        },
+        {
+          "prompt": "Why is an alloy steel like **4140** usually quenched in **oil** rather than water?",
+          "options": [
+            "Because oil makes the part harder than water",
+            "Because its high hardenability allows a gentler quench, with less distortion and cracking",
+            "Because water oxidizes the chromium",
+            "Because oil is cheaper"
+          ],
+          "explanation": "Since the alloying elements delay pearlite and bainite, oil is already fast enough to form martensite — with smaller thermal gradients than water."
+        }
+      ],
+      "goals": [
+        "At least 90% martensite",
+        "Quench-crack risk ≤ 15%",
+        "Without overheating or burning the steel"
+      ],
+      "title": "Hardenability, the Jominy test and alloy steels",
+      "theory": "# Hardness is not hardenability\n\nTwo ideas that are often mixed up:\n\n- **Maximum hardness**: the hardness of martensite. It depends almost only on **carbon** (0.20% C → ~47 HRC; 0.45% → ~58 HRC; 0.80% → ~65 HRC).\n- **Hardenability**: how **easily** martensite forms — to what **depth** and with which **quenchant** a part hardens. It depends on the **alloying elements** and the grain size.\n\nA thick bar of carbon steel quenched in water hardens only at the **skin**: the core cools too slowly and becomes pearlite/bainite. A **high-hardenability** steel hardens through to the centre, even in oil or air.\n\n# The Jominy test\n\nThe standard test (ASTM A255, ISO 642): a bar **25 mm in diameter** and 100 mm long is austenitized and cooled by a **water jet on one end only**. The wet end cools extremely fast; the other end slowly. Then the hardness is measured **along the bar**, every 1.5 mm. The Jominy curve shows:\n\n- **carbon** steel: hardness collapses a few millimetres from the end;\n- **alloy** steel (4140, 4340): hardness stays high for tens of millimetres.\n\nWith the curve, an engineer predicts the hardness at the centre of a real part of a given diameter.\n\n# Why alloying elements help\n\nChromium, molybdenum, manganese, nickel and boron **delay the formation of pearlite and bainite** (they shift the nose of the TTT/CCT curves to the right). As a result, martensite forms even with **slower** cooling, which allows:\n\n- hardening **thick** parts through to the core;\n- using **oil** instead of water → **less distortion and fewer quench cracks**.\n\nExamples (SAE/AISI designations): **1045** (carbon), **4140** (Cr-Mo, shafts and gears), **4340** (Ni-Cr-Mo, highly stressed parts), **8620** (carburizing).\n\n## The flip side: weldability\n\nWhat makes the part easy to harden also makes the **weld HAZ** easy to harden. That is why the **carbon equivalent** includes the alloying elements:\n\n```\nCE(IIW) = C + Mn/6 + (Cr + Mo + V)/5 + (Ni + Cu)/15\n```\n\nA 4140 has CE ≈ 0.78: welding it calls for a high preheat and post-weld heat treatment.\n\n# In the simulator\n\nThe simulator models a small part in **carbon steel**: in it, the ease of hardening grows with carbon. We start with 0.45% C in **oil** — the result is half martensite, half bainite. In industry the answer would be switching to an alloy steel; here, explore the carbon.",
+      "task": "Quenching in **oil** (fewer cracks than water), get **at least 90% martensite** with a **quench-crack risk ≤ 15%**, without overheating. Choose the carbon content and the temperature.",
+      "safety": "Oil quenching requires a **tank with a lid, a class B extinguisher and full thermal PPE** (gloves, apron, face shield). Parts quenched and not tempered can **crack on their own** and throw chips: temper right after quenching. Practise with a **qualified instructor**."
+    },
+    "met-13-simbologia": {
+      "questions": [
+        {
+          "prompt": "In the **AWS** standard, a fillet symbol drawn **below** the reference line means a weld…",
+          "options": [
+            "on the arrow side",
+            "on the other side",
+            "on both sides",
+            "made in the field"
+          ],
+          "explanation": "In AWS: below = arrow side; above = other side; symbols on both sides of the line = weld on both sides."
+        },
+        {
+          "prompt": "A **flag** at the elbow of the reference line means…",
+          "options": [
+            "weld all around",
+            "intermittent weld",
+            "field weld (made at erection, not in the shop)",
+            "weld to be ground"
+          ],
+          "explanation": "The flag marks a field weld. The circle at the elbow is what means \"all around\"."
+        },
+        {
+          "prompt": "A **circle** at the elbow of the reference line means…",
+          "options": [
+            "spot weld",
+            "weld all around the part",
+            "ultrasonic inspection",
+            "weld made downhill"
+          ],
+          "explanation": "The circle at the elbow (\"weld all around\") asks for the bead to continue around the whole perimeter of the joint, e.g. around a tube."
+        },
+        {
+          "prompt": "The number **6** to the left of a fillet symbol (AWS) means…",
+          "options": [
+            "6 welds",
+            "6 passes",
+            "a 6 mm throat",
+            "a 6 mm fillet leg"
+          ],
+          "explanation": "In AWS the fillet size to the left of the triangle is the leg. In ISO, the letter before the number says whether it is the throat (a) or the leg (z)."
+        },
+        {
+          "prompt": "An equal-leg fillet has a **leg z = 8 mm**. What is its **throat** a?",
+          "options": [],
+          "explanation": "a = 0.707 × z = 0.707 × 8 ≈ 5.66 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "The note **50-150** to the right of a fillet symbol means…",
+          "options": [
+            "a fillet with a 50 mm leg and a 150 mm throat",
+            "welds 50 mm long at a 150 mm pitch (intermittent weld)",
+            "a current of 50 to 150 A",
+            "weld on 50% of the 150 mm length"
+          ],
+          "explanation": "To the right of the symbol go length and pitch: 50 mm segments, 150 mm centre to centre."
+        },
+        {
+          "prompt": "On an **ISO 2553** drawing, **a5** on a fillet means…",
+          "options": [
+            "a 5 mm throat",
+            "a 5 mm leg",
+            "5 passes",
+            "a type A, class 5 weld"
+          ],
+          "explanation": "In ISO, \"a\" = throat (effective thickness) and \"z\" = leg. a5 corresponds to a leg of about 7 mm (5 × 1.414)."
+        }
+      ],
+      "title": "Welding symbols: reading the drawing (AWS A2.4 and ISO 2553)",
+      "theory": "# The language of the drawing\n\nOn a fabrication drawing nobody writes \"weld a 6 mm fillet here on both sides\". A standard **welding symbol** is used, which the welder, the inspector and the designer all read the same way. The two most used standards are **AWS A2.4** (American) and **ISO 2553** (international/European).\n\n# The parts of the symbol (AWS A2.4)\n\n```\n              size  symbol   length-pitch\n                6    ◣         50-150\n   ─────────────────────────────────────────<  tail (process, WPS)\n  ↙  arrow\n```\n\n- **Reference line**: the horizontal line; everything is arranged around it.\n- **Arrow**: points to the joint. The side it touches is the **arrow side**; the other is the **other side**.\n- **Basic weld symbol**: triangle = **fillet**; groove symbols: **V**, **bevel**, **U**, **J**, **square** (square edges); rectangle = plug/slot; circle = spot weld.\n- **Position of the symbol** (AWS's most important rule): **below** the line = weld on the **arrow side**; **above** = on the **other side**; on **both sides** = weld on both.\n- **Size** to the **left** of the symbol: for a fillet, the **leg** (z). **Length and pitch** to the **right**: \"50-150\" = 50 mm welds every 150 mm (centre to centre) — an **intermittent** weld.\n- **Supplementary symbols**: a **flag** at the elbow = **field weld** (made at erection); a **circle** at the elbow = **weld all around**; contour (flush, convex, concave) and finish (G = grind).\n- **Tail**: process (SMAW, GMAW…), WPS number or notes. With no information, the tail is left off.\n\n# ISO 2553: the differences\n\n- It uses **two reference lines**: a continuous one and a **dashed** one. Symbol on the **continuous** line = arrow side; on the **dashed** line = other side. (So reading doesn't depend on \"above or below\".)\n- For fillets, the size comes with a letter: **a** = **throat** (effective thickness) and **z** = **leg**. \"a5\" = a 5 mm throat.\n\n# Fillet throat vs. leg\n\nIn a fillet with equal legs (a right isosceles triangle), the **throat** is the triangle's height to the hypotenuse:\n\n```\na = z × cos 45° = 0.707 × z        z = 1.414 × a\n```\n\nThe fillet's strength is computed from the **throat** (area = a × length). Mixing up a and z on an ISO drawing gives a weld **41% larger or smaller** than designed."
+    },
+    "met-14-zta": {
+      "hints": [
+        "The HAZ is hard because it cools too fast (a t8/5 of a few seconds): it needs more heat input.",
+        "To get to ~350 HV with this steel, t8/5 must exceed ~12 s: more current (1.2 mm wire, ~8 m/min), a spray voltage (~27 V) and a low travel speed (~4 mm/s).",
+        "Another way out is preheating (~200 °C), which also raises t8/5."
+      ],
+      "questions": [
+        {
+          "prompt": "By Düren's formula, what is the HAZ hardness of a steel with **C = 0.20%**, **CE = 0.45** and **t8/5 = 10 s**?",
+          "options": [],
+          "explanation": "log 10 = 1. HV = 2019 × [0.20 × (1 − 0.5) + 0.3 × (0.45 − 0.20)] + 66 × (1 − 0.8) = 2019 × (0.100 + 0.075) + 13.2 = 353.3 + 13.2 ≈ 367 HV.",
+          "unit": "HV"
+        },
+        {
+          "prompt": "Compute the thick-plate **t8/5** (3D formula) for **Q = 1.0 kJ/mm**, **T0 = 20 °C** and **F3 = 1**.",
+          "options": [],
+          "explanation": "t8/5 = (6700 − 100) × 1.0 × (1/480 − 1/780) = 6600 × 0.000801 ≈ 5.29 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "Which region of a welded steel joint is **most prone to cold cracking**?",
+          "options": [
+            "The base metal far from the weld",
+            "The coarse-grained HAZ next to the fusion line",
+            "The subcritical HAZ",
+            "The surface of the weld reinforcement"
+          ],
+          "explanation": "Heated far above A3, the coarse-grained HAZ forms coarse, hard martensite on cooling; with hydrogen and stresses, it is where cold cracks start."
+        },
+        {
+          "prompt": "Increasing the **heat input** of a weld in steel…",
+          "options": [
+            "shortens t8/5 and hardens the HAZ",
+            "changes nothing in the HAZ",
+            "lengthens t8/5 and softens the HAZ, but widens the HAZ and coarsens the grain",
+            "eliminates the fusion zone"
+          ],
+          "explanation": "More heat = slower cooling: less martensite (a softer HAZ), but the HAZ gets wider and the grain grows, which can lower toughness. The engineer looks for the right window."
+        },
+        {
+          "prompt": "The grains of the **fusion zone** grow…",
+          "options": [
+            "columnar, from the fusion line towards the centre of the bead (epitaxial growth)",
+            "equiaxed and very fine throughout the bead",
+            "only after a heat treatment",
+            "from the centre of the bead outwards"
+          ],
+          "explanation": "The pool solidifies from the partly melted grains of the base metal, which keep growing in the direction of the steepest temperature gradient: columnar, dendritic grains."
+        }
+      ],
+      "goals": [
+        "HAZ hardness of at most 350 HV",
+        "Quality ≥ 80"
+      ],
+      "title": "Welding metallurgy: fusion zone, HAZ and t8/5",
+      "theory": "# A weld is a small heat treatment\n\nFor a few seconds the arc takes the metal from 20 °C to over 1500 °C and then lets it cool. Each point of the part goes through a different **thermal cycle**, and the result is three regions, visible in a **macrograph** (a section polished and etched with acid):\n\n# 1. Fusion zone (FZ)\n\nThe metal that **melted** (base metal + filler metal) and solidified. The grains grow **columnar**, from the fusion line towards the centre of the bead (**epitaxial growth**), with a **dendritic** structure, like a casting. Typical problems: porosity, inclusions and **solidification (hot) cracks**, favoured by sulphur, phosphorus and narrow, deep beads.\n\n# 2. Heat-affected zone (HAZ)\n\nThe base metal that **did not melt** but was heated enough to change its microstructure. From the bead outwards:\n\n- **Coarse grain** (1100–1450 °C): the austenite grows a lot. On cooling, if fast, it becomes **coarse martensite**: the **hardest and most brittle** region — where **cold cracks** start.\n- **Fine grain** (900–1100 °C): normalized; usually has **good toughness**.\n- **Intercritical** (A1–A3): partly transformed.\n- **Subcritical** (< A1): tempered/spheroidized.\n\n# 3. Base metal\n\nUnchanged.\n\n# t8/5: the HAZ cooling rate\n\nThe microstructure of a steel's HAZ depends on **how long** it takes to cool from **800 °C to 500 °C** — the range in which austenite transforms. That is **t8/5**:\n\n- **short** t8/5 (a few seconds): martensite, a **hard** HAZ.\n- **long** t8/5 (15–30 s): bainite/ferrite, a **soft** HAZ (but, overdone, coarse grain and low toughness).\n\nAccording to **EN 1011-2**, for **thick** plate (3D heat flow):\n\n```\nt8/5 = (6700 − 5·T0) × Q × [1/(500 − T0) − 1/(800 − T0)] × F3\n```\n\nand for **thin** plate (2D) t8/5 grows with **Q²/d²**. Q is the heat input (kJ/mm), T0 the preheat (°C), d the thickness and F3 the joint's shape factor.\n\n# Predicting HAZ hardness\n\n**Düren's** formula estimates the maximum HAZ hardness (HV10):\n\n```\nHV = 2019·[C·(1 − 0.5·log t8/5) + 0.3·(CE − C)] + 66·(1 − 0.8·log t8/5)\n```\n\nMany codes and clients (oil and gas, pressure vessels) limit the HAZ to **350 HV** (sometimes 248–250 HV in H₂S service). To lower the hardness: **more heat input** (more current, less speed) or **preheat** — both increase t8/5.\n\n# In the simulator\n\nA butt joint in **12 mm** plate of a steel with **C = 0.20%** and **CE = 0.45**, welded with MIG/MAG. Watch **t8/5** and the **HAZ hardness** as you change the wire, wire feed, voltage, travel speed and preheat.",
+      "task": "Weld the **12 mm** butt joint (C 0.20%, CE 0.45) with MIG/MAG keeping the **HAZ at 350 HV at most** and **quality ≥ 80**.",
+      "safety": "MIG/MAG currents above 200 A produce **intense radiation**: use a helmet with a **DIN 12–13** filter, leather or heavy cotton clothing covering all skin and **local fume extraction** (welding fumes are carcinogenic). Thick parts hold heat for a long time: handle them with **gloves and tongs**. Thick-plate parameters are practised with a **qualified instructor**."
+    },
+    "met-15-inox": {
+      "hints": [
+        "The Ar + 20% CO₂ mix is for carbon steel: on stainless it puts carbon into the bead. Use Ar + 2% O₂.",
+        "For 3 mm with full penetration, 1.0 mm wire at ~6 m/min (≈ 165 A) and the tip's ideal voltage (~22.5 V).",
+        "A travel speed of ~5 mm/s keeps the heat input low (~0.6 kJ/mm) without lack of fusion."
+      ],
+      "questions": [
+        {
+          "prompt": "What makes a steel **stainless**?",
+          "options": [
+            "Having a lot of nickel and no chromium",
+            "Having at least ~10.5% chromium, which forms a passive chromium-oxide layer",
+            "Being zinc-coated",
+            "Having carbon above 1%"
+          ],
+          "explanation": "Chromium forms the passive Cr₂O₃ film, which heals itself. Nickel (in austenitics) stabilizes the austenite, but it is not what gives corrosion resistance."
+        },
+        {
+          "prompt": "**Sensitization** of an austenitic stainless steel is…",
+          "options": [
+            "quench hardening in the HAZ",
+            "the loss of magnetism after welding",
+            "hydrogen porosity",
+            "the precipitation of chromium carbides at the grain boundaries (450–850 °C), which leaves the region prone to intergranular corrosion"
+          ],
+          "explanation": "The chromium locked in the carbides leaves the boundaries depleted (< ~12% Cr) and without a passive layer. That is why \"L\" grades, stabilized steels and low heat input are used."
+        },
+        {
+          "prompt": "Compute the **Schaeffler chromium equivalent** of a 304 with Cr = 18.5%, Mo = 0, Si = 0.5% and Nb = 0.",
+          "options": [],
+          "explanation": "Cr eq = Cr + Mo + 1.5·Si + 0.5·Nb = 18.5 + 0 + 0.75 + 0 = 19.25%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "Why is **308L** filler metal formulated to leave a little **delta ferrite** in the bead?",
+          "options": [
+            "To prevent hot (solidification) cracking",
+            "To make the bead magnetic so it can be inspected with magnetic particles",
+            "To increase the bead's hardness",
+            "To lower the wire's cost"
+          ],
+          "explanation": "A small ferrite fraction (FN ≈ 3–10) dissolves sulphur and phosphorus and breaks the continuity of the liquid films between dendrites, which is what causes hot cracking."
+        },
+        {
+          "prompt": "Which shielding gas is right for **MIG on stainless**?",
+          "options": [
+            "Pure CO₂",
+            "Ar + 20% CO₂",
+            "Ar + 2% O₂ (or Ar + 2% CO₂)",
+            "Compressed air"
+          ],
+          "explanation": "Stainless needs an almost inert gas. Too much CO₂ puts carbon into the bead (sensitization, loss of corrosion resistance) and oxidizes the chromium."
+        }
+      ],
+      "goals": [
+        "Quality ≥ 80",
+        "Heat input ≤ 0.8 kJ/mm",
+        "Porosity ≤ 10%"
+      ],
+      "title": "Stainless steels: types, sensitization and welding",
+      "theory": "# What makes a steel \"stainless\"\n\nWith at least **10.5% chromium**, steel forms an extremely thin film of **chromium oxide (Cr₂O₃)** on its surface — the **passive layer** — which heals itself when scratched. That is what stops rust.\n\n# The families\n\n- **Austenitic** (300 series: **304**, **316**): Cr 18% + Ni 8–10%. FCC structure, **non-magnetic**, very ductile and tough even at cryogenic temperatures. The most used (kitchens, chemical and food industries). 316 has Mo and resists chlorides better.\n- **Ferritic** (430): chromium only; magnetic, cheap, less weldable (the grain grows).\n- **Martensitic** (410, 420): hardenable — knives, surgical instruments. Difficult to weld (they crack).\n- **Duplex** (2205): half austenite, half ferrite: twice the strength of 304 and excellent resistance to stress corrosion.\n\n# The problems when welding austenitics\n\n## Sensitization\n\nBetween **~450 and 850 °C**, carbon reacts with chromium and forms **chromium carbides (Cr₂₃C₆)** at the grain boundaries. The neighbouring region becomes **chromium-depleted** and loses its passive layer: **intergranular corrosion** appears in a band next to the bead. Solutions:\n\n- **low-carbon** steels, the **\"L\"** grades (304L, 316L: C ≤ 0.03%);\n- **stabilized** steels with Ti or Nb (321, 347), which \"tie up\" the carbon;\n- **low heat input** and a low interpass temperature (≤ 150 °C).\n\n## Hot cracking and delta ferrite\n\nPure austenite solidifies with a tendency to **hot crack**. The consumables (**308L** for 304, **316L** for 316) are formulated to leave a little **delta ferrite** in the bead (ferrite number FN ≈ 3–10), which absorbs impurities and prevents cracking. The **Schaeffler diagram** (or WRC-1992) predicts the weld structure from two equivalents:\n\n```\nCr eq = Cr + Mo + 1.5·Si + 0.5·Nb\nNi eq = Ni + 30·C + 0.5·Mn\n```\n\n## Distortion and contamination\n\nStainless **conducts little heat** and **expands 50% more** than carbon steel: it distorts a lot. Use low heat input, dense tack welds and a balanced sequence. Tools that touched carbon steel leave particles that **rust** on the stainless. After welding, the oxide colouring (heat tint) must be removed (brushing, pickling and **passivation**).\n\n## Shielding gas\n\nFor MIG on stainless the gas must be almost inert: **Ar + 2% O₂** or **Ar + 2% CO₂**. With 20% CO₂, carbon from the gas enters the bead and it loses its corrosion resistance. For TIG, pure argon — and, in pipes, an argon **purge** inside so the root doesn't oxidize.\n\n# In the simulator\n\nA butt joint in **3 mm 304 stainless** welded with MIG. The simulator penalizes gas with too much CO₂ and high heat input (risk of cracking and loss of corrosion resistance).",
+      "task": "Weld the **3 mm 304 stainless** (butt) with MIG: **quality ≥ 80**, **heat input ≤ 0.8 kJ/mm** (so it doesn't sensitize) and **porosity ≤ 10%**. Choose the right gas, too.",
+      "safety": "Stainless steel welding fumes contain **hexavalent chromium (Cr⁶⁺)**, a carcinogen: use **local fume extraction** and, in enclosed spaces, a suitable respirator. Stainless reflects the arc strongly: a **DIN 11–13** filter and all skin covered. Use brushes and discs **dedicated to stainless**. Practise with a **qualified instructor**."
+    },
+    "met-16-aluminio": {
+      "hints": [
+        "Aluminium only accepts inert gas: pure argon (or argon + helium).",
+        "Aluminium pulls the heat away: it needs plenty of current. With 1.0 mm wire, ~8 m/min (≈ 210 A) and the ideal voltage of ~24.5 V.",
+        "A travel speed around 6 mm/s and a gas flow of 15–18 L/min."
+      ],
+      "questions": [
+        {
+          "prompt": "Why does the **aluminium oxide** layer get in the way of welding so much?",
+          "options": [
+            "Because it is magnetic",
+            "Because it conducts electricity better than the metal",
+            "Because it melts at ≈ 2070 °C, far above aluminium's 660 °C, and keeps the edges from fusing",
+            "Because it only forms after welding"
+          ],
+          "explanation": "The oxide is a refractory \"envelope\". It must be removed mechanically beforehand and broken up by the arc (cathodic cleaning) during welding."
+        },
+        {
+          "prompt": "The main cause of **porosity** when welding aluminium is…",
+          "options": [
+            "hydrogen (moisture, oil, hydrated oxide), very soluble in liquid aluminium and almost insoluble in the solid",
+            "too much argon",
+            "nitrogen from steel",
+            "alternating current"
+          ],
+          "explanation": "During solidification the dissolved hydrogen comes out of solution and is trapped in bubbles. Cleaning, dry wire and good-quality gas are essential."
+        },
+        {
+          "prompt": "To weld **6061** with the **lowest risk of hot cracking**, the most suitable wire is…",
+          "options": [
+            "ER70S-6",
+            "ER4043 (Al-Si)",
+            "ER308L",
+            "a 6061 wire matching the base metal"
+          ],
+          "explanation": "The silicon in 4043 improves fluidity and moves the bead's composition away from the crack-sensitive range. 5356 is chosen when more strength or anodizing is wanted."
+        },
+        {
+          "prompt": "The HAZ of a **6061-T6** (UTS = 310 MPa) keeps only **60%** of its strength. What is the strength in that region?",
+          "options": [],
+          "explanation": "0.60 × 310 = 186 MPa. That is why welded aluminium structures are sized with the HAZ strength.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "For **MIG on aluminium**, the usual setup is…",
+          "options": [
+            "DC− (electrode negative) and a drag technique",
+            "AC and CO₂ gas",
+            "DC+ and pure CO₂",
+            "DC+ (electrode positive), argon and a push technique"
+          ],
+          "explanation": "With the wire positive the arc cleans off the oxide cathodically; pushing, the gas shields the front of the pool; argon is inert and doesn't oxidize the aluminium."
+        }
+      ],
+      "goals": [
+        "Quality ≥ 80",
+        "Porosity ≤ 10%",
+        "Lack of fusion ≤ 10%"
+      ],
+      "title": "Welding aluminium: oxide, porosity and hot cracking",
+      "theory": "# Why aluminium is different\n\nAluminium is light (1/3 of steel), resists corrosion well and conducts a lot of heat and electricity. All of that changes welding:\n\n- **The oxide layer**: aluminium instantly covers itself with **Al₂O₃**, which melts at **≈ 2070 °C** — more than three times the metal's melting point (**660 °C**). The oxide keeps the edges from fusing (lack of fusion) and gets trapped in the bead. That is why: clean with a **dedicated stainless brush** and solvent right before welding, and use the arc's **cathodic cleaning action** with the electrode positive (**DC+ in MIG**, **AC in TIG**).\n- **Thermal conductivity** about 4 times that of steel: the heat escapes fast. The start of the bead is cold (lack of fusion) and the end too hot. You use **more current and more speed**; on thick parts, a moderate preheat (up to ~120 °C).\n- **Hydrogen porosity**: liquid aluminium dissolves a lot of hydrogen, solid aluminium almost none. During solidification the gas comes out and is trapped as pores. Sources: **moisture**, oil, hydrated oxide, dirty wire. Gas: only **argon** or **argon + helium** (helium gives more heat and penetration).\n- **No visual warning**: it doesn't change colour and the pool shines little before it \"drops through\".\n\n# Hot cracking and choosing the wire\n\nSome alloys (e.g. **6061**, Al-Mg-Si) are sensitive to **solidification cracking** when the bead has the base metal's composition. The fix is to **dilute** with a wire of a different composition:\n\n- **ER4043** (Al-5Si): flows well, bright bead, **more resistant to hot cracking**.\n- **ER5356** (Al-5Mg): a **stronger** bead, better for anodizing (the colour matches the base metal).\n\n# The aluminium HAZ loses strength\n\n**Heat-treatable** alloys (6061-T6, 7075-T6) get their strength from the precipitation of fine particles. The welding heat dissolves or coarsens those particles: the HAZ becomes **much weaker** — a 310 MPa 6061-T6 drops to ~165–190 MPa near the bead. Welded aluminium structures are designed with the **HAZ** strength, not that of the original metal.\n\n# MIG on aluminium in practice\n\n- **DC+** (electrode positive), **spray** or **pulsed** transfer.\n- **Push** technique (torch tilted forward) so the gas cleans the front of the pool.\n- Aluminium wire is **soft**: **U-groove** drive rolls, a **Teflon** liner, a short torch, a spool gun or a push-pull system.\n\n# In the simulator\n\nA butt joint in **4 mm aluminium** welded with MIG. Notice that the CO₂ mix (good for steel) ruins the aluminium weld.",
+      "task": "Weld the **4 mm aluminium** (butt) with MIG: **quality ≥ 80**, **porosity ≤ 10%** and **lack of fusion ≤ 10%**. Start by choosing the gas.",
+      "safety": "Aluminium **doesn't change colour** when hot: a freshly welded part looks cold and burns your hand. Mark hot parts and wear gloves. The arc on aluminium reflects strongly and produces **ozone**: a **DIN 11–13** filter, skin covered and fume extraction. Aluminium grinding dust is **flammable**. Practise with a **qualified instructor**."
+    },
+    "met-17-fratura": {
+      "questions": [
+        {
+          "prompt": "A plate with a **4 mm** edge crack (Y = 1.12) is under **200 MPa**. What is the stress intensity factor K?",
+          "options": [],
+          "explanation": "K = 1.12 × 200 × √(π × 0.004) = 224 × 0.1121 ≈ 25.1 MPa·√m.",
+          "unit": "MPa·√m"
+        },
+        {
+          "prompt": "A steel with **KIC = 50 MPa·√m** works at **250 MPa** (Y = 1). What is the critical crack size?",
+          "options": [],
+          "explanation": "a_c = (1/π) × (50/250)² = 0.04/π = 0.0127 m ≈ 12.7 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "A **20 kg** Charpy pendulum falls from **1.5 m** and, after breaking the specimen, rises to **0.7 m**. How much energy did the specimen absorb? (g = 9.81 m/s²)",
+          "options": [],
+          "explanation": "E = m·g·(h0 − h1) = 20 × 9.81 × (1.5 − 0.7) = 20 × 9.81 × 0.8 ≈ 157 J.",
+          "unit": "J"
+        },
+        {
+          "prompt": "Why did the hulls of the **Liberty ships** break in two?",
+          "options": [
+            "Because the steel was too weak in tension",
+            "Because the ferritic steel was below its ductile-to-brittle transition temperature in the icy water, and weld cracks propagated",
+            "Because the aluminium hull corroded",
+            "Because the welds were too strong"
+          ],
+          "explanation": "Low-toughness steel in the cold + stress raisers + weld defects: the crack ran in a brittle way through an all-welded hull (with no rivet seams to stop it)."
+        },
+        {
+          "prompt": "Which of these materials **does not show** a ductile-to-brittle transition?",
+          "options": [
+            "Structural carbon steel",
+            "Ferritic low-alloy steel",
+            "Austenitic stainless steel (FCC)",
+            "Ferritic ductile iron"
+          ],
+          "explanation": "FCC metals (austenitics, aluminium, copper) stay ductile even at cryogenic temperatures; the transition is typical of BCC metals like ferritic steels."
+        },
+        {
+          "prompt": "The **Charpy test** measures…",
+          "options": [
+            "the energy absorbed to break a notched specimen with one blow",
+            "surface hardness",
+            "the yield strength",
+            "the number of cycles to fatigue failure"
+          ],
+          "explanation": "The pendulum measures the energy (J) absorbed in the impact. Repeated at several temperatures, it shows the ductile-to-brittle transition."
+        }
+      ],
+      "title": "Toughness, the Charpy test and fracture mechanics",
+      "theory": "# Strength is not toughness\n\nA part can be very strong and still **break like glass**. **Toughness** is the ability to absorb energy and resist the propagation of a crack. Historical examples:\n\n- **Liberty ships** (1940s): welded steel hulls that **broke in two** in the icy North Atlantic. The steel was below its **transition temperature** and the welds had cracks.\n- **Titanic**: the hull steel and rivets became **brittle** in water at −2 °C.\n\n# Ductile vs. brittle fracture\n\n- **Ductile**: large deformation before breaking, a dull, fibrous surface, it \"warns\" you.\n- **Brittle**: almost no deformation, a bright, crystalline surface (cleavage), **chevron** marks pointing to the origin. It happens suddenly, sometimes below the design stress.\n\n# The Charpy test\n\nA **10 × 10 × 55 mm** specimen with a **V notch** is broken by a **pendulum**. The absorbed energy (in **joules**) is the difference between the potential energy before and after the blow:\n\n```\nE = m · g · (h0 − h1)\n```\n\nTesting at several temperatures gives the **ductile-to-brittle transition curve** of **ferritic** (BCC) steels: high energy at high temperatures (the \"upper shelf\"), a sharp drop at the **transition temperature** and low energy in the cold. Structural and pressure-vessel codes require, for example, **27 J at −20 °C** in the base metal, the weld and the HAZ.\n\n**FCC** metals — **austenitic** stainless steels, aluminium, copper — **have no transition**: they stay tough at cryogenic temperatures (LNG tanks, at −162 °C, use stainless or 9% Ni steel).\n\n# Fracture mechanics\n\nEvery real structure has defects (pores, inclusions, weld cracks). The engineering question is: **which crack is dangerous?** Linear-elastic fracture mechanics answers with the **stress intensity factor**:\n\n```\nK = Y · σ · √(π · a)        (MPa·√m)\n```\n\n- σ = applied stress; a = crack size (in metres; the depth of a surface crack or half of an embedded one); Y = geometry factor (≈ 1.12 for an edge crack).\n- The crack grows unstably when **K ≥ KIC**, the material's **fracture toughness** (structural steel ~50–150 MPa·√m; 7075 aluminium ~25; glass ~0.7).\n- Critical crack size:\n\n```\na_c = (1/π) · (KIC / (Y · σ))²\n```\n\nThis calculation decides whether a defect found by non-destructive testing can stay or must be repaired (a **fitness-for-service** assessment, BS 7910 / API 579). For very tough materials, elastic-plastic tests are used (**CTOD**, the J-integral)."
+    },
+    "met-18-fadiga": {
+      "questions": [
+        {
+          "prompt": "A **FAT 80** detail is loaded with **Δσ = 160 MPa**. How many cycles does it last (m = 3)?",
+          "options": [],
+          "explanation": "N = 2·10⁶ × (80/160)³ = 2·10⁶ × 0.125 = 250,000 cycles.",
+          "unit": "cycles"
+        },
+        {
+          "prompt": "A part undergoes **100,000 cycles** of a load it could take **500,000** times and **50,000 cycles** of another it could take **200,000** times. What is the Miner damage?",
+          "options": [],
+          "explanation": "D = 100,000/500,000 + 50,000/200,000 = 0.20 + 0.25 = 0.45 (55% of the life left).",
+          "unit": ""
+        },
+        {
+          "prompt": "With **m = 3**, if the stress range **doubles**, the fatigue life drops how many times?",
+          "options": [],
+          "explanation": "N ∝ 1/Δσ³: (2)³ = 8 times fewer cycles.",
+          "unit": "times"
+        },
+        {
+          "prompt": "In a cyclically loaded fillet weld, the fatigue crack usually starts…",
+          "options": [
+            "in the middle of the base metal, far from the weld",
+            "at the centre of the bead, inside it",
+            "at the weld toe, where the stress concentration is highest",
+            "on the surface opposite the weld"
+          ],
+          "explanation": "The weld toe concentrates stress (an abrupt change of geometry), has micro-defects and tensile residual stresses: it is the weakest point in fatigue."
+        },
+        {
+          "prompt": "Which of these measures **increases** the fatigue life of a welded joint?",
+          "options": [
+            "Greatly increasing the weld reinforcement",
+            "Grinding or peening the weld toe (compressive stresses)",
+            "Using a stronger steel without changing the joint",
+            "Leaving spatter and undercut"
+          ],
+          "explanation": "Improving the toe geometry and introducing compression attack the crack's origin. A stronger steel barely helps in welded joints: life depends on Δσ and the detail."
+        },
+        {
+          "prompt": "**Beach marks** on a fracture surface indicate…",
+          "options": [
+            "brittle impact fracture",
+            "pitting corrosion",
+            "too much carbon",
+            "fatigue: the crack advanced little by little, cycle after cycle"
+          ],
+          "explanation": "Beach marks are the successive \"fronts\" of a fatigue crack, usually concentric around the origin."
+        }
+      ],
+      "title": "Fatigue of welded structures",
+      "theory": "# The failure that comes with time\n\n**Fatigue** is fracture caused by **varying loads** (cycles), even well below the yield strength. Most mechanical failures in service are thought to be fatigue: shafts, bridges, cranes, chassis, aircraft, wind turbine towers — anything that vibrates or is loaded and unloaded.\n\n# How a fatigue crack grows\n\n1. **Initiation**: at a **stress concentration** (a notch, a hole, the **weld toe**, an undercut).\n2. **Propagation**: the crack advances a tiny bit each cycle, leaving **beach marks** on the fracture surface (visible to the naked eye) and microscopic striations.\n3. **Final fracture**: when the remaining section can't hold any more, it breaks at once (a rough region).\n\n# The S-N curve\n\nConstant-amplitude tests give the **S-N curve** (stress vs. number of cycles to failure, on a log scale). What matters in a weld is the **stress range** Δσ = σmax − σmin.\n\n- **Unwelded**, polished steels have a **fatigue limit** (≈ 0.5 × UTS): below it, \"infinite\" life.\n- **Welded joints** are much worse: the weld toe is already a notch with micro-defects and **residual stresses** near yield. Life depends almost only on Δσ and the **joint geometry**, not on the steel's strength!\n\n# FAT classes (IIW, Eurocode 3)\n\nEach welded detail has a **FAT class** = the stress range (MPa) it withstands for **2 million cycles**. Examples: butt weld ground flush ≈ FAT 112; as-welded butt ≈ FAT 90; transverse fillet (weld toe) ≈ FAT 80; end of a longitudinal stiffener ≈ FAT 56–71. The curve has a slope of **m = 3**:\n\n```\nN = 2·10⁶ × (FAT / Δσ)³\n```\n\nDoubling Δσ divides the life by 2³ = **8**.\n\n# Variable loading: Miner's rule\n\nIn real life the cycles vary. The **Palmgren–Miner rule** adds up the \"damage\" of each block of cycles:\n\n```\nD = Σ nᵢ / Nᵢ        failure when D = 1\n```\n\n# How to increase fatigue life\n\n- **Design**: avoid welds in high-Δσ regions, use smooth transitions, butt joints instead of fillets, no stiffener \"tips\".\n- **Workmanship**: avoid undercut, lack of penetration, spatter and arc strikes on the part.\n- **Weld toe improvement**: **grinding** (a smooth radius), **TIG dressing**, **hammer peening** and **HFMI** (high-frequency mechanical impact), which introduce **compressive stresses**.\n- Excess reinforcement **worsens** fatigue: it increases the toe angle and the stress concentration."
+    },
+    "met-19-qualificacao": {
+      "hints": [
+        "The material must be the joint's: SAE 1045 (UTS = 565 MPa). Aluminium doesn't even reach the required minimum.",
+        "Force = UTS × A0. For 30–40 kN at 565 MPa, A0 must be between 53 and 71 mm².",
+        "A0 = π·d²/4: d between ~8.2 and ~9.5 mm. At 9.5 mm the force slightly exceeds 40 kN."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the difference between a **WPS** and a **PQR**?",
+          "options": [
+            "They are the same document with different names",
+            "The WPS is the \"recipe\" for how to weld; the PQR is the record of the test that proved the recipe makes good welds",
+            "The WPS qualifies the welder and the PQR qualifies the machine",
+            "The PQR is made after every production weld"
+          ],
+          "explanation": "The WPS says how to weld (with parameter ranges). The PQR records the actual test weld and the results of the tests that qualified it."
+        },
+        {
+          "prompt": "A **19 mm × 10 mm** rectangular specimen breaks at **110 kN**. What is its tensile strength?",
+          "options": [],
+          "explanation": "A0 = 19 × 10 = 190 mm². UTS = 110,000 / 190 ≈ 579 MPa — above SAE 1045's 565 MPa: accepted.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "Which of these changes is a typical **essential variable** (requires requalifying the procedure under ASME IX)?",
+          "options": [
+            "Changing the welding process (from stick to MIG)",
+            "Changing the electrode brand, keeping the same AWS classification",
+            "Changing the interpass cleaning method",
+            "Replacing the welder with another qualified one"
+          ],
+          "explanation": "The process is always essential. The consumable brand within the same classification and the cleaning method are non-essential; changing welders is a matter for welder qualification, not for the procedure."
+        },
+        {
+          "prompt": "The **guided bend test** is mainly used to…",
+          "options": [
+            "measure the HAZ hardness",
+            "measure the impact energy",
+            "measure the yield strength",
+            "reveal lack of fusion, inclusions and other discontinuities, which open up when the weld is bent"
+          ],
+          "explanation": "Bent 180°, the weld metal is stretched a lot: fusion defects and inclusions open up as visible cracks. That is why it is the most used test to qualify welders."
+        },
+        {
+          "prompt": "At what force does a **9 mm** diameter round specimen of a steel with **UTS = 565 MPa** break?",
+          "options": [],
+          "explanation": "A0 = π × 9² / 4 = 63.6 mm². F = 565 × 63.6 ≈ 35,940 N ≈ 35.9 kN.",
+          "unit": "kN"
+        }
+      ],
+      "goals": [
+        "Tensile strength ≥ 565 MPa (SAE 1045 minimum)",
+        "Elongation of at least 14%",
+        "Breaking force between 30 and 40 kN (within the machine's capacity)"
+      ],
+      "title": "Qualifying procedures and welders: WPS, PQR and the tests",
+      "theory": "# Why qualify\n\nA weld that looks good outside can hide lack of fusion, a brittle HAZ or a weak filler metal. In structures, pressure vessels, piping and offshore platforms, the codes require **proving beforehand** that the procedure and the welder produce sound welds. The documents:\n\n- **WPS** (Welding Procedure Specification): the \"recipe\" — process, base metal, thicknesses, consumable, gas, position, current/voltage/speed ranges, heat input, preheat, interpass temperature, PWHT…\n- **PQR** (Procedure Qualification Record): the **record of the test** — a plate or pipe is welded following the proposed WPS, the actual values are recorded and the specimens are **tested**. If all pass, the WPS is qualified.\n- **WPQ** (Welder Performance Qualification): each welder welds a test coupon (usually assessed by **bend test** or radiography) and is qualified for the processes, positions and thickness ranges tested.\n\nMost used codes: **ASME IX** (vessels and piping), **AWS D1.1** (steel structures), **ISO 15614-1** (procedures) and **ISO 9606-1** (welders).\n\n# Essential variables\n\nEach code lists the variables that, if changed, **require requalifying** the procedure. Typical examples in ASME IX: changing the **process**, changing the base metal group (P-number), changing the consumable classification (F/A-number), lowering the **preheat** by more than 55 °C (100 °F), adding or removing **PWHT**, raising the **heat input** when there are impact requirements. Changing the electrode brand within the same classification or the cleaning method is usually **non-essential**.\n\n# The PQR tests\n\n- **Transverse tensile**: the specimen crosses the weld. Criterion (ASME IX): the **tensile strength** must be **≥ the base metal's specified minimum**. If it breaks outside the weld, in the base metal, 95% of that minimum is accepted.\n- **Guided bend** (face, root or side): the specimen is bent 180° over a mandrel; it must not open a crack larger than ~3 mm. It reveals lack of fusion and inclusions.\n- **Charpy impact** (when required): in the weld metal and the HAZ, at the design temperature.\n- **Macro-etch** and **hardness** (e.g. ≤ 350 HV, or ≤ 248–250 HV in H₂S service).\n\n# The PQR tensile test\n\n```\nUTS = Fmax / A0        (MPa = N/mm²)\nRectangular: A0 = width × thickness      Round: A0 = π·d²/4\n```\n\nFor thick plates ASME IX allows **turned round specimens**. The diameter is also chosen by the **machine's capacity**: the breaking force must fit in it with margin.\n\n# In the simulator\n\nThe joint is **SAE 1045** steel (specified minimum UTS: **565 MPa**). The lab's tensile machine is rated **50 kN** and, for safety, the breaking force should be between **30 and 40 kN**.",
+      "task": "Prepare the PQR tensile test: select the joint's material (**SAE 1045**) and the specimen **diameter** so that it breaks between **30 and 40 kN**, proving **UTS ≥ 565 MPa** and **elongation ≥ 14%**.",
+      "safety": "In a tensile test the specimen stores **a lot of elastic energy** and may throw fragments when it breaks: wear **safety glasses** and use the machine's guard. Test coupons are welded, cut and machined with each process's PPE, always with a **qualified instructor** and a welding inspector."
+    },
+    "met-20-ttps": {
+      "hints": [
+        "Don't change the quench: austenitize at 840 °C and cool in water to represent the hard HAZ.",
+        "Tempering at 375 °C in the heat-treatment lesson left the part at ~48 HRC. Carbon-steel PWHT is done much hotter.",
+        "Carbon steels get PWHT between 595 and 650 °C — always below A1 (727 °C)."
+      ],
+      "questions": [
+        {
+          "prompt": "A steel bar (**E = 200 GPa**, **α = 12·10⁻⁶ /°C**) fully prevented from expanding is heated by **100 °C**. What stress builds up?",
+          "options": [],
+          "explanation": "σ = E·α·ΔT = 200,000 MPa × 12·10⁻⁶ × 100 = 240 MPa — more than the yield strength of a 1020 steel (210 MPa).",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "By the **1 hour per 25 mm** rule, what is the PWHT holding time for a **38 mm** plate?",
+          "options": [],
+          "explanation": "38 / 25 = 1.52 h (about 1 h 31 min).",
+          "unit": "h"
+        },
+        {
+          "prompt": "Compute the **Hollomon–Jaffe parameter** of a temper at **620 °C** for **1 hour** (C = 20).",
+          "options": [],
+          "explanation": "T = 620 + 273.15 = 893.15 K; log 1 = 0. P = 893.15 × (20 + 0) ≈ 17,863.",
+          "unit": ""
+        },
+        {
+          "prompt": "Why is carbon-steel PWHT done **below 727 °C (A1)**?",
+          "options": [
+            "Because the steel melts above that",
+            "Because above A1 stresses grow instead of dropping",
+            "Because above A1 the steel forms austenite again, which on cooling may turn into new martensite or a coarse structure",
+            "Because furnaces don't go above 700 °C"
+          ],
+          "explanation": "The goal is to temper and relieve stresses without a phase change. Going past A1, the HAZ would partly re-austenitize and the problem would come back."
+        },
+        {
+          "prompt": "The **residual stresses** in a freshly made weld bead are typically…",
+          "options": [
+            "tensile, on the order of the yield strength, in the bead and HAZ",
+            "zero, because the metal cools freely",
+            "compressive throughout the bead",
+            "small, under 1% of the yield strength"
+          ],
+          "explanation": "The bead wants to shrink as it cools and is restrained by the cold metal around it: it is pulled in tension until it yields. Further away, the part is in compression to balance it."
+        },
+        {
+          "prompt": "Which of these techniques **reduces distortion** in welding?",
+          "options": [
+            "Making fillets much larger than needed",
+            "Welding in a balanced sequence (alternating sides) and using back-step welding",
+            "Welding everything from one side, in one go",
+            "Raising the heat input as much as possible"
+          ],
+          "explanation": "Balancing the heat on both sides and breaking the bead into segments that progress backwards make the shrinkages offset each other. Too much metal and too much heat increase distortion."
+        }
+      ],
+      "goals": [
+        "Hardness of at most 22 HRC (NACE MR0175)",
+        "At least 90% martensite (tempered)",
+        "Toughness of at least 70/100"
+      ],
+      "title": "Residual stresses, distortion and post-weld heat treatment (PWHT)",
+      "theory": "# What the weld leaves behind\n\nDuring welding, the metal next to the bead heats up, tries to expand, is restrained by the cold metal around it and **yields**. On cooling it tries to shrink and is restrained again. Result: once cold, the joint holds **residual stresses** — **tensile** in the bead and HAZ, on the order of the **yield strength** — balanced by compression further away.\n\nAn estimate of the stress in a bar fully prevented from expanding:\n\n```\nσ = E · α · ΔT\nSteel: E ≈ 200 GPa, α ≈ 12·10⁻⁶ /°C  →  just 100 °C gives 240 MPa\n```\n\n# Consequences\n\n- **Distortion**: if the part can move, the stresses turn into warping — angular, longitudinal, buckling of thin plates.\n- **Cracks**: residual tension + hard HAZ + hydrogen = cold cracking.\n- **Fatigue** and **stress corrosion cracking** (H₂S, chlorides on stainless, caustic soda) get much worse.\n- **Brittle fracture** at low temperature.\n\n## Controlling distortion\n\nLess deposited metal (smaller grooves, fillets of the right size), a **balanced sequence** (alternating sides), **back-step** welding, **presetting** (positioning the part bent the opposite way), jigs and clamps, well-distributed tack welds.\n\n# Post-weld heat treatment (PWHT)\n\nThe welded part is heated (whole, in a furnace, or only the weld region, with electric blankets) to **595–650 °C** for carbon steels, held at temperature for a time proportional to thickness, and cooled slowly and under control. Effects:\n\n1. **Stress relief**: hot, the yield strength drops and the residual stresses \"relax\" by creep to a fraction of their initial value.\n2. **Tempering of the HAZ**: the hard martensite in the HAZ is tempered — **hardness drops** and **toughness rises**.\n3. **Removal of the remaining hydrogen**.\n\nImportant rules:\n\n- Stay **below A1 (727 °C)**: above it the steel would form austenite again and, on cooling, new martensite or a coarse structure.\n- Typical holding time (ASME VIII, P-1 steels): **1 hour per 25 mm** (1 h/in) of thickness (15 minutes minimum), up to 50 mm.\n- Controlled heating and cooling rates above ~425 °C, so as not to create new stresses.\n\nThe combined effect of temperature and time in tempering is summed up by the **Hollomon–Jaffe parameter**:\n\n```\nP = T(K) × (C + log t)        C ≈ 20, t in hours\n```\n\nA higher temperature for less time can have the same effect as a lower temperature for longer.\n\n## Sour service (H₂S)\n\nIn oil and gas with H₂S, **NACE MR0175 / ISO 15156** limits the hardness of carbon steels, including weld and HAZ, to **22 HRC** (~248–250 HV), to avoid H₂S cracking. PWHT is the classic tool to get there.\n\n# In the simulator\n\nTo represent the **hardened HAZ** of a weld in **SAE 1045** steel, the simulator quenches the steel in water (100% martensite, ~58 HRC). The PWHT is the **tempering**: choose its temperature.",
+      "task": "Simulate the **PWHT** of the SAE 1045's martensitic HAZ: keep the quench (at least **90% martensite**, then tempered) and choose the tempering temperature to reach **at most 22 HRC** (the NACE limit for H₂S service) with **toughness ≥ 70/100**.",
+      "safety": "PWHT runs at **600–650 °C** for hours, with furnaces or **electric resistance heating blankets** fed by high-current supplies: risk of **severe burns, electric shock and fire**. The area is cordoned off and signposted, the temperature is measured with **thermocouples** and only trained staff operate the equipment. Learn from a **qualified instructor**."
     }
   }
 }

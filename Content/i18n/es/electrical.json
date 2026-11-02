@@ -1,6 +1,6 @@
 {
   "title": "Ingeniería Eléctrica: de Ohm a los sistemas de potencia",
-  "description": "De la Ley de Ohm a los sistemas trifásicos: tensión, corriente, Kirchhoff, Thévenin, condensadores, corriente alterna, factor de potencia y rectificadores — todo en un simulador de circuitos con multímetro y osciloscopio virtuales.",
+  "description": "De la Ley de Ohm a los sistemas de potencia: tensión, corriente, Kirchhoff, superposición, Thévenin, condensadores e inductores, corriente alterna, filtros y resonancia, factor de potencia, diodos y LEDs, transformadores, amplificadores operacionales, motores, dimensionamiento de cables y protección — todo en un simulador de circuitos con multímetro y osciloscopio virtuales.",
   "lessons": {
     "ele-01-ohm": {
       "hints": [
@@ -392,6 +392,518 @@
       "theory": "# ¿Por qué tres fases?\n\nLa energía se genera y se transmite en **tres fases**: tres tensiones sinusoidales del mismo valor, desfasadas **120°** entre sí (A, B y C). Comparado con el monofásico, el trifásico:\n\n- transmite la misma potencia con **menos cobre** en los cables;\n- entrega **potencia constante** en el tiempo (las tres ondas se complementan) — los motores giran suaves;\n- crea un **campo magnético giratorio**, lo que hace que el motor de inducción arranque solo.\n\n# Conexión en estrella (Y)\n\nLas tres fuentes (o cargas) tienen un punto común, el **neutro**.\n\n- **Tensión de fase** (Vf): entre una fase y el neutro.\n- **Tensión de línea** (VL): entre dos fases. Por los fasores, `VL = √3 × Vf`. De ahí viene el par **127/220 V** (220 = √3 × 127) y el **220/380 V**.\n- En estrella, la corriente de línea es igual a la corriente de fase.\n\n```\nVa = 127∠0°   Vb = 127∠−120°   Vc = 127∠120°\nVab = Va − Vb = 220∠30°\n```\n\n# Carga equilibrada y corriente en el neutro\n\nPor la Ley de los Nodos en el punto estrella de la carga, la corriente en el neutro es la **suma fasorial** de las tres corrientes de fase:\n\n```\nIn = Ia + Ib + Ic\n```\n\nSi las tres cargas son **iguales** (carga **equilibrada**), las tres corrientes tienen el mismo módulo y están a 120° una de otra: la suma es **cero**. Con cargas distintas, sobra corriente en el neutro, que calienta el conductor y desequilibra las tensiones. Por eso los electricistas reparten los circuitos de un edificio entre las fases.\n\n# Potencia trifásica\n\n```\nP = 3 × Vf × If × cos φ = √3 × VL × IL × cos φ\n```\n\n# El circuito\n\nTres fuentes de 127 V (60 Hz, 0°, −120°, +120°) alimentan las cargas Ra, Rb y Rc conectadas en estrella. El punto estrella vuelve al neutro de la fuente por el conductor **Rn** (0,5 Ω), y el voltímetro **M1** mide la tensión de línea entre B y C. El osciloscopio muestra las tres tensiones de fase.",
       "task": "La carga de la fase C (**Rc**) es distinta de las otras y hace circular corriente por el neutro. **Equilibra la carga**: la corriente en el neutro debe quedar por debajo de **0,5 A** y la potencia total entre **4,6 y 5,1 kW**.",
       "safety": "Las redes trifásicas (220/380 V en industrias, 13,8 kV o más en distribución) son **mortales**. Solo profesionales habilitados y autorizados (NR-10), con equipo de protección, trabajan en ellas. Aquí todo es simulado."
+    },
+    "ele-11-superposicao": {
+      "hints": [
+        "Si no pasa corriente por R1, no hay caída en él: V(n2) tiene que ser igual a los 12 V de la batería.",
+        "Superposición: V(n2) = 8 + I1 × 666,7. Para llegar a 12 V faltan 4 V = I1 × 666,7 Ω.",
+        "Otro camino: con 12 V en n2, toda la corriente de R2 (12 V / 2 kΩ) tiene que venir de I1."
+      ],
+      "questions": [
+        {
+          "prompt": "En el circuito del laboratorio, solo con la **batería de 12 V** (I1 apagada = circuito abierto), ¿cuánto vale **V(n2)**?",
+          "options": [],
+          "explanation": "Sin I1 queda un divisor de tensión: 12 × 2k / (1k + 2k) = 8 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "Ahora solo con **I1 = 6 mA** (batería apagada = cortocircuito). ¿Cuánto vale **V(n2)**?",
+          "options": [],
+          "explanation": "Con la batería en cortocircuito, R1 y R2 quedan en paralelo: 1k ∥ 2k = 666,7 Ω. V = 0,006 × 666,7 = 4 V. Sumando los dos efectos: 8 + 4 = 12 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "En la superposición, al calcular el efecto de una fuente sola, las demás fuentes de **tensión** se vuelven ___ y las de **corriente** se vuelven ___.",
+          "options": [
+            "cortocircuito; circuito abierto",
+            "circuito abierto; cortocircuito",
+            "resistores de 1 Ω; cortocircuito",
+            "se retiran junto con sus resistores"
+          ],
+          "explanation": "Fuente de tensión anulada = 0 V = un cable (cortocircuito). Fuente de corriente anulada = 0 A = circuito abierto."
+        },
+        {
+          "prompt": "En el ejemplo de mallas de la teoría (10 V; R1 = 2 Ω; R2 = 2 Ω; R3 = 4 Ω compartido), ¿cuál es la corriente en **R3**?",
+          "options": [],
+          "explanation": "Ia = 3 A e Ib = 2 A; en R3 las dos corrientes de malla pasan en sentidos opuestos: 3 − 2 = 1 A. Comprueba: Req = 2 + (4 ∥ 2) = 3,33 Ω, I = 3 A, y el paralelo reparte 2 A a R2 y 1 A a R3.",
+          "unit": "A"
+        },
+        {
+          "prompt": "¿Por qué **no** se pueden sumar las potencias calculadas con cada fuente por separado?",
+          "options": [
+            "Porque las fuentes de corriente no disipan potencia",
+            "Porque la potencia solo existe en corriente alterna",
+            "Porque P = R·I² no es lineal: (I₁ + I₂)² ≠ I₁² + I₂²",
+            "Porque la superposición solo funciona con una fuente"
+          ],
+          "explanation": "La superposición vale para magnitudes lineales (tensión y corriente). La potencia depende del cuadrado de la corriente: suma las corrientes y solo después calcula P."
+        }
+      ],
+      "goals": [
+        "Corriente en R1 prácticamente nula (entre −0,1 mA y +0,1 mA)",
+        "Tensión en el nodo n2 igual a 12 V"
+      ],
+      "title": "Superposición, fuentes de corriente y análisis de mallas",
+      "theory": "# Circuitos con varias fuentes\n\nHasta ahora casi todos los circuitos tenían una sola fuente. En la vida real aparecen varias: dos baterías en paralelo, un panel solar y la red, un sensor alimentado por una fuente y leído por otra. Hay tres herramientas clásicas para resolverlos.\n\n# 1. Superposición\n\nEn un circuito **lineal** (resistores, condensadores, inductores y fuentes), el efecto de varias fuentes juntas es la **suma** de los efectos de cada fuente sola:\n\n1. Elige una fuente y \"apaga\" las demás:\n   - fuente de **tensión** apagada = **cortocircuito** (0 V entre sus terminales);\n   - fuente de **corriente** apagada = **circuito abierto** (0 A).\n2. Calcula la tensión o la corriente que quieres.\n3. Repite con cada fuente y **suma** los resultados (¡con su signo!).\n\n⚠ La superposición vale para **tensiones y corrientes**, nunca para **potencias**: P = R·I² no es lineal. Suma primero las corrientes y solo después calcula la potencia.\n\n# 2. La fuente de corriente\n\nUna **fuente de corriente** ideal empuja siempre la **misma corriente**, sea cual sea la tensión en sus terminales (el símbolo es un círculo con una flecha). Aparece en el **equivalente de Norton** y modela bien sensores (fotodiodos), transistores y cargadores de baterías en la fase de corriente constante.\n\n# 3. Análisis nodal y de mallas\n\n- **Nodal**: una ecuación de Kirchhoff de corrientes (LKC) por nodo. Para el nodo n2 de este laboratorio:\n\n```\n(V − 12)/1k + V/2k = I1   →   V = 8 + 666,7 × I1\n```\n\n- **Mallas**: una corriente que \"circula\" en cada ventana del circuito y una ecuación de Kirchhoff de tensiones (LKT) por malla. Ejemplo: fuente de 10 V, R1 = 2 Ω solo en la malla 1, R2 = 2 Ω solo en la malla 2 y R3 = 4 Ω compartido:\n\n```\nMalla 1:  10 = (2 + 4)·Ia − 4·Ib\nMalla 2:   0 = −4·Ia + (4 + 2)·Ib\n→ Ia = 3 A, Ib = 2 A; por R3 pasa Ia − Ib = 1 A\n```\n\nLos simuladores de circuitos (como SPICE y este) arman esas ecuaciones en forma de matriz y resuelven todo de una vez.\n\n# En el simulador\n\nLa batería de 12 V alimenta el nodo n2 a través de R1 = 1 kΩ; R2 = 2 kΩ va a tierra; la fuente de corriente **I1** inyecta corriente en el mismo nodo. Por superposición, V(n2) = **8 V** (efecto de la batería) **+ I1 × 666,7 Ω** (efecto de I1, con la batería en cortocircuito: R1 ∥ R2 = 666,7 Ω).",
+      "task": "Ajusta la fuente de corriente **I1** para que **no pase corriente por R1** (entre −0,1 mA y +0,1 mA): la batería queda \"en equilibrio\" y el nodo n2 llega a **12 V**."
+    },
+    "ele-12-rl": {
+      "hints": [
+        "τ = L / (R1 + Rb). Para τ = 2,5 ms con L = 0,5 H, la resistencia total tiene que ser 0,5 / 0,0025.",
+        "La resistencia total es 200 Ω, pero 50 Ω ya son de la propia bobina.",
+        "Comprueba la corriente final: 12 V / 200 Ω."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la constante de tiempo de un circuito con **L = 200 mH** y **R = 40 Ω**?",
+          "options": [],
+          "explanation": "τ = L / R = 0,2 / 40 = 0,005 s = 5 ms.",
+          "unit": "ms"
+        },
+        {
+          "prompt": "¿Cuánta energía queda guardada en la bobina del laboratorio (**L = 0,5 H**) con **60 mA**?",
+          "options": [],
+          "explanation": "E = ½ × L × I² = 0,5 × 0,5 × 0,06² = 0,0009 J = 0,9 mJ.",
+          "unit": "mJ"
+        },
+        {
+          "prompt": "Después de **3 τ**, ¿a qué porcentaje del valor final llegó la corriente?",
+          "options": [],
+          "explanation": "1 − e^(−3) = 1 − 0,0498 = 0,950 → cerca del 95%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "¿Para qué sirve el **diodo en paralelo** con la bobina de un relé?",
+          "options": [
+            "Para aumentar la corriente de la bobina",
+            "Para dar camino a la corriente cuando el transistor se apaga, evitando el pico de tensión v = L·di/dt",
+            "Para rectificar la corriente alterna de la bobina",
+            "Para que el relé se active más despacio"
+          ],
+          "explanation": "Sin el diodo, la corriente de la bobina se cortaría en microsegundos y el pico de tensión quemaría el transistor. El diodo deja circular la corriente hasta que la energía ½·L·I² se disipa."
+        }
+      ],
+      "goals": [
+        "Constante de tiempo τ = 2,5 ms (entre 2,4 y 2,6 ms)",
+        "Corriente final en la bobina de al menos 57 mA"
+      ],
+      "title": "Inductores, el transitorio RL y la energía magnética",
+      "theory": "# El inductor\n\nUn **inductor** es un cable enrollado en espiras (a veces alrededor de un núcleo de hierro). La corriente crea un **campo magnético** que guarda energía. La propiedad que lo mide es la **inductancia L**, en **henrios (H)**.\n\nLa regla fundamental es la **ley de Faraday/Lenz**: el inductor reacciona a cualquier **cambio** de corriente generando una tensión contraria:\n\n```\nv = L × di/dt\n```\n\nPor eso la corriente en un inductor **no puede cambiar de golpe**: se comporta como una \"inercia\" eléctrica (igual que la tensión de un condensador no puede saltar).\n\n# El transitorio RL\n\nAl conectar una fuente V a un resistor R en serie con un inductor L, la corriente sube de forma exponencial hasta el valor final V/R:\n\n```\ni(t) = (V / R) × (1 − e^(−t/τ))        τ = L / R\n```\n\n- En **1 τ** la corriente llega al **63,2%** del final; en **3 τ**, al 95%; en **5 τ**, al 99,3% (\"se estabilizó\").\n- La tensión del inductor empieza en V y cae a cero: en régimen continuo, un inductor ideal es **un cable**.\n- Compara con el RC: allí τ = R × C; aquí τ = L / R. **Más resistencia** hace el RC **más lento**, pero el RL **más rápido**.\n\nUna bobina real tiene la resistencia de su propio cable (aquí **Rb = 50 Ω**), que entra en serie en el cálculo: τ = L / (R1 + Rb).\n\n# Energía magnética\n\n```\nE = ½ × L × I²\n```\n\nCuando el interruptor se abre, esa energía tiene que ir a algún lado. Como di/dt se vuelve enorme, v = L·di/dt se convierte en un **pico de tensión**: es lo que produce la chispa de la bujía (cientos de voltios se vuelven ~20 kV en la bobina de encendido) y lo que **quema los transistores** que accionan relés. La solución es el **diodo de rueda libre** (flyback) en paralelo con la bobina, que da un camino para que la corriente siga circulando y se apague despacio.\n\n# En el simulador\n\nLa bobina de un relé tiene **L = 0,5 H** y **Rb = 50 Ω**, alimentada con 12 V a través del resistor **R1**. El osciloscopio muestra la corriente I(L1) subiendo y la tensión V(L1) bajando.",
+      "task": "El relé tiene que activarse rápido: ajusta **R1** para que la constante de tiempo sea **τ = 2,5 ms** (entre 2,4 y 2,6 ms) y la corriente final sea de al menos **57 mA** (la corriente de activación del relé).",
+      "safety": "Las bobinas (relés, solenoides, motores, la bobina de encendido del coche) generan **picos de cientos o miles de voltios** cuando su corriente se interrumpe de golpe. Nunca desconectes una bobina energizada con la mano y, en circuitos con relés, usa siempre el **diodo de rueda libre**."
+    },
+    "ele-13-led-zener": {
+      "hints": [
+        "Sobran 12 − 3 × 2,0 = 6 V para repartir entre R1 y las tres resistencias internas de los LEDs (3 × 10 Ω).",
+        "R1 + 30 Ω = 6 V / 0,020 A = 300 Ω.",
+        "Potencia en el resistor: P = R × I² = 270 × 0,02²."
+      ],
+      "questions": [
+        {
+          "prompt": "Un LED rojo (**Vf = 2 V**, **15 mA**) se va a conectar a una fuente de **5 V**. ¿Qué resistor en serie?",
+          "options": [],
+          "explanation": "R = (5 − 2) / 0,015 = 200 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "Un regulador Zener recibe **Vin = 12 V**, usa un Zener de **5,1 V** y alimenta una carga de **20 mA**; el Zener necesita al menos **5 mA**. ¿Qué resistor en serie?",
+          "options": [],
+          "explanation": "R = (12 − 5,1) / (0,020 + 0,005) = 6,9 / 0,025 = 276 Ω (en la práctica, 270 Ω de la serie E24).",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "En ese regulador (R = 276 Ω), ¿cuál es la potencia en el Zener si **se desconecta la carga**?",
+          "options": [],
+          "explanation": "Sin carga, toda la corriente del resistor, 6,9 / 276 = 25 mA, pasa por el Zener: Pz = 5,1 × 0,025 = 0,1275 W. Elige un Zener de al menos 0,25 W (con margen, 0,5 W).",
+          "unit": "W"
+        },
+        {
+          "prompt": "¿Por qué **no** se conectan varios LEDs en paralelo con un solo resistor?",
+          "options": [
+            "Porque los LEDs en paralelo no encienden",
+            "Porque la tensión de cada LED se sumaría",
+            "Porque el LED con un Vf un poco menor se lleva casi toda la corriente, se calienta y se quema (avalancha térmica)",
+            "Porque el resistor quedaría en cortocircuito"
+          ],
+          "explanation": "La corriente del diodo es exponencial con la tensión: pequeñas diferencias de Vf se vuelven grandes diferencias de corriente. Cada rama en paralelo necesita su propio resistor."
+        }
+      ],
+      "goals": [
+        "Corriente en los LEDs entre 19 mA y 21 mA",
+        "Potencia en R1 de como máximo 0,125 W"
+      ],
+      "title": "LEDs, el diodo Zener y los reguladores de tensión",
+      "theory": "# El diodo real\n\nUn diodo de silicio solo conduce cuando la tensión **directa** (ánodo más positivo que el cátodo) supera unos **0,6–0,7 V**; por debajo, la corriente es prácticamente cero. Por encima, la corriente crece de forma **exponencial** (ecuación de Shockley): unas décimas de voltio más multiplican la corriente por decenas. Por eso **un diodo nunca se conecta directo a una fuente**: algo tiene que limitar la corriente.\n\nEl simulador usa el modelo de ingeniería más común: un interruptor ideal con una **tensión de codo Vf** y una pequeña **resistencia Ron** detrás.\n\n# LEDs\n\nEl **LED** es un diodo que emite luz. Su tensión directa depende del color (del gap del semiconductor):\n\n- rojo / amarillo: **~2 V**;\n- verde, azul y blanco: **~3 V**.\n\nLa corriente típica de un LED indicador es de **10–20 mA**. El resistor en serie se calcula con la ley de Ohm sobre la tensión **sobrante**:\n\n```\nR = (Vfuente − n × Vf) / I        (n LEDs en serie)\n```\n\nConectar LEDs **en serie** con un solo resistor ahorra energía (la misma corriente enciende todos). Conectar LEDs **en paralelo** sin un resistor para cada uno es mala idea: el que tenga un Vf un poco menor se lleva casi toda la corriente, se calienta, su Vf baja más… y se quema (**avalancha térmica**).\n\n# El diodo Zener\n\nTodo diodo, polarizado al revés, se rompe a una tensión alta. El **Zener** está fabricado para romperse a una tensión **precisa y baja** (3,3 V, 5,1 V, 12 V…) sin dañarse. En la zona de ruptura la tensión casi no cambia con la corriente: se convierte en una **referencia de tensión**.\n\n## El regulador Zener\n\n```\nVin ── R ──┬── Vout = Vz\n           │      │\n         Zener  carga\n```\n\nEl resistor tiene que suministrar la corriente de la carga **más** una corriente mínima en el Zener (para que siga regulando):\n\n```\nR = (Vin − Vz) / (Icarga + Iz,mín)\nPeor caso del Zener (sin carga):  Pz = Vz × (Vin − Vz) / R\n```\n\nLos **reguladores integrados** (7805, LM317, LDO) hacen lo mismo con un amplificador y un transistor: mucho más estables, con protección contra cortocircuito y sobretemperatura. Y las **fuentes conmutadas** (buck, boost) convierten la tensión con una eficiencia del 85–95%, en lugar de quemar el sobrante en calor.\n\n# En el simulador\n\nTres LEDs rojos (Vf = 2,0 V y Ron = 10 Ω cada uno) están en serie con **R1**, alimentados con 12 V. La corriente aparece en el multímetro al hacer clic en un LED, y el brillo del dibujo sigue a la corriente.",
+      "task": "Ajusta **R1** para que los tres LEDs funcionen con **20 mA** (entre 19 y 21 mA) sin superar **0,125 W** en el resistor (un resistor de 1/8 W)."
+    },
+    "ele-14-filtros": {
+      "hints": [
+        "R = 1 / (2π fc C) = 1 / (2π × 1000 × 100 × 10⁻⁹).",
+        "Da ≈ 1592 Ω. El valor E24 más cercano es 1,6 kΩ.",
+        "Gira el control y observa cómo el \"codo\" de la curva pasa por la línea discontinua."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la frecuencia de corte de un pasa-bajos con **R = 10 kΩ** y **C = 10 nF**?",
+          "options": [],
+          "explanation": "fc = 1 / (2π × 10 000 × 10 × 10⁻⁹) = 1 / (6,283 × 10⁻⁴) ≈ 1592 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "Un filtro reduce la señal de 1 V a **0,1 V**. ¿Cuánto es eso en decibelios?",
+          "options": [],
+          "explanation": "G = 20 × log10(0,1) = 20 × (−1) = −20 dB.",
+          "unit": "dB"
+        },
+        {
+          "prompt": "Un pasa-bajos RC con **fc = 1 kHz** recibe una señal de **10 kHz**. ¿Cuál es la ganancia?",
+          "options": [],
+          "explanation": "|H| = 1 / √(1 + (10 000/1000)²) = 1/√101 ≈ 0,0995 (≈ −20 dB: una década por encima del corte).",
+          "unit": ""
+        },
+        {
+          "prompt": "Por encima de la frecuencia de corte, un filtro RC de **1.er orden** atenúa…",
+          "options": [
+            "−3 dB por década",
+            "−20 dB por década",
+            "−40 dB por década",
+            "nada: la ganancia se mantiene constante"
+          ],
+          "explanation": "La ganancia se vuelve proporcional a fc/f: diez veces más frecuencia, diez veces menos señal = −20 dB por década."
+        },
+        {
+          "prompt": "¿Cómo convertir este pasa-bajos en un **pasa-altos**?",
+          "options": [
+            "Aumentando el resistor",
+            "Usando un condensador electrolítico",
+            "Tomando la salida antes del resistor",
+            "Intercambiando R y C: condensador en serie y resistor a tierra"
+          ],
+          "explanation": "Con el condensador en serie, las bajas frecuencias (XC alto) se bloquean y las altas pasan. La fc sigue siendo 1/(2πRC)."
+        }
+      ],
+      "goals": [
+        "Ganancia en 1 kHz entre 0,69 y 0,72 (≈ −3 dB)",
+        "Fase de la salida entre −50° y −40°"
+      ],
+      "title": "Filtros RC, decibelios y el diagrama de Bode",
+      "theory": "# ¿Por qué filtrar?\n\nToda señal real viene con \"suciedad\": el siseo de alta frecuencia de un micrófono, el ruido del motor en el sensor de un robot, los 50/60 Hz de la red en una medición. Un **filtro** deja pasar las frecuencias que interesan y atenúa las demás.\n\n# El filtro pasa-bajos RC\n\nUn resistor en serie y un condensador a tierra. A baja frecuencia el condensador es casi un circuito abierto (XC enorme) y la salida copia la entrada; a alta frecuencia se vuelve casi un cortocircuito y la salida cae.\n\n```\nGanancia |H| = Vsalida / Ventrada = 1 / √(1 + (f / fc)²)\nFase     φ   = −arctan(f / fc)\nCorte    fc  = 1 / (2π R C)\n```\n\nEn la **frecuencia de corte** fc: ganancia = 1/√2 = **0,707** y fase = **−45°**. Por encima de fc la ganancia cae **10 veces por década** de frecuencia.\n\n# Decibelios\n\nComo las ganancias van de 1 a 0,0001, los ingenieros usan una escala logarítmica, el **decibelio**:\n\n```\nG(dB) = 20 × log10(Vsalida / Ventrada)\n```\n\n- ganancia 1 → 0 dB; 0,707 → **−3 dB**; 0,1 → −20 dB; 0,01 → −40 dB; 10 → +20 dB.\n- Por eso fc también se llama **frecuencia de −3 dB** (la potencia cae a la mitad).\n- Por encima de fc el pasa-bajos RC cae **−20 dB por década** (filtro de 1.er orden). Dos etapas dan −40 dB/década (2.º orden).\n\nEl gráfico de ganancia (en dB) y fase frente a la frecuencia en escala logarítmica es el **diagrama de Bode**.\n\n# Otros filtros\n\n- **Pasa-altos**: intercambia R y C (condensador en serie, resistor a tierra). Bloquea la CC y las bajas frecuencias: es el \"condensador de acoplamiento\" de las entradas de audio.\n- **Pasa-banda** y **rechaza-banda**: combinan los dos, o usan un LC resonante (próxima lección).\n- **Filtros activos** (con amplificadores operacionales) tienen ganancia y órdenes altos sin inductores.\n\nEjemplos: el filtro anti-aliasing antes de un convertidor analógico-digital, el crossover que separa graves y agudos en un altavoz, el RC en el pin de un botón para limpiar el rebote.\n\n# En el simulador\n\nEl gráfico muestra **V(n2)** (la salida) frente a la frecuencia, de 10 Hz a 100 kHz, con 1 V en la entrada: así V(n2) ya es la ganancia. La línea discontinua marca 1 kHz, la frecuencia de la fuente. La métrica **ph(n2)** es la fase de la salida.",
+      "task": "Diseña un pasa-bajos con **corte en 1 kHz** usando C = 100 nF: ajusta **R1** hasta que la ganancia en 1 kHz quede entre **0,69 y 0,72** (≈ −3 dB) con una fase entre **−50° y −40°**."
+    },
+    "ele-15-ressonancia-paralela": {
+      "hints": [
+        "Calcula f0 = 1 / (2π √(L C)) con L = 0,01 H y C = 2,2 × 10⁻⁶ F.",
+        "√(2,2 × 10⁻⁸) ≈ 1,483 × 10⁻⁴ → f0 ≈ 1073 Hz.",
+        "La resonancia es estrecha: usa ◀ ▶ de 10 en 10 Hz cerca de 1070 Hz."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la frecuencia de resonancia del tanque del laboratorio (**L = 10 mH**, **C = 2,2 µF**)?",
+          "options": [],
+          "explanation": "f0 = 1 / (2π √(0,01 × 2,2 × 10⁻⁶)) = 1 / (2π × 1,483 × 10⁻⁴) ≈ 1073 Hz.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "Un circuito resonante con **f0 = 1000 Hz** tiene **Q = 50**. ¿Cuál es el ancho de banda?",
+          "options": [],
+          "explanation": "BW = f0 / Q = 1000 / 50 = 20 Hz (de ~990 a ~1010 Hz).",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "Un tanque paralelo tiene **R = 10 kΩ** en paralelo y **XL = 100 Ω** en resonancia. ¿Cuál es su **Q**?",
+          "options": [],
+          "explanation": "En paralelo, Q = R / XL = 10 000 / 100 = 100.",
+          "unit": ""
+        },
+        {
+          "prompt": "En resonancia, un circuito LC **paralelo** ideal tiene una impedancia…",
+          "options": [
+            "máxima (idealmente infinita)",
+            "mínima (idealmente cero)",
+            "igual a XL + XC",
+            "igual a la de un resistor de 1 Ω"
+          ],
+          "explanation": "Las corrientes de L y C se cancelan hacia afuera: la fuente no tiene que entregar ninguna corriente, es decir, la impedancia es infinita (en un tanque real, igual a Rp)."
+        }
+      ],
+      "goals": [
+        "Tensión en el tanque V(n2) de al menos 9,0 V (sintonizado)"
+      ],
+      "title": "Resonancia paralelo, factor de calidad y selectividad",
+      "theory": "# El circuito tanque\n\nEn la lección de fasores, el RLC **serie** tenía impedancia **mínima** en resonancia. Ahora el inductor y el condensador están **en paralelo**: el llamado **circuito tanque**. En la frecuencia de resonancia la corriente del inductor (atrasada 90°) y la del condensador (adelantada 90°) son iguales y opuestas: **se cancelan** hacia afuera, y la energía se queda \"pasando\" de uno al otro dentro.\n\n```\nf0 = 1 / (2π √(L C))      (la misma fórmula que en serie)\n```\n\n- **LC serie** en resonancia: impedancia mínima (≈ cortocircuito) → deja pasar f0.\n- **LC paralelo** en resonancia: impedancia **máxima** (idealmente infinita) → **bloquea** f0.\n\nEn un tanque real la impedancia máxima es finita: las pérdidas (resistencia del cable y del núcleo) aparecen como un resistor en paralelo, **Rp**. En resonancia el tanque vale exactamente **Rp**.\n\n# Factor de calidad (Q) y ancho de banda\n\nEl **Q** mide lo \"afilada\" que es la resonancia: cuánta energía queda guardada comparada con la que se pierde por ciclo.\n\n```\nParalelo:  Q = R / XL = R / (2π f0 L)      (R = resistencia en paralelo con el tanque)\nSerie:     Q = XL / R\nAncho de banda:  BW = f0 / Q      (entre los puntos de −3 dB)\n```\n\n- Q alto (50–500): resonancia estrecha, **selectiva**: sintoniza una emisora y rechaza las vecinas.\n- Q bajo: respuesta ancha y \"blanda\".\n- Todo lo que queda en paralelo **carga** el tanque: aquí la fuente ve R1 ∥ Rp = 909 Ω, así que el Q cargado es 909 / 67,4 ≈ 13,5 (mucho menor que el Q del tanque solo, 10 000 / 67,4 ≈ 148).\n\n# Dónde aparece\n\n- Sintonía de radios AM/FM y del NFC (13,56 MHz): el tanque selecciona una frecuencia.\n- **Osciladores** LC: el tanque define la frecuencia y un amplificador repone las pérdidas.\n- Filtros que **rechazan** una frecuencia (el tanque en serie con la línea), por ejemplo armónicos en sistemas de potencia.\n\n# En el simulador\n\nLa fuente de 10 V alimenta el tanque (**L = 10 mH**, **C = 2,2 µF**, pérdidas **Rp = 10 kΩ**) a través de **R1 = 1 kΩ**. El gráfico muestra V(n2), la tensión del tanque, frente a la frecuencia. Lejos de la resonancia el tanque \"cortocircuita\" la señal; cerca de f0 se abre y la tensión sube hasta 10 × 10k/11k ≈ 9,09 V.",
+      "task": "Ajusta la **frecuencia** de la fuente para sintonizar el tanque: la tensión **V(n2)** tiene que llegar a al menos **9,0 V** (el máximo es 9,09 V, en resonancia)."
+    },
+    "ele-16-transformador": {
+      "questions": [
+        {
+          "prompt": "Un transformador tiene **1100 espiras** en el primario, conectado a **220 V**, y **60 espiras** en el secundario. ¿Cuál es la tensión en el secundario?",
+          "options": [],
+          "explanation": "V2 = V1 × N2 / N1 = 220 × 60 / 1100 = 12 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "Ese transformador (ideal) alimenta una carga que toma **2 A** del secundario. ¿Cuál es la corriente en el primario?",
+          "options": [],
+          "explanation": "I1 = I2 × N2 / N1 = 2 × 60 / 1100 ≈ 0,109 A. Compruébalo con la potencia: 12 V × 2 A = 24 W = 220 V × 0,109 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "Un altavoz de **8 Ω** está en el secundario de un transformador con relación **10:1** (N1/N2 = 10). ¿Qué impedancia \"ve\" el amplificador en el primario?",
+          "options": [],
+          "explanation": "Z1 = (N1/N2)² × Z2 = 10² × 8 = 800 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "Una línea lleva la misma potencia primero a **1 kV** y después a **10 kV**. ¿Cuántas veces cae la pérdida R·I² en la línea?",
+          "options": [],
+          "explanation": "Con 10× la tensión, la corriente cae 10× (I = P/V). La pérdida depende de I²: cae 10² = 100 veces.",
+          "unit": "veces"
+        },
+        {
+          "prompt": "¿Por qué un transformador **no funciona** (y puede quemarse) con corriente continua?",
+          "options": [
+            "Porque la CC tiene una tensión demasiado alta",
+            "Porque el núcleo de hierro bloquea la CC",
+            "Porque el flujo queda constante (dΦ/dt = 0): no se induce nada, y el primario es solo la resistencia del cable",
+            "Porque la CC solo pasa por el secundario"
+          ],
+          "explanation": "La inducción depende de la variación del flujo. Con CC, después del transitorio no hay variación ni tensión inducida; la corriente queda limitada solo por la pequeña resistencia del devanado."
+        },
+        {
+          "prompt": "¿Por qué el núcleo del transformador se hace de **chapas finas aisladas** en lugar de un bloque macizo de hierro?",
+          "options": [
+            "Para que sea más liviano",
+            "Para reducir las corrientes parásitas (de Foucault) que calientan el núcleo",
+            "Para aumentar la relación de espiras",
+            "Para que el transformador funcione con CC"
+          ],
+          "explanation": "El flujo variable induce corrientes que circulan dentro del propio núcleo. Las chapas finas y aisladas cortan esos caminos y reducen mucho esa pérdida."
+        }
+      ],
+      "title": "Transformadores e inducción electromagnética",
+      "theory": "# Inducción: el campo que genera tensión\n\nEn 1831, Michael Faraday descubrió que un **campo magnético variable** que atraviesa una bobina induce una tensión en ella:\n\n```\nv = N × dΦ/dt        (N espiras, Φ = flujo magnético)\n```\n\nEl signo (la **ley de Lenz**) dice que la tensión inducida intenta oponerse a la variación que la creó. Es el principio de los generadores, los motores, los cargadores inalámbricos, los detectores de metales… y los **transformadores**.\n\n# El transformador\n\nDos bobinas enrolladas en el **mismo núcleo de hierro**. La corriente alterna en el **primario** crea un flujo que varía 50 o 60 veces por segundo; ese flujo atraviesa el **secundario** e induce en él una tensión. Como el flujo es el mismo, la tensión por espira también:\n\n```\nV1 / V2 = N1 / N2          (relación de espiras, a)\nI1 / I2 = N2 / N1          (la corriente hace lo contrario)\nP1 = P2  →  V1·I1 = V2·I2  (transformador ideal)\n```\n\n- **Reductor** (N2 < N1): 220 V → 12 V en un cargador antiguo, 13,8 kV → 220/127 V en el poste.\n- **Elevador** (N2 > N1): en la central, de ~13,8 kV a 138, 500 o 765 kV.\n- **De aislamiento** (N1 = N2): la misma tensión, pero el secundario queda **aislado** de la red: más seguridad.\n\n## Por qué solo funciona en CA\n\nUna corriente **continua** crea un flujo **constante**: dΦ/dt = 0, no se induce ninguna tensión. Peor: el primario queda solo como la resistencia del cable, la corriente se dispara y el transformador se quema.\n\n## Impedancia reflejada\n\nUna carga Z en el secundario \"aparece\" en el primario multiplicada por a²:\n\n```\nZ1 = (N1/N2)² × Z2\n```\n\nAsí un transformador de salida adapta un altavoz de 8 Ω a un amplificador a válvulas de algunos kΩ (¡máxima transferencia de potencia!).\n\n# El transformador real\n\n- **Pérdidas en el cobre**: R·I² en los devanados (crecen con la carga).\n- **Pérdidas en el hierro**: **histéresis** (el hierro \"se resiste\" a invertir su magnetización) y **corrientes parásitas** (de Foucault) que circulan dentro del núcleo; por eso el núcleo se hace de **chapas finas aisladas** (laminado) de acero al silicio.\n- Rendimiento: 95% (pequeños) a más del 99% (transformadores de potencia).\n- La placa indica la potencia en **VA** o **kVA** (potencia aparente), no en W.\n\n# Por qué transmitir en alta tensión\n\nPara la misma potencia, P = V × I: **tensión 10 veces mayor = corriente 10 veces menor**. La pérdida en la línea es R × I², así que cae **100 veces**. Sin transformadores (y, por lo tanto, sin CA), cada barrio necesitaría su propia central: ese argumento hizo que la CA de Tesla y Westinghouse le ganara a la CC de Edison en la \"guerra de las corrientes\".",
+      "safety": "El primario de un transformador enchufado a la red tiene **127/220 V** (o 230 V) y los transformadores de distribución llegan a **13,8 kV o más**: son letales. Un transformador desconectado todavía puede estar energizado desde el otro lado (retroalimentación). No abras fuentes, cargadores ni tableros; el trabajo en instalaciones es para profesionales habilitados."
+    },
+    "ele-17-ampop": {
+      "questions": [
+        {
+          "prompt": "Un amplificador **inversor** tiene **Rf = 47 kΩ** y **Rin = 4,7 kΩ**. Con **0,3 V** en la entrada, ¿cuál es la salida?",
+          "options": [],
+          "explanation": "Ganancia = −Rf/Rin = −47k/4,7k = −10. Vout = −10 × 0,3 = −3 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "¿Cuál es la ganancia de un amplificador **no inversor** con **Rf = 9 kΩ** y **Rg = 1 kΩ**?",
+          "options": [],
+          "explanation": "G = 1 + Rf/Rg = 1 + 9 = 10 (y sin invertir la señal).",
+          "unit": ""
+        },
+        {
+          "prompt": "Ese no inversor de ganancia 10, alimentado con **±12 V**, recibe **2 V** en la entrada. La salida queda en…",
+          "options": [
+            "+20 V",
+            "cerca de +12 V (saturada)",
+            "−20 V",
+            "0 V"
+          ],
+          "explanation": "La cuenta daría 20 V, pero la salida no supera la alimentación: se satura cerca de +12 V (un poco por debajo, en un amp-op común)."
+        },
+        {
+          "prompt": "Una ganancia de tensión de **100 veces** corresponde a ¿cuántos decibelios?",
+          "options": [],
+          "explanation": "20 × log10(100) = 20 × 2 = 40 dB.",
+          "unit": "dB"
+        },
+        {
+          "prompt": "Un **sumador inversor** tiene Rf = R1 = R2 = 10 kΩ y recibe **V1 = 1 V** y **V2 = 0,5 V**. ¿Cuál es la salida?",
+          "options": [],
+          "explanation": "Vout = −Rf × (V1/R1 + V2/R2) = −10k × (1/10k + 0,5/10k) = −(1 + 0,5) = −1,5 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "Un amp-op tiene un **producto ganancia × ancho de banda de 1 MHz**. Montado con **ganancia 100**, ¿hasta qué frecuencia amplifica bien?",
+          "options": [],
+          "explanation": "Ancho de banda = GBW / ganancia = 1 000 000 / 100 = 10 000 Hz (10 kHz).",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "Al analizar un amp-op ideal con realimentación negativa, valen las reglas:",
+          "options": [
+            "La salida es siempre cero y las entradas toman mucha corriente",
+            "La corriente de salida es igual a la de entrada",
+            "La ganancia es siempre 1",
+            "No entra corriente en las entradas y la salida hace V+ = V− (cortocircuito virtual)"
+          ],
+          "explanation": "Son las dos \"reglas de oro\": impedancia de entrada infinita y, con realimentación negativa, la salida se ajusta hasta que las dos entradas tengan la misma tensión."
+        }
+      ],
+      "title": "Amplificadores operacionales",
+      "theory": "# La \"pieza de construcción\" de la electrónica analógica\n\nEl **amplificador operacional** (amp-op, op-amp) es un circuito integrado con dos entradas, **no inversora (+)** e **inversora (−)**, y una salida. Amplifica la **diferencia** entre las entradas con una ganancia enorme (10⁵ a 10⁶):\n\n```\nVsalida = A × (V+ − V−)        A ≈ 100 000 o más\n```\n\nCon semejante ganancia, cualquier milivoltio de diferencia lleva la salida cerca de la alimentación (**saturación**). El truco es la **realimentación negativa**: conectar la salida de vuelta a la entrada inversora con resistores. Así el circuito pasa a depender **solo de los resistores**, no de la ganancia del chip.\n\n# Las reglas de oro (amp-op ideal con realimentación negativa)\n\n1. **No entra corriente** en las entradas (impedancia de entrada infinita).\n2. La salida hace lo necesario para que **V+ = V−** (el \"cortocircuito virtual\").\n\nCon ellas, todos los circuitos clásicos salen en dos líneas.\n\n# Circuitos clásicos\n\n```\nInversor:          Vout = −(Rf / Rin) × Vin\nNo inversor:       Vout = (1 + Rf / Rg) × Vin\nSeguidor (buffer): Vout = Vin        (ganancia 1, aísla una fuente débil de una carga)\nSumador inversor:  Vout = −Rf × (V1/R1 + V2/R2 + …)\n```\n\n- **Inversor**: la entrada + va a tierra; por el cortocircuito virtual la entrada − también queda en 0 V (\"tierra virtual\"). La corriente Vin/Rin pasa toda por Rf (regla 1), así que Vout = −Rf·Vin/Rin.\n- **No inversor**: Vin entra por la +; Rf y Rg forman un divisor de la salida que tiene que reproducir Vin en la entrada −.\n- **Sumador**: es el mezclador de audio y la base de los convertidores digital-analógico.\n- **Integrador** (un condensador en lugar de Rf): la salida es la integral de la entrada, la \"I\" de un controlador PID analógico.\n- **Comparador** (sin realimentación): la salida va al máximo positivo o negativo según V+ > V− o no. Con realimentación **positiva** se vuelve un **Schmitt trigger** (histéresis contra el ruido).\n\n# Límites del amp-op real\n\n- **Saturación**: la salida no supera las tensiones de alimentación (un amp-op rail-to-rail se acerca a ellas; un 741 queda ~1,5–2 V por debajo).\n- **Producto ganancia × ancho de banda (GBW)**: un amp-op con GBW de 1 MHz da ganancia 10 hasta 100 kHz, y ganancia 100 solo hasta 10 kHz.\n- **Slew rate**: la velocidad máxima de la salida (V/µs). Las señales grandes y rápidas se vuelven \"triangulares\".\n- La tensión de offset, las corrientes de polarización y el ruido importan en instrumentación de precisión.\n\n# Ganancia en decibelios\n\n```\nG(dB) = 20 × log10(|Vout / Vin|)      ganancia 10 → 20 dB, 100 → 40 dB, 1000 → 60 dB\n```"
+    },
+    "ele-18-motores": {
+      "questions": [
+        {
+          "prompt": "¿Cuál es la velocidad síncrona de un motor de inducción de **4 polos** a **60 Hz**?",
+          "options": [],
+          "explanation": "ns = 120 × f / p = 120 × 60 / 4 = 1800 rpm.",
+          "unit": "rpm"
+        },
+        {
+          "prompt": "La placa de ese motor dice **1740 rpm**. ¿Cuál es el deslizamiento?",
+          "options": [],
+          "explanation": "s = (1800 − 1740) / 1800 = 60 / 1800 = 0,0333 = 3,33%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "El motor entrega **7,5 kW** en el eje a **1740 rpm**. ¿Cuál es el torque?",
+          "options": [],
+          "explanation": "ω = 2π × 1740 / 60 = 182,2 rad/s. T = P / ω = 7500 / 182,2 ≈ 41,2 N·m.",
+          "unit": "N·m"
+        },
+        {
+          "prompt": "Conectado a **380 V** trifásicos, toma **15 A** con **factor de potencia 0,85**, entregando **7,5 kW**. ¿Cuál es el rendimiento?",
+          "options": [],
+          "explanation": "Pentrada = √3 × 380 × 15 × 0,85 ≈ 8392 W. η = 7500 / 8392 ≈ 0,894 = 89,4%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "¿Cómo se **invierte el sentido de giro** de un motor de inducción trifásico?",
+          "options": [
+            "Intercambiando dos fases cualesquiera",
+            "Invirtiendo la polaridad del neutro",
+            "Reduciendo la frecuencia a la mitad",
+            "No es posible invertirlo"
+          ],
+          "explanation": "Intercambiar dos fases invierte la secuencia (A-B-C pasa a A-C-B) y el campo giratorio gira en sentido contrario."
+        },
+        {
+          "prompt": "Un **variador de frecuencia** cambia la velocidad de un motor de inducción porque…",
+          "options": [
+            "aumenta la resistencia del rotor",
+            "cambia el número de polos del motor",
+            "cambia la frecuencia (y la tensión, manteniendo V/f), y con ella la velocidad síncrona ns = 120·f/p",
+            "reduce el factor de potencia"
+          ],
+          "explanation": "La velocidad del campo giratorio es proporcional a la frecuencia. El variador genera una CA de frecuencia ajustable y mantiene V/f constante para que el flujo del motor no cambie."
+        }
+      ],
+      "title": "Motores eléctricos: CC, inducción y accionamientos",
+      "theory": "# La fuerza que hace girar el mundo\n\nCerca de **la mitad de la energía eléctrica** del mundo la consumen los motores. Todos usan la misma física: un conductor con corriente dentro de un campo magnético sufre una fuerza (la **fuerza de Lorentz**, F = B·I·L). Coloca varios conductores alrededor de un eje y tienes **torque**.\n\n```\nPotencia mecánica:  P = T × ω        ω (rad/s) = 2π × n (rpm) / 60\n```\n\n# Motor de corriente continua\n\n- Imanes (o bobinas de campo) en el **estator**; la bobina del **rotor** recibe corriente a través de las **escobillas y el conmutador**, que invierten la corriente cada media vuelta.\n- Al girar, el rotor genera una **fuerza contraelectromotriz** E = k·ω que se opone a la tensión aplicada: la velocidad sube hasta E ≈ V. Por eso **la velocidad es casi proporcional a la tensión** y el **torque a la corriente** (T = k·I).\n- En el arranque E = 0: la corriente es enorme (solo la resistencia del devanado la limita).\n- Variantes: **brushless (BLDC)**, sin escobillas, conmutado por un controlador electrónico (drones, ventiladores, coches eléctricos); **motor paso a paso**, que gira en pasos exactos (impresoras 3D); **servomotor**, motor + sensor de posición + control.\n\n# Motor de inducción trifásico\n\nEl caballo de batalla de la industria: simple, robusto y sin escobillas.\n\n- Las tres fases en el estator crean un **campo magnético giratorio**, que gira a la **velocidad síncrona**:\n\n```\nns = 120 × f / p        (f en Hz, p = número de polos)\n60 Hz: 2 polos → 3600 rpm; 4 polos → 1800 rpm; 6 polos → 1200 rpm\n```\n\n- El campo induce corrientes en el rotor (la \"jaula de ardilla\") y estas son arrastradas por el campo. Pero el rotor nunca alcanza ns: si lo hiciera, no habría inducción ni torque. La diferencia es el **deslizamiento**:\n\n```\ns = (ns − n) / ns        (típicamente 2–5% a carga nominal)\n```\n\n- **Invertir el sentido**: intercambia **dos fases** cualesquiera.\n- **Arranque**: directo, la corriente llega a 6–8× la nominal. El arranque **estrella-triángulo** reduce esa corriente a 1/3; el **arrancador suave** la controla electrónicamente.\n\n## Placa y rendimiento\n\nLa placa indica la potencia **mecánica en el eje** (kW o HP), tensión, corriente, factor de potencia y rendimiento. La potencia eléctrica de entrada de un motor trifásico es:\n\n```\nPentrada = √3 × V × I × FP          rendimiento η = Psalida / Pentrada\n```\n\n# Accionamientos\n\nEl **variador de frecuencia** (VFD) rectifica la red y \"fabrica\" una nueva CA con frecuencia variable (PWM): al cambiar f cambia ns, y el motor de inducción se vuelve un motor de **velocidad variable**, manteniendo V/f constante. Ahorra mucha energía en bombas y ventiladores, donde la potencia cae con el cubo de la velocidad.",
+      "safety": "Los motores industriales son **trifásicos (220/380 V o más)** y giran con torque suficiente para aplastar manos. Antes de cualquier mantenimiento: **desconectar, bloquear y etiquetar** (LOTO) la alimentación y esperar a que el eje se detenga; los variadores de frecuencia guardan tensión peligrosa en sus condensadores durante minutos después de apagados. El trabajo en tableros y motores es para profesionales habilitados."
+    },
+    "ele-19-condutores": {
+      "hints": [
+        "Calcula la resistencia de cada opción: R = 0,0172 × 80 / A.",
+        "Con 2,5 mm² (Rc = 0,55 Ω) la corriente es 220 / 9,35 = 23,5 A y solo llegan 207 V a la ducha; y los 25 A nominales ya superan los 24 A que aguanta el cable de 2,5 mm².",
+        "Usa la menor sección que cumpla los dos criterios: un cable más grueso funciona, pero cuesta más."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la resistencia de **50 m** de cable de cobre de **2,5 mm²**?",
+          "options": [],
+          "explanation": "R = ρ × L / A = 0,0172 × 50 / 2,5 = 0,344 Ω.",
+          "unit": "Ω"
+        },
+        {
+          "prompt": "Un circuito de **127 V** toma **20 A** por un cable cuyo lazo (ida y vuelta) tiene **0,4 Ω**. ¿Cuál es la caída de tensión en %?",
+          "options": [],
+          "explanation": "ΔV = R × I = 0,4 × 20 = 8 V. 8 / 127 = 0,063 = 6,3%: por encima del 4% permitido, hace falta un cable más grueso.",
+          "unit": "%"
+        },
+        {
+          "prompt": "¿Cuántos vatios se vuelven calor en un cable con un lazo de **0,344 Ω** que lleva **25 A**?",
+          "options": [],
+          "explanation": "P = R × I² = 0,344 × 25² = 0,344 × 625 = 215 W: como una lámpara incandescente grande escondida en la pared.",
+          "unit": "W"
+        },
+        {
+          "prompt": "¿Por qué un cable de **2,5 mm²** no sirve para una ducha de **25 A** en tubo empotrado, aunque la caída de tensión estuviera bien?",
+          "options": [
+            "Porque 2,5 mm² solo sirve para iluminación",
+            "Porque la corriente supera la capacidad del cable (≈ 24 A): el aislamiento se calienta por encima de 70 °C",
+            "Porque los cables de 2,5 mm² no pueden ser de cobre",
+            "Porque la caída de tensión siempre sería cero"
+          ],
+          "explanation": "La intensidad admisible es un criterio independiente: una corriente por encima de la capacidad calienta el conductor más de lo que aguanta el aislamiento de PVC, lo envejece y crea riesgo de cortocircuito e incendio."
+        },
+        {
+          "prompt": "El disyuntor de un circuito debe elegirse para proteger, ante todo…",
+          "options": [
+            "el aparato enchufado",
+            "el contador de la distribuidora",
+            "a las personas contra el choque eléctrico",
+            "el cable: In ≤ capacidad de corriente del conductor"
+          ],
+          "explanation": "El disyuntor termomagnético protege los conductores contra sobrecarga y cortocircuito (Ib ≤ In ≤ Iz). Proteger a las personas contra el choque es tarea del diferencial (dispositivo de corriente residual)."
+        }
+      ],
+      "goals": [
+        "Tensión en la ducha de al menos 211,2 V (caída ≤ 4%)",
+        "Pérdida en el cable de como máximo 220 W"
+      ],
+      "title": "Dimensionamiento de conductores y caída de tensión",
+      "theory": "# El cable también es un resistor\n\nLos cables de una instalación tienen una resistencia pequeña, pero no nula:\n\n```\nR = ρ × L / A\nρ (cobre, 20 °C) ≈ 0,0172 Ω·mm²/m      L en metros, A en mm²\n```\n\nUn circuito tiene **ida y vuelta** (fase y neutro, o dos fases): la longitud eléctrica es **2 × la distancia**. Ejemplo: 25 m de cable de 2,5 mm² → R = 0,0172 × 50 / 2,5 = **0,344 Ω** en el lazo completo.\n\nEsa resistencia causa dos problemas:\n\n- **Caída de tensión**: ΔV = R × I. El aparato recibe menos tensión: la ducha calienta menos, el motor pierde torque y se calienta, la lámpara parpadea.\n- **Calentamiento**: P = R × I² se convierte en calor dentro del tubo.\n\n# Los dos criterios del reglamento\n\nSe elige la **menor sección** que cumpla **todos** los criterios (los principales):\n\n1. **Capacidad de conducción de corriente** (intensidad admisible): el aislamiento de PVC aguanta 70 °C. Valores típicos para 2 conductores cargados en tubo empotrado (método B1, NBR 5410 / IEC 60364-5-52):\n\n```\n1,5 mm² → 17,5 A    2,5 mm² → 24 A    4 mm² → 32 A\n6 mm²   → 41 A      10 mm²  → 57 A\n```\n\n2. **Caída de tensión**: como máximo **4%** en los circuitos finales (desde el cuadro de distribución).\n\nAdemás están las **secciones mínimas** (1,5 mm² para iluminación, 2,5 mm² para tomas) y la **coordinación con la protección**: la corriente del disyuntor tiene que quedar entre la corriente del circuito y la capacidad del cable (Ib ≤ In ≤ Iz).\n\n# En el simulador\n\nUna ducha eléctrica de **5500 W / 220 V** (resistencia **Rch = 8,8 Ω**, 25 A nominales) está a **40 m** del cuadro. El resistor **Rc** representa el cable entero, ida y vuelta (80 m de cobre): elige la sección y mira la corriente en el amperímetro, la tensión que llega a la ducha en el voltímetro y el calor perdido en el cable haciendo clic en Rc. Como la ducha es una resistencia pura, los valores eficaces de la CA se calculan como si fuera CC.",
+      "task": "Elige la **sección del cable** de la ducha: la tensión en la ducha debe ser de al menos **211,2 V** (caída ≤ 4% de 220 V) y la pérdida en el cable de como máximo **220 W**. Comprueba también en la tabla de la teoría que el cable aguanta la corriente.",
+      "safety": "Dimensionar e instalar circuitos es trabajo de un **electricista o ingeniero habilitado**, siguiendo el reglamento de instalaciones (NBR 5410 en Brasil, el REBT en España, la IEC 60364…). Un cable demasiado fino se calienta, derrite su aislamiento y es una de las mayores causas de **incendios** en viviendas. Nunca cambies un disyuntor por otro mayor \"porque saltaba\": el disyuntor protege el cable."
+    },
+    "ele-20-protecao": {
+      "hints": [
+        "Ifalta = 127 / (0,1 + 0,172 + Rpe) y Vcontacto = Ifalta × Rpe.",
+        "Con el PE de 2,5 mm² (0,275 Ω) la corriente supera 200 A, pero la carcasa queda con casi 64 V.",
+        "La regla del reglamento: hasta 16 mm², el PE tiene la misma sección que la fase."
+      ],
+      "questions": [
+        {
+          "prompt": "Un lazo de falta tiene una impedancia total de **0,5 Ω** en una red de **127 V**. ¿Cuál es la corriente de cortocircuito?",
+          "options": [],
+          "explanation": "I = V / Z = 127 / 0,5 = 254 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "¿Cuál es la diferencia entre el **disyuntor** y el **diferencial**?",
+          "options": [
+            "Ninguna: los dos miden lo mismo",
+            "El diferencial protege el cable y el disyuntor protege a las personas",
+            "El disyuntor solo funciona en CC",
+            "El disyuntor protege el cable contra sobrecarga y cortocircuito; el diferencial detecta la fuga de corriente (30 mA) y protege a las personas contra el choque"
+          ],
+          "explanation": "El disyuntor reacciona a corrientes altas (de decenas a miles de amperios). Un choque de 50 mA no dispara ningún disyuntor, pero sí el diferencial, que compara la corriente de ida y la de vuelta."
+        },
+        {
+          "prompt": "Una persona con una resistencia de **1000 Ω** (mano-pie) toca una carcasa sin tierra a **127 V**. ¿Qué corriente pasa por el cuerpo?",
+          "options": [],
+          "explanation": "I = 127 / 1000 = 0,127 A = 127 mA, muy por encima de los 30 mA que pueden causar fibrilación. Por eso existen la puesta a tierra y el diferencial.",
+          "unit": "mA"
+        },
+        {
+          "prompt": "Para garantizar el **disparo instantáneo** de un disyuntor **curva C de 20 A**, la corriente de falta tiene que superar…",
+          "options": [
+            "20 A",
+            "200 A",
+            "40 A",
+            "1000 A"
+          ],
+          "explanation": "La curva C dispara magnéticamente entre 5 y 10 × In. Solo por encima de 10 × 20 A = 200 A el disparo instantáneo está garantizado."
+        },
+        {
+          "prompt": "¿Por qué el conductor de protección (PE) debe tener la **misma sección** que el conductor de fase (hasta 16 mm²)?",
+          "options": [
+            "Porque un PE de baja resistencia aumenta la corriente de falta y reduce la tensión de contacto en la carcasa",
+            "Porque el PE lleva la corriente normal del aparato",
+            "Por estética: los cables quedan iguales",
+            "Porque el PE reemplaza al neutro"
+          ],
+          "explanation": "Con Rpe pequeño, el lazo de falta tiene menos resistencia (el disyuntor dispara más rápido) y la parte de la tensión que queda en la carcasa (Ifalta × Rpe) disminuye."
+        }
+      ],
+      "goals": [
+        "Corriente de falta de al menos 200 A (disparo instantáneo del disyuntor C20)",
+        "Tensión de contacto en la carcasa de como máximo 50 V"
+      ],
+      "title": "Cortocircuito, protección y puesta a tierra",
+      "theory": "# Sobrecarga y cortocircuito\n\n- **Sobrecarga**: una corriente algo por encima de lo normal durante mucho tiempo (demasiados aparatos en un circuito). El cable se calienta despacio.\n- **Cortocircuito**: la fase toca el neutro, otra fase o una carcasa puesta a tierra. La corriente solo queda limitada por la resistencia de los cables y de la red: **cientos o miles de amperios** en milisegundos.\n\n# El disyuntor termomagnético\n\n- **Disparo térmico** (lámina bimetálica): tarda de segundos a minutos; se encarga de la **sobrecarga**.\n- **Disparo magnético** (bobina): instantáneo (≈ 10 ms), se encarga del **cortocircuito**. Solo actúa por encima de un múltiplo de la corriente nominal In, según la **curva**:\n\n```\nCurva B: 3 a 5 × In      (circuitos resistivos, cables largos)\nCurva C: 5 a 10 × In     (uso general, motores pequeños)\nCurva D: 10 a 20 × In    (motores y transformadores con gran arranque)\n```\n\nPara **garantizar** el disparo instantáneo, la corriente de falta tiene que superar el **límite superior** de la banda (10 × In en la curva C).\n\n# Falta a la carcasa y el conductor de protección (PE)\n\nSi la fase toca la carcasa metálica de una lavadora, la carcasa queda energizada. En el esquema **TN-S** (el más usado en edificios), el **conductor de protección PE** (cable verde/amarillo) une la carcasa de vuelta con el neutro del transformador. Se forma el **lazo de falta**:\n\n```\nIfalta = V / (Rfuente + Rfase + Rpe)\nTensión de contacto en la carcasa:  Vcontacto = Ifalta × Rpe\n```\n\nTienen que ocurrir dos cosas: la corriente de falta debe ser **suficientemente grande** para que el disyuntor dispare **en el acto**, y mientras tanto la tensión en la carcasa debe quedar **baja**. El valor de referencia de la tensión de contacto límite en locales secos es **50 V** (CA). Por eso los reglamentos exigen el PE con la **misma sección que la fase** hasta 16 mm²: un PE fino aumenta Rpe (y con ella la tensión de contacto) y reduce la corriente de falta.\n\n# El diferencial (dispositivo de corriente residual)\n\nEl diferencial compara la corriente que va por la fase con la que vuelve por el neutro. Si la diferencia supera **30 mA** (alguien recibiendo un choque, o una fuga a tierra), desconecta en ~30 ms. **El disyuntor protege el cable; el diferencial protege a las personas.** Los reglamentos lo exigen en baños, cocinas, zonas exteriores y tomas de zonas húmedas.\n\n## Otros elementos\n\n- **Equipotencialización**: unir todas las masas metálicas (tuberías, estructuras) a la misma barra de tierra.\n- **Protector contra sobretensiones**: protege contra los picos de rayos y maniobras.\n- **Esquema TT**: el PE va a su propio electrodo de tierra; la corriente de falta es pequeña y solo el **diferencial** garantiza la desconexión.\n\n# En el simulador\n\nUna falta une la fase con la carcasa de un aparato en 127 V. **Rs = 0,1 Ω** es la impedancia de la red, **Rf = 0,172 Ω** es el conductor de fase (40 m de 4 mm²) y **Rpe** es el conductor de protección, que tú eliges. El amperímetro muestra la corriente de falta; el voltímetro, la tensión en la carcasa. El disyuntor es de **20 A, curva C**.",
+      "task": "Elige la sección del **conductor de protección (PE)** para que la corriente de falta supere **200 A** (10 × 20 A: el disyuntor curva C dispara en el acto) y la **tensión de contacto** en la carcasa sea de como máximo **50 V**.",
+      "safety": "El choque eléctrico **mata**: **30 mA** a través del pecho ya pueden causar fibrilación. Nunca toques cuadros, tomas o tierras energizados; nunca \"pruebes\" una carcasa con la mano. Las instalaciones, la puesta a tierra y la protección las diseñan y ejecutan **profesionales habilitados** (reglamento de instalaciones y normas de seguridad eléctrica), con equipos de medición adecuados."
     }
   }
 }
