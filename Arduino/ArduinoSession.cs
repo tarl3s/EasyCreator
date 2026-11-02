@@ -31,7 +31,7 @@ public sealed class ArduinoSession : IDisposable
     /// <summary>Virtual-time speed: 1 = real time, 2 = twice as fast, 0.25 = slow motion.</summary>
     public double SpeedFactor { get; set; } = 1.0;
     public bool IsRunning { get; private set; }
-    /// <summary>Compile or runtime error (friendly Portuguese text), or null.</summary>
+    /// <summary>Compile or runtime error (friendly text in the chosen language), or null.</summary>
     public string? Error { get; private set; }
     /// <summary>True when the program stopped (error, exit() or Stop()).</summary>
     public bool HasFinished { get; private set; }
@@ -61,11 +61,11 @@ public sealed class ArduinoSession : IDisposable
             {
                 ipc.Compile(sketch ?? "");
                 if (!ipc.HasFunction("setup") || !ipc.HasFunction("loop"))
-                    return "Erro de compilação: o sketch precisa ter as duas funções: void setup() { } e void loop() { }";
+                    return L.T("Erro de compilação: o sketch precisa ter as duas funções: void setup() { } e void loop() { }");
                 return null;
             }
             catch (CError e) { return e.Friendly; }
-            catch (Exception e) { return "Erro ao ler o código: " + e.Message; }
+            catch (Exception e) { return L.F("Erro ao ler o código: {0}", e.Message); }
         }, 64);
         if (compileError != null)
         {
@@ -101,8 +101,8 @@ public sealed class ArduinoSession : IDisposable
         catch (CHalt) { }
         catch (CExit) { Error = null; }
         catch (CError e) { Error = e.Friendly; }
-        catch (InsufficientExecutionStackException) { Error = "Erro de execução: recursão profunda demais."; }
-        catch (Exception e) { Error = "Erro interno do simulador perto da linha " + ip.Line + ": " + e.Message; }
+        catch (InsufficientExecutionStackException) { Error = L.T("Erro de execução: recursão profunda demais."); }
+        catch (Exception e) { Error = L.F("Erro interno do simulador perto da linha {0}: {1}", ip.Line, e.Message); }
         finally
         {
             HasFinished = true;
@@ -136,7 +136,7 @@ public sealed class ArduinoSession : IDisposable
         _run.Release();
         if (!_paused.Wait(5000))
         {
-            Error ??= "O simulador parou de responder.";
+            Error ??= L.T("O simulador parou de responder.");
             _stop = true;
         }
     }

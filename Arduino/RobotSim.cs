@@ -272,4 +272,6 @@ public sealed class RobotSim
 
     public double LineRatio => TotalTime <= 0 ? 0 : OnLineTime / TotalTime;
     public double Speed => (LeftV + RightV) / 2;
+    /// <summary>Both wheels (almost) still — spinning in place is not stopped.</summary>
+    public bool IsStopped => Math.Abs(LeftV) < 1 && Math.Abs(RightV) < 1;
 }

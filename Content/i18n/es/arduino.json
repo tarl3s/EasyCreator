@@ -1,0 +1,180 @@
+{
+  "title": "Arduino y Robótica",
+  "description": "Desde el primer LED que parpadea hasta un robot que sigue una línea solo: electrónica básica, entradas y salidas, PWM, sensores, motores y control — todo en un Arduino simulado.",
+  "lessons": {
+    "ard-01-pisca-led": {
+      "title": "Parpadeo de LED: el \"Hola, mundo\" de la electrónica",
+      "theory": "# ¿Qué es un Arduino?\n\nEl **Arduino Uno** es una placa pequeña con un **microcontrolador**: una computadora diminuta que ejecuta **un único programa** (el *sketch*) para siempre, desde el momento en que recibe energía. Tiene **pines** — los agujeritos de los costados — que pueden **encender y apagar cosas** (salidas) o **leer cosas** (entradas).\n\n- Pines digitales: **0 a 13**. Cada uno está en `HIGH` (5 voltios) o `LOW` (0 voltios).\n- Pines analógicos: **A0 a A5** (los veremos más adelante).\n\n# La estructura de todo sketch\n\nTodo programa de Arduino tiene dos funciones obligatorias:\n\n```\nvoid setup() {\n  // se ejecuta UNA vez, cuando la placa se enciende\n}\n\nvoid loop() {\n  // se ejecuta una y otra vez, para siempre\n}\n```\n\n# El LED y la resistencia (ley de Ohm)\n\nUn **LED** (diodo emisor de luz) solo deja pasar la corriente en un sentido: la pata **larga** (ánodo, +) va al pin y la **corta** (cátodo, −) va a GND. Necesita una **resistencia** en serie; si no, la corriente es demasiado alta y el LED (o el pin) se quema.\n\nLa **ley de Ohm** dice: **V = R × I** (tensión = resistencia × corriente). El pin da 5 V y el LED \"consume\" unos 2 V, así que quedan 3 V en la resistencia. Para una corriente segura de 15 mA (0,015 A):\n\n**R = V / I = 3 / 0,015 = 200 Ω** → usamos el valor comercial inmediatamente superior, **220 Ω**, que deja pasar 3 / 220 ≈ **14 mA**.\n\nCada pin del Arduino soporta un **máximo absoluto de 40 mA**; lo recomendado es quedarse en **20 mA**. Por eso la resistencia nunca puede faltar.\n\nEl pin **13** ya tiene un LED en la propia placa (`LED_BUILTIN`), y en nuestro circuito hay un LED rojo conectado a él.\n\n# Los tres comandos de esta lección\n\n- `pinMode(13, OUTPUT);` — avisa que el pin 13 será una **salida**. Sin esto, el pin queda como entrada y el LED casi no enciende.\n- `digitalWrite(13, HIGH);` — pone 5 V en el pin: el LED **se enciende**. `LOW` lo apaga.\n- `delay(1000);` — espera **1000 milisegundos** (1 segundo) sin hacer nada.",
+      "task": "Haz que el LED del pin 13 parpadee: **encendido 1 segundo, apagado 1 segundo**, para siempre. Recuerda configurar el pin como salida en `setup()`.",
+      "hints": [
+        "En setup() escribe pinMode(13, OUTPUT); — eso convierte el pin 13 en salida.",
+        "En loop() son 4 líneas: digitalWrite(13, HIGH); delay(1000); digitalWrite(13, LOW); delay(1000);",
+        "No olvides el punto y coma al final de cada comando y escribir HIGH y LOW en mayúsculas."
+      ],
+      "checks": [
+        "El LED está encendido en el primer segundo",
+        "El LED está apagado entre 1 s y 2 s",
+        "El LED se enciende de nuevo (el loop se repite)",
+        "El pin 13 está en HIGH a los 4,5 s"
+      ]
+    },
+    "ard-02-botao": {
+      "title": "Botón: leyendo una entrada digital",
+      "theory": "# Entradas digitales\n\nHasta ahora el Arduino solo **habló** (salida). Ahora va a **escuchar**: un pin configurado como **entrada** mide si la tensión en él está cerca de 5 V (`HIGH`) o de 0 V (`LOW`). Quien lee es la función `digitalRead(pin)`, que devuelve `HIGH` (1) o `LOW` (0).\n\n# El problema del pin \"flotante\"\n\nUn botón es solo un interruptor: presionado, une dos patas; suelto, deja el circuito abierto. Si conectamos el botón entre el pin y GND, cuando está **suelto** el pin queda conectado a **nada** — \"flota\" y lee valores aleatorios, como una antena captando ruido.\n\nLa solución es una **resistencia pull-up**: una resistencia (unos 10 kΩ) que une el pin a 5 V. Así:\n\n- **Botón suelto** → la resistencia \"tira\" del pin hacia 5 V → `digitalRead` da **HIGH**.\n- **Botón presionado** → el botón une el pin directo a GND (un camino de resistencia casi cero) → `digitalRead` da **LOW**.\n\n¿Por qué la resistencia? Por la **ley de Ohm**, con el botón presionado pasa una corriente de 5 V / 10 000 Ω = 0,5 mA — pequeña y segura. ¡Sin la resistencia sería un cortocircuito!\n\n# INPUT_PULLUP: la resistencia que ya viene dentro del chip\n\nEl microcontrolador tiene esa resistencia **incorporada** (de 20 a 50 kΩ). Basta escribir:\n\n```\npinMode(2, INPUT_PULLUP);\n```\n\nAtención a la **lógica invertida**: con pull-up, **presionado = LOW** y **suelto = HIGH**. Si usas solo `INPUT` (sin pull-up), el botón suelto deja el pin flotando y las lecturas salen aleatorias.\n\n# Decidiendo con if/else\n\n```\nint estado = digitalRead(2);\nif (estado == LOW) {\n  // botón presionado\n} else {\n  // botón suelto\n}\n```\n\nFíjate: `==` compara, `=` guarda un valor. ¡Confundirlos es uno de los errores más comunes en C!",
+      "task": "El botón está en el pin **2** (conectado a GND) y el LED en el pin **13**. Haz que el LED quede **encendido mientras el botón esté presionado** y apagado cuando esté suelto. Usa `INPUT_PULLUP`.",
+      "hints": [
+        "Guarda la lectura en una variable: int estado = digitalRead(BOTAO);",
+        "Con INPUT_PULLUP, el botón presionado lee LOW. Entonces: if (estado == LOW) { enciende } else { apaga }.",
+        "Usa == para comparar (dos signos de igual)."
+      ],
+      "checks": [
+        "Con el botón suelto, el LED queda apagado",
+        "Al presionar el botón, el LED se enciende",
+        "Al soltar el botón, el LED se apaga de nuevo",
+        "El LED se enciende justo después de presionar"
+      ]
+    },
+    "ard-03-pwm-fade": {
+      "title": "PWM: el LED que se enciende y apaga suavemente",
+      "theory": "# Lo digital solo tiene dos niveles… ¿o no?\n\nUn pin digital solo sabe dar 0 V o 5 V. ¿Cómo dejar entonces un LED a **medio brillo**? El truco se llama **PWM** (*Pulse Width Modulation*, modulación por ancho de pulso).\n\n# Cómo funciona el PWM\n\nEl pin se enciende y apaga **muy rápido**: unas **490 veces por segundo** (490 Hz) en el pin 9, y 980 Hz en los pines 5 y 6. Lo que cambia es **cuánto tiempo** queda encendido en cada ciclo — el **ciclo de trabajo** (*duty cycle*):\n\n- 0% encendido → LED apagado\n- 25% encendido → brillo débil\n- 50% encendido → medio brillo\n- 100% encendido → brillo máximo\n\nNuestros ojos no perciben un parpadeo tan rápido y solo ven el **promedio**. La tensión media es: **V_media = 5 V × duty**. Con 50%, es como si el LED recibiera 2,5 V.\n\n# analogWrite\n\n```\nanalogWrite(9, 128);   // 128 de 255 ≈ 50% del tiempo encendido\n```\n\nEl valor va de **0** (siempre apagado) a **255** (siempre encendido). ¿Por qué 255? Porque el temporizador del chip usa **8 bits**, y 2⁸ = 256 valores (0 a 255).\n\n**Atención:** solo los pines con el símbolo **~** tienen PWM en el Uno: **3, 5, 6, 9, 10 y 11**. Por eso el LED de esta lección está en el pin 9.\n\n# El bucle for\n\nPara subir el brillo poco a poco, usamos `for`:\n\n```\nfor (int brilho = 0; brilho <= 255; brilho += 5) {\n  analogWrite(9, brilho);\n  delay(10);\n}\n```\n\nSe lee: \"empieza con brilho = 0; mientras brilho ≤ 255, ejecuta el bloque y después suma 5\". Son 52 pasos de 10 ms ≈ medio segundo para encender. Para apagar, haz otro `for` contando **hacia abajo** (`brilho -= 5`).\n\n(*brilho* es \"brillo\" en portugués.)",
+      "task": "Haz que el LED del pin **9** se encienda suavemente de 0 a 255 (pasos de **5** cada **10 ms**) y después se apague suavemente de 255 a 0 de la misma forma, repitiendo para siempre.",
+      "hints": [
+        "Usa analogWrite(LED, brilho); y no digitalWrite — solo analogWrite genera valores intermedios.",
+        "Subiendo: for (int brilho = 0; brilho <= 255; brilho += 5) { ... }",
+        "Bajando: for (int brilho = 255; brilho >= 0; brilho -= 5) { ... } — con el mismo delay(10) dentro."
+      ],
+      "checks": [
+        "A los 0,25 s el LED tiene brillo medio (subiendo)",
+        "El pin 9 está en PWM (valor intermedio)",
+        "Hacia los 0,5 s el brillo llega al máximo",
+        "A los 0,78 s el brillo es medio otra vez (bajando)",
+        "Hacia 1 s el LED está casi apagado"
+      ]
+    },
+    "ard-04-potenciometro": {
+      "title": "Potenciómetro y analogRead: un regulador de brillo",
+      "theory": "# Señales analógicas\n\nMuchas cosas del mundo real no son solo \"encendido/apagado\": la posición de una perilla de volumen, la luz del ambiente, la temperatura. Varían **continuamente**. Para eso, el Arduino tiene los pines **A0 a A5**, conectados a un **ADC** (*convertidor analógico-digital*).\n\n# El ADC de 10 bits\n\nEl ADC mide la tensión en el pin (de 0 a 5 V) y la transforma en un número entero de **0 a 1023**, porque tiene **10 bits** (2¹⁰ = 1024 valores):\n\n- 0 V → 0\n- 2,5 V → ~512\n- 5 V → 1023\n\nCada \"escalón\" vale 5 V / 1024 ≈ **4,9 mV**. La función es `analogRead(A0)`.\n\n# El potenciómetro: un divisor de tensión\n\nEl potenciómetro es una resistencia con un **cursor** que se desliza sobre ella. Los extremos van a 5 V y GND, y el cursor (pin del medio) va a **A0**. Forma un **divisor de tensión**:\n\n**V_salida = 5 V × R₂ / (R₁ + R₂)**\n\nAquí R₁ es la parte de la pista entre 5 V y el cursor, y R₂ la parte entre el cursor y GND. Al girar el eje cambiamos la proporción entre R₁ y R₂, y la tensión en el cursor va de 0 a 5 V.\n\n# Convirtiendo escalas con map()\n\n`analogRead` da 0–1023, pero `analogWrite` acepta 0–255. La función `map` hace la regla de tres:\n\n```\nint brilho = map(leitura, 0, 1023, 0, 255);\n```\n\n\"Toma `leitura`, que está en la escala 0–1023, y llévala a la escala 0–255.\" Es lo mismo que `leitura * 255 / 1023`, o aproximadamente `leitura / 4`. (*leitura* significa \"lectura\" y *brilho* \"brillo\".)\n\nCuidado: `analogWrite` solo entiende de **0 a 255**. Si mandas el valor crudo (por ejemplo 1023), el resultado sale mal: en los pines 3, 5, 6 y 11 el número \"da la vuelta\" (256 se vuelve 0, 300 se vuelve 44), y el brillo sube y se desploma varias veces mientras giras el potenciómetro.",
+      "task": "El potenciómetro está en **A0** y el LED en el pin **9**. Haz que el brillo del LED siga al potenciómetro: girado del todo hacia un lado → apagado; hacia el otro → brillo máximo. Usa `analogRead`, `map` y `analogWrite` (y un `delay(20)` al final del loop).",
+      "hints": [
+        "int brilho = map(leitura, 0, 1023, 0, 255);",
+        "Después: analogWrite(LED, brilho);",
+        "No mandes la lectura directo a analogWrite: 1023 es mucho mayor que el máximo de 255."
+      ],
+      "checks": [
+        "Potenciómetro en cero → LED apagado",
+        "Potenciómetro al máximo → brillo máximo",
+        "Potenciómetro en el medio → medio brillo",
+        "El LED sigue el giro del potenciómetro"
+      ]
+    },
+    "ard-05-serial-ldr": {
+      "title": "Monitor Serie y sensor de luz (LDR)",
+      "theory": "# Hablando con la computadora: el puerto serie\n\nCuando algo no funciona, ¿cómo saber qué está \"pensando\" el Arduino? Con la **comunicación serie**: el Arduino envía texto, un bit a la vez, por el cable USB, y la computadora lo muestra en el **Monitor Serie**.\n\n```\nSerial.begin(9600);        // en setup: activa el puerto serie a 9600 bits por segundo\nSerial.print(\"Luz: \");     // escribe sin saltar de línea\nSerial.println(valor);     // escribe y salta a la línea siguiente\n```\n\nEl número **9600** es la velocidad (*baud rate*) — los dos lados deben usar la misma. ¡Sin `Serial.begin`, no aparece nada!\n\n# El LDR: una resistencia que siente la luz\n\nEl **LDR** (*Light Dependent Resistor*, fotorresistencia) cambia de resistencia con la luz:\n\n- **Mucha luz** → resistencia **baja** (algunos kΩ)\n- **Oscuridad** → resistencia **alta** (cientos de kΩ)\n\nMontamos un **divisor de tensión**: el LDR entre 5 V y A0, y una resistencia fija de 10 kΩ entre A0 y GND. En este circuito, cuanta **más luz**, **mayor** la lectura de `analogRead` (cerca de 1023); en la oscuridad baja a cerca de 0.\n\n# Tomando decisiones con un umbral\n\nPara transformar una lectura continua en una decisión (claro/oscuro), elegimos un **umbral** (*threshold*):\n\n```\nif (luz < 300) {\n  // está oscuro\n} else {\n  // está claro\n}\n```\n\nEse es el principio de una **luz nocturna automática**, como las del alumbrado público.",
+      "task": "El LDR está en **A0** y un LED en el pin **13**. Cada **500 ms**: lee la luz, muestra en el Monitor Serie una línea `Luz: <valor>` y, en la línea siguiente, `escuro` (si la lectura es menor que **300**) o `claro`. Cuando esté oscuro, enciende el LED; cuando esté claro, apágalo.\n\n(*escuro* es \"oscuro\" en portugués. Imprime exactamente estas palabras — la corrección las busca.)",
+      "hints": [
+        "Sin Serial.begin(9600); en setup() no aparece nada en el Monitor Serie.",
+        "Serial.print(\"Luz: \"); seguido de Serial.println(luz); escribe todo en la misma línea y salta al final.",
+        "if (luz < 300) { Serial.println(\"escuro\"); digitalWrite(LED, HIGH); } else { ... }"
+      ],
+      "checks": [
+        "Muestra \"Luz: 800\" con el ambiente claro",
+        "Escribe \"claro\" cuando hay luz",
+        "El LED queda apagado con luz",
+        "Muestra \"Luz: 100\" en la oscuridad",
+        "Escribe \"escuro\" cuando falta luz",
+        "El LED se enciende en la oscuridad"
+      ]
+    },
+    "ard-06-semaforo": {
+      "title": "Semáforo: máquina de estados con millis()",
+      "theory": "# El problema de delay()\n\n`delay(3000)` **congela** el Arduino durante 3 segundos: en ese tiempo no lee botones, no mide sensores, nada. En un semáforo con botón para peatones, si el programa está dentro de un `delay`, la pulsación del botón pasa desapercibida.\n\n# millis(): el reloj que nunca se detiene\n\n`millis()` devuelve cuántos **milisegundos** han pasado desde que la placa se encendió. En lugar de esperar quietos, preguntamos todo el tiempo: \"¿**ya pasó** el tiempo?\"\n\n```\nunsigned long inicio = millis();\n...\nif (millis() - inicio >= 3000) {\n  // pasaron 3 segundos\n}\n```\n\nUsamos `unsigned long` porque el número crece mucho (llega a unos 4,3 mil millones antes de volver a cero, tras ~49,7 días). Y la cuenta `millis() - inicio` sigue siendo correcta incluso en ese reinicio, porque la resta de números `unsigned` también \"da la vuelta\" — por eso siempre se compara la **diferencia**, nunca `millis() >= inicio + 3000`.\n\n# Máquina de estados\n\nUn semáforo está siempre en **un estado** de una lista pequeña, y cambia de estado cuando ocurre un **evento**:\n\n- **ABERTO** (abierto, luz verde) → pasa a ATENCAO cuando pasan 3 s **o** el peatón presiona el botón\n- **ATENCAO** (atención, luz amarilla) → pasa a FECHADO cuando pasa 1 s\n- **FECHADO** (cerrado, luz roja) → vuelve a ABERTO cuando pasan 3 s\n\nEn C, damos nombre a los estados con `enum` y guardamos el actual en una variable. El `switch` elige qué hacer en cada estado:\n\n```\nenum { ABERTO, ATENCAO, FECHADO };\nint estado = ABERTO;\n\nswitch (estado) {\n  case ABERTO:\n    ...\n    break;\n  case ATENCAO:\n    ...\n    break;\n}\n```\n\nCada vez que cambiamos de estado, anotamos `inicio = millis()`. Así el `loop()` se ejecuta miles de veces por segundo, sin trabarse, y el botón se lee todo el tiempo. ¡Este patrón es la base de casi todo programa de robot!",
+      "task": "LEDs: rojo en el pin **12**, amarillo en el **11**, verde en el **10**; botón de peatones en el pin **2** (con `INPUT_PULLUP`). Empieza en **verde durante 3 s**, después **amarillo durante 1 s**, después **rojo durante 3 s**, y repite. Si el peatón presiona el botón durante el verde, pasa **inmediatamente** al amarillo. No uses `delay()` — usa `millis()` y una máquina de estados.",
+      "hints": [
+        "Crea una función mudarPara(int novo) que haga estado = novo; e inicio = millis(); — así el cronómetro se reinicia en cada cambio.",
+        "En case ABERTO: enciende solo el verde y cambia a ATENCAO si tempo >= 3000 O digitalRead(BOTAO) == LOW.",
+        "No olvides el break; al final de cada case."
+      ],
+      "checks": [
+        "Empieza en verde",
+        "En verde, el rojo está apagado",
+        "Después de 3 s viene el amarillo",
+        "En amarillo, el verde se apaga",
+        "Después del amarillo viene el rojo",
+        "Después de 3 s en rojo, vuelve al verde",
+        "El botón de peatones adelanta el amarillo",
+        "…y el rojo llega 1 s después"
+      ]
+    },
+    "ard-07-servo": {
+      "title": "Servomotor: barrido de 0° a 180°",
+      "theory": "# Qué es un servo\n\nUn **servomotor** (como el SG90) no gira sin parar: va al **ángulo** que le mandas, entre **0° y 180°**, y se queda ahí sosteniendo la posición. Por dentro tiene un pequeño motor DC, engranajes y un **potenciómetro** que mide la posición del eje — un pequeño sistema de **control en lazo cerrado**: compara dónde está con dónde debería estar y corrige.\n\n# Cómo enviamos el ángulo\n\nEl servo tiene 3 cables: marrón (GND), rojo (5 V) y naranja (**señal**). La señal es un pulso repetido cada 20 ms; el **ancho del pulso** indica el ángulo:\n\n- ~0,5 ms → 0°\n- ~1,5 ms → 90°\n- ~2,4 ms → 180°\n\n(La biblioteca Servo usa de 544 µs a 2400 µs; cada modelo de servo varía un poco.) No necesitamos generar esto a mano: la biblioteca **Servo** lo hace todo. Un detalle: usa el temporizador **Timer1** del chip, así que, mientras haya un servo conectado, `analogWrite` deja de funcionar en los pines **9 y 10**.\n\n```\n#include <Servo.h>\n\nServo motor;            // crea un objeto servo\n\nvoid setup() {\n  motor.attach(9);      // la señal está en el pin 9\n}\n\nvoid loop() {\n  motor.write(90);      // va a 90 grados\n}\n```\n\nFíjate en la sintaxis `motor.write(...)`: el punto llama a una **función del objeto** (esto viene de C++, que usa el Arduino).\n\n# Velocidad\n\nUn SG90 tarda unos **0,1 s en girar 60°**. Si enviamos ángulos demasiado rápido, no alcanza a seguirlos. Por eso, en un **barrido** (*sweep*), avanzamos 1° por vez con una pausa de ~15 ms: 180 pasos × 15 ms ≈ 2,7 s para ir de un lado al otro.\n\nServos así mueven el timón de avioncitos, brazos de robot, barreras de estacionamiento y la \"cabeza\" de robots que buscan obstáculos.",
+      "task": "El servo está en el pin **9**. Haz un barrido: de **0° a 180°**, un grado por vez con `delay(15)`, y después de **180° de vuelta a 0°** de la misma forma, para siempre.",
+      "hints": [
+        "for (int angulo = 0; angulo <= 180; angulo++) { motor.write(angulo); delay(15); }",
+        "Para volver, cuenta hacia abajo: for (int angulo = 180; angulo >= 0; angulo--) { ... }",
+        "El objeto se llama motor, así que los comandos son motor.attach(9) y motor.write(angulo)."
+      ],
+      "checks": [
+        "A los 0,75 s el servo está cerca de 50° (subiendo)",
+        "Cerca de 2,7 s llega a 180°",
+        "A los 4 s está volviendo, cerca de 95°",
+        "Cerca de 5,4 s vuelve a 0°"
+      ]
+    },
+    "ard-08-ultrassom": {
+      "title": "Sensor ultrasónico y zumbador: alarma de distancia",
+      "theory": "# Midiendo distancia con sonido\n\nEl sensor **HC-SR04** funciona como un murciélago: emite un \"grito\" de **ultrasonido** (40 kHz, demasiado agudo para que lo oigamos) y mide cuánto tarda el **eco** en volver.\n\n1. Enviamos un pulso de **10 µs** al pin **TRIG**.\n2. El sensor emite el sonido y pone el pin **ECHO** en `HIGH` hasta que vuelve el eco.\n3. Medimos cuánto tiempo estuvo ECHO en HIGH con `pulseIn(ECHO, HIGH)` (en **microsegundos**).\n\n# La cuenta de la distancia\n\nEl sonido viaja a **343 m/s** = **0,0343 cm/µs**. El tiempo medido es de **ida y vuelta**, entonces:\n\n**distancia = tiempo × 0,0343 / 2 ≈ tiempo / 58** (en cm)\n\nEjemplo: eco de 1160 µs → 1160 / 58 = **20 cm**. El sensor mide de **2 cm a unos 4 m**. Sin nada en ese alcance, ECHO queda unos 38 ms en HIGH (≈ 650 cm, una distancia \"imposible\"); y si `pulseIn` se rinde antes (se agota su tiempo máximo) devuelve **0** — por eso la tarea solo pita cuando la distancia es mayor que 0.\n\n```\ndigitalWrite(TRIG, LOW);\ndelayMicroseconds(2);\ndigitalWrite(TRIG, HIGH);\ndelayMicroseconds(10);\ndigitalWrite(TRIG, LOW);\nlong duracao = pulseIn(ECHO, HIGH);\nlong cm = duracao / 58;\n```\n\n# Funciones que devuelven valores\n\nVale la pena poner la medición en una **función** propia, que devuelve la distancia con `return`:\n\n```\nlong medirDistancia() {\n  ...\n  return duracao / 58;\n}\n```\n\n(*duracao* = duración, *medirDistancia* = medir distancia.)\n\n# El zumbador\n\nUn **zumbador pasivo** (*buzzer*) es un pequeño altavoz. `tone(pin, frecuencia)` hace que el pin oscile a la frecuencia pedida (en Hz) y el zumbador pita; `noTone(pin)` lo detiene. 1000 Hz es un pitido agudo, 440 Hz es la nota La.\n\nCon esto montamos un **sensor de estacionamiento** de auto: demasiado cerca → ¡pita!",
+      "task": "Sensor ultrasónico con TRIG en el pin **7** y ECHO en el **6**; zumbador en el pin **8**; LED en el **13**. Cada **100 ms**: mide la distancia, escribe en el Serial `Distancia: <cm> cm` y, si la distancia es **menor que 20 cm** (y mayor que 0), toca `tone(8, 1000)` y enciende el LED; si no, `noTone(8)` y apaga el LED.",
+      "hints": [
+        "Serial.print(\"Distancia: \"); Serial.print(cm); Serial.println(\" cm\");",
+        "La condición es if (cm > 0 && cm < 20) — && quiere decir \"y\".",
+        "Dentro del if: tone(BUZZER, 1000); digitalWrite(LED, HIGH);  En el else: noTone(BUZZER); digitalWrite(LED, LOW);"
+      ],
+      "checks": [
+        "Muestra la distancia de 50 cm en el Serial",
+        "Lejos (50 cm): zumbador en silencio",
+        "Lejos (50 cm): LED apagado",
+        "Cerca (10 cm): el zumbador pita",
+        "El pitido es de 1000 Hz",
+        "Cerca (10 cm): el LED se enciende",
+        "Muestra la distancia de 10 cm en el Serial"
+      ]
+    },
+    "ard-09-motor-dc": {
+      "title": "Motor DC con puente H: velocidad, sentido y LCD",
+      "theory": "# Por qué el Arduino no conecta un motor directamente\n\nUn pin del Arduino soporta como máximo **40 mA** (lo recomendado es hasta 20 mA). Un motorcito DC consume **cientos de mA** (y mucho más al arrancar). Conectarlo directo quemaría el pin. Además, el motor es una **bobina**: al apagarlo, genera picos de tensión que pueden dañar el chip. Por eso el motor siempre lleva **diodos de rueda libre** (*flyback*), que dan un camino seguro a esa corriente — los módulos L298N ya traen esos diodos en la placa.\n\n# El puente H (L298N)\n\nEl **puente H** es un circuito con 4 interruptores (transistores) en forma de \"H\", con el motor en el medio. Cerrando los interruptores en diagonal, la corriente pasa por el motor **en un sentido o en el otro** — y viene de una fuente propia, no del Arduino (el L298N \"se come\" unos 2 V de esa fuente). En el módulo **L298N**:\n\n- IN1 = `HIGH`, IN2 = `LOW` → gira hacia **adelante**\n- IN1 = `LOW`, IN2 = `HIGH` → gira hacia **atrás** (reversa)\n- IN1 e IN2 iguales → el motor **se detiene** (frena)\n\nEl pin **EN** (*enable*) activa el puente. Enviándole **PWM** con `analogWrite(EN, v)`, controlamos la **velocidad**: la tensión media en el motor es proporcional a v/255 (¡es el mismo PWM del LED!).\n\n# Detectando la pulsación (flanco), no el \"estar presionado\"\n\nQueremos que **cada pulsación** del botón invierta el sentido. Si escribimos solo `if (digitalRead(BOTAO) == LOW) frente = !frente;`, mientras el dedo esté en el botón el `loop` se ejecuta decenas de veces y ¡el sentido cambia sin parar! Lo correcto es detectar el **flanco de bajada**: el botón **estaba** suelto (HIGH) y **ahora** está presionado (LOW):\n\n```\nint botao = digitalRead(BOTAO);\nif (botaoAnterior == HIGH && botao == LOW) {\n  frente = !frente;          // ! invierte: true pasa a false y viceversa\n}\nbotaoAnterior = botao;\n```\n\nLos botones reales también **rebotan** (*bounce*): al presionar, el contacto se abre y se cierra varias veces en pocos milisegundos. El `delay(50)` al final del loop hace que el programa lea el botón solo cada 50 ms, y así esos rebotes no se convierten en varias pulsaciones — es un *debounce* simple.\n\n(*botao* = botón, *botaoAnterior* = botón anterior, *frente* = adelante.)\n\n# El display LCD 16x2\n\nLa biblioteca **LiquidCrystal** controla displays de 2 líneas × 16 columnas:\n\n```\nLiquidCrystal lcd(12, 11, 10, 9, 4, 3);   // pines RS, E, D4, D5, D6, D7\nlcd.begin(16, 2);       // en el setup\nlcd.setCursor(0, 1);    // columna 0, línea 1 (la de abajo)\nlcd.print(\"Ola!\");\n```\n\nConsejo: al reescribir un número que puede quedar más corto (de 100 a 99), imprime algunos espacios después para borrar el dígito que sobró.",
+      "task": "Motor en el L298N: **IN1 = 8**, **IN2 = 7**, **EN = 5**. Potenciómetro en **A0** y botón (con `INPUT_PULLUP`) en el pin **2**. LCD 16x2 con `LiquidCrystal lcd(12, 11, 10, 9, 4, 3)`.\n\n1. La velocidad (0–255) viene del potenciómetro (usa `map`).\n2. Cada **pulsación** del botón invierte el sentido (empieza hacia adelante).\n3. Línea 0 del LCD: `Vel: <velocidad>`; línea 1: `Frente` o `Re`.\n4. Termina el loop con `delay(50)`.\n\n(*Frente* = adelante, *Re* = reversa. Muestra exactamente estos textos — la corrección los busca.)",
+      "hints": [
+        "Flanco: if (botaoAnterior == HIGH && botao == LOW) { frente = !frente; } y después botaoAnterior = botao;",
+        "Velocidad: int velocidade = map(analogRead(A0), 0, 1023, 0, 255); y después analogWrite(EN, velocidade);",
+        "En el LCD: lcd.setCursor(0, 0); lcd.print(\"Vel: \"); lcd.print(velocidade); — y en la línea 1 escribe \"Frente\" o \"Re    \" (con espacios para borrar las letras viejas)."
+      ],
+      "checks": [
+        "Potenciómetro al máximo → motor a 255 hacia adelante",
+        "El LCD muestra \"Vel: 255\"",
+        "El LCD muestra \"Frente\"",
+        "Potenciómetro en cero → motor detenido",
+        "Una pulsación invierte el sentido (reversa, velocidad ~127)",
+        "El LCD muestra \"Re\" después de la pulsación",
+        "Una segunda pulsación vuelve hacia adelante (una pulsación = un cambio)"
+      ]
+    },
+    "ard-10-robo-seguidor": {
+      "title": "Robot seguidor de línea con control P y parada ante obstáculos",
+      "theory": "# El robot\n\nNuestro robot tiene **tracción diferencial**: dos ruedas, cada una con su motor DC, conectados a un puente H L298N, y una rueda loca adelante. Para girar, una rueda gira más rápido que la otra — como un tanque de guerra.\n\n- Motor **izquierdo**: IN1 = 8, IN2 = 7, ENA = 5 (PWM)\n- Motor **derecho**: IN3 = 4, IN4 = 2, ENB = 6 (PWM)\n- **Ultrasonido** adelante: TRIG = 10, ECHO = 11\n- Dos **sensores de línea** (infrarrojos, tipo TCRT5000) mirando al suelo, uno a la izquierda y otro a la derecha de la línea: **A0** (izquierdo) y **A1** (derecho)\n\n# Cómo ve el sensor de línea\n\nEl sensor emite luz infrarroja y mide cuánta vuelve. El suelo **blanco refleja** mucho; la cinta **negra absorbe**. En este robot, `analogRead` da cerca de **80 en el blanco** y llega a unos **950 sobre la línea negra**, con valores intermedios en el borde.\n\n# Control todo o nada vs. control proporcional\n\nLa idea más simple es: \"¿línea a la izquierda? gira a la izquierda a fondo\". Funciona, pero el robot **zigzaguea** — corrige de más, se pasa y corrige de nuevo.\n\nEl **control proporcional (P)** corrige **en la medida del error**:\n\n```\nerro = esquerdo - direito;          // > 0: la línea está más a la izquierda\ncorrecao = KP * erro;\nvelocidadeEsquerda = BASE - correcao;\nvelocidadeDireita  = BASE + correcao;\n```\n\n(*erro* = error, *correcao* = corrección, *esquerdo/direito* = izquierdo/derecho, *velocidade* = velocidad.)\n\n- Robot centrado → los dos sensores leen igual → error 0 → avanza recto.\n- Línea tirando hacia la izquierda → el sensor izquierdo lee más → error positivo → la rueda **derecha acelera** y la izquierda frena → el robot gira a la izquierda, de vuelta a la línea.\n\nLa ganancia **KP** es el \"cuánto reaccionar\": demasiado pequeña y el robot se sale de la línea en las curvas; demasiado grande y oscila. Con errores de hasta ~870 y base 150, **KP ≈ 0,15** da correcciones de hasta ~130 — un buen comienzo. En robótica real, se suman además los términos **I** (integral) y **D** (derivativo): es el famoso **control PID**.\n\n# La seguridad primero: obstáculos\n\nAntes de cada corrección, el robot mide la distancia al frente con el ultrasonido. Si hay algo a **menos de 15 cm**, **detiene los dos motores** y no hace nada más en esa vuelta del `loop` (`return;`). Así nunca choca.\n\n# Organizando el código\n\nUna función `motor(in1, in2, en, velocidade)` que acepta velocidades **de −255 a 255** (negativo = reversa) deja el `loop()` corto y legible. Usa `constrain(v, -255, 255)` para no pasar nunca del límite.\n\nConsejo: en `pulseIn`, pasa un tiempo máximo (`pulseIn(ECHO, HIGH, 30000)`): sin él, cuando no hay eco `pulseIn` puede esperar hasta 1 s, y el robot queda \"ciego\" y sin control durante ese tiempo. Con el tiempo máximo devuelve 0 — y la función de distancia trata el 0 como \"nada adelante\".",
+      "task": "Completa el robot para que **siga la línea negra hasta el objetivo** usando un **control proporcional** con los sensores A0 (izquierdo) y A1 (derecho): velocidad base **150**, **KP = 0,15**, `erro = esquerdo - direito`, rueda izquierda = base − corrección, rueda derecha = base + corrección. Antes de corregir, mide la distancia con el ultrasonido: si es **menor que 15 cm**, detén los dos motores. Termina el loop con `delay(5)`.",
+      "hints": [
+        "Crea long distanciaCm() igual a la de la lección del ultrasonido (con pulseIn(ECHO, HIGH, 30000) y devolviendo 999 cuando el resultado sea 0).",
+        "Al comienzo del loop: if (distanciaCm() < 15) { motor(IN1, IN2, ENA, 0); motor(IN3, IN4, ENB, 0); return; }",
+        "Control P: int erro = analogRead(A0) - analogRead(A1); int correcao = 0.15 * erro; motor izquierdo con 150 - correcao y derecho con 150 + correcao."
+      ],
+      "checks": [
+        "El robot sigue la línea y llega al objetivo",
+        "El robot se mantiene sobre la línea la mayor parte del camino",
+        "El robot no choca con nada",
+        "Con un obstáculo en la línea, el robot se detiene",
+        "…y se detiene sin chocar con el obstáculo"
+      ]
+    }
+  }
+}
