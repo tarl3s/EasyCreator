@@ -9,6 +9,7 @@ public partial class App : Application
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnMainWindowClose;
+        Runners.RunnerRegistry.Register(new CInterp.CRunner());
         if (TestEntry.TryRun(e.Args)) return;
         MainWindow = new MainWindow();
         MainWindow.Show();

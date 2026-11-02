@@ -27,6 +27,9 @@ public static partial class TestEntry
     static int RunSuites(TextWriter log)
     {
         int f = TestEntryRunners.Run();
+        int a = Tests.ArduinoTestEntry.RunToLog();
+        log.WriteLine($"Arduino/C: {a} failures (see easycreator_arduino_tests.log)");
+        f += a;
         log.WriteLine($"Runners: {f} failures (see easycreator_runnertests.log)");
         return f;
     }

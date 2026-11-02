@@ -107,9 +107,9 @@ public static class RunnerTests
             var shape = CheckShape(track, lang);
             if (shape.Count == 0) Ok($"{lang}.json: {track.Lessons.Count} lessons, {track.Lessons.Sum(l => l.Tests.Count)} tests, fields filled");
             else foreach (var s in shape) Fail($"{lang}.json: {s}");
-            if (lang == "c") { log.WriteLine("  skip c lessons: the C interpreter is not part of this branch"); continue; }
 
-            var runner = builtIn.First(r => r.LanguageId == lang);
+
+            ILanguageRunner runner = lang == "c" ? new EasyCreator.CInterp.CRunner() : builtIn.First(r => r.LanguageId == lang);
             foreach (var lesson in track.Lessons)
             {
                 var sw = Stopwatch.StartNew();
@@ -149,7 +149,7 @@ public static class RunnerTests
         log.WriteLine("== Registry");
         RunnerRegistry.Register(new FakeRunner());
         if (RunnerRegistry.Default("python") is PythonRunner) Ok("default python is built-in"); else Fail("default python");
-        if (RunnerRegistry.Default("c") is FakeRunner) Ok("registered C runner is the default"); else Fail("registered C runner");
+        if (RunnerRegistry.For("c").Any(r => r is FakeRunner)) Ok("registered C runner is listed"); else Fail("registered C runner");
         await RunnerRegistry.DetectExternalAsync().ConfigureAwait(false);
         if (RunnerRegistry.All.Count >= 4 && RunnerRegistry.For("python")[0] is PythonRunner) Ok($"registry lists {RunnerRegistry.All.Count} runners"); else Fail("registry list");
 
