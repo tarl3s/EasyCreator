@@ -12,7 +12,7 @@ public sealed record MotorSpec(string Id, string Label, double Impulse, double B
 
     public static readonly MotorSpec[] Catalog =
     {
-        new("A8", "A8 · 2,5 N·s", 2.5, 0.50, 9.7, 0.00312, 0.0162, 70, 18),
+        new("A8", "A8 · 2,5 N·s", 2.5, 0.73, 10.7, 0.00312, 0.0162, 70, 18),
         new("B6", "B6 · 5 N·s", 5.0, 0.86, 12.0, 0.0062, 0.0198, 70, 18),
         new("C6", "C6 · 10 N·s", 10.0, 1.86, 14.0, 0.0123, 0.0250, 70, 18),
         new("D12", "D12 · 16,8 N·s", 16.8, 1.65, 29.7, 0.0211, 0.0440, 70, 24),
