@@ -39,7 +39,7 @@ public sealed class CollisionLab : PhysLab
         // Stop the replay a little after the crash, or when a cart reaches the end of the 10 m track.
         double t0 = _hit ? _tc : 0, c1 = X1 + v1 * t0, c2 = X2 + v2 * t0;
         _tSim = t0 + Math.Max(0.5, Math.Min(Math.Min(ToEdge(c1, _u1), ToEdge(c2, _u2)), _hit ? 2.5 : 4));
-        if (_hit) _tSim = Math.Min(_tSim, 14);
+
         double keB = 0.5 * m1 * v1 * v1 + 0.5 * m2 * v2 * v2, keA = 0.5 * m1 * _u1 * _u1 + 0.5 * m2 * _u2 * _u2;
         M["v1After"] = _u1;
         M["v2After"] = _u2;
@@ -69,17 +69,17 @@ public sealed class CollisionLab : PhysLab
     {
         var s = State();
         double p = V("m1") * s.v1 + V("m2") * s.v2;
-        return $"t = {F(T, "0.00")} s   v1 = {F(s.v1, "0.00")} m/s   v2 = {F(s.v2, "0.00")} m/s   p total = {F(p, "0.00")} kg·m/s";
+        return L.F("t = {0} s   v1 = {1} m/s   v2 = {2} m/s   p total = {3} kg·m/s", F(T, "0.00"), F(s.v1, "0.00"), F(s.v2, "0.00"), F(p, "0.00"));
     }
 
     protected override IEnumerable<(string, string)> Results()
     {
-        if (!_hit) { yield return ("Colisão", "não bateram (o 1 não alcança o 2)"); }
-        yield return ("v1 depois", F(_u1, "0.00") + " m/s");
-        yield return ("v2 depois", F(_u2, "0.00") + " m/s");
-        yield return ("p antes/depois", $"{F(M["pBefore"], "0.00")} / {F(M["pAfter"], "0.00")} kg·m/s");
-        yield return ("Ec antes/depois", $"{F(M["keBefore"], "0.00")} / {F(M["keAfter"], "0.00")} J");
-        yield return ("Energia perdida", F(M["keLostPct"], "0.0") + " %");
+        if (!_hit) { yield return (L.T("Colisão"), L.T("não bateram (o 1 não alcança o 2)")); }
+        yield return (L.T("v1 depois"), F(_u1, "0.00") + " m/s");
+        yield return (L.T("v2 depois"), F(_u2, "0.00") + " m/s");
+        yield return (L.T("p antes/depois"), $"{F(M["pBefore"], "0.00")} / {F(M["pAfter"], "0.00")} kg·m/s");
+        yield return (L.T("Ec antes/depois"), $"{F(M["keBefore"], "0.00")} / {F(M["keAfter"], "0.00")} J");
+        yield return (L.T("Energia perdida"), F(M["keLostPct"], "0.0") + " %");
     }
 
     protected override void Paint(DrawingContext dc)
@@ -125,13 +125,13 @@ public sealed class CollisionLab : PhysLab
             }
             else Text(dc, "…", zero + w + 6, y, 11, Faint);
         }
-        Text(dc, "Quantidade de movimento p = m·v", 18, top + 6, 11.5, Ui.Text, 0, true);
-        Bar(18, top + 26, "antes (kg·m/s)", pB, pMax, Blue, true);
-        Bar(18, top + 46, "depois (kg·m/s)", pA, pMax, Blue, after);
-        Text(dc, "Energia cinética Ec = m·v²/2", 330, top + 6, 11.5, Ui.Text, 0, true);
-        Bar(330, top + 26, "antes (J)", kB, kMax, Orange, true);
-        Bar(330, top + 46, "depois (J)", kA, kMax, Orange, after);
-        if (HasResult && !_hit) Text(dc, "Sem colisão: o carrinho 1 precisa ser mais rápido que o 2 (v1 > v2).", W / 2, top + 66, 11, Ui.Bad, 0.5);
+        Text(dc, L.T("Quantidade de movimento p = m·v"), 18, top + 6, 11.5, Ui.Text, 0, true);
+        Bar(18, top + 26, L.T("antes (kg·m/s)"), pB, pMax, Blue, true);
+        Bar(18, top + 46, L.T("depois (kg·m/s)"), pA, pMax, Blue, after);
+        Text(dc, L.T("Energia cinética Ec = m·v²/2"), 330, top + 6, 11.5, Ui.Text, 0, true);
+        Bar(330, top + 26, L.T("antes (J)"), kB, kMax, Orange, true);
+        Bar(330, top + 46, L.T("depois (J)"), kA, kMax, Orange, after);
+        if (HasResult && !_hit) Text(dc, L.T("Sem colisão: o carrinho 1 precisa ser mais rápido que o 2 (v1 > v2)."), W / 2, top + 66, 11, Ui.Bad, 0.5);
     }
 
     void Cart(DrawingContext dc, double cx, double rail, double mass, string name, Brush b, double v)
@@ -147,7 +147,11 @@ public sealed class CollisionLab : PhysLab
         {
             double ay = r.Top - 24;
             Arrow(dc, Yellow, cx, ay, cx + v * 14, ay, 2);
-            Text(dc, F(v, "0.0") + " m/s", Math.Clamp(cx + v * 14 + (v > 0 ? 4 : -4), 50, W - 50), ay - 8, 11, Yellow, v > 0 ? 0 : 1);
+            // label past the arrow tip; near an edge of the track it goes behind the arrow instead of over it
+            double tip = cx + v * 14, tx = tip + (v > 0 ? 4 : -4), align = v > 0 ? 0 : 1;
+            if (v > 0 && tx > W - 50) { tx = cx - 4; align = 1; }
+            else if (v < 0 && tx < 50) { tx = cx + 4; align = 0; }
+            Text(dc, F(v, "0.0") + " m/s", tx, ay - 8, 11, Yellow, align);
         }
     }
 }

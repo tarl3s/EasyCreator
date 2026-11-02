@@ -71,11 +71,11 @@ public sealed class SpringLab : PhysLab
 
     protected override IEnumerable<(string, string)> Results()
     {
-        yield return ("Período", F(_period, "0.000") + " s");
-        yield return ("Frequência", F(M["frequency"], "0.00") + " Hz");
-        yield return ("Energia", F(M["energy"], "0.00") + " J");
-        yield return ("Vel. máxima", F(_vMax, "0.00") + " m/s");
-        if (V("damping") > 0) yield return ("Energia no fim", F(M["energyEnd"], "0.00") + " J");
+        yield return (L.T("Período"), F(_period, "0.000") + " s");
+        yield return (L.T("Frequência"), F(M["frequency"], "0.00") + " Hz");
+        yield return (L.T("Energia"), F(M["energy"], "0.00") + " J");
+        yield return (L.T("Vel. máxima"), F(_vMax, "0.00") + " m/s");
+        if (V("damping") > 0) yield return (L.T("Energia no fim"), F(M["energyEnd"], "0.00") + " J");
     }
 
     protected override void Paint(DrawingContext dc)
@@ -111,13 +111,13 @@ public sealed class SpringLab : PhysLab
             dc.DrawRectangle(b, null, new Rect(80, yy, Math.Min(120, val * bar), 10));
             Text(dc, F(val, "0.00") + " J", 206, yy - 2, 11, Ui.TextDim);
         }
-        Bar(176, "cinética", ke, Orange);
-        Bar(192, "elástica", pe, Yellow);
-        Bar(208, "total", ke + pe, Ui.Accent);
+        Bar(176, L.T("cinética"), ke, Orange);
+        Bar(192, L.T("elástica"), pe, Yellow);
+        Bar(208, L.T("total"), ke + pe, Ui.Accent);
 
         // right: x(t)
         double cxl = 348, cw = 282, ctop = 20, ch = 188;
-        Chart(dc, cxl, ctop, cw, ch, "posição x(t)", "tempo");
+        Chart(dc, cxl, ctop, cw, ch, L.T("posição x(t)"), L.T("tempo"));
         if (!HasResult) return;
         double A = Math.Max(1e-9, V("amplitude"));
         int count = (int)(Progress * (_s.Count - 1)) + 1;

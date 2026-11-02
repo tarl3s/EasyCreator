@@ -1,0 +1,315 @@
+{
+  "title": "Física: del movimiento a la física moderna",
+  "description": "Desde lanzar una pelota hasta órbitas, oscilaciones, lentes, calor, electromagnetismo y métodos numéricos de universidad — cada ley con un laboratorio para que experimentes.",
+  "lessons": {
+    "fis-01-cinematica": {
+      "title": "Cinemática: el lanzamiento de un proyectil",
+      "theory": "# ¿Qué es la cinemática?\n\nLa **cinemática** describe **cómo** se mueven las cosas, sin preguntar todavía **por qué** (eso es la dinámica, en la próxima lección). Usa tres magnitudes:\n\n- **Posición** `x` — dónde está el cuerpo, en metros (m).\n- **Velocidad** `v = Δx / Δt` — cuánto cambia la posición por segundo (m/s).\n- **Aceleración** `a = Δv / Δt` — cuánto cambia la velocidad por segundo (m/s²).\n\n## Movimiento uniformemente acelerado (MRUA)\n\nCuando la aceleración es constante, valen tres ecuaciones que vas a usar toda la vida:\n\n```\nv = v0 + a·t\nx = x0 + v0·t + a·t²/2\nv² = v0² + 2·a·Δx        (Torricelli)\n```\n\nCerca de la superficie de la Tierra, todo cuerpo en caída libre tiene la misma aceleración hacia abajo: **g ≈ 9,81 m/s²** — ¡una piedra y una pluma caen juntas en el vacío!\n\n# Tiro oblicuo\n\nEl truco de Galileo: **separa el movimiento en dos**. Un cañón lanza la bola con velocidad `v0` y ángulo `θ`:\n\n- En la **horizontal** nada la empuja ni la frena: velocidad constante `vx = v0·cos θ`.\n- En la **vertical** sube frenando y baja acelerando, con `a = −g`: empieza con `vy = v0·sin θ`.\n\n```\nx(t) = v0·cos θ · t\ny(t) = h0 + v0·sin θ · t − g·t²/2\n```\n\nLanzando desde el suelo (`h0 = 0`) y resolviendo `y = 0`:\n\n```\ntiempo de vuelo:  T = 2·v0·sin θ / g\nalcance:          A = v0²·sin(2θ) / g\naltura máxima:    H = (v0·sin θ)² / (2·g)\n```\n\n## Lo que enseña el alcance\n\n- `sin(2θ)` es máximo cuando `2θ = 90°`: **45° da el mayor alcance** (sin aire).\n- Ángulos **complementarios** (30° y 60°, 20° y 70°) dan el **mismo alcance** — pero el más alto vuela mucho más tiempo.\n- Duplicar la velocidad **cuadruplica** el alcance (`v0²`).\n\n## Hipótesis del modelo\n\n- Sin resistencia del aire (veremos el aire en la última lección).\n- `g` constante y Tierra plana — bien para alcances de algunos kilómetros.\n- La bola es un punto: no gira ni tiene tamaño.",
+      "task": "Acierta a la bandera verde a **30 m** de distancia (la bola debe caer entre 29 y 31 m) con un **tiempo de vuelo menor que 3 s**. Cambia la velocidad y el ángulo y haz clic en **▶ Ejecutar** en cada intento.",
+      "hints": [
+        "Desde el suelo, el alcance es `A = v0²·sin(2θ)/g`. Con 45°, `sin 90° = 1`, así que `A = v0²/g`.",
+        "Para A = 30 m con 45°: `v0 = √(30 · 9,81) ≈ 17,2 m/s`.",
+        "Ángulos altos como 60° también aciertan, pero la bola sube mucho y tarda más de 3 s: prefiere ángulos de hasta 45°."
+      ],
+      "goals": [
+        "La bola cae en el blanco (30 m ± 1 m)",
+        "Tiempo de vuelo menor que 3 s"
+      ],
+      "questions": [
+        {
+          "prompt": "Una bola rueda fuera de una mesa y cae desde **20 m** de altura (sin aire, g = 9,8 m/s²). ¿Cuánto tarda en llegar al suelo?",
+          "explanation": "En la vertical parte del reposo: 20 = 9,8·t²/2 → t = √(40/9,8) ≈ 2,02 s. ¡La velocidad horizontal no cambia ese tiempo!"
+        },
+        {
+          "prompt": "Sin resistencia del aire, lanzando desde el suelo, ¿qué ángulo da el **mayor alcance**?",
+          "options": ["30°", "45°", "60°", "90°"],
+          "explanation": "El alcance es v0²·sin(2θ)/g, máximo cuando sin(2θ) = 1, es decir, 2θ = 90° → θ = 45°."
+        },
+        {
+          "prompt": "Un coche parte del reposo con aceleración constante de **3 m/s²**. ¿Cuál es su velocidad después de **4 s**?",
+          "explanation": "v = v0 + a·t = 0 + 3·4 = 12 m/s (≈ 43 km/h)."
+        }
+      ]
+    },
+    "fis-02-newton": {
+      "title": "Leyes de Newton: el bloque en la rampa",
+      "theory": "# Las tres leyes de Newton\n\nLa cinemática dice cómo se mueve algo; la **dinámica** dice por qué. Todo cabe en tres leyes:\n\n- **1.ª ley (inercia):** si la fuerza resultante es cero, el cuerpo sigue quieto o en movimiento rectilíneo con velocidad constante.\n- **2.ª ley:** la fuerza resultante produce aceleración: `F_resultante = m·a`. Fuerza en **newtons** (N), masa en kg.\n- **3.ª ley (acción y reacción):** si A empuja a B, B empuja a A con una fuerza igual y opuesta — sobre cuerpos **distintos**, por eso no se anulan.\n\n# Las fuerzas que aparecen en casi todo problema\n\n- **Peso** `P = m·g` — la Tierra tira del bloque hacia abajo (5 kg → 49 N).\n- **Normal** `N` — la superficie empuja el bloque, siempre **perpendicular** a ella.\n- **Rozamiento** — siempre **contra** el movimiento (o contra la tendencia a moverse):\n  - quieto: el rozamiento estático se ajusta, hasta el máximo `Fr ≤ μ·N`;\n  - deslizando: rozamiento cinético `Fr = μ·N`.\n\n## Descomponer el peso en una rampa\n\nEn una rampa de ángulo `θ`, usa ejes **a lo largo** y **perpendiculares** a la rampa:\n\n```\nP paralelo      = m·g·sin θ  (rampa abajo)\nP perpendicular = m·g·cos θ  (contra la rampa)\nN               = m·g·cos θ\n```\n\nA lo largo de la rampa, con una fuerza `F` tirando hacia arriba y el bloque subiendo:\n\n```\nF − m·g·sin θ − μ·m·g·cos θ = m·a\n```\n\n## Ejemplo\n\nBloque de 5 kg, rampa de 30°, μ = 0,2, sin fuerza aplicada: `P paralelo = 24,5 N` y el rozamiento máximo es `0,2 · 42,5 = 8,5 N`. Como 24,5 > 8,5, el bloque **baja** con `a = (24,5 − 8,5)/5 ≈ 3,2 m/s²`.\n\n## Hipótesis del simulador\n\n- `g = 9,81 m/s²`; el bloque es rígido y parte del reposo en el medio de la rampa.\n- Un único μ vale para el rozamiento estático y el cinético (en la vida real el estático suele ser un poco mayor).\n- La fuerza aplicada es paralela a la rampa (positiva = rampa arriba). El diagrama de la derecha muestra todas las fuerzas.",
+      "task": "El bloque tiene **5 kg** y el rozamiento es **μ = 0,2** (bloqueados). Elige la fuerza para que **suba** la rampa con una aceleración entre **1,8 y 2,2 m/s²**, en una rampa de **al menos 30°**.",
+      "hints": [
+        "Suma las fuerzas a lo largo de la rampa: `F − P·sin θ − Fr = m·a`.",
+        "Con 30°: `P·sin 30° = 5·9,81·0,5 ≈ 24,5 N`; `N = 5·9,81·cos 30° ≈ 42,5 N`; `Fr = 0,2·42,5 ≈ 8,5 N`.",
+        "Para a = 2 m/s²: `F = 5·2 + 24,5 + 8,5 ≈ 43 N`."
+      ],
+      "goals": [
+        "El bloque sube con una aceleración entre 1,8 y 2,2 m/s²",
+        "Rampa con al menos 30° de inclinación"
+      ],
+      "questions": [
+        {
+          "prompt": "Un bloque de **5 kg** está quieto en una rampa de **30°** (g = 9,8 m/s²). ¿Cuál es la fuerza normal?",
+          "explanation": "N = m·g·cos θ = 5·9,8·0,866 ≈ 42,4 N. La normal es menor que el peso (49 N) porque solo equilibra la parte del peso perpendicular a la rampa."
+        },
+        {
+          "prompt": "Según la 3.ª ley de Newton, ¿cuál es la **reacción** al peso del bloque (la Tierra tirando del bloque)?",
+          "options": ["La fuerza normal que la rampa hace sobre el bloque", "La fuerza con la que el bloque tira de la Tierra hacia arriba", "El rozamiento entre el bloque y la rampa", "No existe reacción al peso"],
+          "explanation": "Acción y reacción son del mismo tipo y actúan sobre cuerpos distintos: la Tierra atrae al bloque y el bloque atrae a la Tierra con la misma fuerza. La normal NO es la reacción del peso."
+        },
+        {
+          "prompt": "Con **μ = 0,5**, ¿cuál es el **mayor ángulo** de rampa en el que un bloque se queda quieto solo?",
+          "explanation": "En el límite, m·g·sin θ = μ·m·g·cos θ → tan θ = μ = 0,5 → θ ≈ 26,6°. ¡Fíjate que la masa ni siquiera entra en la cuenta!"
+        }
+      ]
+    },
+    "fis-03-energia": {
+      "title": "Energía y trabajo: el resorte que lanza",
+      "theory": "# Trabajo: fuerza a lo largo de un camino\n\nUna fuerza **realiza trabajo** cuando desplaza algo:\n\n```\nW = F·d·cos θ        (julios: 1 J = 1 N·m)\n```\n\n`θ` es el ángulo entre la fuerza y el desplazamiento. Empujar a favor del movimiento da trabajo **positivo**; el rozamiento, que va en contra, da trabajo **negativo**; la normal, perpendicular, no realiza ningún trabajo.\n\n# Formas de energía\n\n- **Cinética** (movimiento): `Ec = m·v²/2`\n- **Potencial gravitatoria** (altura): `Ep = m·g·h`\n- **Potencial elástica** (resorte estirado o comprimido): `Ee = k·x²/2`\n\n## Teorema del trabajo y la energía\n\nEl trabajo **total** sobre un cuerpo se convierte en variación de su energía cinética: `W_total = ΔEc`.\n\n## Conservación de la energía mecánica\n\nSin rozamiento ni resistencia del aire, la energía solo **cambia de forma** — la suma se mantiene constante:\n\n```\nEc + Ep + Ee = constante\n```\n\n# El resorte (ley de Hooke)\n\nUn resorte tira de vuelta en proporción a cuánto se deformó: `F = −k·x`. La **constante elástica** `k` (N/m) dice lo duro que es.\n\nEn el laboratorio el bloque se estira hasta `x = A` y se suelta. Ahí toda la energía es elástica; al pasar por `x = 0` toda se ha vuelto cinética:\n\n```\nk·A²/2 = m·v_max²/2   →   v_max = A·√(k/m)\n```\n\nLas barras muestran la energía pasando de elástica a cinética y de vuelta, con el total constante.\n\n## Potencia\n\n`P = W / Δt` (vatios). Un motor de 100 W entrega 100 J cada segundo.\n\n## Hipótesis del simulador\n\n- Resorte ideal y sin masa; suelo sin rozamiento; bloque rígido.",
+      "task": "Monta un lanzador de resorte que haga que el bloque alcance una **velocidad máxima entre 3,8 y 4,2 m/s** guardando **como máximo 10 J** de energía en el resorte.",
+      "hints": [
+        "La velocidad máxima es `v_max = A·√(k/m)` y la energía guardada es `E = k·A²/2 = m·v_max²/2`.",
+        "Con v = 4 m/s, la energía es `8·m`: para quedar por debajo de 10 J, la masa debe ser como máximo 1,25 kg.",
+        "Ejemplo: m = 1 kg, k = 200 N/m y A = 0,28 m → v_max ≈ 3,96 m/s y E ≈ 7,8 J."
+      ],
+      "goals": [
+        "Velocidad máxima entre 3,8 y 4,2 m/s",
+        "Energía guardada en el resorte de como máximo 10 J"
+      ],
+      "questions": [
+        {
+          "prompt": "Un resorte de **k = 400 N/m** se comprime **0,1 m**. ¿Cuánta energía guarda?",
+          "explanation": "Ee = k·x²/2 = 400·0,01/2 = 2 J."
+        },
+        {
+          "prompt": "Un bloque de **2 kg** se desliza sin rozamiento desde una altura de **5 m** (g = 9,8 m/s²). ¿Con qué velocidad llega abajo?",
+          "explanation": "m·g·h = m·v²/2 → v = √(2·g·h) = √98 ≈ 9,9 m/s. ¡La masa se cancela!"
+        },
+        {
+          "prompt": "Una caja se arrastra 3 m por el suelo. El trabajo de la **fuerza de rozamiento** sobre ella es…",
+          "options": ["positivo, porque se movió", "cero, porque el rozamiento no se mueve", "negativo, porque el rozamiento es contrario al desplazamiento", "igual al trabajo del peso"],
+          "explanation": "W = F·d·cos 180° = −F·d: el rozamiento le quita energía cinética al cuerpo y la convierte en calor."
+        }
+      ]
+    },
+    "fis-04-colisoes": {
+      "title": "Cantidad de movimiento y choques",
+      "theory": "# Cantidad de movimiento (momento lineal)\n\nUn camión a 10 km/h es más difícil de detener que una bicicleta a la misma velocidad. La magnitud que mide eso es la **cantidad de movimiento**:\n\n```\np = m·v        (kg·m/s, es un vector: ¡tiene sentido!)\n```\n\n## Impulso\n\nUna fuerza que actúa durante un tiempo cambia el momento: `I = F·Δt = Δp`. Por eso el airbag salva vidas: **alarga el tiempo** de la parada y reduce la fuerza.\n\n# Conservación del momento\n\nSi ninguna fuerza **externa** actúa sobre el sistema, el momento total no cambia — incluso en un choque violento, porque las fuerzas entre los carritos son acción y reacción (3.ª ley) y se cancelan en el total:\n\n```\nm1·v1 + m2·v2 = m1·v1' + m2·v2'\n```\n\n## Tipos de choque\n\nEl momento **siempre** se conserva; la energía cinética **no siempre**. El **coeficiente de restitución** mide cuánto se separan los cuerpos después, comparado con cuánto se acercaban antes:\n\n```\ne = (v2' − v1') / (v1 − v2)\n```\n\n- `e = 1` — **elástico**: la energía cinética también se conserva (bolas de billar, casi).\n- `0 < e < 1` — **parcialmente inelástico**: parte de la energía se vuelve calor, sonido, deformación.\n- `e = 0` — **perfectamente inelástico**: los cuerpos se pegan y siguen juntos. Es el que más energía pierde.\n\nJuntando las dos ecuaciones, las velocidades después son:\n\n```\nv1' = (m1·v1 + m2·v2 + m2·e·(v2 − v1)) / (m1 + m2)\nv2' = (m1·v1 + m2·v2 + m1·e·(v1 − v2)) / (m1 + m2)\n```\n\n## Hipótesis del simulador\n\n- Riel recto sin rozamiento (la única fuerza horizontal es la del choque).\n- Choque instantáneo, en una dimensión. Velocidad positiva = hacia la derecha.",
+      "task": "Reproduce el famoso **péndulo de Newton**: haz que el carrito 1 **se detenga por completo** después del choque, entregando todo el movimiento al carrito 2, **sin perder energía cinética** (pérdida de como máximo 1%).",
+      "hints": [
+        "Para no perder energía, el choque tiene que ser elástico: `e = 1`.",
+        "En un choque elástico entre masas **iguales**, los carritos simplemente intercambian velocidades.",
+        "Ejemplo: m1 = m2 = 2 kg, v1 = 2 m/s, v2 = 0 y e = 1."
+      ],
+      "goals": [
+        "Los carritos chocan",
+        "El carrito 1 queda quieto después del choque (|v1'| ≤ 0,05 m/s)",
+        "Energía cinética conservada (pérdida de como máximo 1%)"
+      ],
+      "questions": [
+        {
+          "prompt": "Un carrito de **2 kg** a **3 m/s** choca con un carrito de **1 kg** quieto y los dos **se quedan pegados**. ¿Cuál es la velocidad del conjunto?",
+          "explanation": "Momento antes: 2·3 = 6 kg·m/s. Después: (2 + 1)·v = 6 → v = 2 m/s."
+        },
+        {
+          "prompt": "En el choque de la pregunta anterior, ¿cuánta **energía cinética se perdió**?",
+          "explanation": "Antes: 2·3²/2 = 9 J. Después: 3·2²/2 = 6 J. Se perdieron 3 J, que se volvieron calor, sonido y deformación."
+        },
+        {
+          "prompt": "En un choque en el que no actúa ninguna fuerza externa, ¿qué se conserva **siempre**?",
+          "options": ["La energía cinética total", "La cantidad de movimiento total", "La velocidad de cada cuerpo", "Las dos: energía cinética y cantidad de movimiento"],
+          "explanation": "El momento total siempre se conserva sin fuerzas externas. La energía cinética solo se conserva en los choques elásticos."
+        }
+      ]
+    },
+    "fis-05-orbitas": {
+      "title": "Movimiento circular y gravitación: un satélite en órbita",
+      "theory": "# Movimiento circular\n\nUn cuerpo que gira en círculo con rapidez constante **está acelerando**: la dirección de la velocidad cambia todo el tiempo. Esa aceleración apunta al centro (**centrípeta**):\n\n```\nv  = 2·π·r / T          (T = período)\nω  = 2·π / T = v / r    (velocidad angular, rad/s)\nac = v² / r = ω²·r\n```\n\nPor la 2.ª ley, alguna fuerza tiene que tirar hacia el centro: `Fc = m·v²/r`. En un coche en la curva es el rozamiento de los neumáticos; en una piedra atada a una cuerda, la tensión; en un satélite, **la gravedad**.\n\n# Gravitación universal\n\nNewton se dio cuenta de que la fuerza que hace caer la manzana es la misma que sostiene a la Luna:\n\n```\nF = G·M·m / r²        G = 6,67×10⁻¹¹ N·m²/kg²\n```\n\n`r` es la distancia entre los **centros**. Para la Tierra, `G·M ≈ 398 600 km³/s²`.\n\n## El cañón de Newton\n\nImagina un cañón en lo alto de una montaña. Cuanto más rápido sale la bala, más lejos cae — hasta que, a cierta velocidad, la Tierra \"se curva\" en la misma medida en que la bala cae: **cae para siempre alrededor de la Tierra**. ¡Eso es una órbita! Igualando gravedad y fuerza centrípeta:\n\n```\nG·M·m/r² = m·v²/r\nv_circular = √(G·M / r)\nT = 2·π·√(r³ / (G·M))    (Kepler: T² ∝ r³)\nv_escape = √(2·G·M / r) = √2 · v_circular\n```\n\n## Órbitas elípticas\n\n- Más lento que `v_circular`: la órbita se vuelve una **elipse** que baja (y puede chocar con el planeta).\n- Más rápido: una elipse que sube hasta un **apogeo** lejano.\n- A partir de `v_escape`: el satélite **escapa** y no vuelve.\n\nLa **excentricidad** `e` mide el achatamiento: 0 = círculo, cerca de 1 = elipse muy alargada.\n\n## Hipótesis del simulador\n\n- Planeta esférico, sin atmósfera y sin otros cuerpos (Luna, Sol).\n- Lanzamiento horizontal (perpendicular al radio). Altitud = distancia sobre la superficie.",
+      "task": "Pon un satélite en una **órbita circular a 400 km** de altitud, como la Estación Espacial Internacional: no puede caer ni escapar, la excentricidad debe ser **como máximo 0,01** y el período entre **90 y 95 minutos**.",
+      "hints": [
+        "Usa `v = √(G·M/r)` con `r` medido desde el **centro** de la Tierra: r = 6371 + 400 = 6771 km.",
+        "√(398 600 / 6771) ≈ 7,67 km/s — ¡unos 27 600 km/h!",
+        "Si el satélite cae, aumenta la velocidad; si la órbita se alarga demasiado, disminúyela. Ajuste fino de 0,01 km/s."
+      ],
+      "goals": [
+        "El satélite queda en órbita (no cae ni escapa)",
+        "Órbita casi circular (excentricidad ≤ 0,01)",
+        "Período entre 90 y 95 minutos",
+        "Lanzado a 400 km de altitud (entre 390 y 410 km)"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál sería la velocidad de una órbita circular **rasante** en la Luna (r = 1737 km, G·M = 4903 km³/s²)?",
+          "explanation": "v = √(G·M/r) = √(4903/1737) ≈ 1,68 km/s — mucho menos que en la Tierra, porque la Luna tiene mucha menos masa."
+        },
+        {
+          "prompt": "¿Por qué los astronautas **flotan** dentro de la Estación Espacial, a solo 400 km de altitud?",
+          "options": ["Porque allí no existe gravedad", "Porque están en caída libre junto con la estación", "Porque el aire allá arriba los empuja hacia arriba", "Porque la Luna los atrae en sentido contrario"],
+          "explanation": "¡A 400 km la gravedad todavía es ~89% de la de la superficie! La estación y los astronautas caen juntos alrededor de la Tierra, por eso nada presiona a los astronautas contra el suelo."
+        },
+        {
+          "prompt": "Un coche toma una curva de radio **50 m** a **20 m/s**. ¿Cuál es la aceleración centrípeta?",
+          "explanation": "ac = v²/r = 400/50 = 8 m/s² — ¡casi 1 g! Quien proporciona esa fuerza es el rozamiento de los neumáticos."
+        }
+      ]
+    },
+    "fis-06-pendulo": {
+      "title": "Oscilaciones: el péndulo que bate segundos",
+      "theory": "# Movimiento armónico simple (MAS)\n\nMuchas cosas **van y vuelven**: un columpio, una cuerda de guitarra, átomos en un cristal, circuitos eléctricos. Cuando la fuerza de retorno es proporcional al desplazamiento (`F = −k·x`), el movimiento es un **MAS**:\n\n```\nx(t) = A·cos(ω·t)\nT = 2·π / ω        (período, s)\nf = 1 / T          (frecuencia, Hz)\n```\n\nPara el sistema **masa–resorte**: `ω = √(k/m)`, así que `T = 2·π·√(m/k)`.\n\n# El péndulo simple\n\nUna masa colgada de un hilo de longitud `L`. La componente del peso que tira de vuelta es `m·g·sin θ`, y la ecuación del movimiento es:\n\n```\nθ'' = −(g/L)·sin θ\n```\n\nPara **ángulos pequeños** (hasta unos 15°), `sin θ ≈ θ` (en radianes) y se vuelve un MAS:\n\n```\nT = 2·π·√(L / g)\n```\n\n## Cosas sorprendentes\n\n- El período **no depende de la masa**: plomo o corcho, mismo período.\n- Para oscilaciones pequeñas, tampoco **depende de la amplitud** (isocronismo, descubierto por Galileo mirando una lámpara en la iglesia). Por eso el péndulo se volvió reloj.\n- Para amplitudes grandes el período **aumenta**: `T ≈ T0·(1 + θ0²/16)` con θ0 en radianes — a 40° es un 3% más.\n- En la Luna (g = 1,62 m/s²) el mismo péndulo oscila ~2,5 veces más despacio.\n\n## Amortiguamiento y resonancia\n\nEl rozamiento con el aire hace que la amplitud baje poco a poco (**amortiguamiento**). Empujar al ritmo justo — a la frecuencia natural — hace crecer mucho la amplitud: es la **resonancia**, que usas en el columpio del parque.\n\n## Hipótesis del simulador\n\n- Masa puntual en un hilo sin masa e inextensible.\n- El simulador resuelve la ecuación **completa** (con `sin θ`) numéricamente, así que muestra el efecto de las amplitudes grandes. El período se mide en el propio movimiento.",
+      "task": "Construye en la Tierra un **péndulo de segundos** (cada ida o vuelta dura 1 s): período entre **1,98 y 2,02 s**, con amplitud de como máximo **15°** para que valga la fórmula de las oscilaciones pequeñas.",
+      "hints": [
+        "Despeja L en `T = 2·π·√(L/g)`: `L = g·(T / 2π)²`.",
+        "Con T = 2 s y g = 9,81 m/s²: L = 9,81 · (2/6,283)² ≈ 0,99 m.",
+        "Usa una amplitud pequeña (por ejemplo 5°) y deja el planeta en la Tierra."
+      ],
+      "goals": [
+        "Período entre 1,98 y 2,02 s",
+        "Amplitud de como máximo 15°",
+        "En la Tierra (g = 9,81 m/s²)"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es el período de un péndulo de **1 m** en la **Luna** (g = 1,62 m/s²), con oscilaciones pequeñas?",
+          "explanation": "T = 2π·√(1/1,62) ≈ 2π·0,786 ≈ 4,94 s — 2,5 veces más lento que en la Tierra (2,0 s)."
+        },
+        {
+          "prompt": "Para oscilaciones pequeñas, ¿qué cambia el período de un péndulo simple?",
+          "options": ["Solo la masa", "La longitud y la gravedad", "La masa y la amplitud", "Solo la amplitud"],
+          "explanation": "T = 2π·√(L/g): solo la longitud y la gravedad. La masa no entra, y la amplitud solo importa cuando es grande."
+        },
+        {
+          "prompt": "Una masa de **0,5 kg** sujeta a un resorte de **k = 200 N/m** oscila. ¿Cuál es el período?",
+          "explanation": "T = 2π·√(m/k) = 2π·√(0,0025) = 2π·0,05 ≈ 0,314 s."
+        }
+      ]
+    },
+    "fis-07-optica": {
+      "title": "Ondas y óptica: formar imágenes con lentes",
+      "theory": "# Ondas\n\nUna **onda** transporta energía sin transportar materia: la ola del estadio avanza, las personas se quedan en su sitio. Toda onda periódica cumple:\n\n```\nv = λ·f\n```\n\n- `λ` (lambda) — **longitud de onda**, distancia entre dos crestas (m).\n- `f` — **frecuencia**, cuántas crestas pasan por segundo (Hz).\n- `v` — velocidad de propagación: sonido en el aire ≈ 340 m/s; luz en el vacío `c ≈ 3×10⁸ m/s`.\n\nEl sonido es una onda **mecánica** (necesita un medio). La luz es una onda **electromagnética** (viaja en el vacío); el color depende de la longitud de onda: violeta ~400 nm, rojo ~700 nm.\n\nCuando dos ondas se encuentran se suman (**interferencia**): crestas con crestas se refuerzan, crestas con valles se anulan — es lo que da los colores de una pompa de jabón.\n\n# Refracción\n\nAl cambiar de medio la luz cambia de velocidad y se **desvía** (ley de Snell): `n1·sin θ1 = n2·sin θ2`, con `n = c / v` (índice de refracción; vidrio ≈ 1,5). Las lentes usan esto para doblar los rayos.\n\n# Lentes delgadas\n\n- **Convergente** (más gruesa en el centro): junta los rayos paralelos en un **foco** F', a una distancia `f`.\n- **Divergente** (más fina en el centro): separa los rayos, como si vinieran de un foco virtual.\n\n## Los tres rayos principales\n\n- Rayo **paralelo** al eje → sale pasando por el foco F' (o alejándose de F, en la divergente).\n- Rayo por el **centro** de la lente → pasa recto.\n- Rayo por el **foco** F → sale paralelo al eje (en la divergente, el rayo que **apunta** al foco del otro lado).\n\nDonde los rayos (o sus prolongaciones) se cruzan, nace la **imagen**.\n\n## Ecuación de las lentes y aumento\n\n```\n1/f = 1/do + 1/di\nm = −di / do          (aumento)\n```\n\n- `di > 0`: imagen **real** (al otro lado, se puede proyectar en una pantalla).\n- `di < 0`: imagen **virtual** (del mismo lado, solo se ve a través de la lente — la lupa).\n- `m < 0`: imagen **invertida**; `|m| > 1`: mayor que el objeto.\n- Convergente: `f > 0`; divergente: `f < 0`. Potencia `D = 1/f` en dioptrías (f en metros) — la \"graduación\" de las gafas.\n\n## Hipótesis del simulador\n\n- Lente delgada, rayos cercanos al eje (aproximación paraxial).\n- En el dibujo la altura está ampliada respecto a la distancia, para que se lea bien; las líneas siguen rectas y se cruzan en el lugar correcto.",
+      "task": "Con la lente **convergente**, monta un **proyector**: forma una imagen **real, invertida y dos veces mayor** que el objeto (aumento entre −2,1 y −1,9).",
+      "hints": [
+        "Aumento −2 significa `di = 2·do` (imagen real, al otro lado, dos veces más lejos).",
+        "En la ecuación de las lentes: `1/f = 1/do + 1/(2·do) = 3/(2·do)` → `do = 1,5·f`.",
+        "Con f = 10 cm, coloca el objeto a 15 cm de la lente."
+      ],
+      "goals": [
+        "La imagen es real (se forma al otro lado de la lente)",
+        "Imagen invertida y dos veces mayor (aumento entre −2,1 y −1,9)"
+      ],
+      "questions": [
+        {
+          "prompt": "Un sonido de **680 Hz** viaja en el aire a **340 m/s**. ¿Cuál es la longitud de onda?",
+          "explanation": "λ = v / f = 340 / 680 = 0,5 m."
+        },
+        {
+          "prompt": "Una lente convergente tiene **f = 20 cm** y el objeto está a **60 cm** de ella. ¿A qué distancia de la lente se forma la imagen?",
+          "explanation": "1/di = 1/20 − 1/60 = 2/60 → di = 30 cm (real, invertida y de la mitad del tamaño, m = −0,5)."
+        },
+        {
+          "prompt": "La imagen de un objeto real formada por una lente **divergente** es siempre…",
+          "options": ["real, invertida y mayor", "real, invertida y menor", "virtual, derecha y menor", "virtual, invertida y mayor"],
+          "explanation": "La divergente separa los rayos; sus prolongaciones se cruzan del mismo lado del objeto, más cerca de la lente: imagen virtual, derecha y menor (como en una mirilla de puerta)."
+        }
+      ]
+    },
+    "fis-08-termodinamica": {
+      "title": "Termodinámica: el gas ideal y la primera ley",
+      "safety": "Nunca calientes **recipientes cerrados** (latas, frascos, una olla a presión con la válvula tapada): por la ley de los gases, la presión sube con la temperatura hasta que el recipiente explota.",
+      "theory": "# Temperatura, presión y gas ideal\n\n- La **temperatura** mide la agitación de las moléculas. En física usamos **kelvin**: `T(K) = T(°C) + 273,15`. Cero kelvin es el cero absoluto.\n- La **presión** es fuerza por área: `p = F / A` (pascal, Pa = N/m²). El aire al nivel del mar empuja con ~101 kPa.\n- 1 litro = 0,001 m³.\n\nUn **gas ideal** (moléculas puntuales que solo chocan entre sí) cumple:\n\n```\np·V = n·R·T        R = 8,314 J/(mol·K)\n```\n\nEn el laboratorio las moléculas (puntos amarillos) se mueven más rápido cuando el gas se calienta: la velocidad media crece con `√T`.\n\n# Energía interna, calor y trabajo\n\n- **Energía interna** `U` — la energía de las moléculas. En un gas ideal monoatómico: `U = (3/2)·n·R·T` — ¡solo depende de la temperatura!\n- **Calor** `Q` — energía que entra por diferencia de temperatura (Q > 0 entrando).\n- **Trabajo** `W` — energía que el gas entrega empujando el pistón. Con presión variable, `W` es el **área bajo la curva** en el gráfico p–V (W > 0 cuando el gas se expande).\n\n## Primera ley (conservación de la energía)\n\n```\nΔU = Q − W\n```\n\n## Los procesos clásicos\n\n- **Isotérmico** (T constante): `ΔU = 0`, así que `Q = W = n·R·T·ln(V2/V1)`. Todo el calor recibido se vuelve trabajo.\n- **Isobárico** (p constante): `W = p·(V2 − V1)`; el gas se calienta al expandirse.\n- **Isocórico** (V constante): `W = 0`, todo el calor se vuelve energía interna.\n- **Adiabático** (sin intercambiar calor, Q = 0): `p·V^γ` constante, con `γ = 5/3` en el gas monoatómico; al expandirse el gas **se enfría** (`W = −ΔU`) — así el aire que sube en la atmósfera se expande, se enfría y forma las nubes.\n\n# Segunda ley y máquinas térmicas\n\nEl calor fluye solo de lo caliente a lo frío, y ninguna máquina convierte **todo** el calor en trabajo en un ciclo. El límite es el **rendimiento de Carnot**:\n\n```\nη_max = 1 − T_fría / T_caliente   (en kelvin)\n```\n\n## Hipótesis del simulador\n\n- Gas ideal monoatómico, procesos lentos (cuasiestáticos), pistón sin rozamiento.",
+      "task": "Empieza con **1 mol a 300 K en 10 L** (bloqueados). Elige el proceso y el volumen final para que el gas **realice unos 1000 J de trabajo** (entre 950 y 1050 J) **sin cambiar su energía interna** (ΔU entre −1 y 1 J).",
+      "hints": [
+        "Energía interna constante significa temperatura constante: ¿qué proceso es ese?",
+        "En el isotérmico, `W = n·R·T·ln(V2/V1)` y `n·R·T = 8,314·300 ≈ 2494 J`.",
+        "`ln(V2/V1) = 1000/2494 ≈ 0,40` → `V2/V1 ≈ 1,49` → V2 ≈ 15 L."
+      ],
+      "goals": [
+        "El gas realiza entre 950 y 1050 J de trabajo",
+        "La energía interna no cambia (ΔU entre −1 y 1 J)"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la presión de **1 mol** de gas ideal a **300 K** ocupando **24,9 L**?",
+          "explanation": "p = n·R·T / V = 8,314·300 / 0,0249 ≈ 100 200 Pa ≈ 100 kPa — prácticamente la presión atmosférica."
+        },
+        {
+          "prompt": "¿Cuál es el **rendimiento máximo** (Carnot) de una máquina que trabaja entre **600 K** y **300 K**?",
+          "explanation": "η = 1 − 300/600 = 0,5 = 50%. Las máquinas reales quedan bastante por debajo."
+        },
+        {
+          "prompt": "En una **expansión adiabática**, ¿qué pasa con la temperatura del gas?",
+          "options": ["Aumenta, porque el volumen aumenta", "Se queda igual, porque no intercambia calor", "Disminuye, porque el gas gasta energía interna para realizar trabajo", "Depende del color del recipiente"],
+          "explanation": "Con Q = 0, ΔU = −W: el trabajo de empujar el pistón sale de la energía interna, y la temperatura baja."
+        }
+      ]
+    },
+    "fis-09-eletromagnetismo": {
+      "title": "Electricidad y magnetismo: cargas, campos y corrientes",
+      "safety": "El enchufe de casa (110–240 V) **mata**. Nunca toques cables con corriente; los experimentos de electricidad se hacen con pilas y baterías de baja tensión.",
+      "theory": "# Carga eléctrica y ley de Coulomb\n\nLa materia tiene cargas **positivas** (protones) y **negativas** (electrones). Cargas iguales se repelen, opuestas se atraen. La carga se mide en **culombios** (C); un electrón tiene carga `−1,6×10⁻¹⁹ C`.\n\n```\nF = k·|q1·q2| / r²        k ≈ 9×10⁹ N·m²/C²\n```\n\nFíjate en el parecido con la gravitación: también cae con `1/r²`, pero es **mucho** más fuerte y puede repeler.\n\n# Campo y potencial\n\n- **Campo eléctrico** `E = F / q` (N/C o V/m): la fuerza por unidad de carga en cada punto del espacio. Las líneas de campo salen de las cargas positivas y entran en las negativas.\n- **Potencial** y **diferencia de potencial** (tensión, voltaje) `U` en voltios: energía por unidad de carga. Una pila de 1,5 V da 1,5 J a cada culombio que pasa.\n\n# Corriente y circuitos\n\n- **Corriente** `I = ΔQ / Δt` (amperios): cuánta carga pasa por segundo.\n- **Ley de Ohm:** `U = R·I` (R en ohmios, Ω).\n- **Potencia:** `P = U·I = R·I² = U²/R` (vatios).\n- Resistencias en **serie** se suman: `R = R1 + R2`. En **paralelo**: `1/R = 1/R1 + 1/R2` — la equivalente es **menor** que la menor de ellas.\n\n# Magnetismo\n\nLas corrientes y los imanes crean un **campo magnético** `B` (tesla, T). Una carga en movimiento dentro de `B` siente la **fuerza de Lorentz**, perpendicular a la velocidad:\n\n```\nF = |q|·v·B·sin θ\n```\n\nComo la fuerza es perpendicular, solo **curva** la trayectoria: la carga describe un círculo de radio\n\n```\nr = m·v / (|q|·B)\n```\n\nCon un campo eléctrico cruzado, las fuerzas eléctrica y magnética se anulan cuando `q·E = q·v·B`, es decir, `v = E / B`: es el **selector de velocidades** de los espectrómetros de masas.\n\n# Inducción: la electricidad que viene del movimiento\n\n**Ley de Faraday:** un flujo magnético **variable** a través de una espira genera tensión: `ε = −ΔΦ / Δt`. El signo menos (**ley de Lenz**) dice que la corriente inducida se opone a la variación. Así funcionan las centrales eléctricas, las dinamos, los transformadores y los cargadores inalámbricos.\n\nMaxwell lo juntó todo y descubrió que campos eléctricos y magnéticos variables se sostienen mutuamente y viajan a `c = 1/√(μ0·ε0) ≈ 3×10⁸ m/s`: **la luz es una onda electromagnética**.",
+      "task": "Responde las preguntas. Usa `k = 9×10⁹ N·m²/C²` y escribe números como `0,4` o `3e-2`.",
+      "hints": [
+        "μC es microculombio: 1 μC = 10⁻⁶ C.",
+        "En la ley de Coulomb la r va al cuadrado; en `P = R·I²` es la corriente la que va al cuadrado.",
+        "En el radio de la órbita magnética, convierte el resultado de metros a centímetros (× 100)."
+      ],
+      "questions": [
+        {
+          "prompt": "Dos cargas de **2 μC** cada una están a **0,3 m** de distancia. ¿Cuál es la fuerza entre ellas?",
+          "explanation": "F = 9×10⁹ · (2×10⁻⁶)² / 0,3² = 9×10⁹ · 4×10⁻¹² / 0,09 = 0,4 N (repulsión)."
+        },
+        {
+          "prompt": "Una batería de **12 V** está conectada a una resistencia de **4 Ω**. ¿Cuál es la corriente?",
+          "explanation": "Ley de Ohm: I = U / R = 12 / 4 = 3 A."
+        },
+        {
+          "prompt": "¿Cuál es la potencia disipada en esa resistencia de 4 Ω con 3 A?",
+          "explanation": "P = R·I² = 4·9 = 36 W (lo mismo que U·I = 12·3)."
+        },
+        {
+          "prompt": "Dos resistencias de **6 Ω** conectadas en **paralelo** equivalen a…",
+          "options": ["12 Ω", "6 Ω", "3 Ω", "36 Ω"],
+          "explanation": "1/R = 1/6 + 1/6 = 2/6 → R = 3 Ω. En paralelo la corriente tiene dos caminos, así que la resistencia total baja."
+        },
+        {
+          "prompt": "Un protón (m = 1,67×10⁻²⁷ kg, q = 1,6×10⁻¹⁹ C) entra a **2×10⁶ m/s** perpendicular a un campo de **0,5 T**. ¿Cuál es el radio de la trayectoria circular?",
+          "explanation": "r = m·v / (q·B) = 1,67×10⁻²⁷ · 2×10⁶ / (1,6×10⁻¹⁹ · 0,5) ≈ 0,0418 m ≈ 4,18 cm."
+        },
+        {
+          "prompt": "En un selector de velocidades con **E = 5×10⁴ V/m** y **B = 0,1 T**, ¿qué velocidad pasa sin desviarse?",
+          "explanation": "Las fuerzas se anulan cuando q·E = q·v·B → v = E / B = 5×10⁴ / 0,1 = 5×10⁵ m/s."
+        },
+        {
+          "prompt": "¿Qué hace aparecer corriente inducida en una bobina?",
+          "options": ["Un imán quieto dentro de ella", "Una variación del flujo magnético a través de ella", "Cualquier campo eléctrico constante", "Calentar la bobina"],
+          "explanation": "Ley de Faraday: solo la VARIACIÓN del flujo (un imán moviéndose, una corriente variable, una espira girando) induce tensión. Un imán quieto no genera nada."
+        }
+      ]
+    },
+    "fis-10-arrasto-numerico": {
+      "title": "Física universitaria: resistencia del aire y métodos numéricos",
+      "theory": "# Cuando la fórmula se acaba\n\nEn la lección 1 el alcance tenía una fórmula cerrada. Basta con poner el **aire** para que desaparezca. La fuerza de arrastre a velocidades cotidianas crece con el **cuadrado** de la velocidad y apunta en contra de ella:\n\n```\nF_arrastre = ½·ρ·C·A·v²\n```\n\n`ρ` es la densidad del aire (~1,2 kg/m³), `C` el coeficiente de forma (esfera ≈ 0,47), `A` el área frontal. Dividiendo por la masa, la ecuación del movimiento queda:\n\n```\na = −g·ŷ − k·|v|·v\nk = ρ·C·A / (2·m)      (unidad: 1/m)\n```\n\nEl término `|v|·v` **acopla** x e y: frenar en la horizontal depende de la velocidad vertical y viceversa. No existe solución en funciones elementales — necesitamos un **método numérico**.\n\n# Integración numérica\n\nLa idea: avanzar el tiempo en pasos pequeños `dt`, usando la derivada para estimar el siguiente estado.\n\n## Método de Euler\n\n```\nwhile y >= 0:\n    v_mod = sqrt(vx*vx + vy*vy)\n    ax = -k*v_mod*vx\n    ay = -g - k*v_mod*vy\n    x, y   = x + vx*dt, y + vy*dt\n    vx, vy = vx + ax*dt, vy + ay*dt\n    t = t + dt\n```\n\nSencillo, pero el error total es **proporcional a dt** (método de 1.er orden): para ganar un decimal, 10 veces más pasos.\n\n## Runge–Kutta de 4.º orden (RK4)\n\nCalcula la derivada en 4 puntos del intervalo (inicio, dos en el medio, final) y hace un promedio ponderado `(k1 + 2·k2 + 2·k3 + k4)/6`. El error cae con **dt⁴**: dividir el paso por 2 hace el resultado 16 veces más preciso. Es lo que usa este simulador (dt = 0,5 ms).\n\n# Lo que cambia el aire\n\n- **Velocidad terminal:** al caer, el arrastre crece hasta igualar el peso: `k·v² = g` → `v_t = √(g/k)`.\n- El alcance baja mucho, y el **ángulo óptimo queda por debajo de 45°**: subir mucho cuesta tiempo en el aire, y el aire sigue robando velocidad.\n- La trayectoria deja de ser simétrica: la bajada es más empinada que la subida. La curva discontinua muestra la misma bola en el vacío.\n\n# Para ir más allá: la visión de Lagrange\n\nEn la mecánica analítica no se empieza por las fuerzas, sino por el **lagrangiano** `L = T − V` (energía cinética menos potencial), escrito en coordenadas convenientes `q`. El movimiento real obedece la ecuación de Euler–Lagrange:\n\n```\nd/dt (∂L/∂q') − ∂L/∂q = 0\n```\n\nPara el péndulo de longitud `ℓ`, con `q = θ`: `L = m·ℓ²·θ'²/2 + m·g·ℓ·cos θ` da directamente `θ'' = −(g/ℓ)·sin θ` — la ecuación que resuelve el laboratorio de oscilaciones. Las fuerzas que disipan energía, como el arrastre, no caben en un `V` y entran como **fuerzas generalizadas**.\n\n## ¿Y cuando la velocidad se acerca a la de la luz?\n\nLa mecánica de Newton también tiene un límite: cerca de `c`, la relatividad especial exige usar el factor de Lorentz `γ = 1/√(1 − v²/c²)`. Los relojes en movimiento van `γ` veces más despacio y el momento pasa a ser `p = γ·m·v`.\n\n## Hipótesis del simulador\n\n- Arrastre cuadrático con `k` constante (densidad del aire y coeficiente fijos), sin viento y sin giro de la bola (sin efecto Magnus).",
+      "task": "Una pelotita de plástico ligera (arrastre **k = 0,03 1/m**, bloqueado) tiene que caer en el blanco a **40 m**. Con el aire, 45° ya no es el mejor ángulo: acierta al blanco lanzando con una velocidad de **como máximo 35,3 m/s**.",
+      "hints": [
+        "Sin aire bastarían √(40·9,81) ≈ 19,8 m/s. Con el aire, a 45° la bola necesita unos 37 m/s para llegar a 40 m — y con 35,3 m/s ni siquiera alcanza el borde del blanco.",
+        "Prueba ángulos menores, entre 33° y 40°, y ajusta la velocidad hasta acertar.",
+        "Ejemplo: 36° con 35,3 m/s (la bola cae cerca de 39,7 m)."
+      ],
+      "goals": [
+        "La bola cae en el blanco (40 m ± 1 m)",
+        "Velocidad de lanzamiento de como máximo 35,3 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la **velocidad terminal** de caída de esta pelotita (k = 0,03 1/m, g = 9,81 m/s²)?",
+          "explanation": "En el equilibrio k·v² = g → v_t = √(9,81/0,03) = √327 ≈ 18,1 m/s. Caiga desde la altura que caiga, no pasa de eso."
+        },
+        {
+          "prompt": "Dividiste el paso `dt` por 10. ¿Cuánto disminuye el error total del método de **Euler**?",
+          "options": ["No cambia", "Unas 10 veces", "Unas 100 veces", "Unas 10 000 veces"],
+          "explanation": "Euler es de 1.er orden: error ∝ dt, así que 10 veces menor. Con RK4 (error ∝ dt⁴) serían ~10 000 veces."
+        },
+        {
+          "prompt": "Una nave pasa junto a la Tierra a **0,6·c**. ¿Cuál es el factor de Lorentz γ?",
+          "explanation": "γ = 1/√(1 − 0,36) = 1/√0,64 = 1/0,8 = 1,25: un reloj de la nave marca 1 h mientras en la Tierra pasan 1 h 15 min."
+        }
+      ]
+    }
+  }
+}
