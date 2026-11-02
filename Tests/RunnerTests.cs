@@ -202,7 +202,7 @@ public static class RunnerTests
         if (t.Language != lang) p.Add($"language is '{t.Language}'");
         if (t.Area != "programming") p.Add("area is not programming");
         if (string.IsNullOrWhiteSpace(t.Title) || string.IsNullOrWhiteSpace(t.Description)) p.Add("title/description empty");
-        if (t.Lessons.Count != 10) p.Add($"{t.Lessons.Count} lessons (expected 10)");
+        if (t.Lessons.Count != 20) p.Add($"{t.Lessons.Count} lessons (expected 20)");
         if (t.Lessons.Select(l => l.Id).Distinct().Count() != t.Lessons.Count) p.Add("duplicate lesson ids");
         foreach (var l in t.Lessons)
         {

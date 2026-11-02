@@ -3,7 +3,7 @@
   "title": "C",
   "area": "programming",
   "language": "c",
-  "description": "Aprenda C do zero: saída na tela, variáveis e tipos, entrada, decisões, laços, funções e ponteiros, vetores e strings, structs, recursão e, no fim, ordenação e busca binária com análise de complexidade. C é a linguagem que mostra como o computador realmente funciona.",
+  "description": "Aprenda C do zero: saída na tela, variáveis e tipos, entrada, decisões, laços, funções e ponteiros, vetores e strings, structs, recursão, ordenação e busca binária; depois aritmética de ponteiros, matrizes, análise de texto, memória dinâmica, listas ligadas, pilhas, manipulação de bits, merge sort, tabelas hash e grafos com BFS. C é a linguagem que mostra como o computador realmente funciona.",
   "lessons": [
     {
       "id": "c-01",
@@ -380,6 +380,446 @@
         {
           "input": "7\n15\n-8\n0\n23\n4\n-1\n11\n23\n",
           "expected": "Ordenado: -8 -1 0 4 11 15 23\nPosicao: 6",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "c-11",
+      "title": "Aritmética de ponteiros",
+      "theory": "# Aritmética de ponteiros\n\nNa lição 6 você usou ponteiros para uma única variável (`&a`, `*p`). Agora vamos ver o que acontece quando um ponteiro aponta para um **vetor**: dá para andar com ele pela memória, somar, subtrair e comparar endereços. É assim que o C trabalha \"por baixo\" de todo `v[i]`.\n\n## O nome do vetor é um endereço\n\nQuando você passa um vetor para uma função, o C passa o endereço do **primeiro elemento**. Por isso `v` e `&v[0]` são a mesma coisa:\n\n```c\nint v[5] = {10, 20, 30, 40, 50};\nint *p = v;          /* o mesmo que p = &v[0] */\nprintf(\"%d\\n\", *p);  /* 10 */\n```\n\n## Somar um inteiro a um ponteiro\n\n`p + 1` **não** soma 1 byte ao endereço: soma o tamanho de **um elemento**. Se `p` aponta para um `int`, `p + 1` aponta para o próximo `int`. Por isso:\n\n```c\n*(p + 2)   /* 30: o terceiro elemento */\np[2]       /* exatamente a mesma coisa */\n```\n\nNa verdade, `v[i]` é definido pelo próprio C como `*(v + i)`. O índice é só uma forma mais confortável de escrever aritmética de ponteiros.\n\n## Andando com p++\n\n```c\nint *p;\nfor (p = v; p < v + 5; p++) {\n    printf(\"%d \", *p);\n}\n```\n\n`v + 5` aponta para **uma posição depois do fim**. O C permite calcular (mas nunca ler) esse endereço, e ele é ótimo como \"parada\". Muitas funções trabalham com o par **[início, fim)**: o início entra, o fim não. A biblioteca do C++ inteira usa essa convenção.\n\n## Diferença entre ponteiros\n\nSubtrair dois ponteiros do mesmo vetor dá a **distância em elementos** entre eles:\n\n```c\nint *achado = v + 3;\nprintf(\"%d\\n\", (int)(achado - v));  /* 3: a posição */\n```\n\nComparar (`<`, `>`, `==`) ponteiros do mesmo vetor também é permitido. Comparar ponteiros de vetores diferentes não tem significado.\n\n## Dois ponteiros que se encontram\n\nUma técnica clássica: um ponteiro no começo, outro no fim, andando um em direção ao outro. Serve para inverter um vetor no lugar, testar palíndromos e muitos problemas de entrevista:\n\n```c\nvoid inverter(int *ini, int *fim) {   /* intervalo [ini, fim) */\n    int t;\n    fim--;                 /* agora fim aponta para o último */\n    while (ini < fim) {\n        t = *ini; *ini = *fim; *fim = t;\n        ini++;\n        fim--;\n    }\n}\n```\n\n## const: prometer não alterar\n\n`const int *p` é um ponteiro para inteiros que **não podem ser alterados por meio de p**. Use-o em funções que só leem o vetor: o compilador avisa se você tentar escrever `*p = 0` por engano, e quem lê a função entende na hora que ela não modifica nada.\n\n## Erros comuns\n\n- Ler `*fim` quando `fim` é \"um depois do último\": é memória fora do vetor.\n- Achar que `p + 1` avança 1 byte: avança um **elemento**.\n- Esquecer o `*`: `p > maior` compara endereços, `*p > *maior` compara valores.",
+      "task": "Leia `n` (1 <= n <= 100) e, na linha seguinte, `n` inteiros separados por espaço. Complete as três funções **usando apenas ponteiros** (sem `v[i]` dentro delas). Todas recebem o intervalo **[ini, fim)**:\n\n- `int soma(const int *ini, const int *fim)`: a soma dos elementos;\n- `const int *maior(const int *ini, const int *fim)`: um ponteiro para o maior elemento (em caso de empate, o primeiro);\n- `void inverter(int *ini, int *fim)`: inverte o vetor no lugar, com dois ponteiros.\n\nO `main` já está pronto e mostra:\n\n```\nSoma: <soma>\nMaior: <maior valor> na posicao <indice dele, comecando em 0>\nInvertido: <elementos invertidos separados por um espaco>\n```\n\nExemplo: entrada `5` e `3 9 -2 9 4` gera:\n\n```\nSoma: 23\nMaior: 9 na posicao 1\nInvertido: 4 9 -2 9 3\n```",
+      "starter": "#include <stdio.h>\n#define MAX 100\n\nint soma(const int *ini, const int *fim) {\n    /* escreva aqui */\n    return 0;\n}\n\nconst int *maior(const int *ini, const int *fim) {\n    /* escreva aqui */\n    return ini;\n}\n\nvoid inverter(int *ini, int *fim) {\n    /* escreva aqui */\n}\n\nint main(void) {\n    int v[MAX];\n    int n, i;\n    const int *m;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", v + i);\n    }\n    printf(\"Soma: %d\\n\", soma(v, v + n));\n    m = maior(v, v + n);\n    printf(\"Maior: %d na posicao %d\\n\", *m, (int)(m - v));\n    inverter(v, v + n);\n    printf(\"Invertido:\");\n    for (i = 0; i < n; i++) {\n        printf(\" %d\", *(v + i));\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#define MAX 100\n\nint soma(const int *ini, const int *fim) {\n    int s = 0;\n    while (ini < fim) {\n        s += *ini;\n        ini++;\n    }\n    return s;\n}\n\nconst int *maior(const int *ini, const int *fim) {\n    const int *m = ini;\n    const int *p;\n    for (p = ini + 1; p < fim; p++) {\n        if (*p > *m) {\n            m = p;\n        }\n    }\n    return m;\n}\n\nvoid inverter(int *ini, int *fim) {\n    int t;\n    fim--;\n    while (ini < fim) {\n        t = *ini;\n        *ini = *fim;\n        *fim = t;\n        ini++;\n        fim--;\n    }\n}\n\nint main(void) {\n    int v[MAX];\n    int n, i;\n    const int *m;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", v + i);\n    }\n    printf(\"Soma: %d\\n\", soma(v, v + n));\n    m = maior(v, v + n);\n    printf(\"Maior: %d na posicao %d\\n\", *m, (int)(m - v));\n    inverter(v, v + n);\n    printf(\"Invertido:\");\n    for (i = 0; i < n; i++) {\n        printf(\" %d\", *(v + i));\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "hints": [
+        "Em `soma`, use `while (ini < fim) { s += *ini; ini++; }`.",
+        "Em `maior`, guarde um ponteiro `m = ini` e troque para `p` só quando `*p > *m` (estritamente maior).",
+        "Em `inverter`, faça `fim--` antes do laço: o fim do intervalo aponta uma posição depois do último elemento."
+      ],
+      "tests": [
+        {
+          "input": "5\n3 9 -2 9 4\n",
+          "expected": "Soma: 23\nMaior: 9 na posicao 1\nInvertido: 4 9 -2 9 3",
+          "hidden": false
+        },
+        {
+          "input": "1\n42\n",
+          "expected": "Soma: 42\nMaior: 42 na posicao 0\nInvertido: 42",
+          "hidden": false
+        },
+        {
+          "input": "4\n-5 -1 -7 -1\n",
+          "expected": "Soma: -14\nMaior: -1 na posicao 1\nInvertido: -1 -7 -1 -5",
+          "hidden": false
+        },
+        {
+          "input": "6\n1 2 3 4 5 6\n",
+          "expected": "Soma: 21\nMaior: 6 na posicao 5\nInvertido: 6 5 4 3 2 1",
+          "hidden": true
+        },
+        {
+          "input": "7\n0 -3 15 8 15 2 -10\n",
+          "expected": "Soma: 27\nMaior: 15 na posicao 2\nInvertido: -10 2 15 8 15 -3 0",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "c-12",
+      "title": "Matrizes e multiplicação",
+      "theory": "# Matrizes\n\nUma **matriz** é um vetor de vetores: uma tabela com linhas e colunas. Planilhas, imagens (cada pixel numa linha e coluna), tabuleiros de jogos e quase toda a computação científica usam matrizes.\n\n## Declarando e acessando\n\n```c\nint m[3][4];       /* 3 linhas, 4 colunas */\nm[0][2] = 7;       /* linha 0, coluna 2 */\n```\n\nO primeiro índice é a **linha**, o segundo, a **coluna**. Para percorrer tudo, use dois laços aninhados:\n\n```c\nfor (i = 0; i < 3; i++) {\n    for (j = 0; j < 4; j++) {\n        printf(\"%d \", m[i][j]);\n    }\n    printf(\"\\n\");\n}\n```\n\n## Como fica na memória\n\nA memória é uma fila única de endereços. O C guarda a matriz **linha por linha** (row-major): primeiro toda a linha 0, depois toda a linha 1, e assim por diante. O elemento `m[i][j]` de uma matriz com `C` colunas fica na posição `i * C + j` dessa fila. Por isso percorrer linha por linha (o `j` no laço de dentro) é mais rápido do que coluna por coluna: o processador lê posições vizinhas da memória de uma vez só (cache).\n\n## Matrizes como parâmetro\n\nPara passar uma matriz a uma função, o C precisa saber **quantas colunas** cada linha tem (para calcular `i * C + j`). As linhas podem ficar em branco:\n\n```c\n#define MAX 10\nvoid mostrar(int m[][MAX], int linhas, int colunas);\n```\n\nÉ comum declarar a matriz com um tamanho máximo (`MAX`) e usar só a parte de cima e da esquerda, guardando os tamanhos reais em variáveis.\n\n## Multiplicação de matrizes\n\nSe `A` tem `l` linhas e `m` colunas e `B` tem `m` linhas e `c` colunas, o produto `R = A × B` tem `l` linhas e `c` colunas. Cada elemento é a soma dos produtos da **linha i de A** pela **coluna j de B**:\n\n```\nR[i][j] = A[i][0]*B[0][j] + A[i][1]*B[1][j] + ... + A[i][m-1]*B[m-1][j]\n```\n\n```c\nfor (i = 0; i < l; i++)\n    for (j = 0; j < c; j++) {\n        r[i][j] = 0;\n        for (k = 0; k < m; k++)\n            r[i][j] += a[i][k] * b[k][j];\n    }\n```\n\nSão três laços aninhados: o custo é **O(l · m · c)**; para matrizes quadradas n × n, **O(n³)**. O número de colunas de A **precisa** ser igual ao de linhas de B. E a ordem importa: em geral, `A × B` é diferente de `B × A`.\n\nMultiplicação de matrizes está em toda parte: gráficos 3D (girar e mover objetos), redes neurais e simulações físicas.\n\n## O traço\n\nO **traço** de uma matriz quadrada é a soma da diagonal principal: `m[0][0] + m[1][1] + ...`. Ele só faz sentido quando o número de linhas é igual ao de colunas.\n\n## Erros comuns\n\n- Trocar linha e coluna (`m[j][i]` em vez de `m[i][j]`).\n- Esquecer de zerar `r[i][j]` antes de acumular a soma.\n- Declarar o parâmetro como `int m[][]`: o número de colunas é obrigatório.",
+      "task": "Leia três inteiros `l`, `m` e `c` (de 1 a 10). Depois leia a matriz `A` (`l` linhas com `m` números cada) e a matriz `B` (`m` linhas com `c` números cada). Complete a função `multiplicar`, que calcula `R = A × B`, e mostre:\n\n```\nProduto <l>x<c>:\n<as l linhas de R, com os numeros separados por um espaco>\nTraco: <soma da diagonal de R>\n```\n\nSe `R` não for quadrada (`l` diferente de `c`), a última linha deve ser `Traco: nao se aplica`.\n\nExemplo: entrada `2 2 2`, depois `1 2` / `3 4` (A) e `5 6` / `7 8` (B) gera:\n\n```\nProduto 2x2:\n19 22\n43 50\nTraco: 69\n```",
+      "starter": "#include <stdio.h>\n#define MAX 10\n\nvoid ler(int m[][MAX], int linhas, int colunas) {\n    int i, j;\n    for (i = 0; i < linhas; i++) {\n        for (j = 0; j < colunas; j++) {\n            scanf(\"%d\", &m[i][j]);\n        }\n    }\n}\n\nvoid multiplicar(int a[][MAX], int b[][MAX], int r[][MAX], int l, int m, int c) {\n    /* escreva aqui: r = a x b */\n}\n\nint main(void) {\n    int a[MAX][MAX], b[MAX][MAX], r[MAX][MAX];\n    int l, m, c, i, j;\n    scanf(\"%d %d %d\", &l, &m, &c);\n    ler(a, l, m);\n    ler(b, m, c);\n    multiplicar(a, b, r, l, m, c);\n    /* escreva aqui a saida */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#define MAX 10\n\nvoid ler(int m[][MAX], int linhas, int colunas) {\n    int i, j;\n    for (i = 0; i < linhas; i++) {\n        for (j = 0; j < colunas; j++) {\n            scanf(\"%d\", &m[i][j]);\n        }\n    }\n}\n\nvoid multiplicar(int a[][MAX], int b[][MAX], int r[][MAX], int l, int m, int c) {\n    int i, j, k;\n    for (i = 0; i < l; i++) {\n        for (j = 0; j < c; j++) {\n            r[i][j] = 0;\n            for (k = 0; k < m; k++) {\n                r[i][j] += a[i][k] * b[k][j];\n            }\n        }\n    }\n}\n\nint main(void) {\n    int a[MAX][MAX], b[MAX][MAX], r[MAX][MAX];\n    int l, m, c, i, j;\n    int traco = 0;\n    scanf(\"%d %d %d\", &l, &m, &c);\n    ler(a, l, m);\n    ler(b, m, c);\n    multiplicar(a, b, r, l, m, c);\n    printf(\"Produto %dx%d:\\n\", l, c);\n    for (i = 0; i < l; i++) {\n        for (j = 0; j < c; j++) {\n            if (j > 0) {\n                printf(\" \");\n            }\n            printf(\"%d\", r[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    if (l == c) {\n        for (i = 0; i < l; i++) {\n            traco += r[i][i];\n        }\n        printf(\"Traco: %d\\n\", traco);\n    } else {\n        printf(\"Traco: nao se aplica\\n\");\n    }\n    return 0;\n}",
+      "hints": [
+        "São três laços: `i` percorre as linhas de A, `j` as colunas de B e `k` soma `a[i][k] * b[k][j]`.",
+        "Zere `r[i][j]` antes do laço de `k`.",
+        "O traço só existe quando `l == c`: some `r[i][i]` para `i` de 0 até `l - 1`."
+      ],
+      "tests": [
+        {
+          "input": "2 2 2\n1 2\n3 4\n5 6\n7 8\n",
+          "expected": "Produto 2x2:\n19 22\n43 50\nTraco: 69",
+          "hidden": false
+        },
+        {
+          "input": "2 3 1\n1 0 2\n-1 3 1\n3\n2\n1\n",
+          "expected": "Produto 2x1:\n5\n4\nTraco: nao se aplica",
+          "hidden": false
+        },
+        {
+          "input": "1 1 1\n7\n6\n",
+          "expected": "Produto 1x1:\n42\nTraco: 42",
+          "hidden": false
+        },
+        {
+          "input": "3 3 3\n1 0 0\n0 1 0\n0 0 1\n4 -2 9\n3 5 0\n-7 1 8\n",
+          "expected": "Produto 3x3:\n4 -2 9\n3 5 0\n-7 1 8\nTraco: 17",
+          "hidden": true
+        },
+        {
+          "input": "3 2 3\n1 2\n3 4\n5 6\n7 8 9\n10 11 12\n",
+          "expected": "Produto 3x3:\n27 30 33\n61 68 75\n95 106 117\nTraco: 212",
+          "hidden": true
+        }
+      ],
+      "level": 3
+    },
+    {
+      "id": "c-13",
+      "title": "Analisando texto: um avaliador de expressões",
+      "theory": "# Analisando texto caractere por caractere\n\nCompiladores, calculadoras, planilhas e leitores de arquivos de configuração fazem a mesma coisa: recebem um **texto** e descobrem o que ele significa. Esse trabalho se chama **análise léxica** (separar o texto em pedaços, os *tokens*) e **análise sintática** (entender como os pedaços se combinam). Nesta lição você vai escrever uma pequena calculadora assim.\n\n## Lendo uma linha inteira: fgets\n\nO `scanf(\"%s\")` para no primeiro espaço. Para ler a linha toda, use `fgets`:\n\n```c\nchar linha[201];\nfgets(linha, 201, stdin);\n```\n\nEle lê até 200 caracteres (deixa espaço para o `'\\0'`) ou até o fim da linha, e **guarda o `'\\n'`** no texto. Se precisar, remova-o:\n\n```c\nint n = strlen(linha);\nif (n > 0 && linha[n - 1] == '\\n') linha[n - 1] = '\\0';\n```\n\nSe não houver nada para ler, `fgets` devolve `NULL`.\n\n## Classificando caracteres: <ctype.h>\n\n- `isdigit(c)`: verdadeiro se `c` é um dígito `'0'` a `'9'`;\n- `isspace(c)`: espaço, tab ou quebra de linha;\n- `isalpha(c)`: letra.\n\n## De texto para número\n\nO caractere `'7'` não é o número 7: é o código 55 na tabela ASCII. Como os dígitos são consecutivos na tabela, `c - '0'` dá o valor do dígito. Para montar um número com vários dígitos, multiplique o que já tem por 10 e some o novo dígito:\n\n```c\nint valor = 0;\nwhile (isdigit(*p)) {\n    valor = valor * 10 + (*p - '0');   /* \"472\": 4, 47, 472 */\n    p++;\n}\n```\n\nÉ exatamente isso que o `atoi` faz por dentro.\n\n## O laço do analisador\n\nUm ponteiro `p` percorre a linha. Em cada volta, olhamos o caractere atual e decidimos:\n\n```c\nchar *p = linha;\nwhile (*p != '\\0') {\n    if (isspace(*p)) {\n        p++;                    /* ignora espaços */\n    } else if (isdigit(*p)) {\n        /* lê o número inteiro e soma com o sinal atual */\n    } else if (*p == '+' || *p == '-') {\n        /* guarda o sinal para o próximo número */\n        p++;\n    } else {\n        /* caractere inválido: erro */\n    }\n}\n```\n\nNote que ler um número **avança** o ponteiro por vários caracteres de uma vez, enquanto os outros casos avançam um só. A posição do caractere atual é `p - linha` (aritmética de ponteiros, lição 11).\n\n## Mensagens de erro úteis\n\nUm bom analisador diz **onde** está o problema. Compiladores mostram linha e coluna; aqui, a coluna é `(p - linha) + 1` (contando a partir de 1, como as pessoas contam).\n\n## Erros comuns\n\n- Somar `*p` em vez de `*p - '0'`: `'7'` vale 55.\n- Esquecer de avançar `p` em algum caso: laço infinito.\n- Testar só `' '` como espaço e tropeçar no `'\\n'` que o `fgets` deixou no fim.",
+      "task": "Leia **uma linha** com uma expressão de números inteiros não negativos, somas e subtrações, com espaços em qualquer lugar (ou nenhum), por exemplo `12 + 7-3 + 100`. A expressão pode começar com um sinal (`-5 + 2`) e entre dois números há sempre exatamente um operador. Calcule o resultado da esquerda para a direita e mostre:\n\n```\nNumeros: <quantos numeros a expressao tem>\nResultado: <valor>\n```\n\nSe aparecer qualquer caractere que não seja dígito, `+`, `-` ou espaço, mostre só esta linha e pare:\n\n```\nErro: caractere invalido '<caractere>' na coluna <posicao, comecando em 1>\n```\n\nExemplo: entrada `12 + 7-3 + 100` gera:\n\n```\nNumeros: 4\nResultado: 116\n```\n\nE a entrada `8 * 2` gera `Erro: caractere invalido '*' na coluna 3`.",
+      "starter": "#include <stdio.h>\n#include <ctype.h>\n\nint main(void) {\n    char linha[201];\n    char *p;\n    int resultado = 0;\n    int numeros = 0;\n    int sinal = 1;\n    if (fgets(linha, 201, stdin) == NULL) {\n        linha[0] = '\\0';\n    }\n    p = linha;\n    /* escreva aqui o laco que percorre a linha */\n    printf(\"Numeros: %d\\n\", numeros);\n    printf(\"Resultado: %d\\n\", resultado);\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <ctype.h>\n\nint main(void) {\n    char linha[201];\n    char *p;\n    int resultado = 0;\n    int numeros = 0;\n    int sinal = 1;\n    int valor;\n    if (fgets(linha, 201, stdin) == NULL) {\n        linha[0] = '\\0';\n    }\n    p = linha;\n    while (*p != '\\0') {\n        if (isspace(*p)) {\n            p++;\n        } else if (isdigit(*p)) {\n            valor = 0;\n            while (isdigit(*p)) {\n                valor = valor * 10 + (*p - '0');\n                p++;\n            }\n            resultado += sinal * valor;\n            numeros++;\n        } else if (*p == '+') {\n            sinal = 1;\n            p++;\n        } else if (*p == '-') {\n            sinal = -1;\n            p++;\n        } else {\n            printf(\"Erro: caractere invalido '%c' na coluna %d\\n\", *p, (int)(p - linha) + 1);\n            return 0;\n        }\n    }\n    printf(\"Numeros: %d\\n\", numeros);\n    printf(\"Resultado: %d\\n\", resultado);\n    return 0;\n}",
+      "hints": [
+        "Guarde o sinal do próximo número numa variável `sinal` (1 ou -1): `+` faz `sinal = 1` e `-` faz `sinal = -1`.",
+        "Ao achar um dígito, monte o número com `valor = valor * 10 + (*p - '0')` enquanto `isdigit(*p)`, e depois some `sinal * valor` ao resultado.",
+        "A coluna do erro é `(int)(p - linha) + 1`. Use `isspace` para ignorar espaços e o `'\\n'` do fim."
+      ],
+      "tests": [
+        {
+          "input": "12 + 7-3 + 100\n",
+          "expected": "Numeros: 4\nResultado: 116",
+          "hidden": false
+        },
+        {
+          "input": "8 * 2\n",
+          "expected": "Erro: caractere invalido '*' na coluna 3",
+          "hidden": false
+        },
+        {
+          "input": "-5 + 2\n",
+          "expected": "Numeros: 2\nResultado: -3",
+          "hidden": false
+        },
+        {
+          "input": "1000-1-1-1\n",
+          "expected": "Numeros: 4\nResultado: 997",
+          "hidden": true
+        },
+        {
+          "input": "   42\n",
+          "expected": "Numeros: 1\nResultado: 42",
+          "hidden": true
+        },
+        {
+          "input": "10 + 20 + x\n",
+          "expected": "Erro: caractere invalido 'x' na coluna 11",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-14",
+      "title": "Memória dinâmica: malloc, realloc e free",
+      "theory": "# Memória dinâmica\n\nAté agora todo vetor tinha um tamanho fixo escrito no código (`int v[100]`). Mas e quando você não sabe quantos dados virão? Reservar um milhão de posições \"por garantia\" desperdiça memória, e mesmo assim pode não bastar. A solução é pedir memória **enquanto o programa roda**.\n\n## Pilha e heap\n\nAs variáveis locais vivem na **pilha** (stack): são criadas quando a função começa e somem quando ela termina, automaticamente. A memória dinâmica vem de outra região, o **heap**: você pede, usa pelo tempo que quiser e **devolve** quando não precisar mais. Ninguém devolve por você.\n\n## malloc: pedir memória\n\n```c\n#include <stdlib.h>\n\nint *v = malloc(10 * sizeof(int));   /* espaço para 10 ints */\nif (v == NULL) {\n    /* não havia memória: trate o erro */\n}\nv[0] = 42;                           /* usa como um vetor normal */\n```\n\n`malloc` recebe o número de **bytes** e devolve um ponteiro para o começo do bloco, ou `NULL` se falhar. Por isso usamos `sizeof(int)`: o tamanho de um `int` muda de máquina para máquina. O conteúdo inicial é lixo; `calloc(10, sizeof(int))` faz o mesmo, mas zera tudo.\n\n## free: devolver\n\n```c\nfree(v);\nv = NULL;   /* boa prática: evita usar o bloco depois de liberado */\n```\n\nEsquecer o `free` causa **vazamento de memória** (memory leak): programas que rodam por muito tempo, como servidores, vão consumindo cada vez mais até travar. Usar o bloco depois do `free` (*use after free*) ou liberar duas vezes são erros graves, fontes clássicas de falhas de segurança.\n\n## realloc: mudar de tamanho\n\n```c\nint *novo = realloc(v, 20 * sizeof(int));\nif (novo == NULL) { free(v); /* erro */ }\nv = novo;\n```\n\n`realloc` aumenta (ou diminui) o bloco, **mantendo o conteúdo**. Se não couber no mesmo lugar, ele copia tudo para um bloco novo e libera o antigo. Por isso guardamos o resultado numa variável auxiliar: se falhar, o bloco antigo ainda é válido.\n\n## O vetor dinâmico (que cresce sozinho)\n\nÉ a estrutura por trás do `list` do Python, do `ArrayList` do Java e do `List<T>` do C#. Guardamos três coisas: o ponteiro, quantos elementos há (`n`) e quantos cabem (`capacidade`). Quando enche, **dobramos** a capacidade:\n\n```c\nif (n == capacidade) {\n    capacidade *= 2;\n    v = realloc(v, capacidade * sizeof(int));\n}\nv[n] = x;\nn++;\n```\n\nPor que dobrar e não somar 1? Cada `realloc` pode copiar o vetor inteiro. Crescendo de 1 em 1, inserir `n` elementos custaria 1 + 2 + ... + n = **O(n²)** cópias. Dobrando, as cópias somam no máximo 2n: cada inserção custa **O(1) amortizado**, em média.\n\n## Lendo até acabar\n\n`scanf` devolve quantos valores conseguiu ler. Com `while (scanf(\"%d\", &x) == 1 && x != 0)` o laço para no 0 **ou** no fim da entrada.",
+      "task": "Leia inteiros (separados por espaços ou quebras de linha) até aparecer um `0` (que não entra na conta) ou a entrada acabar. Guarde-os num **vetor dinâmico** que começa com capacidade 2 e **dobra** quando enche, com `realloc`. Cada vez que a capacidade mudar, mostre:\n\n```\nCapacidade: <antiga> -> <nova>\n```\n\nNo fim, mostre:\n\n```\nLidos: <quantidade>\nMedia: <media com 2 casas>\nAcima da media: <os valores maiores que a media, na ordem de entrada, separados por um espaco>\n```\n\nSe nenhum valor for maior que a média, a última linha é `Acima da media: nenhum`. Se nenhum número for lido, mostre só `Lidos: 0`. Não esqueça o `free`.\n\nExemplo: entrada `5 1 4 6 1 0` gera:\n\n```\nCapacidade: 2 -> 4\nCapacidade: 4 -> 8\nLidos: 5\nMedia: 3.40\nAcima da media: 5 4 6\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int capacidade = 2;\n    int n = 0;\n    int x, i;\n    int *v = malloc(capacidade * sizeof(int));\n    if (v == NULL) {\n        return 1;\n    }\n    while (scanf(\"%d\", &x) == 1 && x != 0) {\n        /* escreva aqui: cresca o vetor quando encher e guarde x */\n    }\n    printf(\"Lidos: %d\\n\", n);\n    /* escreva aqui a media e os valores acima dela */\n    free(v);\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int capacidade = 2;\n    int n = 0;\n    int x, i;\n    int achou = 0;\n    long soma = 0;\n    double media;\n    int *novo;\n    int *v = malloc(capacidade * sizeof(int));\n    if (v == NULL) {\n        return 1;\n    }\n    while (scanf(\"%d\", &x) == 1 && x != 0) {\n        if (n == capacidade) {\n            novo = realloc(v, 2 * capacidade * sizeof(int));\n            if (novo == NULL) {\n                free(v);\n                return 1;\n            }\n            printf(\"Capacidade: %d -> %d\\n\", capacidade, 2 * capacidade);\n            v = novo;\n            capacidade = 2 * capacidade;\n        }\n        v[n] = x;\n        n++;\n        soma += x;\n    }\n    printf(\"Lidos: %d\\n\", n);\n    if (n > 0) {\n        media = (double)soma / n;\n        printf(\"Media: %.2f\\n\", media);\n        printf(\"Acima da media:\");\n        for (i = 0; i < n; i++) {\n            if (v[i] > media) {\n                printf(\" %d\", v[i]);\n                achou = 1;\n            }\n        }\n        if (!achou) {\n            printf(\" nenhum\");\n        }\n        printf(\"\\n\");\n    }\n    free(v);\n    return 0;\n}",
+      "hints": [
+        "Comece com `capacidade = 2` e `v = malloc(capacidade * sizeof(int))`.",
+        "Antes de guardar, se `n == capacidade`, faça o `realloc` para o dobro, mostre a linha `Capacidade: ...` e atualize `capacidade`.",
+        "Calcule a média como `double` (`(double)soma / n`) e compare cada `v[i] > media`; use uma variável para saber se algum foi mostrado."
+      ],
+      "tests": [
+        {
+          "input": "5 1 4 6 1 0\n",
+          "expected": "Capacidade: 2 -> 4\nCapacidade: 4 -> 8\nLidos: 5\nMedia: 3.40\nAcima da media: 5 4 6",
+          "hidden": false
+        },
+        {
+          "input": "7\n7\n0\n",
+          "expected": "Lidos: 2\nMedia: 7.00\nAcima da media: nenhum",
+          "hidden": false
+        },
+        {
+          "input": "0\n",
+          "expected": "Lidos: 0",
+          "hidden": false
+        },
+        {
+          "input": "3 -2 10 8 1 9 4 4 -7 2 6 0 99 99\n",
+          "expected": "Capacidade: 2 -> 4\nCapacidade: 4 -> 8\nCapacidade: 8 -> 16\nLidos: 11\nMedia: 3.45\nAcima da media: 10 8 9 4 4 6",
+          "hidden": true
+        },
+        {
+          "input": "12 15\n",
+          "expected": "Lidos: 2\nMedia: 13.50\nAcima da media: 15",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-15",
+      "title": "Listas ligadas",
+      "theory": "# Listas ligadas\n\nUm vetor guarda os elementos lado a lado na memória. Isso torna o acesso `v[i]` instantâneo, mas inserir no meio é caro: é preciso empurrar todos os seguintes uma casa para a frente. A **lista ligada** faz a troca oposta: cada elemento vive num bloco separado (um **nó**) e guarda o **endereço do próximo**.\n\n```\ncabeca -> [3 | *] -> [5 | *] -> [8 | NULL]\n```\n\n## O nó: uma struct que aponta para si mesma\n\n```c\ntypedef struct No {\n    int valor;\n    struct No *prox;   /* endereço do próximo nó (ou NULL no último) */\n} No;\n```\n\nUma struct não pode **conter** a si mesma (teria tamanho infinito), mas pode conter um **ponteiro** para outra do mesmo tipo. Por isso precisamos do nome `struct No` dentro da própria definição.\n\nA lista inteira é representada por um único ponteiro, a **cabeça**: `No *cabeca = NULL;` é a lista vazia.\n\n## Percorrer\n\n```c\nNo *p;\nfor (p = cabeca; p != NULL; p = p->prox) {\n    printf(\"%d \", p->valor);\n}\n```\n\nNão há índice: para chegar ao quinto elemento é preciso passar pelos quatro primeiros. Acesso por posição custa **O(n)**.\n\n## Inserir no começo: O(1)\n\n```c\nNo *novo = malloc(sizeof(No));\nnovo->valor = 42;\nnovo->prox = cabeca;   /* o novo aponta para o antigo primeiro */\ncabeca = novo;         /* e passa a ser a cabeça */\n```\n\n## Inserir em ordem\n\nPara manter a lista ordenada, ande até o último nó cujo valor seja **menor ou igual** ao novo e encaixe o novo logo depois dele. Cuidado com o caso especial: se a lista estiver vazia ou o novo for menor que a cabeça, ele vira a nova cabeça. Por isso a função **devolve a cabeça** (que pode ter mudado): `cabeca = inserirOrdenado(cabeca, 5);`.\n\n## Remover\n\nPara remover um nó, o **anterior** precisa passar a apontar para o seguinte. Por isso percorremos com dois ponteiros, `ant` e `atual`:\n\n```c\nwhile (atual != NULL && atual->valor != valor) {\n    ant = atual;\n    atual = atual->prox;\n}\nif (atual != NULL) {\n    if (ant == NULL) cabeca = atual->prox;   /* era a cabeça */\n    else ant->prox = atual->prox;\n    free(atual);\n}\n```\n\nProgramadores experientes às vezes usam um ponteiro para ponteiro (`No **`) para eliminar o caso especial da cabeça; é um bom exercício depois desta lição.\n\n## Liberar a lista inteira\n\nCada nó veio de um `malloc`, então cada um precisa de um `free`. Guarde o próximo **antes** de liberar o atual:\n\n```c\nwhile (cabeca != NULL) {\n    No *prox = cabeca->prox;\n    free(cabeca);\n    cabeca = prox;\n}\n```\n\n## Vetor ou lista?\n\n| Operação | Vetor | Lista ligada |\n|---|---|---|\n| acessar o i-ésimo | O(1) | O(n) |\n| inserir/remover no início | O(n) | O(1) |\n| inserir depois de um nó conhecido | O(n) | O(1) |\n\nListas ligadas aparecem dentro de sistemas operacionais, alocadores de memória e tabelas hash (lição 19).",
+      "task": "Mantenha uma **lista ligada ordenada** (crescente) de inteiros. Leia `n` e depois `n` comandos, um por linha:\n\n- `I <valor>`: insere o valor na posição certa (valores repetidos são permitidos; o novo fica depois dos iguais);\n- `R <valor>`: remove a **primeira** ocorrência do valor; se ele não existir, mostre `Nao encontrado: <valor>`;\n- `P`: mostra `Lista: <valores separados por um espaco>` ou `Lista: vazia`.\n\nDepois do último comando, mostre `Tamanho: <quantidade de nos>` e libere todos os nós.\n\nExemplo: entrada `5`, `I 5`, `I 2`, `I 9`, `R 5`, `P` gera:\n\n```\nLista: 2 9\nTamanho: 2\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct No {\n    int valor;\n    struct No *prox;\n} No;\n\nNo *inserirOrdenado(No *cabeca, int valor) {\n    /* escreva aqui (devolva a nova cabeca) */\n    return cabeca;\n}\n\nNo *remover(No *cabeca, int valor, int *removeu) {\n    /* escreva aqui (devolva a nova cabeca e diga se removeu) */\n    *removeu = 0;\n    return cabeca;\n}\n\nvoid mostrar(No *cabeca) {\n    /* escreva aqui */\n}\n\nint main(void) {\n    No *cabeca = NULL;\n    int n, i, valor, removeu;\n    char op;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\" %c\", &op);\n        if (op == 'I') {\n            scanf(\"%d\", &valor);\n            cabeca = inserirOrdenado(cabeca, valor);\n        } else if (op == 'R') {\n            scanf(\"%d\", &valor);\n            cabeca = remover(cabeca, valor, &removeu);\n            if (!removeu) {\n                printf(\"Nao encontrado: %d\\n\", valor);\n            }\n        } else if (op == 'P') {\n            mostrar(cabeca);\n        }\n    }\n    /* escreva aqui: mostre o tamanho e libere os nos */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct No {\n    int valor;\n    struct No *prox;\n} No;\n\nNo *inserirOrdenado(No *cabeca, int valor) {\n    No *novo = malloc(sizeof(No));\n    No *atual;\n    novo->valor = valor;\n    if (cabeca == NULL || valor < cabeca->valor) {\n        novo->prox = cabeca;\n        return novo;\n    }\n    atual = cabeca;\n    while (atual->prox != NULL && atual->prox->valor <= valor) {\n        atual = atual->prox;\n    }\n    novo->prox = atual->prox;\n    atual->prox = novo;\n    return cabeca;\n}\n\nNo *remover(No *cabeca, int valor, int *removeu) {\n    No *ant = NULL;\n    No *atual = cabeca;\n    while (atual != NULL && atual->valor != valor) {\n        ant = atual;\n        atual = atual->prox;\n    }\n    if (atual == NULL) {\n        *removeu = 0;\n        return cabeca;\n    }\n    if (ant == NULL) {\n        cabeca = atual->prox;\n    } else {\n        ant->prox = atual->prox;\n    }\n    free(atual);\n    *removeu = 1;\n    return cabeca;\n}\n\nvoid mostrar(No *cabeca) {\n    No *p;\n    printf(\"Lista:\");\n    if (cabeca == NULL) {\n        printf(\" vazia\");\n    }\n    for (p = cabeca; p != NULL; p = p->prox) {\n        printf(\" %d\", p->valor);\n    }\n    printf(\"\\n\");\n}\n\nint main(void) {\n    No *cabeca = NULL;\n    No *prox;\n    int n, i, valor, removeu;\n    int tamanho = 0;\n    char op;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\" %c\", &op);\n        if (op == 'I') {\n            scanf(\"%d\", &valor);\n            cabeca = inserirOrdenado(cabeca, valor);\n        } else if (op == 'R') {\n            scanf(\"%d\", &valor);\n            cabeca = remover(cabeca, valor, &removeu);\n            if (!removeu) {\n                printf(\"Nao encontrado: %d\\n\", valor);\n            }\n        } else if (op == 'P') {\n            mostrar(cabeca);\n        }\n    }\n    while (cabeca != NULL) {\n        prox = cabeca->prox;\n        free(cabeca);\n        cabeca = prox;\n        tamanho++;\n    }\n    printf(\"Tamanho: %d\\n\", tamanho);\n    return 0;\n}",
+      "hints": [
+        "Em `inserirOrdenado`, se `cabeca == NULL` ou `valor < cabeca->valor`, o novo nó vira a cabeça; senão ande enquanto `atual->prox != NULL && atual->prox->valor <= valor`.",
+        "Em `remover`, percorra com `ant` e `atual`; se `ant == NULL`, quem sai é a cabeça.",
+        "Leia o comando com `scanf(\" %c\", &op)` (o espaço antes de `%c` pula a quebra de linha) e só leia o número quando `op` for `I` ou `R`."
+      ],
+      "tests": [
+        {
+          "input": "5\nI 5\nI 2\nI 9\nR 5\nP\n",
+          "expected": "Lista: 2 9\nTamanho: 2",
+          "hidden": false
+        },
+        {
+          "input": "4\nP\nR 3\nI 3\nP\n",
+          "expected": "Lista: vazia\nNao encontrado: 3\nLista: 3\nTamanho: 1",
+          "hidden": false
+        },
+        {
+          "input": "8\nI 4\nI 4\nI 1\nI 7\nP\nR 4\nR 1\nP\n",
+          "expected": "Lista: 1 4 4 7\nLista: 4 7\nTamanho: 2",
+          "hidden": false
+        },
+        {
+          "input": "9\nI 10\nI -3\nI 6\nI 10\nR 10\nP\nR 99\nR -3\nP\n",
+          "expected": "Lista: -3 6 10\nNao encontrado: 99\nLista: 6 10\nTamanho: 2",
+          "hidden": true
+        },
+        {
+          "input": "6\nI 1\nR 1\nP\nI 2\nI 0\nP\n",
+          "expected": "Lista: vazia\nLista: 0 2\nTamanho: 2",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-16",
+      "title": "Pilhas: calculadora pós-fixa",
+      "theory": "# Pilhas\n\nUma **pilha** (stack) é uma coleção em que só se mexe no **topo**: o último que entra é o primeiro que sai (**LIFO**, *last in, first out*), como uma pilha de pratos. Ela tem só duas operações principais:\n\n- **empilhar** (push): coloca um elemento no topo;\n- **desempilhar** (pop): tira e devolve o elemento do topo.\n\nAmbas custam **O(1)**. Parece pouco, mas pilhas estão em toda parte: o botão \"desfazer\" dos editores, o \"voltar\" do navegador, a verificação de parênteses de um compilador e a própria **pilha de chamadas** que guarda as variáveis de cada função em execução (é ela que \"estoura\" numa recursão infinita, lição 9).\n\n## Implementando com um vetor\n\n```c\n#define MAX 100\nint pilha[MAX];\nint topo = 0;          /* quantos elementos há; o topo é pilha[topo - 1] */\n\nvoid empilhar(int x) {\n    pilha[topo] = x;\n    topo++;\n}\n\nint desempilhar(void) {\n    topo--;\n    return pilha[topo];\n}\n```\n\nAntes de desempilhar, **sempre** verifique se a pilha não está vazia (`topo > 0`); antes de empilhar, se ela não está cheia (`topo < MAX`). Desempilhar de uma pilha vazia é o erro de *stack underflow*.\n\n## Notação pós-fixa (polonesa reversa)\n\nEscrevemos `3 + 4` com o operador **no meio** (notação infixa), o que exige parênteses e regras de precedência: `(3 + 4) * 2`. Na notação **pós-fixa**, o operador vem **depois** dos operandos, e os parênteses desaparecem:\n\n| Infixa | Pós-fixa |\n|---|---|\n| `3 + 4` | `3 4 +` |\n| `(3 + 4) * 2` | `3 4 + 2 *` |\n| `3 + 4 * 2` | `3 4 2 * +` |\n\nCalculadoras HP científicas, a linguagem PostScript e a máquina virtual do Java funcionam assim.\n\n## Avaliando com uma pilha\n\nO algoritmo é curto:\n\n1. Leia os tokens da esquerda para a direita.\n2. Número: empilhe.\n3. Operador: desempilhe **b** (o topo) e depois **a**, calcule `a op b` e empilhe o resultado.\n4. No fim, a pilha deve ter **exatamente um** valor: o resultado.\n\nA ordem importa: em `10 4 -`, o topo é 4, então `b = 4`, `a = 10` e o resultado é `10 - 4 = 6`.\n\n```\ntoken   pilha\n10      10\n4       10 4\n-       6\n```\n\n## Lendo tokens até o fim\n\n`scanf(\"%s\", tok)` lê uma palavra por vez, pulando espaços e quebras de linha, e devolve 1 enquanto conseguir ler. Assim `while (scanf(\"%s\", tok) == 1)` percorre todos os tokens. Para saber se o token é número, olhe o primeiro caractere com `isdigit`; para convertê-lo, use `atoi(tok)` de `<stdlib.h>`.\n\n## Divisão inteira\n\nEm C, `/` entre inteiros **trunca em direção ao zero**: `7 / 2` é 3 e `-7 / 2` é -3. E dividir por zero é um erro grave: verifique antes.",
+      "task": "Leia uma expressão **pós-fixa** com números inteiros não negativos e os operadores `+`, `-`, `*` e `/`, separados por espaços. Avalie-a com uma **pilha** e, depois de processar cada token, mostre o token e o conteúdo da pilha (da base para o topo):\n\n```\n<token> => <valores da pilha separados por um espaco>\n```\n\nNo fim, mostre `Resultado: <valor>`. Trate os erros mostrando **só** a mensagem e parando na hora:\n\n- token que não é número nem um dos quatro operadores: `Erro: token invalido <token>`;\n- operador com menos de dois valores na pilha: `Erro: faltam operandos para <operador>`;\n- divisão por zero: `Erro: divisao por zero`;\n- no fim, pilha vazia: `Erro: expressao vazia`; mais de um valor: `Erro: sobraram <quantidade> valores`.\n\nExemplo: entrada `3 4 + 2 *` gera:\n\n```\n3 => 3\n4 => 3 4\n+ => 7\n2 => 7 2\n* => 14\nResultado: 14\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n#define MAX 100\n\nint pilha[MAX];\nint topo = 0;\n\nvoid empilhar(int x) {\n    /* escreva aqui */\n}\n\nint desempilhar(void) {\n    /* escreva aqui */\n    return 0;\n}\n\nint main(void) {\n    char tok[32];\n    while (scanf(\"%s\", tok) == 1) {\n        /* escreva aqui: trate numeros, operadores e erros, e mostre a pilha */\n    }\n    /* escreva aqui o resultado */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n#define MAX 100\n\nint pilha[MAX];\nint topo = 0;\n\nvoid empilhar(int x) {\n    pilha[topo] = x;\n    topo++;\n}\n\nint desempilhar(void) {\n    topo--;\n    return pilha[topo];\n}\n\nint main(void) {\n    char tok[32];\n    int a, b, i;\n    char op;\n    while (scanf(\"%s\", tok) == 1) {\n        if (isdigit(tok[0])) {\n            empilhar(atoi(tok));\n        } else if (strlen(tok) == 1 && strchr(\"+-*/\", tok[0]) != NULL) {\n            op = tok[0];\n            if (topo < 2) {\n                printf(\"Erro: faltam operandos para %c\\n\", op);\n                return 0;\n            }\n            b = desempilhar();\n            a = desempilhar();\n            if (op == '+') {\n                empilhar(a + b);\n            } else if (op == '-') {\n                empilhar(a - b);\n            } else if (op == '*') {\n                empilhar(a * b);\n            } else {\n                if (b == 0) {\n                    printf(\"Erro: divisao por zero\\n\");\n                    return 0;\n                }\n                empilhar(a / b);\n            }\n        } else {\n            printf(\"Erro: token invalido %s\\n\", tok);\n            return 0;\n        }\n        printf(\"%s =>\", tok);\n        for (i = 0; i < topo; i++) {\n            printf(\" %d\", pilha[i]);\n        }\n        printf(\"\\n\");\n    }\n    if (topo == 1) {\n        printf(\"Resultado: %d\\n\", pilha[0]);\n    } else if (topo == 0) {\n        printf(\"Erro: expressao vazia\\n\");\n    } else {\n        printf(\"Erro: sobraram %d valores\\n\", topo);\n    }\n    return 0;\n}",
+      "hints": [
+        "Verifique nesta ordem: é número (`isdigit(tok[0])`)? É um operador de um caractere só (`strlen(tok) == 1` e `strchr(\"+-*/\", tok[0])`)? Senão, token inválido.",
+        "Para um operador, confira `topo < 2` antes de desempilhar; depois `b = desempilhar(); a = desempilhar();` e empilhe `a op b`.",
+        "Na divisão, teste `b == 0` antes de dividir."
+      ],
+      "tests": [
+        {
+          "input": "3 4 + 2 *\n",
+          "expected": "3 => 3\n4 => 3 4\n+ => 7\n2 => 7 2\n* => 14\nResultado: 14",
+          "hidden": false
+        },
+        {
+          "input": "10 4 -\n",
+          "expected": "10 => 10\n4 => 10 4\n- => 6\nResultado: 6",
+          "hidden": false
+        },
+        {
+          "input": "5 +\n",
+          "expected": "5 => 5\nErro: faltam operandos para +",
+          "hidden": false
+        },
+        {
+          "input": "2 7 - 3 /\n",
+          "expected": "2 => 2\n7 => 2 7\n- => -5\n3 => -5 3\n/ => -1\nResultado: -1",
+          "hidden": false
+        },
+        {
+          "input": "1 2 3\n",
+          "expected": "1 => 1\n2 => 1 2\n3 => 1 2 3\nErro: sobraram 3 valores",
+          "hidden": true
+        },
+        {
+          "input": "8 0 /\n",
+          "expected": "8 => 8\n0 => 8 0\nErro: divisao por zero",
+          "hidden": true
+        },
+        {
+          "input": "15 7 1 1 + - / 3 * 2 1 1 + + -\n",
+          "expected": "15 => 15\n7 => 15 7\n1 => 15 7 1\n1 => 15 7 1 1\n+ => 15 7 2\n- => 15 5\n/ => 3\n3 => 3 3\n* => 9\n2 => 9 2\n1 => 9 2 1\n1 => 9 2 1 1\n+ => 9 2 2\n+ => 9 4\n- => 5\nResultado: 5",
+          "hidden": true
+        },
+        {
+          "input": "4 x +\n",
+          "expected": "4 => 4\nErro: token invalido x",
+          "hidden": true
+        }
+      ],
+      "level": 4
+    },
+    {
+      "id": "c-17",
+      "title": "Manipulação de bits",
+      "theory": "# Manipulação de bits\n\nDentro do computador, todo número é uma sequência de **bits** (0 ou 1). O número 13 é `1101` em binário: 1·8 + 1·4 + 0·2 + 1·1. C permite mexer diretamente nesses bits, e isso é usado em drivers, compressão, criptografia, gráficos, jogos e em todo microcontrolador (registradores de hardware são conjuntos de bits).\n\n## unsigned\n\nPara trabalhar com bits, use tipos **sem sinal**: `unsigned int` tem 32 bits que valem de 0 a 4294967295 (2³² − 1). Com tipos com sinal, deslocar valores negativos tem comportamento que depende do compilador. Leia e mostre com `%u`.\n\n## Os operadores bit a bit\n\n| Operador | Nome | Exemplo (em binário) |\n|---|---|---|\n| `a & b` | E | `1100 & 1010 = 1000` |\n| `a \\| b` | OU | `1100 \\| 1010 = 1110` |\n| `a ^ b` | OU exclusivo (XOR) | `1100 ^ 1010 = 0110` |\n| `~a` | NÃO (inverte todos) | `~0000...0101 = 1111...1010` |\n| `a << k` | desloca à esquerda | `0011 << 2 = 1100` (vezes 4) |\n| `a >> k` | desloca à direita | `1100 >> 2 = 0011` (dividido por 4) |\n\nNão confunda `&` com `&&` nem `|` com `||`: os duplos são lógicos (verdadeiro/falso), os simples operam bit a bit.\n\n## Máscaras\n\nUma **máscara** é um número com 1 só nas posições que interessam. `1u << k` tem um único bit 1, na posição `k` (contando da direita, a partir de 0). Com ela:\n\n```c\nunsigned int m = 1u << k;\nn | m      /* liga o bit k */\nn & ~m     /* desliga o bit k */\nn ^ m      /* inverte o bit k */\n(n >> k) & 1u   /* lê o bit k: 0 ou 1 */\n```\n\n## Truques clássicos\n\n- `n & (n - 1)` **apaga o bit 1 mais baixo** de `n`. Subtrair 1 transforma o último 1 em 0 e os zeros à direita dele em 1; o `&` limpa tudo isso. Repetindo até `n` virar 0, contamos os bits 1 em tantos passos quantos bits 1 houver (algoritmo de Kernighan).\n- Uma **potência de 2** tem exatamente um bit 1. Logo, `n != 0 && (n & (n - 1)) == 0` testa isso em O(1).\n- `n & (~n + 1)` **isola o bit 1 mais baixo** (em complemento de dois, `~n + 1` é `-n`). Com `n = 12` (`1100`), dá 4 (`0100`). As árvores de Fenwick, usadas em competições, dependem desse truque.\n\n## Mostrando em binário\n\nPercorra os bits do 31 até o 0 com `(n >> i) & 1u` e pule os zeros à esquerda até achar o primeiro 1. Se o número for 0, mostre `0`.\n\n## Por que isso importa\n\nUm `unsigned int` pode guardar **32 sinais liga/desliga** num espaço só. Permissões de arquivos no Linux (`rwx`), flags de configuração e os pinos de um Arduino (o registrador `PORTB` controla 8 pinos de uma vez) usam exatamente estas operações.",
+      "task": "Leia um `unsigned int` `n` e um inteiro `k` (0 <= k <= 31), separados por espaço. Mostre:\n\n```\nBinario: <n em binario, sem zeros a esquerda>\nBits 1: <quantidade de bits 1>\nPotencia de 2: <sim ou nao>\nLiga bit <k>: <n com o bit k ligado>\nDesliga bit <k>: <n com o bit k desligado>\nInverte bit <k>: <n com o bit k invertido>\nMenor bit 1: <valor do bit 1 mais baixo de n, ou 0>\n```\n\nUse `%u` para ler e mostrar os valores sem sinal.\n\nExemplo: entrada `44 0` gera:\n\n```\nBinario: 101100\nBits 1: 3\nPotencia de 2: nao\nLiga bit 0: 45\nDesliga bit 0: 44\nInverte bit 0: 45\nMenor bit 1: 4\n```",
+      "starter": "#include <stdio.h>\n\nvoid mostrarBinario(unsigned int n) {\n    /* escreva aqui */\n}\n\nint contarUns(unsigned int n) {\n    /* escreva aqui */\n    return 0;\n}\n\nint main(void) {\n    unsigned int n, mascara;\n    int k;\n    scanf(\"%u %d\", &n, &k);\n    printf(\"Binario: \");\n    mostrarBinario(n);\n    printf(\"\\n\");\n    printf(\"Bits 1: %d\\n\", contarUns(n));\n    /* escreva aqui as outras linhas */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n\nvoid mostrarBinario(unsigned int n) {\n    int i;\n    int comecou = 0;\n    for (i = 31; i >= 0; i--) {\n        if ((n >> i) & 1u) {\n            putchar('1');\n            comecou = 1;\n        } else if (comecou) {\n            putchar('0');\n        }\n    }\n    if (!comecou) {\n        putchar('0');\n    }\n}\n\nint contarUns(unsigned int n) {\n    int conta = 0;\n    while (n != 0) {\n        n = n & (n - 1);\n        conta++;\n    }\n    return conta;\n}\n\nint main(void) {\n    unsigned int n, mascara;\n    int k;\n    scanf(\"%u %d\", &n, &k);\n    printf(\"Binario: \");\n    mostrarBinario(n);\n    printf(\"\\n\");\n    printf(\"Bits 1: %d\\n\", contarUns(n));\n    if (n != 0 && (n & (n - 1)) == 0) {\n        printf(\"Potencia de 2: sim\\n\");\n    } else {\n        printf(\"Potencia de 2: nao\\n\");\n    }\n    mascara = 1u << k;\n    printf(\"Liga bit %d: %u\\n\", k, n | mascara);\n    printf(\"Desliga bit %d: %u\\n\", k, n & ~mascara);\n    printf(\"Inverte bit %d: %u\\n\", k, n ^ mascara);\n    printf(\"Menor bit 1: %u\\n\", n & (~n + 1u));\n    return 0;\n}",
+      "hints": [
+        "Para o binário, percorra `i` de 31 até 0 com `(n >> i) & 1u`, só começando a escrever depois do primeiro 1; se nada foi escrito, escreva `0`.",
+        "Conte os bits com `while (n != 0) { n = n & (n - 1); conta++; }` (numa cópia de `n`!).",
+        "A máscara é `1u << k`: ligar é `n | m`, desligar é `n & ~m`, inverter é `n ^ m`. O menor bit 1 é `n & (~n + 1u)`."
+      ],
+      "tests": [
+        {
+          "input": "44 0\n",
+          "expected": "Binario: 101100\nBits 1: 3\nPotencia de 2: nao\nLiga bit 0: 45\nDesliga bit 0: 44\nInverte bit 0: 45\nMenor bit 1: 4",
+          "hidden": false
+        },
+        {
+          "input": "64 6\n",
+          "expected": "Binario: 1000000\nBits 1: 1\nPotencia de 2: sim\nLiga bit 6: 64\nDesliga bit 6: 0\nInverte bit 6: 0\nMenor bit 1: 64",
+          "hidden": false
+        },
+        {
+          "input": "0 3\n",
+          "expected": "Binario: 0\nBits 1: 0\nPotencia de 2: nao\nLiga bit 3: 8\nDesliga bit 3: 0\nInverte bit 3: 8\nMenor bit 1: 0",
+          "hidden": false
+        },
+        {
+          "input": "4294967295 31\n",
+          "expected": "Binario: 11111111111111111111111111111111\nBits 1: 32\nPotencia de 2: nao\nLiga bit 31: 4294967295\nDesliga bit 31: 2147483647\nInverte bit 31: 2147483647\nMenor bit 1: 1",
+          "hidden": true
+        },
+        {
+          "input": "2147483648 0\n",
+          "expected": "Binario: 10000000000000000000000000000000\nBits 1: 1\nPotencia de 2: sim\nLiga bit 0: 2147483649\nDesliga bit 0: 2147483648\nInverte bit 0: 2147483649\nMenor bit 1: 2147483648",
+          "hidden": true
+        },
+        {
+          "input": "1000000 10\n",
+          "expected": "Binario: 11110100001001000000\nBits 1: 7\nPotencia de 2: nao\nLiga bit 10: 1001024\nDesliga bit 10: 1000000\nInverte bit 10: 1001024\nMenor bit 1: 64",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "c-18",
+      "title": "Merge sort e contagem de inversões",
+      "theory": "# Dividir para conquistar: merge sort\n\nNa lição 10, o insertion sort custava O(n²). Para um milhão de números, isso dá cerca de 10¹² comparações: horas. O **merge sort** (ordenação por intercalação) faz o mesmo trabalho em **O(n log n)**: uns 20 milhões de passos, uma fração de segundo. Ele é o exemplo clássico da técnica **dividir para conquistar**:\n\n1. **Dividir**: corte o vetor ao meio.\n2. **Conquistar**: ordene cada metade, recursivamente (uma metade de tamanho 1 já está ordenada: é o caso base).\n3. **Combinar**: **intercale** as duas metades ordenadas numa só.\n\n## Intercalar (merge)\n\nCom duas metades já ordenadas, basta olhar o primeiro de cada uma e copiar o **menor** para um vetor auxiliar, repetindo até uma acabar; depois copie o que sobrou da outra:\n\n```c\n/* metades v[ini..meio-1] e v[meio..fim-1] já ordenadas */\ni = ini; j = meio; k = ini;\nwhile (i < meio && j < fim) {\n    if (v[i] <= v[j]) tmp[k++] = v[i++];\n    else              tmp[k++] = v[j++];\n}\nwhile (i < meio) tmp[k++] = v[i++];\nwhile (j < fim)  tmp[k++] = v[j++];\nfor (k = ini; k < fim; k++) v[k] = tmp[k];\n```\n\n`tmp[k++] = v[i++]` usa o valor de `k` e de `i` **e depois** soma 1 a cada um. Usar `<=` (e não `<`) mantém a ordem dos iguais: o merge sort é **estável**.\n\n## Por que O(n log n)?\n\nCada nível da recursão divide os pedaços ao meio, então há **log₂ n** níveis. Em cada nível, as intercalações juntas percorrem os **n** elementos uma vez. Total: n · log₂ n. O preço é a memória extra O(n) do vetor `tmp`, que pedimos com `malloc` (lição 14).\n\n## Inversões\n\nUma **inversão** é um par de posições `i < j` com `v[i] > v[j]`: dois elementos \"fora de ordem\". O vetor `2 4 1 3 5` tem 3 inversões: (2,1), (4,1) e (4,3). Um vetor ordenado tem 0; um em ordem decrescente tem o máximo, n(n−1)/2. O número de inversões mede **quão desordenado** está um vetor: é exatamente o número de trocas que o bubble sort faria. Sistemas de recomendação usam essa medida para comparar dois rankings (quanto o meu gosto se parece com o seu).\n\nContar testando todos os pares é O(n²). Mas o merge sort conta de graça: durante a intercalação, quando um elemento da **metade direita** (`v[j]`) é copiado antes dos que ainda restam na metade esquerda, ele é menor que **todos** eles, e cada um forma uma inversão. Restam `meio - i` elementos na esquerda:\n\n```c\nelse {\n    tmp[k++] = v[j++];\n    inversoes += meio - i;\n}\n```\n\nO total é a soma das inversões da esquerda, da direita e as \"cruzadas\" encontradas no merge. Use `long`: com n = 100 000, podem passar de 4 bilhões.\n\n## Quick sort e a biblioteca\n\nOutro algoritmo famoso é o **quick sort**: escolhe um pivô, separa menores e maiores e ordena cada lado. Na média ele é O(n log n) e muito rápido na prática, mas no pior caso cai para O(n²). As bibliotecas reais combinam ideias: o `sort` do C++ usa o *introsort*, e o Python e o Java usam o *Timsort*, um parente do merge sort.",
+      "task": "Leia `n` (1 <= n <= 1000) e, na linha seguinte, `n` inteiros. Complete a função recursiva `long mergeSort(int v[], int tmp[], int ini, int fim)`, que ordena o intervalo **[ini, fim)** com merge sort e **devolve o número de inversões** dele. Mostre:\n\n```\nOrdenado: <elementos em ordem crescente separados por um espaco>\nInversoes: <numero de inversoes do vetor original>\n```\n\nValores iguais **não** formam inversão.\n\nExemplo: entrada `5` e `2 4 1 3 5` gera:\n\n```\nOrdenado: 1 2 3 4 5\nInversoes: 3\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nlong mergeSort(int v[], int tmp[], int ini, int fim) {\n    /* escreva aqui: ordene [ini, fim) e devolva as inversoes */\n    return 0;\n}\n\nint main(void) {\n    int n, i;\n    int *v, *tmp;\n    long inversoes;\n    scanf(\"%d\", &n);\n    v = malloc(n * sizeof(int));\n    tmp = malloc(n * sizeof(int));\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", &v[i]);\n    }\n    inversoes = mergeSort(v, tmp, 0, n);\n    printf(\"Ordenado:\");\n    for (i = 0; i < n; i++) {\n        printf(\" %d\", v[i]);\n    }\n    printf(\"\\n\");\n    printf(\"Inversoes: %ld\\n\", inversoes);\n    free(v);\n    free(tmp);\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n\nlong mergeSort(int v[], int tmp[], int ini, int fim) {\n    int meio, i, j, k;\n    long inversoes = 0;\n    if (fim - ini < 2) {\n        return 0;\n    }\n    meio = (ini + fim) / 2;\n    inversoes += mergeSort(v, tmp, ini, meio);\n    inversoes += mergeSort(v, tmp, meio, fim);\n    i = ini;\n    j = meio;\n    k = ini;\n    while (i < meio && j < fim) {\n        if (v[i] <= v[j]) {\n            tmp[k++] = v[i++];\n        } else {\n            tmp[k++] = v[j++];\n            inversoes += meio - i;\n        }\n    }\n    while (i < meio) {\n        tmp[k++] = v[i++];\n    }\n    while (j < fim) {\n        tmp[k++] = v[j++];\n    }\n    for (k = ini; k < fim; k++) {\n        v[k] = tmp[k];\n    }\n    return inversoes;\n}\n\nint main(void) {\n    int n, i;\n    int *v, *tmp;\n    long inversoes;\n    scanf(\"%d\", &n);\n    v = malloc(n * sizeof(int));\n    tmp = malloc(n * sizeof(int));\n    for (i = 0; i < n; i++) {\n        scanf(\"%d\", &v[i]);\n    }\n    inversoes = mergeSort(v, tmp, 0, n);\n    printf(\"Ordenado:\");\n    for (i = 0; i < n; i++) {\n        printf(\" %d\", v[i]);\n    }\n    printf(\"\\n\");\n    printf(\"Inversoes: %ld\\n\", inversoes);\n    free(v);\n    free(tmp);\n    return 0;\n}",
+      "hints": [
+        "Caso base: se `fim - ini < 2`, devolva 0. Senão, `meio = (ini + fim) / 2` e some as inversões de `mergeSort(v, tmp, ini, meio)` e `mergeSort(v, tmp, meio, fim)`.",
+        "Na intercalação, use `v[i] <= v[j]` para pegar da esquerda; quando pegar da direita, some `meio - i` às inversões.",
+        "Não esqueça de copiar `tmp[ini..fim-1]` de volta para `v` no fim de cada intercalação."
+      ],
+      "tests": [
+        {
+          "input": "5\n2 4 1 3 5\n",
+          "expected": "Ordenado: 1 2 3 4 5\nInversoes: 3",
+          "hidden": false
+        },
+        {
+          "input": "4\n1 2 3 4\n",
+          "expected": "Ordenado: 1 2 3 4\nInversoes: 0",
+          "hidden": false
+        },
+        {
+          "input": "6\n6 5 4 3 2 1\n",
+          "expected": "Ordenado: 1 2 3 4 5 6\nInversoes: 15",
+          "hidden": false
+        },
+        {
+          "input": "7\n3 3 1 2 3 1 0\n",
+          "expected": "Ordenado: 0 1 1 2 3 3 3\nInversoes: 14",
+          "hidden": true
+        },
+        {
+          "input": "1\n-8\n",
+          "expected": "Ordenado: -8\nInversoes: 0",
+          "hidden": true
+        },
+        {
+          "input": "300\n-123 -65 -837 671 -361 -368 -852 620 -8 691 -841 -779 227 -39 -41 716 -99 338 741 681 664 252 797 899 -254 936 -300 396 871 538 98 -212 -332 -782 -993 473 -219 -128 -380 526 652 -462 -434 951 939 -774 96 535 -35 630 -149 -942 -785 40 -395 684 64 -310 -923 -134 640 -580 -558 685 602 -206 -613 -317 336 -492 563 -105 887 -47 757 22 256 833 -159 -457 288 838 -923 -686 -656 810 -755 337 -742 160 -49 849 -834 -87 -841 -841 -359 -299 845 299 805 328 -547 334 -749 -1000 444 -353 383 918 -962 299 75 42 527 -649 687 -632 -176 848 747 -87 897 584 584 -695 -822 448 649 810 -354 -289 49 570 -893 965 285 333 -192 9 471 -675 -714 -709 -730 -685 31 463 579 143 -46 722 607 -902 -380 -216 308 249 688 -951 -606 -351 100 698 790 -732 -480 927 -655 -151 666 -563 -887 609 611 117 719 -597 969 835 215 -319 -74 820 230 611 959 -21 864 607 135 -264 51 89 -930 440 279 -428 860 384 947 524 795 -431 684 -480 297 -862 338 -626 -568 384 152 -341 -634 -483 499 -908 -785 501 889 -555 -278 -789 -806 -845 632 836 796 593 -203 -489 421 751 -224 -644 502 694 553 651 945 963 -266 -418 313 -132 -86 -456 -883 -564 498 -4 -368 -127 79 949 972 872 -587 -651 319 -441 -151 7 256 335 820 388 -671 -707 508 888 -737 902 -602 -537 476 894 547 -851 606 782 541 86 123 -131 757 356 -901 264 89 -330 -483 -342 -625 -916 -242 -669 -728 -102\n",
+          "expected": "Ordenado: -1000 -993 -962 -951 -942 -930 -923 -923 -916 -908 -902 -901 -893 -887 -883 -862 -852 -851 -845 -841 -841 -841 -837 -834 -822 -806 -789 -785 -785 -782 -779 -774 -755 -749 -742 -737 -732 -730 -728 -714 -709 -707 -695 -686 -685 -675 -671 -669 -656 -655 -651 -649 -644 -634 -632 -626 -625 -613 -606 -602 -597 -587 -580 -568 -564 -563 -558 -555 -547 -537 -492 -489 -483 -483 -480 -480 -462 -457 -456 -441 -434 -431 -428 -418 -395 -380 -380 -368 -368 -361 -359 -354 -353 -351 -342 -341 -332 -330 -319 -317 -310 -300 -299 -289 -278 -266 -264 -254 -242 -224 -219 -216 -212 -206 -203 -192 -176 -159 -151 -151 -149 -134 -132 -131 -128 -127 -123 -105 -102 -99 -87 -87 -86 -74 -65 -49 -47 -46 -41 -39 -35 -21 -8 -4 7 9 22 31 40 42 49 51 64 75 79 86 89 89 96 98 100 117 123 135 143 152 160 215 227 230 249 252 256 256 264 279 285 288 297 299 299 308 313 319 328 333 334 335 336 337 338 338 356 383 384 384 388 396 421 440 444 448 463 471 473 476 498 499 501 502 508 524 526 527 535 538 541 547 553 563 570 579 584 584 593 602 606 607 607 609 611 611 620 630 632 640 649 651 652 664 666 671 681 684 684 685 687 688 691 694 698 716 719 722 741 747 751 757 757 782 790 795 796 797 805 810 810 820 820 833 835 836 838 845 848 849 860 864 871 872 887 888 889 894 897 899 902 918 927 936 939 945 947 949 951 959 963 965 969 972\nInversoes: 22424",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "c-19",
+      "title": "Tabela hash: contando palavras",
+      "theory": "# Tabelas hash\n\nComo contar quantas vezes cada palavra aparece num livro? Guardando as palavras num vetor, cada busca percorre tudo: O(n) por palavra, O(n²) no total. A busca binária (lição 10) exige manter tudo ordenado. A **tabela hash** faz melhor: encontra e insere em **O(1) em média**. É a estrutura por trás do `dict` do Python, do `Dictionary` do C#, dos objetos do JavaScript e dos índices dos bancos de dados.\n\n## A ideia\n\nReserve um vetor de `TAM` posições, os **baldes** (buckets). Uma **função hash** transforma a chave (a palavra) num número; o resto da divisão por `TAM` diz em qual balde ela mora. Para procurar, calcule o hash e olhe **só aquele balde**.\n\n## Uma boa função hash: djb2\n\n```c\nunsigned long hash(const char *s) {\n    unsigned long h = 5381;\n    while (*s != '\\0') {\n        h = h * 33 + (unsigned char)*s;\n        s++;\n    }\n    return h % TAM;\n}\n```\n\nEla mistura todos os caracteres, e a ordem importa (\"ab\" e \"ba\" dão hashes diferentes). Com `unsigned`, se o número passar do limite, ele simplesmente \"dá a volta\" (aritmética módulo 2⁶⁴), sem erro. Uma boa função espalha as chaves por igual entre os baldes. Usar um `TAM` **primo** (como 101) ajuda a espalhar.\n\n## Colisões e encadeamento\n\nDuas chaves diferentes podem cair no mesmo balde: é uma **colisão**, e ela é inevitável (há infinitas palavras e só `TAM` baldes). A solução mais comum é o **encadeamento**: cada balde é uma **lista ligada** (lição 15) com todas as chaves daquele balde.\n\n```c\ntypedef struct Item {\n    char palavra[31];\n    int conta;\n    struct Item *prox;\n} Item;\n\nItem *tabela[TAM];   /* global: todos os baldes começam NULL */\n```\n\nBuscar ou inserir:\n\n1. `b = hash(palavra)`;\n2. percorra a lista `tabela[b]` comparando com `strcmp`; se achar, devolva o item;\n3. se não achar, crie um item com `malloc`, copie a palavra com `strcpy`, zere a contagem e insira-o **no começo** da lista do balde.\n\n## Por que O(1) em média?\n\nCom `n` chaves e `TAM` baldes, cada lista tem em média `n / TAM` itens (o **fator de carga**). Mantendo esse fator pequeno (as bibliotecas reais aumentam a tabela quando ele passa de algo como 0,75), cada busca olha só alguns itens. No **pior caso** (todas as chaves no mesmo balde) tudo vira uma lista: O(n). Uma função hash ruim, ou um atacante que escolhe chaves que colidem, causa exatamente isso.\n\n## Tabelas hash não guardam ordem\n\nOs itens ficam espalhados pelos baldes conforme o hash, não na ordem de chegada. Se a ordem importa, guarde também um vetor de ponteiros na ordem em que cada item foi criado, como fizemos com a `List` e o dicionário em outras trilhas.\n\n## Liberar a memória\n\nCada item foi criado com `malloc`: no fim, percorra o vetor de ponteiros (ou cada balde) e dê `free` em todos.",
+      "task": "Leia `n` (1 <= n <= 1000) e depois `n` palavras (letras minúsculas, até 30 cada, separadas por espaços ou quebras de linha). Conte quantas vezes cada uma aparece usando a **tabela hash com encadeamento** do código inicial (`TAM` = 101 baldes, função djb2). Mostre, **na ordem em que cada palavra apareceu pela primeira vez**:\n\n```\n<palavra>: <contagem>\n...\nDistintas: <quantidade de palavras diferentes>\nMais frequente: <palavra> (<contagem>)\n```\n\nEm caso de empate na mais frequente, mostre a que apareceu primeiro. Libere todos os itens no fim.\n\nExemplo: entrada `6` e `o rato roeu o rato rei` gera:\n\n```\no: 2\nrato: 2\nroeu: 1\nrei: 1\nDistintas: 4\nMais frequente: o (2)\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#define TAM 101\n#define MAXP 1000\n\ntypedef struct Item {\n    char palavra[31];\n    int conta;\n    struct Item *prox;\n} Item;\n\nItem *tabela[TAM];\nItem *ordem[MAXP];\nint distintas = 0;\n\nunsigned long hash(const char *s) {\n    unsigned long h = 5381;\n    while (*s != '\\0') {\n        h = h * 33 + (unsigned char)*s;\n        s++;\n    }\n    return h % TAM;\n}\n\nItem *buscarOuInserir(const char *palavra) {\n    /* escreva aqui: procure no balde; se nao achar, crie o item */\n    return NULL;\n}\n\nint main(void) {\n    int n, i;\n    char palavra[31];\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%s\", palavra);\n        /* escreva aqui */\n    }\n    /* escreva aqui a saida e libere os itens */\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#define TAM 101\n#define MAXP 1000\n\ntypedef struct Item {\n    char palavra[31];\n    int conta;\n    struct Item *prox;\n} Item;\n\nItem *tabela[TAM];\nItem *ordem[MAXP];\nint distintas = 0;\n\nunsigned long hash(const char *s) {\n    unsigned long h = 5381;\n    while (*s != '\\0') {\n        h = h * 33 + (unsigned char)*s;\n        s++;\n    }\n    return h % TAM;\n}\n\nItem *buscarOuInserir(const char *palavra) {\n    unsigned long b = hash(palavra);\n    Item *it = tabela[b];\n    while (it != NULL) {\n        if (strcmp(it->palavra, palavra) == 0) {\n            return it;\n        }\n        it = it->prox;\n    }\n    it = malloc(sizeof(Item));\n    strcpy(it->palavra, palavra);\n    it->conta = 0;\n    it->prox = tabela[b];\n    tabela[b] = it;\n    ordem[distintas] = it;\n    distintas++;\n    return it;\n}\n\nint main(void) {\n    int n, i;\n    char palavra[31];\n    Item *melhor;\n    scanf(\"%d\", &n);\n    for (i = 0; i < n; i++) {\n        scanf(\"%s\", palavra);\n        buscarOuInserir(palavra)->conta++;\n    }\n    melhor = ordem[0];\n    for (i = 0; i < distintas; i++) {\n        printf(\"%s: %d\\n\", ordem[i]->palavra, ordem[i]->conta);\n        if (ordem[i]->conta > melhor->conta) {\n            melhor = ordem[i];\n        }\n    }\n    printf(\"Distintas: %d\\n\", distintas);\n    printf(\"Mais frequente: %s (%d)\\n\", melhor->palavra, melhor->conta);\n    for (i = 0; i < distintas; i++) {\n        free(ordem[i]);\n    }\n    return 0;\n}",
+      "hints": [
+        "Em `buscarOuInserir`, percorra `tabela[b]` com `strcmp(it->palavra, palavra) == 0`; se não achar, crie o item, ponha `it->prox = tabela[b]` e `tabela[b] = it`.",
+        "Ao criar um item, guarde-o também em `ordem[distintas]` e some 1 em `distintas`: é esse vetor que dá a ordem de saída.",
+        "No `main`, faça `buscarOuInserir(palavra)->conta++` para cada palavra lida; para a mais frequente, troque só quando a contagem for estritamente maior."
+      ],
+      "tests": [
+        {
+          "input": "6\no rato roeu o rato rei\n",
+          "expected": "o: 2\nrato: 2\nroeu: 1\nrei: 1\nDistintas: 4\nMais frequente: o (2)",
+          "hidden": false
+        },
+        {
+          "input": "1\nalgoritmo\n",
+          "expected": "algoritmo: 1\nDistintas: 1\nMais frequente: algoritmo (1)",
+          "hidden": false
+        },
+        {
+          "input": "7\nab\nba\nab\nba\nba\nc\nc\n",
+          "expected": "ab: 2\nba: 3\nc: 2\nDistintas: 3\nMais frequente: ba (3)",
+          "hidden": false
+        },
+        {
+          "input": "12\num dois tres um dois um quatro cinco seis sete oito nove\n",
+          "expected": "um: 3\ndois: 2\ntres: 1\nquatro: 1\ncinco: 1\nseis: 1\nsete: 1\noito: 1\nnove: 1\nDistintas: 9\nMais frequente: um (3)",
+          "hidden": true
+        },
+        {
+          "input": "400\nbit fila pilha lista hash dado arvore fila grafo bit laco lista byte bit ponteiro laco byte pilha cache bit\nbit bit bit memoria fila bit cache arvore arvore lista grafo dado bit hash bit hash byte byte cache byte\ndado vetor bit byte laco byte cache bit cache laco byte laco fila cache laco byte dado pilha pilha bit\nlista fila arvore dado bit cache hash grafo bit grafo dado grafo pilha arvore grafo cache bit pilha arvore fila\nlaco byte lista bit fila dado byte lista pilha cache fila pilha dado hash dado bit dado arvore pilha lista\nmemoria bit bit dado dado byte arvore bit hash fila bit cache byte hash vetor dado byte hash dado vetor\narvore vetor lista lista grafo byte fila bit dado byte arvore pilha cache bit bit grafo vetor lista bit bit\ndado lista bit ponteiro laco dado dado laco dado lista cache codigo vetor hash grafo dado cache dado fila byte\ndado lista fila bit fila lista byte dado grafo hash laco ponteiro byte grafo codigo byte dado grafo bit pilha\nfila cache lista pilha teste bit arvore lista grafo fila pilha byte fila bit byte bit bit bit cache dado\nbyte fila byte lista bit arvore fila lista lista grafo cache laco hash dado fila arvore bit dado grafo memoria\nlista cache cache byte cache pilha teste dado pilha bit cache dado ponteiro dado hash bit fila hash grafo fila\nbit lista lista bit hash cache ponteiro ponteiro cache grafo lista dado dado arvore byte cache bit dado hash arvore\nhash lista pilha hash lista cache pilha arvore bit vetor cache memoria byte lista pilha cache bit bit lista bit\nfila grafo fila byte grafo bit bit pilha codigo cache pilha laco dado bit fila bit dado lista lista lista\nhash dado dado byte dado pilha hash memoria fila arvore byte fila grafo cache pilha fila pilha vetor dado pilha\nmemoria byte fila vetor bit dado fila byte byte bit lista dado bit byte bit lista arvore fila codigo pilha\nbyte fila pilha laco bit bit byte fila grafo pilha fila cache vetor bit byte hash vetor fila dado bit\npilha ponteiro pilha byte hash cache arvore grafo dado cache bit byte dado byte dado codigo fila pilha bit laco\ngrafo bit laco fila hash dado pilha bit bit byte grafo hash hash bit arvore bit bit pilha lista teste\n",
+          "expected": "bit: 66\nfila: 36\npilha: 32\nlista: 33\nhash: 24\ndado: 46\narvore: 20\ngrafo: 24\nlaco: 15\nbyte: 41\nponteiro: 7\ncache: 31\nmemoria: 6\nvetor: 11\ncodigo: 5\nteste: 3\nDistintas: 16\nMais frequente: bit (66)",
+          "hidden": true
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "c-20",
+      "title": "Grafos: caminho mais curto com BFS",
+      "theory": "# Grafos e busca em largura\n\nUm **grafo** é um conjunto de **vértices** ligados por **arestas**. Mapas (cidades e estradas), redes sociais (pessoas e amizades), a internet (computadores e cabos) e até um labirinto são grafos. Uma das perguntas mais importantes sobre eles é: **qual o caminho mais curto** de A até B?\n\n## O labirinto como grafo\n\nNuma grade, cada casa livre é um vértice, ligado às casas livres vizinhas (cima, baixo, esquerda, direita). Paredes (`#`) não são vértices. Não precisamos montar o grafo explicitamente: os vizinhos de `(l, c)` são calculados na hora com dois vetores de deslocamento:\n\n```c\nint dl[4] = {-1, 1, 0, 0};   /* cima, baixo, esquerda, direita */\nint dc[4] = { 0, 0, -1, 1};\n/* vizinho d: (l + dl[d], c + dc[d]) */\n```\n\n## Busca em largura (BFS)\n\nA **BFS** (*breadth-first search*) explora o grafo em \"ondas\": primeiro a origem, depois todos a distância 1, depois todos a distância 2, e assim por diante. Por isso, a primeira vez que ela alcança um vértice é **pelo caminho mais curto** (quando todas as arestas valem 1).\n\nO segredo é a **fila** (queue): o primeiro que entra é o primeiro que sai (**FIFO**), o oposto da pilha da lição 16.\n\n```\ndist[origem] = 0; coloque a origem na fila\nenquanto a fila não estiver vazia:\n    tire o primeiro (atual) da fila\n    para cada vizinho livre e ainda não visitado:\n        dist[vizinho] = dist[atual] + 1\n        pai[vizinho] = atual\n        coloque o vizinho no fim da fila\n```\n\nCom `dist` começando em -1 para todos, \"não visitado\" é simplesmente `dist == -1`. Marcar como visitado **ao entrar na fila** (e não ao sair) evita que o mesmo vértice entre duas vezes.\n\n## A fila com um vetor\n\nComo cada casa entra na fila no máximo uma vez, um vetor do tamanho da grade basta, com dois índices:\n\n```c\nint filaL[MAX * MAX], filaC[MAX * MAX];\nint ini = 0, fim = 0;\nfilaL[fim] = l; filaC[fim] = c; fim++;   /* entrar */\nl = filaL[ini]; c = filaC[ini]; ini++;   /* sair */\n/* vazia quando ini == fim */\n```\n\n## Reconstruindo o caminho\n\nA distância diz **quanto**, mas não **por onde**. Para isso guardamos o **pai** de cada casa (de onde viemos ao descobri-la). Partindo do destino e seguindo os pais, chegamos de volta à origem: é o caminho, de trás para a frente.\n\n## Custo\n\nCada casa entra e sai da fila uma vez e olha 4 vizinhos: **O(V + E)**, linear no tamanho do grafo. Numa grade de 1000 × 1000, um milhão de casas em uma fração de segundo.\n\n## Além da BFS\n\n- Se as arestas têm **pesos** diferentes (estradas de tamanhos diferentes), a BFS não basta: usa-se o **algoritmo de Dijkstra**, com uma fila de prioridade (você o verá na trilha de C#).\n- Trocando a fila por uma pilha, a busca vira **DFS** (busca em profundidade): explora fundo antes de voltar, útil para detectar ciclos e componentes, mas **não** garante o caminho mais curto.\n- GPS, jogos (inimigos que perseguem o jogador) e roteadores da internet usam variações destas ideias.",
+      "task": "Leia `l` e `c` (de 1 a 20) e depois `l` linhas de `c` caracteres: `.` é livre, `#` é parede, `S` é a saída (origem) e `E` é a entrada do destino. Andando só para cima, baixo, esquerda e direita, ache o caminho mais curto de `S` até `E` com **BFS**, explorando os vizinhos **nesta ordem: cima, baixo, esquerda, direita**, e guardando como pai de cada casa a primeira que a descobriu. Mostre:\n\n```\nDistancia: <numero de passos>\n<a grade, com as casas do caminho (sem contar S e E) trocadas por *>\n```\n\nSe não houver caminho, mostre só `Sem caminho`.\n\nExemplo: a entrada\n\n```\n3 4\nS..#\n.#..\n...E\n```\n\ngera:\n\n```\nDistancia: 5\nS..#\n*#..\n***E\n```",
+      "starter": "#include <stdio.h>\n#define MAX 20\n\nchar grade[MAX][MAX + 1];\nint dist[MAX][MAX];\nint paiL[MAX][MAX], paiC[MAX][MAX];\nint filaL[MAX * MAX], filaC[MAX * MAX];\n\nint main(void) {\n    int l, c, i, j;\n    int sl = 0, sc = 0, el = 0, ec = 0;\n    int dl[4] = {-1, 1, 0, 0};\n    int dc[4] = {0, 0, -1, 1};\n    scanf(\"%d %d\", &l, &c);\n    for (i = 0; i < l; i++) {\n        scanf(\"%s\", grade[i]);\n        for (j = 0; j < c; j++) {\n            dist[i][j] = -1;\n            if (grade[i][j] == 'S') {\n                sl = i;\n                sc = j;\n            } else if (grade[i][j] == 'E') {\n                el = i;\n                ec = j;\n            }\n        }\n    }\n    /* escreva aqui a BFS, a distancia e o caminho */\n    printf(\"Sem caminho\\n\");\n    return 0;\n}",
+      "solution": "#include <stdio.h>\n#define MAX 20\n\nchar grade[MAX][MAX + 1];\nint dist[MAX][MAX];\nint paiL[MAX][MAX], paiC[MAX][MAX];\nint filaL[MAX * MAX], filaC[MAX * MAX];\n\nint main(void) {\n    int l, c, i, j, d;\n    int sl = 0, sc = 0, el = 0, ec = 0;\n    int ini = 0, fim = 0;\n    int al, ac, nl, nc, pl;\n    int dl[4] = {-1, 1, 0, 0};\n    int dc[4] = {0, 0, -1, 1};\n    scanf(\"%d %d\", &l, &c);\n    for (i = 0; i < l; i++) {\n        scanf(\"%s\", grade[i]);\n        for (j = 0; j < c; j++) {\n            dist[i][j] = -1;\n            if (grade[i][j] == 'S') {\n                sl = i;\n                sc = j;\n            } else if (grade[i][j] == 'E') {\n                el = i;\n                ec = j;\n            }\n        }\n    }\n    dist[sl][sc] = 0;\n    filaL[fim] = sl;\n    filaC[fim] = sc;\n    fim++;\n    while (ini < fim) {\n        al = filaL[ini];\n        ac = filaC[ini];\n        ini++;\n        for (d = 0; d < 4; d++) {\n            nl = al + dl[d];\n            nc = ac + dc[d];\n            if (nl < 0 || nl >= l || nc < 0 || nc >= c) {\n                continue;\n            }\n            if (grade[nl][nc] == '#' || dist[nl][nc] != -1) {\n                continue;\n            }\n            dist[nl][nc] = dist[al][ac] + 1;\n            paiL[nl][nc] = al;\n            paiC[nl][nc] = ac;\n            filaL[fim] = nl;\n            filaC[fim] = nc;\n            fim++;\n        }\n    }\n    if (dist[el][ec] == -1) {\n        printf(\"Sem caminho\\n\");\n        return 0;\n    }\n    printf(\"Distancia: %d\\n\", dist[el][ec]);\n    i = paiL[el][ec];\n    j = paiC[el][ec];\n    while (!(i == sl && j == sc)) {\n        grade[i][j] = '*';\n        pl = paiL[i][j];\n        j = paiC[i][j];\n        i = pl;\n    }\n    for (i = 0; i < l; i++) {\n        printf(\"%s\\n\", grade[i]);\n    }\n    return 0;\n}",
+      "hints": [
+        "Comece com `dist[i][j] = -1` em todas as casas; ponha `dist` da origem em 0 e a origem na fila.",
+        "Para cada vizinho `(nl, nc)`, pule se estiver fora da grade, for `#` ou já tiver `dist != -1`; senão, defina `dist`, o pai (`paiL`, `paiC`) e coloque-o na fila.",
+        "Para marcar o caminho, comece no pai do `E` e vá seguindo os pais até chegar ao `S`, trocando cada casa por `*`."
+      ],
+      "tests": [
+        {
+          "input": "3 4\nS..#\n.#..\n...E\n",
+          "expected": "Distancia: 5\nS..#\n*#..\n***E",
+          "hidden": false
+        },
+        {
+          "input": "2 3\nS#E\n.#.\n",
+          "expected": "Sem caminho",
+          "hidden": false
+        },
+        {
+          "input": "1 2\nSE\n",
+          "expected": "Distancia: 1\nSE",
+          "hidden": false
+        },
+        {
+          "input": "5 7\nS.....#\n.####.#\n.#....#\n.#.####\n...#..E\n",
+          "expected": "Sem caminho",
+          "hidden": true
+        },
+        {
+          "input": "6 6\nS.....\n.####.\n.#..#.\n.#E.#.\n.##.#.\n......\n",
+          "expected": "Distancia: 11\nS.....\n*####.\n*#..#.\n*#E*#.\n*##*#.\n****..",
           "hidden": true
         }
       ],
