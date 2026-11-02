@@ -110,18 +110,18 @@ public sealed class OrbitLab : PhysLab
     {
         var p = _s[Index()];
         double alt = Math.Sqrt(p.x * p.x + p.y * p.y) - Body(C("planet")).R;
-        return $"t = {F(p.t / 60, "0")} min   altitude = {F(alt, "#,0")} km";
+        return L.F("t = {0} min   altitude = {1} km", F(p.t / 60, "0"), F(alt, "#,0"));
     }
 
     protected override IEnumerable<(string, string)> Results()
     {
-        yield return ("Resultado", _type switch { 0 => "caiu no planeta", 1 => "órbita fechada", _ => "escapou" });
-        yield return ("Excentricidade", F(_e, "0.000"));
-        if (_type == 1) yield return ("Período", F(_period / 60, "0.0") + " min");
-        yield return ("Perigeu", F(_rp - Body(C("planet")).R, "#,0") + " km");
-        if (_type == 1) yield return ("Apogeu", F(_ra - Body(C("planet")).R, "#,0") + " km");
-        yield return ("v circular", F(M["circularSpeed"], "0.00") + " km/s");
-        yield return ("v escape", F(M["escapeSpeed"], "0.00") + " km/s");
+        yield return (L.T("Resultado"), _type switch { 0 => L.T("caiu no planeta"), 1 => L.T("órbita fechada"), _ => L.T("escapou") });
+        yield return (L.T("Excentricidade"), F(_e, "0.000"));
+        if (_type == 1) yield return (L.T("Período"), F(_period / 60, "0.0") + " min");
+        yield return (L.T("Perigeu"), F(_rp - Body(C("planet")).R, "#,0") + " km");
+        if (_type == 1) yield return (L.T("Apogeu"), F(_ra - Body(C("planet")).R, "#,0") + " km");
+        yield return (L.T("v circular"), F(M["circularSpeed"], "0.00") + " km/s");
+        yield return (L.T("v escape"), F(M["escapeSpeed"], "0.00") + " km/s");
     }
 
     protected override void Paint(DrawingContext dc)
@@ -150,13 +150,13 @@ public sealed class OrbitLab : PhysLab
             double vc = Math.Sqrt(mu / r);
             Arrow(dc, Yellow, sat0.X, sat0.Y, sat0.X, sat0.Y - 18 - 40 * V("speed") / Math.Max(1, vc), 2);
             Dot(dc, Ui.Text, sat0.X, sat0.Y, 4);
-            Text(dc, "tracejado = órbita circular nessa altitude", 8, H - 18, 11, Ui.TextDim);
+            Text(dc, L.T("tracejado = órbita circular nessa altitude"), 8, H - 18, 11, Ui.TextDim);
             return;
         }
         int idx = Index();
         var pts = _s.Select(p => S(p.x, p.y)).ToList();
         Polyline(dc, P(Yellow, 1.8), pts, idx + 1);
         Dot(dc, Ui.Text, pts[idx].X, pts[idx].Y, 4.5);
-        if (Progress >= 1 && _type == 0) { Dot(dc, Ui.Bad, pts[^1].X, pts[^1].Y, 6); Text(dc, "queda!", pts[^1].X + 8, pts[^1].Y - 8, 12, Ui.Bad, 0, true); }
+        if (Progress >= 1 && _type == 0) { Dot(dc, Ui.Bad, pts[^1].X, pts[^1].Y, 6); Text(dc, L.T("queda!"), pts[^1].X + 8, pts[^1].Y - 8, 12, Ui.Bad, 0, true); }
     }
 }

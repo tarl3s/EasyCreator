@@ -44,16 +44,17 @@ public sealed class LensLab : PhysLab
         AnimSeconds = 1.8;
     }
 
-    protected override string LiveText() => "A luz sai do topo do objeto e atravessa a lente…";
+    protected override string LiveText() => L.T("A luz sai do topo do objeto e atravessa a lente…");
 
     protected override IEnumerable<(string, string)> Results()
     {
-        if (_inf) { yield return ("Imagem", "no infinito (objeto no foco)"); yield break; }
-        yield return ("Distância da imagem", F(_di, "0.0") + " cm");
-        yield return ("Aumento", F(_m, "0.00") + "×");
-        yield return ("Altura da imagem", F(_m * V("objHeight"), "0.0") + " cm");
-        yield return ("Imagem", (_di > 0 ? "real" : "virtual") + ", " + (_m < 0 ? "invertida" : "direita") + ", " +
-                                (Math.Abs(_m) > 1.001 ? "maior" : Math.Abs(_m) < 0.999 ? "menor" : "mesmo tamanho"));
+        if (_inf) { yield return (L.T("Imagem"), L.T("no infinito (objeto no foco)")); yield break; }
+        yield return (L.T("Distância da imagem"), F(_di, "0.0") + " cm");
+        yield return (L.T("Aumento"), F(_m, "0.00") + "×");
+        yield return (L.T("Altura da imagem"), F(_m * V("objHeight"), "0.0") + " cm");
+        // three independent properties of the image (adjectives), listed with commas
+        yield return (L.T("Imagem"), L.F("{0}, {1}, {2}", _di > 0 ? L.T("real") : L.T("virtual"), _m < 0 ? L.T("invertida") : L.T("direita"),
+                                Math.Abs(_m) > 1.001 ? L.T("maior") : Math.Abs(_m) < 0.999 ? L.T("menor") : L.T("mesmo tamanho")));
     }
 
     protected override void Paint(DrawingContext dc)
@@ -82,14 +83,14 @@ public sealed class LensLab : PhysLab
             Line(dc, Blue, lx, yy, lx - 8, yy + k * 8, 2.5);
             Line(dc, Blue, lx, yy, lx + 8, yy + k * 8, 2.5);
         }
-        Text(dc, conv ? "lente convergente" : "lente divergente", lx + 14, 4, 11, Blue);
+        Text(dc, conv ? L.T("lente convergente") : L.T("lente divergente"), lx + 14, 4, 11, Blue);
         Text(dc, $"f = {F(_f, "0")} cm", lx + 14, 18, 11, Blue);
 
         // object
         double ho = V("objHeight");
         var ob = S(-_do, 0); var ot = S(-_do, ho);
         Arrow(dc, Ui.Accent, ob.X, ob.Y, ot.X, ot.Y, 3);
-        Text(dc, "objeto", ob.X, ay + 20, 11, Ui.Accent, 0.5);
+        Text(dc, L.T("objeto"), ob.X, ay + 20, 11, Ui.Accent, 0.5);
 
         if (!HasResult) return;
         // rays revealed from left to right
@@ -131,10 +132,10 @@ public sealed class LensLab : PhysLab
             {
                 var pen = _di > 0 ? Ui.Bad : Purple;
                 Arrow(dc, pen, ib.X, ib.Y, it.X, Math.Clamp(it.Y, -50, H + 50), 3);
-                Text(dc, _di > 0 ? "imagem real" : "imagem virtual", ib.X, hi > 0 ? ay + 20 : ay - 34, 11, pen, 0.5, true);
+                Text(dc, _di > 0 ? L.T("imagem real") : L.T("imagem virtual"), ib.X, hi > 0 ? ay + 20 : ay - 34, 11, pen, 0.5, true);
             }
-            else Text(dc, "a imagem fica fora da tela →", W - 8, H - 18, 11, Ui.TextDim, 1);
+            else Text(dc, L.T("a imagem fica fora da tela →"), W - 8, H - 18, 11, Ui.TextDim, 1);
         }
-        else if (Progress >= 1) Text(dc, "raios saem paralelos: imagem no infinito", W - 8, H - 18, 11, Ui.TextDim, 1);
+        else if (Progress >= 1) Text(dc, L.T("raios saem paralelos: imagem no infinito"), W - 8, H - 18, 11, Ui.TextDim, 1);
     }
 }

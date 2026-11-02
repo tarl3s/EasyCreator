@@ -6,7 +6,7 @@ namespace EasyCreator;
 /// <summary>Simple pendulum (point mass on a massless rigid rod), released from rest at the amplitude angle. Solves the
 /// full non-linear equation θ'' = −(g/L)·sin θ − b·θ' with RK4, so large amplitudes show the longer period.
 /// Metrics: period (s, measured), frequency (Hz), smallAnglePeriod (s, 2π√(L/g)), energy (J, m·g·L·(1 − cos θ0)),
-/// maxSpeed (m/s), amplitudeEnd (°, at the end of the run), g (m/s²), plus the inputs (length, amplitude, mass, damping).</summary>
+/// maxSpeed (m/s), amplitudeEnd (°, largest swing in the last quarter of the run), g (m/s²), plus the inputs (length, amplitude, mass, damping).</summary>
 [Lab("pendulum")]
 public sealed class PendulumLab : PhysLab
 {
@@ -76,18 +76,18 @@ public sealed class PendulumLab : PhysLab
 
     protected override IEnumerable<(string, string)> Results()
     {
-        yield return ("Período medido", F(_period, "0.000") + " s");
+        yield return (L.T("Período medido"), F(_period, "0.000") + " s");
         yield return ("2π√(L/g)", F(M["smallAnglePeriod"], "0.000") + " s");
-        yield return ("Frequência", F(M["frequency"], "0.000") + " Hz");
-        yield return ("Energia", F(M["energy"], "0.00") + " J");
-        yield return ("Vel. máxima", F(_vMax, "0.00") + " m/s");
+        yield return (L.T("Frequência"), F(M["frequency"], "0.000") + " Hz");
+        yield return (L.T("Energia"), F(M["energy"], "0.00") + " J");
+        yield return (L.T("Vel. máxima"), F(_vMax, "0.00") + " m/s");
     }
 
     protected override void Paint(DrawingContext dc)
     {
-        double L = V("length"), m = V("mass");
+        double len0 = V("length"), m = V("mass");
         var (t, th, _) = Now();
-        double px = 170, py = 16, len = 40 + 150 * Math.Sqrt(L / 5);
+        double px = 170, py = 16, len = 40 + 150 * Math.Sqrt(len0 / 5);
         dc.DrawRectangle(Ui.Bg3, null, new Rect(px - 50, py - 8, 100, 8));
         // amplitude guide
         double a0 = Rad(V("amplitude"));
@@ -99,12 +99,12 @@ public sealed class PendulumLab : PhysLab
         Dot(dc, Ui.Text, px, py, 3);
         double r = 7 + 5 * Math.Cbrt(m);
         Dot(dc, Orange, bx, by, r);
-        Text(dc, $"L = {F(L, "0.00")} m", 8, 4, 12, Ui.TextDim);
+        Text(dc, $"L = {F(len0, "0.00")} m", 8, 4, 12, Ui.TextDim);
         Text(dc, $"g = {F(Gravity(C("planet")), "0.00")} m/s²", 8, 20, 12, Ui.TextDim);
 
         double cx = 330, cw = 300, ctop = 20, ch = 188;
-        Chart(dc, cx, ctop, cw, ch, "ângulo θ(t)", "tempo");
-        if (!HasResult) { Text(dc, "rode para ver o gráfico", cx + cw / 2, ctop + ch / 2 + 8, 12, Faint, 0.5); return; }
+        Chart(dc, cx, ctop, cw, ch, L.T("ângulo θ(t)"), L.T("tempo"));
+        if (!HasResult) { Text(dc, L.T("rode para ver o gráfico"), cx + cw / 2, ctop + ch / 2 + 8, 12, Faint, 0.5); return; }
         int count = (int)(Progress * (_s.Count - 1)) + 1;
         var curve = _s.Select(p => new Point(cx + p.t / _tSim * cw, ctop + ch / 2 - p.th / a0 * (ch / 2 - 8))).ToList();
         Polyline(dc, P(Orange, 1.8), curve, count);

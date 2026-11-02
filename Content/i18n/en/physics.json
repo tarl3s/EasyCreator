@@ -1,0 +1,315 @@
+{
+  "title": "Physics: from motion to modern physics",
+  "description": "From throwing a ball to orbits, oscillations, lenses, heat, electromagnetism and university-level numerical methods — every law with a lab for you to experiment with.",
+  "lessons": {
+    "fis-01-cinematica": {
+      "title": "Kinematics: launching a projectile",
+      "theory": "# What is kinematics?\n\n**Kinematics** describes **how** things move, without asking **why** yet (that is dynamics, in the next lesson). It uses three quantities:\n\n- **Position** `x` — where the body is, in metres (m).\n- **Velocity** `v = Δx / Δt` — how much the position changes per second (m/s).\n- **Acceleration** `a = Δv / Δt` — how much the velocity changes per second (m/s²).\n\n## Uniformly accelerated motion\n\nWhen the acceleration is constant, three equations hold that you will use for the rest of your life:\n\n```\nv = v0 + a·t\nx = x0 + v0·t + a·t²/2\nv² = v0² + 2·a·Δx        (Torricelli)\n```\n\nNear the Earth's surface, every body in free fall has the same downward acceleration: **g ≈ 9.81 m/s²** — a stone and a feather fall together in a vacuum!\n\n# Projectile motion\n\nGalileo's trick: **split the motion in two**. A cannon fires the ball with speed `v0` at an angle `θ`:\n\n- **Horizontally** nothing pushes or slows the ball: constant velocity `vx = v0·cos θ`.\n- **Vertically** it slows down on the way up and speeds up on the way down, with `a = −g`: it starts with `vy = v0·sin θ`.\n\n```\nx(t) = v0·cos θ · t\ny(t) = h0 + v0·sin θ · t − g·t²/2\n```\n\nLaunching from the ground (`h0 = 0`) and solving `y = 0`:\n\n```\nflight time:   T = 2·v0·sin θ / g\nrange:         R = v0²·sin(2θ) / g\nmax height:    H = (v0·sin θ)² / (2·g)\n```\n\n## What the range teaches\n\n- `sin(2θ)` is largest when `2θ = 90°`: **45° gives the longest range** (without air).\n- **Complementary** angles (30° and 60°, 20° and 70°) give the **same range** — but the higher one stays in the air much longer.\n- Doubling the speed **quadruples** the range (`v0²`).\n\n## Model assumptions\n\n- No air resistance (we will add air in the last lesson).\n- Constant `g` and a flat Earth — fine for ranges of a few kilometres.\n- The ball is a point: it doesn't spin and has no size.",
+      "task": "Hit the green flag **30 m** away (the ball must land between 29 and 31 m) with a **flight time under 3 s**. Change the speed and the angle and click **▶ Run** for each try.",
+      "hints": [
+        "From the ground, the range is `R = v0²·sin(2θ)/g`. At 45°, `sin 90° = 1`, so `R = v0²/g`.",
+        "For R = 30 m at 45°: `v0 = √(30 · 9.81) ≈ 17.2 m/s`.",
+        "High angles like 60° also hit, but the ball climbs a lot and takes more than 3 s: stick to angles up to 45°."
+      ],
+      "goals": [
+        "The ball lands on the target (30 m ± 1 m)",
+        "Flight time under 3 s"
+      ],
+      "questions": [
+        {
+          "prompt": "A ball rolls off a table and falls from a height of **20 m** (no air, g = 9.8 m/s²). How long does it take to reach the ground?",
+          "explanation": "Vertically it starts from rest: 20 = 9.8·t²/2 → t = √(40/9.8) ≈ 2.02 s. The horizontal speed doesn't change that time!"
+        },
+        {
+          "prompt": "Without air resistance, launching from the ground, which angle gives the **longest range**?",
+          "options": ["30°", "45°", "60°", "90°"],
+          "explanation": "The range is v0²·sin(2θ)/g, largest when sin(2θ) = 1, that is, 2θ = 90° → θ = 45°."
+        },
+        {
+          "prompt": "A car starts from rest with a constant acceleration of **3 m/s²**. What is its speed after **4 s**?",
+          "explanation": "v = v0 + a·t = 0 + 3·4 = 12 m/s (≈ 43 km/h)."
+        }
+      ]
+    },
+    "fis-02-newton": {
+      "title": "Newton's laws: the block on the ramp",
+      "theory": "# Newton's three laws\n\nKinematics tells how something moves; **dynamics** tells why. It all fits in three laws:\n\n- **1st law (inertia):** if the net force is zero, a body stays at rest or keeps moving in a straight line at constant speed.\n- **2nd law:** the net force produces acceleration: `F_net = m·a`. Force in **newtons** (N), mass in kg.\n- **3rd law (action and reaction):** if A pushes B, B pushes A with an equal and opposite force — on **different** bodies, which is why they don't cancel out.\n\n# The forces that show up in almost every problem\n\n- **Weight** `P = m·g` — the Earth pulls the block down (5 kg → 49 N).\n- **Normal** `N` — the surface pushes the block, always **perpendicular** to it.\n- **Friction** — always **against** the motion (or against the tendency to move):\n  - at rest: static friction adjusts itself, up to a maximum `f ≤ μ·N`;\n  - sliding: kinetic friction `f = μ·N`.\n\n## Splitting the weight on a ramp\n\nOn a ramp at angle `θ`, use axes **along** and **perpendicular to** the ramp:\n\n```\nP parallel      = m·g·sin θ  (down the ramp)\nP perpendicular = m·g·cos θ  (into the ramp)\nN               = m·g·cos θ\n```\n\nAlong the ramp, with a force `F` pulling up and the block moving up:\n\n```\nF − m·g·sin θ − μ·m·g·cos θ = m·a\n```\n\n## Example\n\nA 5 kg block, 30° ramp, μ = 0.2, no applied force: `P parallel = 24.5 N` and the maximum friction is `0.2 · 42.5 = 8.5 N`. Since 24.5 > 8.5, it **slides down** with `a = (24.5 − 8.5)/5 ≈ 3.2 m/s²`.\n\n## Simulator assumptions\n\n- `g = 9.81 m/s²`; the block is rigid and starts at rest in the middle of the ramp.\n- A single μ is used for static and kinetic friction (in real life the static one is usually a bit larger).\n- The applied force is parallel to the ramp (positive = up the ramp). The diagram on the right shows every force (mg = weight, f = friction).",
+      "task": "The block has **5 kg** and the friction is **μ = 0.2** (locked). Choose the force so that it moves **up** the ramp with an acceleration between **1.8 and 2.2 m/s²**, on a ramp of **at least 30°**.",
+      "hints": [
+        "Add up the forces along the ramp: `F − P·sin θ − f = m·a`.",
+        "At 30°: `P·sin 30° = 5·9.81·0.5 ≈ 24.5 N`; `N = 5·9.81·cos 30° ≈ 42.5 N`; `f = 0.2·42.5 ≈ 8.5 N`.",
+        "For a = 2 m/s²: `F = 5·2 + 24.5 + 8.5 ≈ 43 N`."
+      ],
+      "goals": [
+        "The block moves up with an acceleration between 1.8 and 2.2 m/s²",
+        "Ramp inclined at least 30°"
+      ],
+      "questions": [
+        {
+          "prompt": "A **5 kg** block rests on a **30°** ramp (g = 9.8 m/s²). What is the normal force?",
+          "explanation": "N = m·g·cos θ = 5·9.8·0.866 ≈ 42.4 N. The normal force is smaller than the weight (49 N) because it only balances the part of the weight perpendicular to the ramp."
+        },
+        {
+          "prompt": "By Newton's 3rd law, what is the **reaction** to the block's weight (the Earth pulling the block)?",
+          "options": ["The normal force the ramp exerts on the block", "The force with which the block pulls the Earth upward", "The friction between the block and the ramp", "There is no reaction to the weight"],
+          "explanation": "Action and reaction are of the same kind and act on different bodies: the Earth attracts the block and the block attracts the Earth with the same force. The normal force is NOT the reaction to the weight."
+        },
+        {
+          "prompt": "With **μ = 0.5**, what is the **steepest** ramp angle at which a block stays at rest on its own?",
+          "explanation": "At the limit, m·g·sin θ = μ·m·g·cos θ → tan θ = μ = 0.5 → θ ≈ 26.6°. Notice the mass doesn't even enter the calculation!"
+        }
+      ]
+    },
+    "fis-03-energia": {
+      "title": "Energy and work: the spring launcher",
+      "theory": "# Work: a force along a path\n\nA force **does work** when it moves something:\n\n```\nW = F·d·cos θ        (joules: 1 J = 1 N·m)\n```\n\n`θ` is the angle between the force and the displacement. Pushing along the motion gives **positive** work; friction, which acts against it, gives **negative** work; the normal force, being perpendicular, does no work at all.\n\n# Forms of energy\n\n- **Kinetic** (motion): `KE = m·v²/2`\n- **Gravitational potential** (height): `PE = m·g·h`\n- **Elastic potential** (stretched or compressed spring): `Ee = k·x²/2`\n\n## Work–energy theorem\n\nThe **total** work on a body becomes a change in its kinetic energy: `W_total = ΔKE`.\n\n## Conservation of mechanical energy\n\nWithout friction or air resistance, energy only **changes form** — the sum stays constant:\n\n```\nKE + PE + Ee = constant\n```\n\n# The spring (Hooke's law)\n\nA spring pulls back in proportion to how much it was deformed: `F = −k·x`. The **spring constant** `k` (N/m) tells how stiff it is.\n\nIn the lab the block is pulled to `x = A` and released. There all the energy is elastic; when it passes `x = 0` all of it has become kinetic:\n\n```\nk·A²/2 = m·v_max²/2   →   v_max = A·√(k/m)\n```\n\nThe bars show the energy flowing from elastic to kinetic and back, with a constant total.\n\n## Power\n\n`P = W / Δt` (watts). A 100 W motor delivers 100 J every second.\n\n## Simulator assumptions\n\n- Ideal, massless spring; frictionless floor; rigid block.",
+      "task": "Build a spring launcher that gives the block a **maximum speed between 3.8 and 4.2 m/s** while storing **at most 10 J** in the spring.",
+      "hints": [
+        "The maximum speed is `v_max = A·√(k/m)` and the stored energy is `E = k·A²/2 = m·v_max²/2`.",
+        "At v = 4 m/s the energy is `8·m`: to stay under 10 J, the mass must be at most 1.25 kg.",
+        "Example: m = 1 kg, k = 200 N/m and A = 0.28 m → v_max ≈ 3.96 m/s and E ≈ 7.8 J."
+      ],
+      "goals": [
+        "Maximum speed between 3.8 and 4.2 m/s",
+        "Energy stored in the spring of at most 10 J"
+      ],
+      "questions": [
+        {
+          "prompt": "A spring with **k = 400 N/m** is compressed by **0.1 m**. How much energy does it store?",
+          "explanation": "Ee = k·x²/2 = 400·0.01/2 = 2 J."
+        },
+        {
+          "prompt": "A **2 kg** block slides without friction from a height of **5 m** (g = 9.8 m/s²). How fast is it at the bottom?",
+          "explanation": "m·g·h = m·v²/2 → v = √(2·g·h) = √98 ≈ 9.9 m/s. The mass cancels out!"
+        },
+        {
+          "prompt": "A box is dragged 3 m across the floor. The work done on it by the **friction force** is…",
+          "options": ["positive, because it moved", "zero, because friction doesn't move", "negative, because friction opposes the displacement", "equal to the work done by the weight"],
+          "explanation": "W = F·d·cos 180° = −F·d: friction takes kinetic energy from the body and turns it into heat."
+        }
+      ]
+    },
+    "fis-04-colisoes": {
+      "title": "Momentum and collisions",
+      "theory": "# Momentum (linear momentum)\n\nA truck at 10 km/h is harder to stop than a bicycle at the same speed. The quantity that measures this is **momentum**:\n\n```\np = m·v        (kg·m/s, it is a vector: it has a direction!)\n```\n\n## Impulse\n\nA force acting for some time changes the momentum: `I = F·Δt = Δp`. That's why airbags save lives: they **lengthen the time** of the stop, lowering the force.\n\n# Conservation of momentum\n\nIf no **external** force acts on the system, the total momentum doesn't change — even in a violent crash, because the forces between the carts are action and reaction (3rd law) and cancel out in the total:\n\n```\nm1·v1 + m2·v2 = m1·v1' + m2·v2'\n```\n\n## Kinds of collision\n\nMomentum is **always** conserved; kinetic energy **not always**. The **coefficient of restitution** measures how fast the bodies separate afterwards compared with how fast they approached before:\n\n```\ne = (v2' − v1') / (v1 − v2)\n```\n\n- `e = 1` — **elastic**: kinetic energy is also conserved (billiard balls, almost).\n- `0 < e < 1` — **partially inelastic**: part of the energy becomes heat, sound, deformation.\n- `e = 0` — **perfectly inelastic**: the bodies stick together and move as one. It loses the most energy.\n\nCombining the two equations, the velocities afterwards are:\n\n```\nv1' = (m1·v1 + m2·v2 + m2·e·(v2 − v1)) / (m1 + m2)\nv2' = (m1·v1 + m2·v2 + m1·e·(v1 − v2)) / (m1 + m2)\n```\n\n## Simulator assumptions\n\n- Straight, frictionless track (the only horizontal force is the one of the crash).\n- Instantaneous collision, in one dimension. Positive velocity = to the right.",
+      "task": "Recreate the famous **Newton's cradle**: make cart 1 **stop completely** after the crash, handing all its motion to cart 2, **without losing kinetic energy** (at most 1% lost).",
+      "hints": [
+        "To lose no energy, the collision must be elastic: `e = 1`.",
+        "In an elastic collision between **equal** masses, the carts simply swap velocities.",
+        "Example: m1 = m2 = 2 kg, v1 = 2 m/s, v2 = 0 and e = 1."
+      ],
+      "goals": [
+        "The carts collide",
+        "Cart 1 stops after the crash (|v1'| ≤ 0.05 m/s)",
+        "Kinetic energy conserved (at most 1% lost)"
+      ],
+      "questions": [
+        {
+          "prompt": "A **2 kg** cart moving at **3 m/s** hits a **1 kg** cart at rest and the two **stick together**. What is the speed of the pair?",
+          "explanation": "Momentum before: 2·3 = 6 kg·m/s. After: (2 + 1)·v = 6 → v = 2 m/s."
+        },
+        {
+          "prompt": "In the crash of the previous question, how much **kinetic energy was lost**?",
+          "explanation": "Before: 2·3²/2 = 9 J. After: 3·2²/2 = 6 J. 3 J were lost, turned into heat, sound and deformation."
+        },
+        {
+          "prompt": "In a collision where no external force acts, what is **always** conserved?",
+          "options": ["The total kinetic energy", "The total momentum", "The velocity of each body", "Both: kinetic energy and momentum"],
+          "explanation": "Total momentum is always conserved without external forces. Kinetic energy is only conserved in elastic collisions."
+        }
+      ]
+    },
+    "fis-05-orbitas": {
+      "title": "Circular motion and gravitation: a satellite in orbit",
+      "theory": "# Circular motion\n\nA body going around a circle at constant speed **is accelerating**: the direction of its velocity changes all the time. That acceleration points to the centre (**centripetal**):\n\n```\nv  = 2·π·r / T          (T = period)\nω  = 2·π / T = v / r    (angular velocity, rad/s)\nac = v² / r = ω²·r\n```\n\nBy the 2nd law, some force must pull towards the centre: `Fc = m·v²/r`. For a car on a bend it is the tyres' friction; for a stone on a string, the tension; for a satellite, **gravity**.\n\n# Universal gravitation\n\nNewton realised that the force that makes the apple fall is the same one that holds the Moon:\n\n```\nF = G·M·m / r²        G = 6.67×10⁻¹¹ N·m²/kg²\n```\n\n`r` is the distance between the **centres**. For the Earth, `G·M ≈ 398 600 km³/s²`.\n\n## Newton's cannon\n\nImagine a cannon on top of a mountain. The faster the ball leaves, the farther it lands — until, at a certain speed, the Earth \"curves away\" exactly as much as the ball falls: it **falls forever around the Earth**. That's an orbit! Setting gravity equal to the centripetal force:\n\n```\nG·M·m/r² = m·v²/r\nv_circular = √(G·M / r)\nT = 2·π·√(r³ / (G·M))    (Kepler: T² ∝ r³)\nv_escape = √(2·G·M / r) = √2 · v_circular\n```\n\n## Elliptical orbits\n\n- Slower than `v_circular`: the orbit becomes an **ellipse** that dips down (and may hit the planet).\n- Faster: an ellipse that rises to a distant **apogee**.\n- From `v_escape` on: the satellite **escapes** and never comes back.\n\nThe **eccentricity** `e` measures how flattened it is: 0 = circle, close to 1 = a very stretched ellipse.\n\n## Simulator assumptions\n\n- Spherical planet, no atmosphere and no other bodies (Moon, Sun).\n- Horizontal launch (perpendicular to the radius). Altitude = distance above the surface.",
+      "task": "Put a satellite into a **circular orbit at 400 km** of altitude, like the International Space Station: it must neither fall nor escape, the eccentricity must be **at most 0.01** and the period between **90 and 95 minutes**.",
+      "hints": [
+        "Use `v = √(G·M/r)` with `r` measured from the **centre** of the Earth: r = 6371 + 400 = 6771 km.",
+        "√(398 600 / 6771) ≈ 7.67 km/s — about 27 600 km/h!",
+        "If the satellite falls, increase the speed; if the orbit stretches too much, decrease it. Fine-tune in steps of 0.01 km/s."
+      ],
+      "goals": [
+        "The satellite stays in orbit (doesn't fall or escape)",
+        "Nearly circular orbit (eccentricity ≤ 0.01)",
+        "Period between 90 and 95 minutes",
+        "Launched at 400 km of altitude (between 390 and 410 km)"
+      ],
+      "questions": [
+        {
+          "prompt": "What would be the speed of a **grazing** circular orbit around the Moon (r = 1737 km, G·M = 4903 km³/s²)?",
+          "explanation": "v = √(G·M/r) = √(4903/1737) ≈ 1.68 km/s — much less than on Earth, because the Moon has much less mass."
+        },
+        {
+          "prompt": "Why do astronauts **float** inside the Space Station, only 400 km up?",
+          "options": ["Because there is no gravity up there", "Because they are in free fall together with the station", "Because the air up there pushes them up", "Because the Moon pulls them the other way"],
+          "explanation": "At 400 km gravity is still ~89% of the surface value! The station and the astronauts fall together around the Earth, so nothing presses the astronauts against the floor."
+        },
+        {
+          "prompt": "A car takes a bend of radius **50 m** at **20 m/s**. What is the centripetal acceleration?",
+          "explanation": "ac = v²/r = 400/50 = 8 m/s² — almost 1 g! The tyres' friction provides that force."
+        }
+      ]
+    },
+    "fis-06-pendulo": {
+      "title": "Oscillations: the pendulum that beats seconds",
+      "theory": "# Simple harmonic motion (SHM)\n\nLots of things **go back and forth**: a swing, a guitar string, atoms in a crystal, electric circuits. When the restoring force is proportional to the displacement (`F = −k·x`), the motion is **SHM**:\n\n```\nx(t) = A·cos(ω·t)\nT = 2·π / ω        (period, s)\nf = 1 / T          (frequency, Hz)\n```\n\nFor the **mass–spring** system: `ω = √(k/m)`, so `T = 2·π·√(m/k)`.\n\n# The simple pendulum\n\nA mass hanging from a string of length `L`. The part of the weight that pulls it back is `m·g·sin θ`, and the equation of motion is:\n\n```\nθ'' = −(g/L)·sin θ\n```\n\nFor **small angles** (up to about 15°), `sin θ ≈ θ` (in radians) and it becomes SHM:\n\n```\nT = 2·π·√(L / g)\n```\n\n## Surprising facts\n\n- The period **doesn't depend on the mass**: lead or styrofoam, same period.\n- For small swings it also **doesn't depend on the amplitude** (isochronism, discovered by Galileo watching a chandelier in a church). That's why the pendulum became a clock.\n- For large amplitudes the period **grows**: `T ≈ T0·(1 + θ0²/16)` with θ0 in radians — at 40° it is about 3% longer.\n- On the Moon (g = 1.62 m/s²) the same pendulum swings ~2.5 times slower.\n\n## Damping and resonance\n\nAir friction makes the amplitude shrink little by little (**damping**). Pushing at the right rhythm — at the natural frequency — makes the amplitude grow a lot: that's **resonance**, which you use on a playground swing.\n\n## Simulator assumptions\n\n- Point mass on a massless, inextensible string.\n- The simulator solves the **full** equation (with `sin θ`) numerically, so it shows the effect of large amplitudes. The period is measured from the motion itself.",
+      "task": "Build a **seconds pendulum** on Earth (each swing one way takes 1 s): period between **1.98 and 2.02 s**, with an amplitude of at most **15°** so the small-swing formula holds.",
+      "hints": [
+        "Solve `T = 2·π·√(L/g)` for L: `L = g·(T / 2π)²`.",
+        "With T = 2 s and g = 9.81 m/s²: L = 9.81 · (2/6.283)² ≈ 0.99 m.",
+        "Use a small amplitude (5°, for example) and keep the planet on Earth."
+      ],
+      "goals": [
+        "Period between 1.98 and 2.02 s",
+        "Amplitude of at most 15°",
+        "On Earth (g = 9.81 m/s²)"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the period of a **1 m** pendulum on the **Moon** (g = 1.62 m/s²), with small swings?",
+          "explanation": "T = 2π·√(1/1.62) ≈ 2π·0.786 ≈ 4.94 s — 2.5 times slower than on Earth (2.0 s)."
+        },
+        {
+          "prompt": "For small swings, what changes the period of a simple pendulum?",
+          "options": ["Only the mass", "The length and gravity", "The mass and the amplitude", "Only the amplitude"],
+          "explanation": "T = 2π·√(L/g): only the length and gravity. The mass doesn't appear, and the amplitude only matters when it is large."
+        },
+        {
+          "prompt": "A **0.5 kg** mass on a spring with **k = 200 N/m** oscillates. What is the period?",
+          "explanation": "T = 2π·√(m/k) = 2π·√(0.0025) = 2π·0.05 ≈ 0.314 s."
+        }
+      ]
+    },
+    "fis-07-optica": {
+      "title": "Waves and optics: forming images with lenses",
+      "theory": "# Waves\n\nA **wave** carries energy without carrying matter: a stadium wave travels, the people stay in place. Every periodic wave obeys:\n\n```\nv = λ·f\n```\n\n- `λ` (lambda) — **wavelength**, the distance between two crests (m).\n- `f` — **frequency**, how many crests pass per second (Hz).\n- `v` — propagation speed: sound in air ≈ 340 m/s; light in vacuum `c ≈ 3×10⁸ m/s`.\n\nSound is a **mechanical** wave (it needs a medium). Light is an **electromagnetic** wave (it travels through vacuum); its colour depends on the wavelength: violet ~400 nm, red ~700 nm.\n\nWhen two waves meet they add up (**interference**): crests with crests reinforce, crests with troughs cancel — that's what makes the colours on a soap bubble.\n\n# Refraction\n\nWhen light changes medium it changes speed and **bends** (Snell's law): `n1·sin θ1 = n2·sin θ2`, with `n = c / v` (refractive index; glass ≈ 1.5). Lenses use this to bend rays.\n\n# Thin lenses\n\n- **Converging** (thicker in the middle): brings parallel rays together at a **focus** F', at a distance `f`.\n- **Diverging** (thinner in the middle): spreads the rays, as if they came from a virtual focus.\n\n## The three principal rays\n\n- Ray **parallel** to the axis → leaves through the focus F' (or away from F, for a diverging lens).\n- Ray through the **centre** of the lens → goes straight through.\n- Ray through the **focus** F → leaves parallel to the axis (for a diverging lens, the ray **aimed** at the focus on the other side).\n\nWhere the rays (or their extensions) cross, the **image** is formed.\n\n## Thin lens equation and magnification\n\n```\n1/f = 1/do + 1/di\nm = −di / do          (magnification)\n```\n\n- `di > 0`: **real** image (on the other side, it can be projected on a screen).\n- `di < 0`: **virtual** image (on the same side, only seen through the lens — a magnifying glass).\n- `m < 0`: **inverted** image; `|m| > 1`: larger than the object.\n- Converging: `f > 0`; diverging: `f < 0`. Optical power `D = 1/f` in dioptres (f in metres) — the strength of glasses.\n\n## Simulator assumptions\n\n- Thin lens, rays close to the axis (paraxial approximation).\n- In the drawing heights are magnified relative to distances, to keep it readable; the lines stay straight and cross in the right place.",
+      "task": "With the **converging** lens, build a **projector**: form a **real, inverted image twice as large** as the object (magnification between −2.1 and −1.9).",
+      "hints": [
+        "Magnification −2 means `di = 2·do` (real image, on the other side, twice as far).",
+        "In the lens equation: `1/f = 1/do + 1/(2·do) = 3/(2·do)` → `do = 1.5·f`.",
+        "With f = 10 cm, place the object 15 cm from the lens."
+      ],
+      "goals": [
+        "The image is real (it forms on the other side of the lens)",
+        "Inverted image, twice as large (magnification between −2.1 and −1.9)"
+      ],
+      "questions": [
+        {
+          "prompt": "A **680 Hz** sound travels in air at **340 m/s**. What is its wavelength?",
+          "explanation": "λ = v / f = 340 / 680 = 0.5 m."
+        },
+        {
+          "prompt": "A converging lens has **f = 20 cm** and the object is **60 cm** from it. How far from the lens does the image form?",
+          "explanation": "1/di = 1/20 − 1/60 = 2/60 → di = 30 cm (real, inverted and half the size, m = −0.5)."
+        },
+        {
+          "prompt": "The image of a real object formed by a **diverging** lens is always…",
+          "options": ["real, inverted and larger", "real, inverted and smaller", "virtual, upright and smaller", "virtual, inverted and larger"],
+          "explanation": "A diverging lens spreads the rays; their extensions cross on the object's side, closer to the lens: a virtual, upright and smaller image (like a door peephole)."
+        }
+      ]
+    },
+    "fis-08-termodinamica": {
+      "title": "Thermodynamics: the ideal gas and the first law",
+      "safety": "Never heat **closed containers** (cans, jars, a pressure cooker with a clogged valve): by the gas law, the pressure rises with the temperature until the container explodes.",
+      "theory": "# Temperature, pressure and the ideal gas\n\n- **Temperature** measures how agitated the molecules are. In physics we use **kelvin**: `T(K) = T(°C) + 273.15`. Zero kelvin is absolute zero.\n- **Pressure** is force per area: `p = F / A` (pascal, Pa = N/m²). Air at sea level pushes with ~101 kPa.\n- 1 litre = 0.001 m³.\n\nAn **ideal gas** (point-like molecules that only bump into each other) follows:\n\n```\np·V = n·R·T        R = 8.314 J/(mol·K)\n```\n\nIn the lab the molecules (yellow dots) move faster when the gas heats up: the average speed grows with `√T`.\n\n# Internal energy, heat and work\n\n- **Internal energy** `U` — the energy of the molecules. In a monatomic ideal gas: `U = (3/2)·n·R·T` — it only depends on the temperature!\n- **Heat** `Q` — energy that flows in because of a temperature difference (Q > 0 when entering).\n- **Work** `W` — energy the gas delivers by pushing the piston. With varying pressure, `W` is the **area under the curve** on the p–V graph (W > 0 when the gas expands).\n\n## First law (conservation of energy)\n\n```\nΔU = Q − W\n```\n\n## The classic processes\n\n- **Isothermal** (constant T): `ΔU = 0`, so `Q = W = n·R·T·ln(V2/V1)`. All the heat received becomes work.\n- **Isobaric** (constant p): `W = p·(V2 − V1)`; the gas heats up as it expands.\n- **Isochoric** (constant V): `W = 0`, all the heat becomes internal energy.\n- **Adiabatic** (no heat exchanged, Q = 0): `p·V^γ` constant, with `γ = 5/3` for a monatomic gas; when it expands the gas **cools down** (`W = −ΔU`) — that's how rising air expands, cools and forms clouds.\n\n# Second law and heat engines\n\nHeat flows by itself from hot to cold, and no engine turns **all** the heat into work in a cycle. The limit is the **Carnot efficiency**:\n\n```\nη_max = 1 − T_cold / T_hot   (in kelvin)\n```\n\n## Simulator assumptions\n\n- Monatomic ideal gas, slow (quasi-static) processes, frictionless piston.",
+      "task": "Start with **1 mol at 300 K in 10 L** (locked). Choose the process and the final volume so that the gas **does about 1000 J of work** (between 950 and 1050 J) **without changing its internal energy** (ΔU between −1 and 1 J).",
+      "hints": [
+        "Constant internal energy means constant temperature: which process is that?",
+        "In the isothermal process, `W = n·R·T·ln(V2/V1)` and `n·R·T = 8.314·300 ≈ 2494 J`.",
+        "`ln(V2/V1) = 1000/2494 ≈ 0.40` → `V2/V1 ≈ 1.49` → V2 ≈ 15 L."
+      ],
+      "goals": [
+        "The gas does between 950 and 1050 J of work",
+        "The internal energy doesn't change (ΔU between −1 and 1 J)"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the pressure of **1 mol** of ideal gas at **300 K** filling **24.9 L**?",
+          "explanation": "p = n·R·T / V = 8.314·300 / 0.0249 ≈ 100 200 Pa ≈ 100 kPa — practically atmospheric pressure."
+        },
+        {
+          "prompt": "What is the **maximum efficiency** (Carnot) of an engine working between **600 K** and **300 K**?",
+          "explanation": "η = 1 − 300/600 = 0.5 = 50%. Real engines stay well below that."
+        },
+        {
+          "prompt": "In an **adiabatic expansion**, what happens to the gas temperature?",
+          "options": ["It rises, because the volume increases", "It stays the same, because no heat is exchanged", "It drops, because the gas spends internal energy doing work", "It depends on the colour of the container"],
+          "explanation": "With Q = 0, ΔU = −W: the work of pushing the piston comes out of the internal energy, and the temperature drops."
+        }
+      ]
+    },
+    "fis-09-eletromagnetismo": {
+      "title": "Electricity and magnetism: charges, fields and currents",
+      "safety": "Household mains (110–240 V) **kills**. Never touch live wires; electricity experiments are done with low-voltage cells and batteries.",
+      "theory": "# Electric charge and Coulomb's law\n\nMatter has **positive** charges (protons) and **negative** ones (electrons). Like charges repel, opposite charges attract. Charge is measured in **coulombs** (C); an electron has a charge of `−1.6×10⁻¹⁹ C`.\n\n```\nF = k·|q1·q2| / r²        k ≈ 9×10⁹ N·m²/C²\n```\n\nNotice the similarity with gravitation: it also falls off as `1/r²`, but it is **much** stronger and can repel.\n\n# Field and potential\n\n- **Electric field** `E = F / q` (N/C or V/m): the force per unit charge at each point in space. Field lines leave positive charges and enter negative ones.\n- **Potential** and **potential difference** (voltage) `U` in volts: energy per unit charge. A 1.5 V cell gives 1.5 J to each coulomb that passes.\n\n# Current and circuits\n\n- **Current** `I = ΔQ / Δt` (amperes): how much charge passes per second.\n- **Ohm's law:** `U = R·I` (R in ohms, Ω).\n- **Power:** `P = U·I = R·I² = U²/R` (watts).\n- Resistors in **series** add up: `R = R1 + R2`. In **parallel**: `1/R = 1/R1 + 1/R2` — the equivalent is **smaller** than the smallest of them.\n\n# Magnetism\n\nCurrents and magnets create a **magnetic field** `B` (tesla, T). A charge moving inside `B` feels the **Lorentz force**, perpendicular to its velocity:\n\n```\nF = |q|·v·B·sin θ\n```\n\nBecause the force is perpendicular, it only **bends** the path: the charge moves in a circle of radius\n\n```\nr = m·v / (|q|·B)\n```\n\nWith a crossed electric field, the electric and magnetic forces cancel when `q·E = q·v·B`, that is, `v = E / B`: the **velocity selector** of mass spectrometers.\n\n# Induction: electricity from motion\n\n**Faraday's law:** a **changing** magnetic flux through a loop creates a voltage: `ε = −ΔΦ / Δt`. The minus sign (**Lenz's law**) says the induced current opposes the change. That's how power plants, dynamos, transformers and wireless chargers work.\n\nMaxwell put it all together and found that changing electric and magnetic fields sustain each other and travel at `c = 1/√(μ0·ε0) ≈ 3×10⁸ m/s`: **light is an electromagnetic wave**.",
+      "task": "Answer the questions. Use `k = 9×10⁹ N·m²/C²` and write numbers like `0.4` or `3e-2`.",
+      "hints": [
+        "μC is microcoulomb: 1 μC = 10⁻⁶ C.",
+        "In Coulomb's law r is squared; in `P = R·I²` it is the current that is squared.",
+        "For the radius of the magnetic orbit, convert the result from metres to centimetres (× 100)."
+      ],
+      "questions": [
+        {
+          "prompt": "Two charges of **2 μC** each are **0.3 m** apart. What is the force between them?",
+          "explanation": "F = 9×10⁹ · (2×10⁻⁶)² / 0.3² = 9×10⁹ · 4×10⁻¹² / 0.09 = 0.4 N (repulsion)."
+        },
+        {
+          "prompt": "A **12 V** battery is connected to a **4 Ω** resistor. What is the current?",
+          "explanation": "Ohm's law: I = U / R = 12 / 4 = 3 A."
+        },
+        {
+          "prompt": "What power is dissipated in that 4 Ω resistor carrying 3 A?",
+          "explanation": "P = R·I² = 4·9 = 36 W (the same as U·I = 12·3)."
+        },
+        {
+          "prompt": "Two **6 Ω** resistors connected in **parallel** are equivalent to…",
+          "options": ["12 Ω", "6 Ω", "3 Ω", "36 Ω"],
+          "explanation": "1/R = 1/6 + 1/6 = 2/6 → R = 3 Ω. In parallel the current has two paths, so the total resistance drops."
+        },
+        {
+          "prompt": "A proton (m = 1.67×10⁻²⁷ kg, q = 1.6×10⁻¹⁹ C) enters at **2×10⁶ m/s** perpendicular to a **0.5 T** field. What is the radius of its circular path?",
+          "explanation": "r = m·v / (q·B) = 1.67×10⁻²⁷ · 2×10⁶ / (1.6×10⁻¹⁹ · 0.5) ≈ 0.0418 m ≈ 4.18 cm."
+        },
+        {
+          "prompt": "In a velocity selector with **E = 5×10⁴ V/m** and **B = 0.1 T**, which speed passes without deflecting?",
+          "explanation": "The forces cancel when q·E = q·v·B → v = E / B = 5×10⁴ / 0.1 = 5×10⁵ m/s."
+        },
+        {
+          "prompt": "What makes an induced current appear in a coil?",
+          "options": ["A magnet resting inside it", "A change in the magnetic flux through it", "Any constant electric field", "Heating the coil"],
+          "explanation": "Faraday's law: only a CHANGE of flux (a moving magnet, a changing current, a spinning loop) induces a voltage. A magnet at rest produces nothing."
+        }
+      ]
+    },
+    "fis-10-arrasto-numerico": {
+      "title": "University physics: air resistance and numerical methods",
+      "theory": "# When the formula runs out\n\nIn lesson 1 the range had a closed formula. Just add **air** and it disappears. At everyday speeds the drag force grows with the **square** of the speed and points against it:\n\n```\nF_drag = ½·ρ·C·A·v²\n```\n\n`ρ` is the air density (~1.2 kg/m³), `C` the shape coefficient (sphere ≈ 0.47), `A` the frontal area. Dividing by the mass, the equation of motion becomes:\n\n```\na = −g·ŷ − k·|v|·v\nk = ρ·C·A / (2·m)      (unit: 1/m)\n```\n\nThe `|v|·v` term **couples** x and y: slowing down horizontally depends on the vertical speed and vice versa. There is no solution in elementary functions — we need a **numerical method**.\n\n# Numerical integration\n\nThe idea: step time forward in small steps `dt`, using the derivative to estimate the next state.\n\n## Euler's method\n\n```\nwhile y >= 0:\n    v_mod = sqrt(vx*vx + vy*vy)\n    ax = -k*v_mod*vx\n    ay = -g - k*v_mod*vy\n    x, y   = x + vx*dt, y + vy*dt\n    vx, vy = vx + ax*dt, vy + ay*dt\n    t = t + dt\n```\n\nSimple, but the total error is **proportional to dt** (a 1st-order method): to gain one decimal place, 10 times more steps.\n\n## 4th-order Runge–Kutta (RK4)\n\nIt computes the derivative at 4 points of the interval (start, two in the middle, end) and takes a weighted average `(k1 + 2·k2 + 2·k3 + k4)/6`. The error falls with **dt⁴**: halving the step makes the result 16 times more accurate. It is what this simulator uses (dt = 0.5 ms).\n\n# What air changes\n\n- **Terminal velocity:** while falling, drag grows until it equals the weight: `k·v² = g` → `v_t = √(g/k)`.\n- The range drops a lot, and the **best angle falls below 45°**: climbing high costs time in the air, and the air keeps stealing speed.\n- The path is no longer symmetric: the descent is steeper than the climb. The dashed curve shows the same ball in a vacuum.\n\n# Going further: Lagrange's view\n\nIn analytical mechanics you don't start from forces but from the **Lagrangian** `L = T − V` (kinetic minus potential energy), written in convenient coordinates `q`. The real motion obeys the Euler–Lagrange equation:\n\n```\nd/dt (∂L/∂q') − ∂L/∂q = 0\n```\n\nFor a pendulum of length `ℓ`, with `q = θ`: `L = m·ℓ²·θ'²/2 + m·g·ℓ·cos θ` gives directly `θ'' = −(g/ℓ)·sin θ` — the equation the oscillations lab solves. Forces that dissipate energy, like drag, don't fit in a `V` and enter as **generalised forces**.\n\n## And when the speed gets close to light?\n\nNewton's mechanics has a limit too: near `c`, special relativity requires the Lorentz factor `γ = 1/√(1 − v²/c²)`. Moving clocks run `γ` times slower and momentum becomes `p = γ·m·v`.\n\n## Simulator assumptions\n\n- Quadratic drag with constant `k` (fixed air density and coefficient), no wind and no spin on the ball (no Magnus effect).",
+      "task": "A light plastic ball (drag **k = 0.03 1/m**, locked) must land on the target **40 m** away. With air, 45° is no longer the best angle: hit the target launching at **no more than 35.3 m/s**.",
+      "hints": [
+        "Without air, √(40·9.81) ≈ 19.8 m/s would do. With air, at 45° the ball needs about 37 m/s to reach 40 m — and at 35.3 m/s it doesn't even reach the edge of the target.",
+        "Try lower angles, between 33° and 40°, and adjust the speed until you hit.",
+        "Example: 36° at 35.3 m/s (the ball lands near 39.7 m)."
+      ],
+      "goals": [
+        "The ball lands on the target (40 m ± 1 m)",
+        "Launch speed of at most 35.3 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **terminal velocity** of this ball when falling (k = 0.03 1/m, g = 9.81 m/s²)?",
+          "explanation": "At equilibrium k·v² = g → v_t = √(9.81/0.03) = √327 ≈ 18.1 m/s. No matter how high it falls from, it never goes faster than that."
+        },
+        {
+          "prompt": "You divided the step `dt` by 10. By how much does the total error of **Euler's** method drop?",
+          "options": ["It doesn't change", "About 10 times", "About 100 times", "About 10 000 times"],
+          "explanation": "Euler is 1st order: error ∝ dt, so 10 times smaller. With RK4 (error ∝ dt⁴) it would be ~10 000 times."
+        },
+        {
+          "prompt": "A spaceship flies past the Earth at **0.6·c**. What is the Lorentz factor γ?",
+          "explanation": "γ = 1/√(1 − 0.36) = 1/√0.64 = 1/0.8 = 1.25: a clock on the ship shows 1 h while 1 h 15 min pass on Earth."
+        }
+      ]
+    }
+  }
+}

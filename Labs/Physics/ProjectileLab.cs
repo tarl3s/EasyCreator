@@ -114,12 +114,12 @@ public sealed class ProjectileLab : PhysLab
 
     protected override IEnumerable<(string, string)> Results()
     {
-        yield return ("Alcance", F(_range, "0.0") + " m");
-        yield return ("Altura máx.", F(_maxH, "0.0") + " m");
-        yield return ("Tempo de voo", F(_flight, "0.00") + " s");
-        yield return ("Impacto", F(_s[^1].v, "0.0") + " m/s");
-        if (V("drag") > 0) yield return ("Sem ar", F(_rangeVacuum, "0.0") + " m");
-        if (!double.IsNaN(_targetX)) yield return ("Alvo", M.GetValueOrDefault("hitTarget") > 0 ? "acertou ✓" : "errou");
+        yield return (L.T("Alcance"), F(_range, "0.0") + " m");
+        yield return (L.T("Altura máx."), F(_maxH, "0.0") + " m");
+        yield return (L.T("Tempo de voo"), F(_flight, "0.00") + " s");
+        yield return (L.T("Impacto"), F(_s[^1].v, "0.0") + " m/s");
+        if (V("drag") > 0) yield return (L.T("Sem ar"), F(_rangeVacuum, "0.0") + " m");
+        if (!double.IsNaN(_targetX)) yield return (L.T("Alvo"), M.GetValueOrDefault("hitTarget") > 0 ? L.T("acertou ✓") : L.T("errou"));
     }
 
     protected override void Paint(DrawingContext dc)
@@ -154,7 +154,7 @@ public sealed class ProjectileLab : PhysLab
             dc.DrawRectangle(AccentSoft, P(Ui.Accent, 1.5), new Rect(a1.X, ground - 6, Math.Max(3, a2.X - a1.X), 6));
             Line(dc, Ui.Accent, (a1.X + a2.X) / 2, ground - 6, (a1.X + a2.X) / 2, ground - 34, 1.5);
             dc.DrawRectangle(Ui.Accent, null, new Rect((a1.X + a2.X) / 2, ground - 34, 14, 9));
-            Text(dc, $"alvo {F(_targetX, "0.#")} m", (a1.X + a2.X) / 2, ground - 50, 11, Ui.Accent, 0.5);
+            Text(dc, L.F("alvo {0} m", F(_targetX, "0.#")), (a1.X + a2.X) / 2, ground - 50, 11, Ui.Accent, 0.5);
         }
 
         // tower and cannon
@@ -177,7 +177,7 @@ public sealed class ProjectileLab : PhysLab
             var ghost = new List<Point>();
             for (int i = 0; i <= 120; i++) { double t = tv * i / 120; ghost.Add(P2(vx * t, Math.Max(0, h0 + vy * t - g * t * t / 2))); }
             Polyline(dc, P(Faint, 1.5, true), ghost, ghost.Count);
-            Text(dc, "sem ar", ghost[^1].X, ground - 18, 11, Faint, 0.5);
+            Text(dc, L.T("sem ar"), ghost[^1].X, ground - 18, 11, Faint, 0.5);
         }
 
         int idx = Index();
@@ -200,7 +200,7 @@ public sealed class ProjectileLab : PhysLab
             var top = _s.OrderByDescending(p => p.y).First();
             var tp = P2(top.x, top.y);
             Line(dc, Blue, left, tp.Y, tp.X, tp.Y, 1, true);
-            Text(dc, $"h máx = {F(_maxH, "0.0")} m", tp.X + 6, tp.Y - 16, 11, Blue);
+            Text(dc, L.F("h máx = {0} m", F(_maxH, "0.0")), tp.X + 6, tp.Y - 16, 11, Blue);
             var land = P2(_range, 0);
             Line(dc, Ui.Bad, land.X - 5, land.Y - 5, land.X + 5, land.Y + 5, 2);
             Line(dc, Ui.Bad, land.X - 5, land.Y + 5, land.X + 5, land.Y - 5, 2);

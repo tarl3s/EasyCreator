@@ -68,8 +68,8 @@ public sealed class GasLab : PhysLab
     {
         yield return ("p1 → p2", $"{F(_p1 / 1000, "0.0")} → {F(_p2 / 1000, "0.0")} kPa");
         yield return ("T2", F(_t2, "0") + " K");
-        yield return ("Trabalho do gás W", F(_w, "0") + " J");
-        yield return ("Calor Q", F(_q, "0") + " J");
+        yield return (L.T("Trabalho do gás W"), F(_w, "0") + " J");
+        yield return (L.T("Calor Q"), F(_q, "0") + " J");
         yield return ("ΔU", F(_du, "0") + " J");
     }
 
@@ -152,7 +152,7 @@ public sealed class GasLab : PhysLab
         if (Progress >= 1)
         {
             Text(dc, "2", cur.X + 5, cur.Y - 16, 11, Orange, 0, true);
-            if (Math.Abs(v2 - v1) > 0.01) Text(dc, $"área = W = {F(_w, "0")} J", gx + gw - 4, gy + 4, 12, Ui.Accent, 1, true);
+            if (Math.Abs(v2 - v1) > 0.01) Text(dc, L.F("área = W = {0} J", F(_w, "0")), gx + gw - 4, gy + 4, 12, Ui.Accent, 1, true);
         }
     }
 

@@ -59,16 +59,16 @@ public sealed class InclineLab : PhysLab
     double Pos => _length / 2 + _a * T * T / 2;   // distance from the bottom of the ramp
 
     protected override string LiveText() =>
-        $"t = {F(T, "0.00")} s   v = {F(_a * T, "0.00")} m/s   posição = {F(Pos, "0.00")} m da base";
+        L.F("t = {0} s   v = {1} m/s   posição = {2} m da base", F(T, "0.00"), F(_a * T, "0.00"), F(Pos, "0.00"));
 
     protected override IEnumerable<(string, string)> Results()
     {
-        yield return ("Aceleração", F(_a, "0.00") + " m/s²");
-        yield return ("Normal", F(_n, "0.0") + " N");
-        yield return ("Atrito", F(_fr, "0.0") + " N");
-        yield return ("Resultante", F(V("mass") * _a, "0.0") + " N");
-        yield return ("Vel. final", F(_vEnd, "0.00") + " m/s");
-        yield return ("Movimento", !_slides ? "parado" : _a > 0 ? "sobe a rampa" : "desce a rampa");
+        yield return (L.T("Aceleração"), F(_a, "0.00") + " m/s²");
+        yield return (L.T("Normal"), F(_n, "0.0") + " N");
+        yield return (L.T("Atrito"), F(_fr, "0.0") + " N");
+        yield return (L.T("Resultante"), F(V("mass") * _a, "0.0") + " N");
+        yield return (L.T("Vel. final"), F(_vEnd, "0.00") + " m/s");
+        yield return (L.T("Movimento"), !_slides ? L.T("parado") : _a > 0 ? L.T("sobe a rampa") : L.T("desce a rampa"));
     }
 
     protected override void Paint(DrawingContext dc)
@@ -91,7 +91,7 @@ public sealed class InclineLab : PhysLab
         ramp.Freeze();
         dc.DrawGeometry(Ui.Bg3, P(Faint, 1.5), ramp);
         Text(dc, $"{F(V("angle"), "0")}°", x0 + 46, yb - 18, 12, Ui.TextDim);
-        Text(dc, $"rampa de {F(_length, "0.#")} m", (x0 + top.X) / 2, yb + 4, 11, Ui.TextDim, 0.5);
+        Text(dc, L.F("rampa de {0} m", F(_length, "0.#")), (x0 + top.X) / 2, yb + 4, 11, Ui.TextDim, 0.5);
 
         // block (clamped to the ramp)
         double bs = 30, edge = Math.Min(_length / 2, bs / 2 / s);
@@ -106,7 +106,7 @@ public sealed class InclineLab : PhysLab
         // free-body diagram on the right
         double cx = 540, cy = 112;
         dc.DrawRoundedRectangle(Ui.Bg1, P(GridLine, 1), new Rect(440, 6, 194, H - 12), 6, 6);
-        Text(dc, "Forças no bloco", 537, 10, 12, Ui.TextDim, 0.5, true);
+        Text(dc, L.T("Forças no bloco"), 537, 10, 12, Ui.TextDim, 0.5, true);
         double m = V("mass"), f = V("force");
         double max = Math.Max(1, new[] { m * G, _n, _fr, Math.Abs(f) }.Max()), k = 64 / max;
         double ux = c, uy = -sn;          // unit vector up the slope (screen coordinates)
@@ -115,7 +115,7 @@ public sealed class InclineLab : PhysLab
         dc.DrawRectangle(Faint, null, new Rect(cx - 8, cy - 8, 16, 16));
         dc.Pop();
         Arrow(dc, Orange, cx, cy, cx, cy + m * G * k);
-        Text(dc, $"P = {F(m * G, "0")} N", cx + 6, cy + m * G * k - 14, 11, Orange);
+        Text(dc, L.F("P = {0} N", F(m * G, "0")), cx + 6, cy + m * G * k - 14, 11, Orange);
         Arrow(dc, Blue, cx, cy, cx + nx * _n * k, cy + ny * _n * k);
         Text(dc, $"N = {F(_n, "0")} N", cx + nx * _n * k - 4, cy + ny * _n * k - 16, 11, Blue, 0.5);
         if (Math.Abs(f) > 0.01)
@@ -128,11 +128,11 @@ public sealed class InclineLab : PhysLab
             // friction opposes motion (or the tendency to move): it points against (F − P·sinθ)
             double dir = -Math.Sign(f - _wPar);
             Arrow(dc, Ui.Bad, cx, cy, cx + ux * dir * _fr * k, cy + uy * dir * _fr * k);
-            Text(dc, $"Fat = {F(_fr, "0")} N", Math.Clamp(cx + ux * dir * _fr * k, 480, 600), cy + uy * dir * _fr * k + 8, 11, Ui.Bad, 0.5);
+            Text(dc, L.F("Fat = {0} N", F(_fr, "0")), Math.Clamp(cx + ux * dir * _fr * k, 480, 600), cy + uy * dir * _fr * k + 8, 11, Ui.Bad, 0.5);
         }
         if (HasResult)
         {
-            string mv = !_slides ? "em repouso" : $"a = {F(_a, "0.00")} m/s²";
+            string mv = !_slides ? L.T("em repouso") : $"a = {F(_a, "0.00")} m/s²";
             Text(dc, mv, 537, H - 26, 12, _slides ? Yellow : Ui.TextDim, 0.5, true);
             if (_slides)
             {

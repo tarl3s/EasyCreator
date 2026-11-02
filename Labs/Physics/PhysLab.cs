@@ -13,11 +13,16 @@ namespace EasyCreator;
 /// Subclasses declare inputs in their constructor (<see cref="Num"/>, <see cref="Opt"/>), compute everything in
 /// <see cref="Compute"/> (fill <see cref="M"/> and their own samples) and draw in <see cref="Paint"/> using
 /// <see cref="Progress"/> (0..1 of the animation) and <see cref="HasResult"/>.
-/// labParams: any input key sets that input's starting value; "hide" and "lock" take a comma list of input keys.</summary>
+/// labParams: any input key sets that input's starting value; "hide" and "lock" take a comma list of input keys.
+/// Texts: input labels and option labels are declared in Portuguese and translated when shown (<see cref="L.T"/>);
+/// subclasses translate their own result chips and drawing texts. Numbers follow the language (<see cref="Pt"/>).</summary>
 public abstract class PhysLab : ILab
 {
     public const double W = 640, H = 230;
-    protected static readonly CultureInfo Pt = CultureInfo.GetCultureInfo("pt-BR");
+    static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR"), EnUs = CultureInfo.GetCultureInfo("en-US"),
+        EsEs = CultureInfo.GetCultureInfo("es-ES");
+    /// <summary>Number format of the current language (decimal comma in Portuguese and Spanish, point in English).</summary>
+    protected static CultureInfo Pt => L.Lang switch { "en" => EnUs, "es" => EsEs, _ => PtBr };
 
     protected static readonly Brush Blue = Ui.Make("#5AA9FF"), Orange = Ui.Make("#FFA94D"), Yellow = Ui.Make("#FFD166"),
         Purple = Ui.Make("#C39BFF"), GridLine = Ui.Make("#2A2A33"), Faint = Ui.Make("#4A4A55"),
@@ -179,7 +184,7 @@ public abstract class PhysLab : ILab
                 }
             if (i.ValueText != null) i.ValueText.Text = ValueLabel(i);
             if (i.Cell != null) { i.Cell.Visibility = i.Hidden ? Visibility.Collapsed : Visibility.Visible; i.Cell.Opacity = i.Locked ? 0.6 : 1; }
-            if (i.NameText != null) i.NameText.Text = i.Locked ? i.Label + " (travado)" : i.Label;
+            if (i.NameText != null) i.NameText.Text = i.Locked ? L.F("{0} (travado)", L.T(i.Label)) : L.T(i.Label);
         }
         finally { _suppress = false; }
     }
@@ -213,7 +218,7 @@ public abstract class PhysLab : ILab
         _animating = true;
         _clock.Restart();
         CompositionTarget.Rendering += OnFrame;
-        if (_run != null) _run.Content = "↻ Rodar de novo";
+        if (_run != null) _run.Content = L.T("↻ Rodar de novo");
         _surface.InvalidateVisual();
     }
 
@@ -242,9 +247,9 @@ public abstract class PhysLab : ILab
     void ShowPrompt()
     {
         if (_view == null) return;
-        if (_run != null) _run.Content = "▶ Rodar";
+        if (_run != null) _run.Content = L.T("▶ Rodar");
         _readouts.Children.Clear();
-        _readouts.Children.Add(Ui.Label("Ajuste os controles e clique em ▶ Rodar.", 13, Ui.TextDim));
+        _readouts.Children.Add(Ui.Label(L.T("Ajuste os controles e clique em ▶ Rodar."), 13, Ui.TextDim));
     }
 
     void ShowResults()
@@ -276,7 +281,7 @@ public abstract class PhysLab : ILab
         var bar = new Grid { Margin = new Thickness(0, 8, 0, 6) };
         bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         bar.ColumnDefinitions.Add(new ColumnDefinition());
-        _run = Ui.Button("▶ Rodar", Ui.Accent);
+        _run = Ui.Button(L.T("▶ Rodar"), Ui.Accent);
         _run.VerticalAlignment = VerticalAlignment.Top;
         _run.Margin = new Thickness(0, 0, 10, 0);
         _run.Click += (_, _) => StartRun();
@@ -303,7 +308,7 @@ public abstract class PhysLab : ILab
         var cell = new Grid { Margin = new Thickness(0, 0, 14, 4) };
         cell.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         cell.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var name = i.NameText = Ui.Label(i.Label, 12.5, Ui.TextDim);
+        var name = i.NameText = Ui.Label(L.T(i.Label), 12.5, Ui.TextDim);
         cell.Children.Add(name);
         i.ValueText = Ui.Label("", 12.5, Ui.Accent, true);
         i.ValueText.HorizontalAlignment = HorizontalAlignment.Right;
@@ -315,7 +320,7 @@ public abstract class PhysLab : ILab
             i.Buttons = new();
             foreach (var (value, label) in i.Options!)
             {
-                var b = Ui.Button(label);
+                var b = Ui.Button(L.T(label));
                 b.Padding = new Thickness(9, 3, 9, 3);
                 b.FontSize = 12.5;
                 b.Margin = new Thickness(0, 0, 5, 3);
@@ -359,7 +364,7 @@ public abstract class PhysLab : ILab
             _lab._dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             dc.DrawRectangle(Ui.Code, null, new Rect(0, 0, W, H));
             try { _lab.Paint(dc); }
-            catch (Exception ex) { _lab.Text(dc, "Erro ao desenhar: " + ex.Message, 10, 10, 12, Ui.Bad); }
+            catch (Exception ex) { _lab.Text(dc, L.F("Erro ao desenhar: {0}", ex.Message), 10, 10, 12, Ui.Bad); }
         }
     }
 
@@ -430,7 +435,7 @@ public abstract class PhysLab : ILab
         return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * mag;
     }
 
-    /// <summary>Simple x(t)-style chart in the box (x, y, w, h): axes, zero line, labels.</summary>
+    /// <summary>Simple x(t)-style chart in the box (x, y, w, h): axes, zero line, labels (already translated).</summary>
     protected void Chart(DrawingContext dc, double x, double y, double w, double h, string title, string xLabel)
     {
         dc.DrawRectangle(null, P(GridLine, 1), new Rect(x, y, w, h));
@@ -439,7 +444,7 @@ public abstract class PhysLab : ILab
         Text(dc, xLabel, x + w - 2, y + h + 1, 11, Ui.TextDim, 1);
     }
 
-    /// <summary>Number in Portuguese format; ∞ and NaN read "∞" and "—".</summary>
+    /// <summary>Number in the current language's format; ∞ and NaN read "∞" and "—".</summary>
     protected static string F(double v, string fmt = "0.##")
     {
         if (double.IsNaN(v)) return "—";
