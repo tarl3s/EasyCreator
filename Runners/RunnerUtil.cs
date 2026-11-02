@@ -59,15 +59,16 @@ internal static class RunnerUtil
     public const int StackBytes = 64 * 1024 * 1024;
 
     public static string TimeoutMessage(TimeSpan timeout) =>
-        $"Tempo esgotado: o programa rodou por mais de {timeout.TotalSeconds:0.#} s e foi interrompido. " +
-        "Verifique se existe um laço infinito (uma repetição cuja condição nunca fica falsa) " +
-        "ou se o programa está esperando mais entrada do que o teste fornece.";
+        L.F("Tempo esgotado: o programa rodou por mais de {0} s e foi interrompido. Verifique se existe um laço infinito (uma repetição cuja condição nunca fica falsa) ou se o programa está esperando mais entrada do que o teste fornece.",
+            timeout.TotalSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
 
-    public const string OutputLimitMessage =
-        "O programa escreveu texto demais (mais de 200 mil caracteres) e foi interrompido. " +
-        "Provavelmente há um laço infinito com print dentro.";
+    /// <summary>True when <paramref name="error"/> (possibly after stderr text) reports a timeout, in any language.</summary>
+    public static bool IsTimeout(string error, TimeSpan timeout) => error.Contains(TimeoutMessage(timeout), StringComparison.Ordinal);
 
-    public const string CanceledMessage = "Execução cancelada.";
+    public static string OutputLimitMessage => L.T(
+        "O programa escreveu texto demais (mais de 200 mil caracteres) e foi interrompido. Provavelmente há um laço infinito com print dentro.");
+
+    public static string CanceledMessage => L.T("Execução cancelada.");
 
     /// <summary>Runs <paramref name="body"/> on a dedicated background thread with a big stack and the invariant
     /// culture (dot as decimal separator, like the lessons expect).</summary>

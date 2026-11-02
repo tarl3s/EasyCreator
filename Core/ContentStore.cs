@@ -38,7 +38,7 @@ public static class ContentStore
     static List<Track> Load()
     {
         var list = new List<Track>();
-        if (!Directory.Exists(Root)) { Errors.Add("Pasta Content não encontrada."); return list; }
+        if (!Directory.Exists(Root)) { Errors.Add(L.T("Pasta Content não encontrada.")); return list; }
         var i18n = Path.Combine(Root, "i18n");
         foreach (var file in Directory.EnumerateFiles(Root, "*.json", SearchOption.AllDirectories).Where(f => !f.StartsWith(i18n, StringComparison.OrdinalIgnoreCase)).OrderBy(f => f))
         {

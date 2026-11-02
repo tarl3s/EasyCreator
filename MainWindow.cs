@@ -20,6 +20,9 @@ public sealed class MainWindow : Window
         Content = _host;
         KeyDown += (_, e) => { if (e.Key == Key.Escape && Keyboard.FocusedElement is not TextBox) Back(); };
         L.Changed += () => { _history.Clear(); Go(() => Pages.Home(this)); };
+        // The open page saves its code and stops its simulation when disposed; closing the window must do that too,
+        // or what the student typed since opening the lesson is lost.
+        Closed += (_, _) => { (_host.Content as IDisposable)?.Dispose(); _host.Content = null; Progress.Current.Save(); };
         Go(() => Pages.Home(this));
     }
 

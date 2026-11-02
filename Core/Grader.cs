@@ -21,18 +21,19 @@ public static class Grader
             var t = lesson.Tests[i];
             if (skipReason != null || ct.IsCancellationRequested)
             {
-                results.Add(Make(i, t, false, "", skipReason ?? "Execução cancelada.", TimeSpan.Zero));
+                results.Add(Make(i, t, false, "", skipReason ?? Runners.RunnerUtil.CanceledMessage, TimeSpan.Zero));
                 continue;
             }
             RunResult r;
             try { r = await runner.RunAsync(code, t.Input ?? "", limit, ct).ConfigureAwait(false); }
-            catch (Exception ex) { r = new RunResult(false, "", "Erro interno: " + ex.Message, TimeSpan.Zero); }
+            catch (Exception ex) { r = new RunResult(false, "", L.F("Erro interno: {0}", ex.Message), TimeSpan.Zero); }
 
             var passed = r.Ok && OutputMatches(t.Expected, r.Stdout);
             var error = r.Ok ? (passed ? "" : MismatchHint(t, r.Stdout)) : r.Error;
             results.Add(Make(i, t, passed, r.Stdout, error, r.Elapsed));
-            if (!r.Ok && r.Error.StartsWith("Tempo esgotado", StringComparison.Ordinal))
-                skipReason = "Não executado: o teste anterior estourou o tempo.";
+            // The runners' timeout text is translated, so recognise it by the message itself, not by a fixed prefix.
+            if (!r.Ok && Runners.RunnerUtil.IsTimeout(r.Error, limit))
+                skipReason = L.T("Não executado: o teste anterior estourou o tempo.");
         }
         return results;
     }
@@ -44,8 +45,8 @@ public static class Grader
 
     private static string MismatchHint(IoTest t, string actual)
     {
-        if (Normalize(actual).Length == 0) return "O programa não escreveu nada.";
-        if (t.Hidden) return "A saída não é a esperada para este teste oculto.";
+        if (Normalize(actual).Length == 0) return L.T("O programa não escreveu nada.");
+        if (t.Hidden) return L.T("A saída não é a esperada para este teste oculto.");
         var exp = Normalize(t.Expected).Split('\n');
         var act = Normalize(actual).Split('\n');
         for (var i = 0; i < Math.Max(exp.Length, act.Length); i++)
@@ -53,11 +54,11 @@ public static class Grader
             var e = i < exp.Length ? exp[i] : null;
             var a = i < act.Length ? act[i] : null;
             if (e == a) continue;
-            if (e == null) return $"Linha {i + 1}: sobrou texto na saída (\"{a}\").";
-            if (a == null) return $"Linha {i + 1}: faltou escrever \"{e}\".";
-            return $"Linha {i + 1}: esperado \"{e}\", mas saiu \"{a}\".";
+            if (e == null) return L.F("Linha {0}: sobrou texto na saída (\"{1}\").", i + 1, a);
+            if (a == null) return L.F("Linha {0}: faltou escrever \"{1}\".", i + 1, e);
+            return L.F("Linha {0}: esperado \"{1}\", mas saiu \"{2}\".", i + 1, e, a);
         }
-        return "A saída não é a esperada.";
+        return L.T("A saída não é a esperada.");
     }
 
     /// <summary>Line endings normalised, trailing spaces of each line removed, blank lines at both ends removed.</summary>

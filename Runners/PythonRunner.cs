@@ -83,7 +83,7 @@ builtins.input = _ec_input
         }
         catch (Exception ex)
         {
-            return RunnerUtil.Fail("Erro interno ao rodar Python: " + ex.Message, stdout.ToString(), sw);
+            return RunnerUtil.Fail(L.F("Erro interno ao rodar Python: {0}", ex.Message), stdout.ToString(), sw);
         }
     }
 
@@ -141,7 +141,7 @@ builtins.input = _ec_input
         }
         catch (Exception ex)
         {
-            return "Erro ao ler o código: " + ex.Message;
+            return L.F("Erro ao ler o código: {0}", ex.Message);
         }
 
         TracebackDelegate? trace = null;
@@ -170,7 +170,7 @@ builtins.input = _ec_input
         {
             var codeObj = sx.GetExitCode(out var other);
             if (codeObj == 0 && other == null) return null;
-            return other != null ? $"O programa encerrou com sys.exit: {other}" : $"O programa encerrou com sys.exit({codeObj}).";
+            return other != null ? L.F("O programa encerrou com sys.exit: {0}", other) : L.F("O programa encerrou com sys.exit({0}).", codeObj);
         }
         catch (SyntaxErrorException se)
         {
@@ -190,12 +190,14 @@ builtins.input = _ec_input
 
     private static string DescribeSyntax(SyntaxErrorException se)
     {
-        var kind = se.GetType().Name.Contains("Indentation", StringComparison.OrdinalIgnoreCase) || se.Message.Contains("indent", StringComparison.OrdinalIgnoreCase)
-            ? "Erro de indentação" : "Erro de sintaxe";
-        var tip = kind == "Erro de indentação"
-            ? "Em Python os espaços no começo da linha definem os blocos: use sempre a mesma quantidade (4 espaços) dentro de if, for, while e def."
-            : "O código não pôde ser lido. Confira parênteses, aspas, dois-pontos (:) no fim de if/for/while/def e a indentação.";
-        return $"{kind} na linha {se.Line}, coluna {se.Column}: {se.Message}\n{tip}";
+        var indent = se.GetType().Name.Contains("Indentation", StringComparison.OrdinalIgnoreCase) || se.Message.Contains("indent", StringComparison.OrdinalIgnoreCase);
+        var head = indent
+            ? L.F("Erro de indentação na linha {0}, coluna {1}: {2}", se.Line, se.Column, se.Message)
+            : L.F("Erro de sintaxe na linha {0}, coluna {1}: {2}", se.Line, se.Column, se.Message);
+        var tip = indent
+            ? L.T("Em Python os espaços no começo da linha definem os blocos: use sempre a mesma quantidade (4 espaços) dentro de if, for, while e def.")
+            : L.T("O código não pôde ser lido. Confira parênteses, aspas, dois-pontos (:) no fim de if/for/while/def e a indentação.");
+        return head + "\n" + tip;
     }
 
     private static string DescribeRuntime(ScriptEngine engine, Exception ex)
@@ -210,25 +212,24 @@ builtins.input = _ec_input
                 if (f.GetFileName() == "main.py") line = f.GetFileLineNumber();
         }
         catch { }
-        var where = line > 0 ? $" na linha {line}" : "";
-        var head = $"Erro{where}: {typeName}: {message}";
+        var head = line > 0 ? L.F("Erro na linha {0}: {1}: {2}", line, typeName, message) : L.F("Erro: {0}: {1}", typeName, message);
         var tip = Explain(typeName);
         return tip.Length > 0 ? head + "\n" + tip : head;
     }
 
     internal static string Explain(string pythonError) => pythonError switch
     {
-        "ZeroDivisionError" => "Divisão por zero: o divisor ficou 0. Teste o valor antes de dividir.",
-        "NameError" => "Você usou um nome (variável ou função) que não existe. Confira a grafia e se ele foi criado antes de ser usado.",
-        "TypeError" => "Operação com tipos incompatíveis — por exemplo, somar texto com número. Lembre que input() devolve texto: converta com int() ou float().",
-        "ValueError" => "Valor inválido para a operação — por exemplo, int('abc'). Confira o que foi lido da entrada.",
-        "IndexError" => "Índice fora da lista: as posições vão de 0 até len(lista) - 1.",
-        "KeyError" => "Essa chave não existe no dicionário. Use 'in' para testar ou dict.get().",
-        "AttributeError" => "Esse objeto não tem o atributo ou método usado. Confira a grafia e o tipo do valor.",
-        "EOFError" => "O programa tentou ler mais entrada (input()) do que o teste forneceu.",
-        "RecursionError" or "RuntimeError" => "Pode ser recursão sem fim: confira o caso base da função recursiva.",
-        "UnboundLocalError" => "A variável foi usada dentro da função antes de receber um valor.",
-        "IndentationError" => "Em Python os espaços no começo da linha definem os blocos: use a mesma quantidade dentro de cada bloco.",
+        "ZeroDivisionError" => L.T("Divisão por zero: o divisor ficou 0. Teste o valor antes de dividir."),
+        "NameError" => L.T("Você usou um nome (variável ou função) que não existe. Confira a grafia e se ele foi criado antes de ser usado."),
+        "TypeError" => L.T("Operação com tipos incompatíveis — por exemplo, somar texto com número. Lembre que input() devolve texto: converta com int() ou float()."),
+        "ValueError" => L.T("Valor inválido para a operação — por exemplo, int('abc'). Confira o que foi lido da entrada."),
+        "IndexError" => L.T("Índice fora da lista: as posições vão de 0 até len(lista) - 1."),
+        "KeyError" => L.T("Essa chave não existe no dicionário. Use 'in' para testar ou dict.get()."),
+        "AttributeError" => L.T("Esse objeto não tem o atributo ou método usado. Confira a grafia e o tipo do valor."),
+        "EOFError" => L.T("O programa tentou ler mais entrada (input()) do que o teste forneceu."),
+        "RecursionError" or "RuntimeError" => L.T("Pode ser recursão sem fim: confira o caso base da função recursiva."),
+        "UnboundLocalError" => L.T("A variável foi usada dentro da função antes de receber um valor."),
+        "IndentationError" => L.T("Em Python os espaços no começo da linha definem os blocos: use a mesma quantidade dentro de cada bloco."),
         _ => "",
     };
 }
