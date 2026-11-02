@@ -7,6 +7,8 @@ namespace EasyCreator;
 /// <summary>Home, area and track pages. The lesson page lives in LessonView.</summary>
 public static class Pages
 {
+    public static Grid Framed(MainWindow w, string title, string subtitle, UIElement body) => Frame(w, title, subtitle, body);
+
     static Grid Frame(MainWindow w, string title, string subtitle, UIElement body, bool back = true)
     {
         var grid = new Grid { Margin = new Thickness(32, 24, 32, 24) };
@@ -33,6 +35,18 @@ public static class Pages
     public static UIElement Home(MainWindow w)
     {
         var body = new StackPanel();
+        var sandbox = new DockPanel();
+        var open = Ui.Button("🧪 Abrir Sandbox", Ui.Accent);
+        open.Click += (_, _) => w.Go(() => Sandbox.Page(w));
+        DockPanel.SetDock(open, Dock.Right);
+        sandbox.Children.Add(open);
+        var sbText = new StackPanel();
+        sbText.Children.Add(Ui.Label("🧪 Sandbox", 20, Ui.Accent, true));
+        sbText.Children.Add(Ui.Label("Modo livre: programe em qualquer linguagem ou monte um circuito e teste no simulador.", 14, Ui.TextDim));
+        sandbox.Children.Add(sbText);
+        var sbCard = Ui.Card(sandbox);
+        sbCard.Margin = new Thickness(0, 0, 0, 16);
+        body.Children.Add(sbCard);
         var cards = Areas.All.Select(a => AreaCard(w, a.Id, $"{a.Icon} {a.Title}", a.Description)).ToArray();
         for (int i = 0; i < cards.Length; i += 3)
         {

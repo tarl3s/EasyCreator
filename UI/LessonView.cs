@@ -20,10 +20,11 @@ public sealed partial class LessonView : Grid, IDisposable
     readonly Grid _right = new();
 
     bool IsRobotics => _track.Area == "robotics";
+    readonly bool _sandbox;
 
-    public LessonView(MainWindow w, Track track, int index)
+    public LessonView(MainWindow w, Track track, int index, bool sandbox = false)
     {
-        _w = w; _track = track; _index = index; _lesson = track.Lessons[index];
+        _w = w; _track = track; _index = index; _lesson = track.Lessons[index]; _sandbox = sandbox;
         Margin = new Thickness(20);
         ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star), MinWidth = 320 });
         ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(12) });
@@ -41,7 +42,8 @@ public sealed partial class LessonView : Grid, IDisposable
         _code.TextChanged += (_, _) => Progress.Current.Code[Progress.Key(_track, _lesson)] = _code.Text;
     }
 
-    UIElement BuildLeft() => new ScrollViewer { Content = LessonText.Left(_w, _track, _index), VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+    UIElement BuildLeft() => _sandbox ? Sandbox.Left(_w, _track, _lesson)
+        : new ScrollViewer { Content = LessonText.Left(_w, _track, _index), VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
 
     void BuildRight()
     {
@@ -65,7 +67,8 @@ public sealed partial class LessonView : Grid, IDisposable
         tabs.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         tabs.Children.Add(outPanel);
         bottom.Children.Add(tabs);
-        UIElement side = IsRobotics ? Titled("Correção", resultsScroll) : Stacked(Titled("Entrada (stdin)", _stdin), Titled("Correção", resultsScroll));
+        UIElement side = _sandbox ? (IsRobotics ? new Border() : Titled("Entrada (stdin)", _stdin))
+            : IsRobotics ? Titled("Correção", resultsScroll) : Stacked(Titled("Entrada (stdin)", _stdin), Titled("Correção", resultsScroll));
         Grid.SetColumn(side, 2);
         bottom.Children.Add(side);
         Grid.SetRow(bottom, 3);

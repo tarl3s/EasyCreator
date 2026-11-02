@@ -45,6 +45,10 @@ public static partial class TestEntry
                 view.SnapStartSolution();
                 await Shot($"robotics_{i + 1}", 2500);
             }
+            w.Go(() => Sandbox.Page(w));
+            await Shot("sandbox");
+            Sandbox.SnapOpenRobotics(w);
+            await Shot("sandbox_robotics", 1500);
             // Every lab lesson (or only the area given after --snap-labs), with its solution inputs already run.
             if (Environment.GetCommandLineArgs().Contains("--snap-labs"))
             {

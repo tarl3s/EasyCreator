@@ -37,7 +37,7 @@ public sealed partial class LessonView
         speed.Tag = "speed";
         _simStatus.VerticalAlignment = VerticalAlignment.Center;
         _actions.Children.Add(_startBtn);
-        _actions.Children.Add(_checkBtn);
+        if (!_sandbox) _actions.Children.Add(_checkBtn);
         _actions.Children.Add(reset);
         _actions.Children.Add(speed);
         _actions.Children.Add(_simStatus);

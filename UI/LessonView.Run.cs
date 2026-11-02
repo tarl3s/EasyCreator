@@ -29,7 +29,7 @@ public sealed partial class LessonView
         with.VerticalAlignment = VerticalAlignment.Center;
         with.Margin = new Thickness(8, 0, 6, 0);
         _actions.Children.Add(_runBtn);
-        _actions.Children.Add(_checkBtn);
+        if (!_sandbox) _actions.Children.Add(_checkBtn);
         _actions.Children.Add(reset);
         _actions.Children.Add(with);
         _actions.Children.Add(_runnerPick);
