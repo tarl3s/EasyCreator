@@ -17,10 +17,10 @@ public static partial class TestEntry
             Snapshots(w);
             return true;
         }
-        if (args.Contains(Tests.ArduinoTestEntry.Flag))
+        if (Tests.ArduinoTestEntry.TryRun(args, out int arduinoFailures))
         {
             // only the Arduino/C suite (log: easycreator_arduino_tests.log)
-            Application.Current.Shutdown(Tests.ArduinoTestEntry.RunToLog() == 0 ? 0 : 1);
+            Application.Current.Shutdown(arduinoFailures == 0 ? 0 : 1);
             return true;
         }
         if (!args.Contains("--test")) return false;

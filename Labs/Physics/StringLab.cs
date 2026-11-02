@@ -56,7 +56,7 @@ public sealed class StringLab : PhysLab
         int k = (int)Math.Round(semis);
         int midi = 69 + k;
         int cents = (int)Math.Round(100 * (semis - k));
-        return $"{names[((midi % 12) + 12) % 12]}{midi / 12 - 1} {(cents >= 0 ? "+" : "−")}{Math.Abs(cents)} ¢";
+        return $"{names[((midi % 12) + 12) % 12]}{(int)Math.Floor(midi / 12.0) - 1} {(cents >= 0 ? "+" : "−")}{Math.Abs(cents)} ¢";
     }
 
     protected override void Paint(DrawingContext dc)

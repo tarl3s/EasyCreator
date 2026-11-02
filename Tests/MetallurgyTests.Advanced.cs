@@ -18,19 +18,15 @@ public static partial class MetallurgyTests
         double Ans(string id, int q) => Question.TryNum(Find(id)?.Questions[q].Answer ?? "", out var v) ? v : double.NaN;
 
         log.WriteLine("== Lessons 11–20");
-        Check($"metallurgy track has 20 lessons ({track.Lessons.Count})", track.Lessons.Count == 20);
-        Check("lesson ids are unique", track.Lessons.Select(l => l.Id).Distinct().Count() == track.Lessons.Count);
-        Check("levels never go down and end at 5", track.Lessons.Zip(track.Lessons.Skip(1)).All(p => p.First.Level <= p.Second.Level) && track.Lessons[^1].Level == 5);
+        LessonChecks.Shape(track, check);
         foreach (var l in track.Lessons.Skip(10).Where(l => l.Kind == "lab"))
             Check($"{l.Id}: lab with a safety note", l.Safety.Length > 0);
-        foreach (var l in track.Lessons.Skip(10))
-            foreach (var (q, i) in l.Questions.Select((q, i) => (q, i)).Where(x => x.q.Kind == "number"))
-                Check($"{l.Id} q{i + 1}: 10 % off is rejected", !q.IsCorrect((Ans(l.Id, i) * 1.1).ToString(CultureInfo.InvariantCulture)));
+        LessonChecks.TenPercentOffRejected(track, 10, check);
 
         // Plays a lesson's lab: the solution inputs, overridden by the given keys.
         IReadOnlyDictionary<string, double> Play(string id, params (string k, string v)[] over)
         {
-            var l = Find(id)!;
+            var l = Find(id) ?? throw new InvalidOperationException($"lesson {id} not found");
             var lab = LabRegistry.Create(l.Lab)!;
             lab.Load(l.LabParams);
             var inputs = new Dictionary<string, string>(l.SolutionInputs);

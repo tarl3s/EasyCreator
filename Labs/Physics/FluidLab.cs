@@ -42,6 +42,7 @@ public sealed class FluidLab : PhysLab
         M["fallTime"] = _tf;
         M["flowRate"] = area * _v * 1000;
         M["pressure"] = Rho * G * _h;
+        M["hole"] = hole;   // the height actually used (clamped to the water level)
         if (!double.IsNaN(_targetX)) M["hitTarget"] = Math.Abs(_x - _targetX) <= _targetW / 2 ? 1 : 0;
         AnimSeconds = 2;
     }

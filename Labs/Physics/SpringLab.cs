@@ -57,7 +57,9 @@ public sealed class SpringLab : PhysLab
         M["maxSpeed"] = _vMax;
         M["energyEnd"] = 0.5 * k * x * x + 0.5 * m * v * v;
         M["overshoot"] = 100 * -xMin / A;
-        M["settleTime"] = lastOut >= t - dt / 2 ? double.PositiveInfinity : lastOut;
+        // settled only if the remaining energy can no longer take |x| above 2 % (a zero crossing at the end of the run is not settling)
+        bool settled = Math.Sqrt(x * x + m * v * v / k) <= 0.02 * A;
+        M["settleTime"] = settled ? lastOut : double.PositiveInfinity;
         AnimSeconds = Math.Min(_tSim, 6);
     }
 

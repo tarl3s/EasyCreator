@@ -19,9 +19,7 @@ public static partial class ElectricalTests
         log.WriteLine("== Lessons 11–20: track shape");
         var track = ContentStore.Find("electrical");
         if (track == null) { Check("electrical track loaded", false); return; }
-        Check($"electrical track has 20 lessons ({track.Lessons.Count})", track.Lessons.Count == 20);
-        Check("lesson ids are unique", track.Lessons.Select(l => l.Id).Distinct().Count() == track.Lessons.Count);
-        Check("levels never go down and end at 5", track.Lessons.Zip(track.Lessons.Skip(1)).All(p => p.First.Level <= p.Second.Level) && track.Lessons[^1].Level == 5);
+        LessonChecks.Shape(track, check);
         foreach (var id in new[] { "ele-12-rl", "ele-16-transformador", "ele-18-motores", "ele-19-condutores", "ele-20-protecao" })
             Check($"{id}: has a safety note", track.Lessons.FirstOrDefault(l => l.Id == id)?.Safety.Length > 0);
 
@@ -30,7 +28,7 @@ public static partial class ElectricalTests
         CircuitLab Play(string id, string key, string value)
         {
             var lab = new CircuitLab();
-            lab.Load(Find(id)!.LabParams);
+            lab.Load(Find(id)?.LabParams ?? throw new InvalidOperationException($"lesson {id} not found"));
             lab.SetInputs(new Dictionary<string, string> { [key] = value });
             lab.RunToEnd();
             return lab;
@@ -44,13 +42,7 @@ public static partial class ElectricalTests
             Check($"{id}: {key} = {value} {(meets ? "meets every goal" : "misses a goal")}", (missed.Count == 0) == meets,
                 missed.Count == 0 ? "(all met)" : "(missed " + string.Join(", ", missed) + ")");
         }
-        // Every quiz answer must be accepted and a value 10 % off must be rejected (the tolerance is not too loose).
-        foreach (var l in track.Lessons.Skip(10))
-            foreach (var (q, i) in l.Questions.Select((q, i) => (q, i)).Where(x => x.q.Kind == "number"))
-            {
-                double a = Ans(l.Id, i);
-                Check($"{l.Id} q{i + 1}: 10 % off is rejected", !q.IsCorrect((a * 1.1).ToString(System.Globalization.CultureInfo.InvariantCulture)));
-            }
+        LessonChecks.TenPercentOffRejected(track, 10, check);
 
         log.WriteLine("== ele-11 superposition");
         {
