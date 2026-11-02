@@ -1,6 +1,6 @@
 {
   "title": "Metalurgia y Soldadura: del átomo al cordón",
-  "description": "Por qué el acero se endurece en el agua, qué pasa dentro del metal cuando sueldas y cómo elegir corriente, tensión y velocidad — de cristales y granos hasta aporte térmico, carbono equivalente y procedimientos de soldadura (WPS). Los simuladores enseñan los parámetros, pero soldar de verdad se aprende con las manos: haz un curso práctico con un instructor calificado (por ejemplo en el SENAI de Brasil, o en una escuela técnica o centro de formación profesional de tu país) y usa siempre el EPP completo.",
+  "description": "Por qué el acero se endurece en el agua, qué pasa dentro del metal cuando sueldas y cómo elegir corriente, tensión y velocidad — de cristales y granos hasta curvas TTT, templabilidad, la ZAT, inoxidable y aluminio, fatiga y fractura, calificación de procedimientos (WPS/PQR) y tratamiento posterior a la soldadura. Los simuladores enseñan los parámetros, pero soldar de verdad se aprende con las manos: haz un curso práctico con un instructor calificado (por ejemplo en el SENAI de Brasil, o en una escuela técnica o centro de formación profesional de tu país) y usa siempre el EPP completo.",
   "lessons": {
     "met-01-estrutura": {
       "title": "Dentro del metal: átomos, cristales y granos",
@@ -304,6 +304,617 @@
           "explanation": "El PQR (RCP) registra los parámetros reales usados y los resultados de los ensayos; la WPS (EPS) es la instrucción que se apoya en él."
         }
       ]
+    },
+    "met-11-ttt": {
+      "hints": [
+        "Primero calienta por encima de A3 (≈ 839 °C), por ejemplo a 870–900 °C, para tener 100% de austenita.",
+        "El agua es demasiado rápida (solo martensita); el aire y el horno son demasiado lentos (ferrita + perlita).",
+        "El medio intermedio, el aceite, pasa por la zona de la bainita."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la diferencia entre los diagramas **TTT** y **CCT**?",
+          "options": [
+            "No hay diferencia: son el mismo diagrama",
+            "El TTT vale para la transformación a temperatura constante (isotérmica); el CCT, para el enfriamiento continuo",
+            "El TTT es para aceros y el CCT para aluminio",
+            "El TTT muestra el equilibrio y el CCT la fusión"
+          ],
+          "explanation": "TTT = enfriar de golpe y mantener la temperatura; CCT = enfriar de forma continua, como en un temple real en agua, aceite o aire."
+        },
+        {
+          "prompt": "¿Por qué la martensita se forma **sin difusión**?",
+          "options": [
+            "Porque se forma a altas temperaturas, donde el carbono es muy rápido",
+            "Porque necesita muchas horas para crecer",
+            "Porque es una transformación por cizallamiento de la red, demasiado rápida para que el carbono se mueva: queda atrapado y distorsiona la red",
+            "Porque el carbono sale del acero durante el temple"
+          ],
+          "explanation": "Por debajo de Ms la red FCC de la austenita \"cizalla\" a una red tetragonal en microsegundos. El carbono queda atrapado, distorsiona la red y eso es lo que hace tan dura a la martensita."
+        },
+        {
+          "prompt": "Estima **Ms** con la fórmula de Andrews para un acero **1045** (C = 0,45%, Mn = 0,75%, sin Ni, Cr ni Mo).",
+          "options": [],
+          "explanation": "Ms = 539 − 423 × 0,45 − 30,4 × 0,75 = 539 − 190,4 − 22,8 ≈ 326 °C.",
+          "unit": "°C"
+        },
+        {
+          "prompt": "El **austempering** produce principalmente…",
+          "options": [
+            "bainita",
+            "martensita",
+            "perlita gruesa",
+            "austenita retenida"
+          ],
+          "explanation": "En el austempering la pieza queda en un baño entre ~250 y 400 °C hasta que toda la austenita se vuelve bainita: dureza media-alta con excelente tenacidad y sin las tensiones del temple."
+        },
+        {
+          "prompt": "En la nariz de la curva TTT de un acero al carbono (~550 °C), la transformación es…",
+          "options": [
+            "la más lenta de todas",
+            "imposible",
+            "solo de martensita",
+            "la más rápida: para obtener martensita, el enfriamiento tiene que pasar a la izquierda de la nariz"
+          ],
+          "explanation": "En la nariz la fuerza motriz y la difusión se equilibran y la perlita/bainita empieza en una fracción de segundo. Por eso los aceros al carbono necesitan un enfriamiento muy rápido (agua) para templar."
+        }
+      ],
+      "goals": [
+        "Calentado hasta 100% austenita",
+        "Al menos 60% de bainita",
+        "Sin sobrecalentar ni quemar el acero"
+      ],
+      "title": "Curvas TTT y CCT: bainita, martensita y la velocidad de enfriamiento",
+      "theory": "# El diagrama Fe–C no alcanza\n\nEl diagrama hierro-carbono muestra el **equilibrio**: lo que se forma con un enfriamiento muy lento. En la práctica la pieza se enfría en segundos o minutos, y el **tiempo** pasa a decidir la microestructura. Para eso existen dos diagramas.\n\n# TTT: transformación isotérmica\n\nEl diagrama **TTT** (tiempo–temperatura–transformación) muestra lo que pasa si la austenita se enfría **de golpe** hasta una temperatura y se **mantiene** en ella. Tiene forma de **\"C\"** (o de \"nariz\"):\n\n- **Por encima de la nariz** (~550–700 °C): se forma **perlita**, gruesa cerca de A1 y fina más abajo. La transformación depende de la **difusión** del carbono, así que lleva tiempo.\n- **En la nariz** (~550 °C en aceros al carbono): la transformación es **la más rápida** (¡menos de 1 s en un acero 1080!). Para evitar la perlita, el enfriamiento tiene que pasar a la izquierda de la nariz.\n- **Por debajo de la nariz** (~250–550 °C): se forma **bainita**, ferrita en agujas o listones con carburos finos. Más dura y más tenaz que la perlita.\n- **Por debajo de Ms** (martensite start): la austenita se convierte en **martensita** por **cizallamiento**, sin difusión, prácticamente al instante. La cantidad depende solo de cuánto baja la temperatura por debajo de Ms (termina en Mf).\n\nUna estimación clásica de Ms (fórmula de **Andrews**, % en masa):\n\n```\nMs (°C) = 539 − 423·C − 30,4·Mn − 17,7·Ni − 12,1·Cr − 7,5·Mo\n```\n\n# CCT: enfriamiento continuo\n\nEn la vida real la pieza se enfría **de forma continua** (agua, aceite, aire, horno). El diagrama **CCT** (continuous cooling transformation) tiene las curvas de enfriamiento dibujadas encima; cada una cruza los campos de ferrita, perlita, bainita y martensita en lugares distintos:\n\n- **Horno** (muy lento): ferrita + perlita gruesa: **recocido**.\n- **Aire** (lento): ferrita + perlita fina: **normalizado**.\n- **Aceite** (rápido): parte bainita, parte martensita; depende del acero y del espesor.\n- **Agua** (muy rápido): martensita.\n\nLa **velocidad crítica de enfriamiento** es la más lenta que aún da 100% de martensita. Los elementos de aleación (Cr, Mo, Ni, Mn) **empujan las curvas hacia la derecha**: el acero templa con enfriamientos más lentos (próxima lección).\n\n## Tratamientos isotérmicos\n\n- **Austempering** (austemplado): enfriar rápido hasta 250–400 °C (baño de sales), esperar a que todo se transforme en **bainita** y solo entonces enfriar. Piezas tenaces y sin grietas: muelles, arandelas, herramientas agrícolas.\n- **Martempering** (martemplado): enfriar hasta justo por encima de Ms, igualar la temperatura del núcleo y de la superficie y luego enfriar al aire: martensita con **menos distorsión y grietas**.\n\n# En el simulador\n\nEl acero es un **SAE 1030** (0,30% C, A3 ≈ 839 °C). El modelo simplificado del simulador decide la estructura por la severidad del medio: aire y horno dan ferrita + perlita; aceite y agua dan martensita, y lo que no se vuelve martensita se vuelve bainita.",
+      "task": "Con el acero **SAE 1030**, obtén una pieza **mayoritariamente bainítica**: austeniza por completo (sin sobrecalentar) y elige el medio de enfriamiento que dé **al menos 60% de bainita**.",
+      "safety": "El aceite de temple caliente **se prende fuego**: sumerge la pieza de una vez y por completo, usa un tanque con tapa, ten un **extintor clase B** cerca y nunca uses agua en un incendio de aceite. Usa **guantes térmicos, delantal, protector facial** y pinzas largas. El tratamiento térmico real se aprende con un **instructor calificado**."
+    },
+    "met-12-temperabilidade": {
+      "hints": [
+        "Con 0,45% C el aceite es demasiado lento para este acero al carbono: le falta templabilidad.",
+        "Aumenta el carbono: alrededor de 0,65–0,75% C el aceite ya da más de 90% de martensita.",
+        "No exageres: demasiado carbono aumenta el riesgo de grieta. Calienta unos 50 °C por encima de la línea A3/A1 del acero (≈ 800 °C)."
+      ],
+      "questions": [
+        {
+          "prompt": "La **templabilidad** es…",
+          "options": [
+            "la dureza máxima que alcanza un acero",
+            "la resistencia a la tracción después del revenido",
+            "la facilidad de formar martensita: la profundidad de temple y el medio necesario",
+            "la temperatura de fusión del acero"
+          ],
+          "explanation": "La dureza máxima depende del carbono; la templabilidad dice hasta dónde (y con qué velocidad de enfriamiento) se forma la martensita, y depende sobre todo de los elementos de aleación."
+        },
+        {
+          "prompt": "En el ensayo **Jominy**, la barra se…",
+          "options": [
+            "enfría con un chorro de agua en un extremo y se mide la dureza a lo largo de ella",
+            "sumerge entera en agua y se corta por la mitad",
+            "calienta en un extremo y se enfría al aire",
+            "tracciona hasta romper a varias temperaturas"
+          ],
+          "explanation": "Cada punto de la barra se enfría a una velocidad distinta; la curva dureza × distancia al extremo resume la templabilidad del acero."
+        },
+        {
+          "prompt": "Calcula el **CE(IIW)** de un acero **4140** con C = 0,40; Mn = 0,85; Cr = 1,0; Mo = 0,20 (%).",
+          "options": [],
+          "explanation": "CE = 0,40 + 0,85/6 + (1,0 + 0,20)/5 = 0,40 + 0,142 + 0,240 ≈ 0,78: soldabilidad difícil, con precalentamiento y tratamiento posterior.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Por qué un acero aleado como el **4140** suele templarse en **aceite** y no en agua?",
+          "options": [
+            "Porque el aceite deja la pieza más dura que el agua",
+            "Porque su alta templabilidad permite un enfriamiento más suave, con menos distorsión y grietas",
+            "Porque el agua oxida el cromo",
+            "Porque el aceite es más barato"
+          ],
+          "explanation": "Como los elementos de aleación retrasan la perlita y la bainita, el aceite ya es suficientemente rápido para formar martensita, con gradientes térmicos menores que en agua."
+        }
+      ],
+      "goals": [
+        "Al menos 90% de martensita",
+        "Riesgo de grieta de temple ≤ 15%",
+        "Sin sobrecalentar ni quemar el acero"
+      ],
+      "title": "Templabilidad, ensayo Jominy y aceros aleados",
+      "theory": "# Dureza no es templabilidad\n\nDos ideas que suelen confundirse:\n\n- **Dureza máxima**: la dureza de la martensita. Depende casi solo del **carbono** (0,20% C → ~47 HRC; 0,45% → ~58 HRC; 0,80% → ~65 HRC).\n- **Templabilidad**: la **facilidad** de formar martensita: hasta qué **profundidad** y con qué **medio** templa la pieza. Depende de los **elementos de aleación** y del tamaño de grano.\n\nUna barra gruesa de acero al carbono templada en agua queda dura solo en la **superficie**: el núcleo se enfría demasiado despacio y se vuelve perlita/bainita. Un acero de **alta templabilidad** templa hasta el centro, incluso en aceite o al aire.\n\n# El ensayo Jominy\n\nEl ensayo estándar (ASTM A255, ISO 642): una barra de **25 mm de diámetro** y 100 mm de largo se austeniza y se enfría con un **chorro de agua en un solo extremo**. El extremo mojado se enfría rapidísimo; el otro, despacio. Después se mide la dureza **a lo largo de la barra**, cada 1,5 mm. La curva Jominy muestra:\n\n- acero **al carbono**: la dureza se desploma pocos milímetros después del extremo;\n- acero **aleado** (4140, 4340): la dureza sigue alta durante decenas de milímetros.\n\nCon la curva, el ingeniero predice la dureza en el centro de una pieza real de un diámetro dado.\n\n# Por qué ayudan los elementos de aleación\n\nEl cromo, el molibdeno, el manganeso, el níquel y el boro **retrasan la formación de perlita y bainita** (desplazan la nariz de las curvas TTT/CCT a la derecha). Resultado: la martensita se forma incluso con enfriamientos más **lentos**, lo que permite:\n\n- templar piezas **gruesas** hasta el núcleo;\n- usar **aceite** en lugar de agua → **menos distorsión y grietas de temple**.\n\nEjemplos (designación SAE/AISI): **1045** (al carbono), **4140** (Cr-Mo, ejes y engranajes), **4340** (Ni-Cr-Mo, piezas muy solicitadas), **8620** (cementación).\n\n## La otra cara: la soldabilidad\n\nLo que facilita el temple en la pieza también facilita el temple en la **ZAT de la soldadura**. Por eso el **carbono equivalente** incluye los elementos de aleación:\n\n```\nCE(IIW) = C + Mn/6 + (Cr + Mo + V)/5 + (Ni + Cu)/15\n```\n\nUn 4140 tiene CE ≈ 0,78: soldarlo exige un precalentamiento alto y tratamiento posterior a la soldadura.\n\n# En el simulador\n\nEl simulador modela una pieza pequeña de **acero al carbono**: en él, la facilidad de templar crece con el carbono. Empezamos con 0,45% C en **aceite**: el resultado es mitad martensita, mitad bainita. En la industria la respuesta sería cambiar a un acero aleado; aquí, explora el carbono.",
+      "task": "Templando en **aceite** (menos grietas que el agua), obtén **al menos 90% de martensita** con un **riesgo de grieta de temple ≤ 15%**, sin sobrecalentar. Elige el contenido de carbono y la temperatura.",
+      "safety": "El temple en aceite exige **tanque con tapa, extintor clase B y EPP térmico completo** (guantes, delantal, protector facial). Las piezas templadas sin revenir pueden **agrietarse solas** y soltar esquirlas: revénalas justo después del temple. Practica con un **instructor calificado**."
+    },
+    "met-13-simbologia": {
+      "questions": [
+        {
+          "prompt": "En la norma **AWS**, un símbolo de filete dibujado **debajo** de la línea de referencia indica soldadura…",
+          "options": [
+            "del lado de la flecha",
+            "del otro lado",
+            "de los dos lados",
+            "hecha en campo"
+          ],
+          "explanation": "En la AWS: debajo = lado de la flecha; encima = otro lado; símbolos a los dos lados de la línea = soldadura en ambos lados."
+        },
+        {
+          "prompt": "Una **bandera** en el codo de la línea de referencia significa…",
+          "options": [
+            "soldadura en todo el contorno",
+            "soldadura intermitente",
+            "soldadura de campo (hecha en el montaje, no en el taller)",
+            "soldadura que se debe amolar"
+          ],
+          "explanation": "La bandera indica soldadura de campo. El círculo en el codo es el que indica \"en todo el contorno\"."
+        },
+        {
+          "prompt": "Un **círculo** en el codo de la línea de referencia indica…",
+          "options": [
+            "soldadura por puntos",
+            "soldadura en todo el contorno de la pieza",
+            "inspección por ultrasonido",
+            "soldadura hecha de arriba abajo"
+          ],
+          "explanation": "El círculo en el codo (\"weld all around\") pide que el cordón siga por todo el perímetro de la unión, por ejemplo alrededor de un tubo."
+        },
+        {
+          "prompt": "El número **6** a la izquierda de un símbolo de filete (AWS) indica…",
+          "options": [
+            "6 cordones",
+            "6 pasadas",
+            "la garganta de 6 mm",
+            "el cateto del filete de 6 mm"
+          ],
+          "explanation": "En la AWS el tamaño del filete a la izquierda del triángulo es el cateto. En la ISO, la letra antes del número dice si es la garganta (a) o el cateto (z)."
+        },
+        {
+          "prompt": "Un filete de catetos iguales tiene **cateto z = 8 mm**. ¿Cuál es la **garganta** a?",
+          "options": [],
+          "explanation": "a = 0,707 × z = 0,707 × 8 ≈ 5,66 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "La indicación **50-150** a la derecha de un símbolo de filete significa…",
+          "options": [
+            "filete de 50 mm de cateto y 150 mm de garganta",
+            "cordones de 50 mm de longitud con un paso de 150 mm (soldadura intermitente)",
+            "corriente de 50 a 150 A",
+            "soldadura en el 50% de la longitud de 150 mm"
+          ],
+          "explanation": "A la derecha del símbolo van la longitud y el paso: segmentos de 50 mm, a 150 mm de centro a centro."
+        },
+        {
+          "prompt": "En un plano **ISO 2553**, la indicación **a5** en un filete significa…",
+          "options": [
+            "garganta de 5 mm",
+            "cateto de 5 mm",
+            "5 pasadas",
+            "soldadura tipo A, clase 5"
+          ],
+          "explanation": "En la ISO, \"a\" = garganta (espesor efectivo) y \"z\" = cateto. a5 corresponde a un cateto de unos 7 mm (5 × 1,414)."
+        }
+      ],
+      "title": "Simbología de soldadura: leyendo el plano (AWS A2.4 e ISO 2553)",
+      "theory": "# El lenguaje del plano\n\nEn un plano de fabricación nadie escribe \"suelda aquí un filete de 6 mm por los dos lados\". Se usa un **símbolo de soldadura** normalizado, que el soldador, el inspector y el proyectista leen de la misma forma. Las dos normas más usadas son la **AWS A2.4** (estadounidense) y la **ISO 2553** (internacional/europea).\n\n# Las partes del símbolo (AWS A2.4)\n\n```\n            tamaño  símbolo  longitud-paso\n                6    ◣         50-150\n   ─────────────────────────────────────────<  cola (proceso, WPS)\n  ↙  flecha\n```\n\n- **Línea de referencia**: la línea horizontal; todo se organiza en torno a ella.\n- **Flecha**: apunta a la unión. El lado que toca es el **lado de la flecha**; el otro es el **otro lado**.\n- **Símbolo básico** de la soldadura: triángulo = **filete**; símbolos de bisel: **V**, **½V** (bisel simple), **U**, **J**, **recto** (bordes rectos); rectángulo = tapón/ranura; círculo = soldadura por puntos.\n- **Posición del símbolo** (la regla más importante de la AWS): **debajo** de la línea = soldadura del **lado de la flecha**; **encima** = del **otro lado**; en **los dos lados** = soldadura en ambos.\n- **Tamaño** a la **izquierda** del símbolo: en el filete, el **cateto** (z). **Longitud y paso** a la **derecha**: \"50-150\" = cordones de 50 mm cada 150 mm (de centro a centro): soldadura **intermitente**.\n- **Símbolos suplementarios**: **bandera** en el codo = **soldadura de campo** (hecha en el montaje); **círculo** en el codo = **soldadura en todo el contorno**; contorno (plano, convexo, cóncavo) y acabado (G = amolar).\n- **Cola**: proceso (SMAW, GMAW…), número de WPS u observaciones. Sin información, la cola se omite.\n\n# ISO 2553: las diferencias\n\n- Usa **dos líneas de referencia**: una continua y una **discontinua**. Símbolo en la línea **continua** = lado de la flecha; en la **discontinua** = otro lado. (Así la lectura no depende de \"encima o debajo\".)\n- En el filete, el tamaño lleva una letra: **a** = **garganta** (espesor efectivo) y **z** = **cateto**. \"a5\" = garganta de 5 mm.\n\n# Garganta × cateto del filete\n\nEn un filete de catetos iguales (triángulo rectángulo isósceles), la **garganta** es la altura del triángulo hasta la hipotenusa:\n\n```\na = z × cos 45° = 0,707 × z        z = 1,414 × a\n```\n\nLa resistencia del filete se calcula con la **garganta** (área = a × longitud). Confundir a con z en un plano ISO da un cordón **41% mayor o menor** que el diseñado."
+    },
+    "met-14-zta": {
+      "hints": [
+        "La ZAT está dura porque se enfría demasiado rápido (un t8/5 de pocos segundos): le falta aporte térmico.",
+        "Para llegar a ~350 HV con este acero, el t8/5 tiene que superar ~12 s: más corriente (alambre de 1,2 mm, ~8 m/min), tensión de spray (~27 V) y velocidad baja (~4 mm/s).",
+        "Otra salida es el precalentamiento (~200 °C), que también aumenta el t8/5."
+      ],
+      "questions": [
+        {
+          "prompt": "Según la fórmula de Düren, ¿cuál es la dureza de la ZAT de un acero con **C = 0,20%**, **CE = 0,45** y **t8/5 = 10 s**?",
+          "options": [],
+          "explanation": "log 10 = 1. HV = 2019 × [0,20 × (1 − 0,5) + 0,3 × (0,45 − 0,20)] + 66 × (1 − 0,8) = 2019 × (0,100 + 0,075) + 13,2 = 353,3 + 13,2 ≈ 367 HV.",
+          "unit": "HV"
+        },
+        {
+          "prompt": "Calcula el **t8/5** de chapa gruesa (fórmula 3D) para **Q = 1,0 kJ/mm**, **T0 = 20 °C** y **F3 = 1**.",
+          "options": [],
+          "explanation": "t8/5 = (6700 − 100) × 1,0 × (1/480 − 1/780) = 6600 × 0,000801 ≈ 5,29 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "¿Qué región de la unión soldada de un acero es la **más propensa a las grietas en frío**?",
+          "options": [
+            "El metal base lejos de la soldadura",
+            "La ZAT de grano grueso, junto a la línea de fusión",
+            "La ZAT subcrítica",
+            "La superficie del refuerzo del cordón"
+          ],
+          "explanation": "Calentada muy por encima de A3, la ZAT de grano grueso forma martensita gruesa y dura al enfriar; con hidrógeno y tensiones, es donde empieza la grieta en frío."
+        },
+        {
+          "prompt": "Aumentar el **aporte térmico** de una soldadura en acero…",
+          "options": [
+            "acorta el t8/5 y endurece la ZAT",
+            "no cambia nada en la ZAT",
+            "alarga el t8/5 y ablanda la ZAT, pero ensancha la ZAT y engruesa el grano",
+            "elimina la zona fundida"
+          ],
+          "explanation": "Más calor = enfriamiento más lento: menos martensita (ZAT más blanda), pero la ZAT se ensancha y el grano crece, lo que puede bajar la tenacidad. El ingeniero busca la ventana correcta."
+        },
+        {
+          "prompt": "Los granos de la **zona fundida** crecen…",
+          "options": [
+            "columnares, desde la línea de fusión hacia el centro del cordón (crecimiento epitaxial)",
+            "equiaxiales y muy finos en todo el cordón",
+            "solo después de un tratamiento térmico",
+            "desde el centro del cordón hacia afuera"
+          ],
+          "explanation": "El baño solidifica a partir de los granos parcialmente fundidos del metal base, que siguen creciendo en la dirección del mayor gradiente de temperatura: granos columnares y dendríticos."
+        }
+      ],
+      "goals": [
+        "Dureza de la ZAT de como máximo 350 HV",
+        "Calidad ≥ 80"
+      ],
+      "title": "Metalurgia de la soldadura: zona fundida, ZAT y el t8/5",
+      "theory": "# Una soldadura es un pequeño tratamiento térmico\n\nDurante unos segundos el arco lleva el metal de 20 °C a más de 1500 °C y después lo deja enfriar. Cada punto de la pieza pasa por un **ciclo térmico** distinto, y el resultado son tres regiones, visibles en una **macrografía** (corte pulido y atacado con ácido):\n\n# 1. Zona fundida (ZF)\n\nEl metal que se **fundió** (metal base + metal de aporte) y solidificó. Los granos crecen **columnares**, desde la línea de fusión hacia el centro del cordón (**crecimiento epitaxial**), con estructura **dendrítica**, como una pieza fundida. Problemas típicos: porosidad, inclusiones y **grietas de solidificación** (en caliente), favorecidas por el azufre, el fósforo y los cordones estrechos y profundos.\n\n# 2. Zona afectada térmicamente (ZAT)\n\nEl metal base que **no se fundió**, pero se calentó lo suficiente para cambiar su microestructura. Del cordón hacia afuera:\n\n- **Grano grueso** (1100–1450 °C): la austenita crece mucho. Al enfriar, si es rápido, se vuelve **martensita gruesa**: la región **más dura y frágil**, donde nacen las **grietas en frío**.\n- **Grano fino** (900–1100 °C): normalizada; suele tener **buena tenacidad**.\n- **Intercrítica** (A1–A3): parcialmente transformada.\n- **Subcrítica** (< A1): revenida/esferoidizada.\n\n# 3. Metal base\n\nNo sufrió cambios.\n\n# El t8/5: la velocidad de enfriamiento de la ZAT\n\nLa microestructura de la ZAT de un acero depende de **cuánto tiempo** tarda en enfriarse de **800 °C a 500 °C**, el rango en el que la austenita se transforma. Es el **t8/5**:\n\n- t8/5 **corto** (pocos segundos): martensita, ZAT **dura**.\n- t8/5 **largo** (15–30 s): bainita/ferrita, ZAT **blanda** (pero, si se exagera, grano grueso y baja tenacidad).\n\nSegún la **EN 1011-2**, en chapa **gruesa** (calor que fluye en 3D):\n\n```\nt8/5 = (6700 − 5·T0) × Q × [1/(500 − T0) − 1/(800 − T0)] × F3\n```\n\ny en chapa **fina** (2D) el t8/5 crece con **Q²/e²**. Q es el aporte térmico (kJ/mm), T0 el precalentamiento (°C), e el espesor y F3 el factor de forma de la unión.\n\n# Predecir la dureza de la ZAT\n\nLa fórmula de **Düren** estima la dureza máxima de la ZAT (HV10):\n\n```\nHV = 2019·[C·(1 − 0,5·log t8/5) + 0,3·(CE − C)] + 66·(1 − 0,8·log t8/5)\n```\n\nMuchas normas y clientes (petróleo, recipientes a presión) limitan la ZAT a **350 HV** (a veces 248–250 HV en servicio con H₂S). Para bajar la dureza: **más aporte térmico** (más corriente, menos velocidad) o **precalentamiento**; los dos aumentan el t8/5.\n\n# En el simulador\n\nUna unión a tope en chapa de **12 mm** de un acero con **C = 0,20%** y **CE = 0,45**, soldada con MIG/MAG. Observa el **t8/5** y la **dureza de la ZAT** al cambiar el alambre, la velocidad del alambre, la tensión, la velocidad de soldadura y el precalentamiento.",
+      "task": "Suelda la unión a tope de **12 mm** (C 0,20%, CE 0,45) con MIG/MAG manteniendo la **ZAT en 350 HV como máximo** y una **calidad ≥ 80**.",
+      "safety": "Las corrientes de más de 200 A en MIG/MAG producen **radiación intensa**: usa careta con filtro **DIN 12–13**, ropa de cuero o algodón grueso que cubra toda la piel y **extracción localizada** (los humos de soldadura son cancerígenos). Las piezas gruesas guardan calor mucho tiempo: manipúlalas con **guantes y tenazas**. Los parámetros de chapa gruesa se practican con un **instructor calificado**."
+    },
+    "met-15-inox": {
+      "hints": [
+        "La mezcla Ar + 20% CO₂ es para acero al carbono: en el inoxidable pone carbono en el cordón. Usa Ar + 2% O₂.",
+        "Para 3 mm con penetración total, alambre de 1,0 mm a ~6 m/min (≈ 165 A) y la tensión ideal de la sugerencia (~22,5 V).",
+        "Una velocidad de ~5 mm/s mantiene el aporte bajo (~0,6 kJ/mm) sin falta de fusión."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Qué hace que un acero sea **inoxidable**?",
+          "options": [
+            "Tener mucho níquel y nada de cromo",
+            "Tener al menos ~10,5% de cromo, que forma una capa pasiva de óxido de cromo",
+            "Estar recubierto de zinc",
+            "Tener carbono por encima del 1%"
+          ],
+          "explanation": "El cromo forma la película pasiva de Cr₂O₃, que se regenera sola. El níquel (en los austeníticos) estabiliza la austenita, pero no es lo que da la resistencia a la corrosión."
+        },
+        {
+          "prompt": "La **sensibilización** de un inoxidable austenítico es…",
+          "options": [
+            "el endurecimiento por temple en la ZAT",
+            "la pérdida del magnetismo después de soldar",
+            "la porosidad por hidrógeno",
+            "la precipitación de carburos de cromo en los bordes de grano (450–850 °C), que deja la región expuesta a la corrosión intergranular"
+          ],
+          "explanation": "El cromo atrapado en los carburos deja los bordes empobrecidos (< ~12% Cr) y sin capa pasiva. Por eso se usan aceros \"L\", estabilizados y bajo aporte."
+        },
+        {
+          "prompt": "Calcula el **cromo equivalente de Schaeffler** de un 304 con Cr = 18,5%, Mo = 0, Si = 0,5% y Nb = 0.",
+          "options": [],
+          "explanation": "Cr eq = Cr + Mo + 1,5·Si + 0,5·Nb = 18,5 + 0 + 0,75 + 0 = 19,25%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "¿Por qué el metal de aporte **308L** se formula para dejar un poco de **ferrita delta** en el cordón?",
+          "options": [
+            "Para evitar las grietas en caliente (de solidificación)",
+            "Para que el cordón sea magnético y se pueda inspeccionar con partículas magnéticas",
+            "Para aumentar la dureza del cordón",
+            "Para abaratar el alambre"
+          ],
+          "explanation": "Una pequeña fracción de ferrita (FN ≈ 3–10) disuelve el azufre y el fósforo y rompe la continuidad de las películas líquidas entre las dendritas, que es lo que causa la grieta en caliente."
+        },
+        {
+          "prompt": "¿Qué gas de protección es el adecuado para **MIG en inoxidable**?",
+          "options": [
+            "CO₂ puro",
+            "Ar + 20% CO₂",
+            "Ar + 2% O₂ (o Ar + 2% CO₂)",
+            "Aire comprimido"
+          ],
+          "explanation": "El inoxidable necesita un gas casi inerte. Mucho CO₂ pone carbono en el cordón (sensibilización, pérdida de resistencia a la corrosión) y oxida el cromo."
+        }
+      ],
+      "goals": [
+        "Calidad ≥ 80",
+        "Aporte térmico ≤ 0,8 kJ/mm",
+        "Porosidad ≤ 10%"
+      ],
+      "title": "Aceros inoxidables: tipos, sensibilización y soldadura",
+      "theory": "# Qué hace \"inoxidable\" a un acero\n\nCon al menos **10,5% de cromo**, el acero forma en su superficie una película finísima de **óxido de cromo (Cr₂O₃)**, la **capa pasiva**, que se regenera sola cuando se raya. Es lo que impide la oxidación.\n\n# Las familias\n\n- **Austeníticos** (serie 300: **304**, **316**): Cr 18% + Ni 8–10%. Estructura FCC, **no magnéticos**, muy dúctiles y tenaces incluso a temperaturas criogénicas. Los más usados (cocinas, industria química y alimentaria). El 316 lleva Mo y resiste mejor los cloruros.\n- **Ferríticos** (430): solo cromo; magnéticos, baratos, menos soldables (el grano crece).\n- **Martensíticos** (410, 420): templables: cuchillos, instrumental quirúrgico. Soldadura difícil (se agrietan).\n- **Dúplex** (2205): mitad austenita, mitad ferrita: el doble de resistencia que el 304 y excelente resistencia a la corrosión bajo tensión.\n\n# Los problemas al soldar los austeníticos\n\n## Sensibilización\n\nEntre **~450 y 850 °C**, el carbono reacciona con el cromo y forma **carburos de cromo (Cr₂₃C₆)** en los bordes de grano. La región vecina queda **empobrecida en cromo** y pierde la capa pasiva: aparece la **corrosión intergranular** en una franja junto al cordón. Soluciones:\n\n- aceros de **bajo carbono**, las versiones **\"L\"** (304L, 316L: C ≤ 0,03%);\n- aceros **estabilizados** con Ti o Nb (321, 347), que \"atrapan\" el carbono;\n- **bajo aporte térmico** y temperatura entre pasadas baja (≤ 150 °C).\n\n## Grietas en caliente y ferrita delta\n\nLa austenita pura solidifica con tendencia a **agrietarse en caliente**. Los consumibles (**308L** para el 304, **316L** para el 316) se formulan para dejar un poco de **ferrita delta** en el cordón (número de ferrita FN ≈ 3–10), que absorbe las impurezas y evita las grietas. El **diagrama de Schaeffler** (o WRC-1992) predice la estructura del cordón a partir de dos equivalentes:\n\n```\nCr eq = Cr + Mo + 1,5·Si + 0,5·Nb\nNi eq = Ni + 30·C + 0,5·Mn\n```\n\n## Distorsión y contaminación\n\nEl inoxidable **conduce poco calor** y **se dilata un 50% más** que el acero al carbono: se distorsiona mucho. Usa poco aporte, punteado denso y secuencia equilibrada. Las herramientas que tocaron acero al carbono dejan partículas que **se oxidan** sobre el inoxidable. Después de soldar, hay que quitar la coloración de óxido (heat tint) (cepillado, decapado y **pasivado**).\n\n## Gas de protección\n\nEn el MIG del inoxidable el gas tiene que ser casi inerte: **Ar + 2% O₂** o **Ar + 2% CO₂**. Con 20% de CO₂, el carbono del gas entra en el cordón y este pierde la resistencia a la corrosión. En TIG, argón puro y, en tubos, **purga** con argón por dentro para que la raíz no se oxide.\n\n# En el simulador\n\nUna unión a tope en **inoxidable 304 de 3 mm** soldada con MIG. El simulador penaliza el gas con mucho CO₂ y el aporte térmico alto (riesgo de grieta y pérdida de resistencia a la corrosión).",
+      "task": "Suelda el **inoxidable 304 de 3 mm** (a tope) con MIG: **calidad ≥ 80**, **aporte térmico ≤ 0,8 kJ/mm** (para no sensibilizar) y **porosidad ≤ 10%**. Elige también el gas correcto.",
+      "safety": "Los humos de la soldadura de inoxidable contienen **cromo hexavalente (Cr⁶⁺)**, cancerígeno: usa **extracción localizada** y, en espacios cerrados, un respirador adecuado. El inoxidable refleja mucho el arco: filtro **DIN 11–13** y toda la piel cubierta. Usa cepillos y discos **exclusivos para inoxidable**. Practica con un **instructor calificado**."
+    },
+    "met-16-aluminio": {
+      "hints": [
+        "El aluminio solo acepta gas inerte: argón puro (o argón + helio).",
+        "El aluminio se lleva el calor: necesita bastante corriente. Con alambre de 1,0 mm, ~8 m/min (≈ 210 A) y la tensión ideal de ~24,5 V.",
+        "Una velocidad de unos 6 mm/s y un caudal de gas de 15–18 L/min."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Por qué la capa de **óxido de aluminio** estorba tanto la soldadura?",
+          "options": [
+            "Porque es magnética",
+            "Porque conduce la electricidad mejor que el metal",
+            "Porque funde a ≈ 2070 °C, muy por encima de los 660 °C del aluminio, e impide que los bordes se fundan",
+            "Porque solo se forma después de soldar"
+          ],
+          "explanation": "El óxido es un \"envoltorio\" refractario. Hay que quitarlo mecánicamente antes y romperlo con el arco (limpieza catódica) durante la soldadura."
+        },
+        {
+          "prompt": "La principal causa de **porosidad** al soldar aluminio es…",
+          "options": [
+            "el hidrógeno (humedad, aceite, óxido hidratado), muy soluble en el aluminio líquido y casi nada en el sólido",
+            "el exceso de argón",
+            "el nitrógeno del acero",
+            "la corriente alterna"
+          ],
+          "explanation": "Al solidificar, el hidrógeno disuelto sale de la solución y queda atrapado en burbujas. La limpieza, el alambre seco y un gas de buena calidad son esenciales."
+        },
+        {
+          "prompt": "Para soldar **6061** con el **menor riesgo de grieta en caliente**, el alambre más indicado es…",
+          "options": [
+            "ER70S-6",
+            "ER4043 (Al-Si)",
+            "ER308L",
+            "un alambre de 6061 igual al metal base"
+          ],
+          "explanation": "El silicio del 4043 mejora la fluidez y aleja la composición del cordón de la zona sensible a la grieta. El 5356 se elige cuando se quiere más resistencia o anodizar."
+        },
+        {
+          "prompt": "La ZAT de un **6061-T6** (σr = 310 MPa) conserva solo el **60%** de la resistencia. ¿Cuál es la resistencia en esa zona?",
+          "options": [],
+          "explanation": "0,60 × 310 = 186 MPa. Por eso las estructuras soldadas de aluminio se dimensionan con la resistencia de la ZAT.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "En el **MIG del aluminio** se usa normalmente…",
+          "options": [
+            "CC− (electrodo negativo) y técnica arrastrando",
+            "CA y gas CO₂",
+            "CC+ y CO₂ puro",
+            "CC+ (electrodo positivo), argón y técnica empujando"
+          ],
+          "explanation": "Con el alambre positivo, el arco hace la limpieza catódica del óxido; empujando, el gas protege el frente del baño; el argón es inerte y no oxida el aluminio."
+        }
+      ],
+      "goals": [
+        "Calidad ≥ 80",
+        "Porosidad ≤ 10%",
+        "Falta de fusión ≤ 10%"
+      ],
+      "title": "Soldadura del aluminio: óxido, porosidad y grietas en caliente",
+      "theory": "# Por qué el aluminio es diferente\n\nEl aluminio es liviano (1/3 del acero), resiste bien la corrosión y conduce mucho calor y electricidad. Todo eso cambia la soldadura:\n\n- **La capa de óxido**: el aluminio se cubre al instante de **Al₂O₃**, que funde a **≈ 2070 °C**, más del triple de la temperatura de fusión del metal (**660 °C**). El óxido impide que los bordes se fundan (falta de fusión) y queda atrapado en el cordón. Por eso: limpiar con **cepillo de inoxidable exclusivo** y solvente justo antes de soldar, y aprovechar la **acción de limpieza catódica** del arco con el electrodo positivo (**CC+ en MIG**, **CA en TIG**).\n- **Conductividad térmica** unas 4 veces la del acero: el calor escapa rápido. El inicio del cordón queda frío (falta de fusión) y el final, demasiado caliente. Se usa **más corriente y más velocidad**; en piezas gruesas, un precalentamiento moderado (hasta ~120 °C).\n- **Porosidad por hidrógeno**: el aluminio líquido disuelve mucho hidrógeno, pero el sólido casi nada. Al solidificar, el gas sale y queda atrapado como poros. Fuentes: **humedad**, aceite, óxido hidratado, alambre sucio. Gas: solo **argón** o **argón + helio** (el helio da más calor y penetración).\n- **Sin aviso visual**: no cambia de color y el baño brilla poco antes de \"caerse\".\n\n# Grietas en caliente y elección del alambre\n\nAlgunas aleaciones (por ejemplo la **6061**, Al-Mg-Si) son sensibles a la **grieta de solidificación** cuando el cordón tiene la composición del metal base. La solución es **diluir** con un alambre de otra composición:\n\n- **ER4043** (Al-5Si): fluye bien, cordón brillante, **más resistente a la grieta en caliente**.\n- **ER5356** (Al-5Mg): cordón **más resistente** y mejor para anodizar (el color queda parecido al del metal base).\n\n# La ZAT del aluminio pierde resistencia\n\nLas aleaciones **tratables térmicamente** (6061-T6, 7075-T6) ganan resistencia por la precipitación de partículas finas. El calor de la soldadura disuelve o engruesa esas partículas: la ZAT queda **mucho más débil**; un 6061-T6 de 310 MPa cae a ~165–190 MPa cerca del cordón. El diseño de estructuras soldadas de aluminio usa la resistencia **de la ZAT**, no la del metal original.\n\n# El MIG del aluminio en la práctica\n\n- **CC+** (electrodo positivo), transferencia **spray** o **pulsada**.\n- Técnica **empujando** (antorcha inclinada hacia adelante) para que el gas limpie el frente del baño.\n- El alambre de aluminio es **blando**: rodillos con **canal en U**, funda de **teflón**, antorcha corta, spool gun o sistema push-pull.\n\n# En el simulador\n\nUna unión a tope en **aluminio de 4 mm** soldada con MIG. Fíjate en que la mezcla con CO₂ (buena para el acero) arruina la soldadura del aluminio.",
+      "task": "Suelda el **aluminio de 4 mm** (a tope) con MIG: **calidad ≥ 80**, **porosidad ≤ 10%** y **falta de fusión ≤ 10%**. Empieza eligiendo el gas.",
+      "safety": "El aluminio **no cambia de color** al calentarse: una pieza recién soldada parece fría y quema la mano. Marca las piezas calientes y usa guantes. El arco en el aluminio refleja mucho y genera **ozono**: filtro **DIN 11–13**, piel cubierta y extracción de humos. El polvo de lijado de aluminio es **inflamable**. Practica con un **instructor calificado**."
+    },
+    "met-17-fratura": {
+      "questions": [
+        {
+          "prompt": "Una placa con una grieta de borde de **4 mm** (Y = 1,12) está sometida a **200 MPa**. ¿Cuál es el factor de intensidad de tensiones K?",
+          "options": [],
+          "explanation": "K = 1,12 × 200 × √(π × 0,004) = 224 × 0,1121 ≈ 25,1 MPa·√m.",
+          "unit": "MPa·√m"
+        },
+        {
+          "prompt": "Un acero con **KIC = 50 MPa·√m** trabaja a **250 MPa** (Y = 1). ¿Cuál es el tamaño crítico de grieta?",
+          "options": [],
+          "explanation": "a_c = (1/π) × (50/250)² = 0,04/π = 0,0127 m ≈ 12,7 mm.",
+          "unit": "mm"
+        },
+        {
+          "prompt": "Un péndulo Charpy de **20 kg** cae desde **1,5 m** y, después de romper la probeta, sube hasta **0,7 m**. ¿Cuánta energía absorbió la probeta? (g = 9,81 m/s²)",
+          "options": [],
+          "explanation": "E = m·g·(h0 − h1) = 20 × 9,81 × (1,5 − 0,7) = 20 × 9,81 × 0,8 ≈ 157 J.",
+          "unit": "J"
+        },
+        {
+          "prompt": "¿Por qué los cascos de los **barcos Liberty** se partieron en dos?",
+          "options": [
+            "Porque el acero era demasiado débil a tracción",
+            "Porque el acero ferrítico quedó por debajo de su temperatura de transición dúctil-frágil en el agua helada, y las grietas de las soldaduras se propagaron",
+            "Porque el casco de aluminio se corroyó",
+            "Porque las soldaduras eran demasiado fuertes"
+          ],
+          "explanation": "Acero de baja tenacidad en frío + concentradores de tensión + defectos de soldadura: la grieta corrió de forma frágil por un casco totalmente soldado (sin juntas remachadas que la detuvieran)."
+        },
+        {
+          "prompt": "¿Cuál de estos materiales **no presenta** transición dúctil-frágil?",
+          "options": [
+            "Acero estructural al carbono",
+            "Acero ferrítico de baja aleación",
+            "Acero inoxidable austenítico (FCC)",
+            "Fundición nodular ferrítica"
+          ],
+          "explanation": "Los metales FCC (austeníticos, aluminio, cobre) siguen dúctiles incluso a temperaturas criogénicas; la transición es típica de los metales BCC, como los aceros ferríticos."
+        },
+        {
+          "prompt": "El **ensayo Charpy** mide…",
+          "options": [
+            "la energía absorbida para romper una probeta entallada con un golpe",
+            "la dureza de la superficie",
+            "el límite elástico",
+            "el número de ciclos hasta la fatiga"
+          ],
+          "explanation": "El péndulo mide la energía (J) absorbida en el impacto. Repetido a varias temperaturas, muestra la transición dúctil-frágil."
+        }
+      ],
+      "title": "Tenacidad, ensayo Charpy y mecánica de la fractura",
+      "theory": "# Resistencia no es tenacidad\n\nUna pieza puede tener mucha resistencia y aun así **romperse como vidrio**. La **tenacidad** es la capacidad de absorber energía y resistir la propagación de una grieta. Ejemplos históricos:\n\n- **Barcos Liberty** (años 1940): cascos soldados de acero que **se partieron en dos** en el Atlántico Norte helado. El acero estaba por debajo de su **temperatura de transición** y las soldaduras tenían grietas.\n- **Titanic**: el acero del casco y los remaches se volvieron **frágiles** en el agua a −2 °C.\n\n# Fractura dúctil × frágil\n\n- **Dúctil**: gran deformación antes de romper, superficie mate y fibrosa, \"avisa\" antes.\n- **Frágil**: casi sin deformación, superficie brillante y cristalina (clivaje), marcas en **chevron** que apuntan al origen. Ocurre de golpe, a veces por debajo de la tensión de diseño.\n\n# El ensayo Charpy\n\nUna probeta de **10 × 10 × 55 mm** con una **entalla en V** se rompe con un **péndulo**. La energía absorbida (en **julios**) es la diferencia entre la energía potencial antes y después del golpe:\n\n```\nE = m · g · (h0 − h1)\n```\n\nEnsayando a varias temperaturas se obtiene la **curva de transición dúctil-frágil** de los aceros **ferríticos** (BCC): energía alta a temperaturas altas (el \"escalón superior\"), una caída brusca en la **temperatura de transición** y energía baja en frío. Las normas de estructuras y recipientes a presión exigen, por ejemplo, **27 J a −20 °C** en el metal base, la soldadura y la ZAT.\n\nLos metales **FCC** (aceros inoxidables **austeníticos**, aluminio, cobre) **no tienen transición**: siguen tenaces a temperaturas criogénicas (los tanques de GNL, a −162 °C, usan inoxidable o acero con 9% Ni).\n\n# Mecánica de la fractura\n\nToda estructura real tiene defectos (poros, inclusiones, grietas de soldadura). La pregunta de ingeniería es: **¿qué grieta es peligrosa?** La mecánica de la fractura elástica lineal responde con el **factor de intensidad de tensiones**:\n\n```\nK = Y · σ · √(π · a)        (MPa·√m)\n```\n\n- σ = tensión aplicada; a = tamaño de la grieta (en metros; la profundidad de una grieta superficial o la mitad de una interna); Y = factor geométrico (≈ 1,12 para una grieta de borde).\n- La grieta crece de forma inestable cuando **K ≥ KIC**, la **tenacidad a la fractura** del material (acero estructural ~50–150 MPa·√m; aluminio 7075 ~25; vidrio ~0,7).\n- Tamaño crítico de grieta:\n\n```\na_c = (1/π) · (KIC / (Y · σ))²\n```\n\nEsa cuenta decide si un defecto encontrado en un ensayo no destructivo puede quedarse o tiene que repararse (evaluación de **aptitud para el servicio**, BS 7910 / API 579). Para materiales muy tenaces se usan ensayos elastoplásticos (**CTOD**, integral J)."
+    },
+    "met-18-fadiga": {
+      "questions": [
+        {
+          "prompt": "Un detalle **FAT 80** se carga con **Δσ = 160 MPa**. ¿Cuántos ciclos aguanta (m = 3)?",
+          "options": [],
+          "explanation": "N = 2·10⁶ × (80/160)³ = 2·10⁶ × 0,125 = 250 000 ciclos.",
+          "unit": "ciclos"
+        },
+        {
+          "prompt": "Una pieza sufre **100 000 ciclos** de una carga que aguantaría **500 000** veces y **50 000 ciclos** de otra que aguantaría **200 000** veces. ¿Cuál es el daño de Miner?",
+          "options": [],
+          "explanation": "D = 100 000/500 000 + 50 000/200 000 = 0,20 + 0,25 = 0,45 (le queda el 55% de la vida).",
+          "unit": ""
+        },
+        {
+          "prompt": "Con **m = 3**, si el rango de tensiones se **duplica**, ¿cuántas veces cae la vida a fatiga?",
+          "options": [],
+          "explanation": "N ∝ 1/Δσ³: (2)³ = 8 veces menos ciclos.",
+          "unit": "veces"
+        },
+        {
+          "prompt": "En un filete soldado cargado cíclicamente, la grieta de fatiga normalmente empieza…",
+          "options": [
+            "en medio del metal base, lejos de la soldadura",
+            "en el centro del cordón, por dentro",
+            "en el pie del cordón, donde la concentración de tensiones es mayor",
+            "en la superficie opuesta a la soldadura"
+          ],
+          "explanation": "El pie del cordón concentra tensiones (cambio brusco de geometría), tiene microdefectos y tensiones residuales de tracción: es el punto más débil a fatiga."
+        },
+        {
+          "prompt": "¿Cuál de estas medidas **aumenta** la vida a fatiga de una unión soldada?",
+          "options": [
+            "Aumentar mucho el refuerzo del cordón",
+            "Amolar o martillar el pie del cordón (tensiones de compresión)",
+            "Usar un acero más resistente sin cambiar la unión",
+            "Dejar salpicaduras y mordeduras"
+          ],
+          "explanation": "Mejorar la geometría del pie e introducir compresión atacan el origen de la grieta. Un acero más resistente casi no ayuda en uniones soldadas: la vida depende de Δσ y del detalle."
+        },
+        {
+          "prompt": "Las **marcas de playa** en una superficie de fractura indican…",
+          "options": [
+            "fractura frágil por impacto",
+            "corrosión por picaduras",
+            "exceso de carbono",
+            "fatiga: la grieta avanzó poco a poco, ciclo a ciclo"
+          ],
+          "explanation": "Las marcas de playa son los \"frentes\" sucesivos de una grieta de fatiga, generalmente concéntricos respecto al origen."
+        }
+      ],
+      "title": "Fatiga de estructuras soldadas",
+      "theory": "# La falla que llega con el tiempo\n\nLa **fatiga** es la rotura causada por **cargas que varían** (ciclos), incluso muy por debajo del límite elástico. Se estima que la mayoría de las fallas mecánicas en servicio son por fatiga: ejes, puentes, grúas, chasis, aviones, torres eólicas; todo lo que vibra o se carga y descarga.\n\n# Cómo crece una grieta de fatiga\n\n1. **Nucleación**: en un punto de **concentración de tensiones** (una entalla, un agujero, el **pie del cordón**, una mordedura).\n2. **Propagación**: la grieta avanza un poquito en cada ciclo y deja **marcas de playa** en la superficie de fractura (visibles a simple vista) y estrías microscópicas.\n3. **Rotura final**: cuando la sección que queda ya no aguanta, rompe de una vez (zona rugosa).\n\n# La curva S-N\n\nLos ensayos con amplitud de tensión constante dan la **curva S-N** (tensión × número de ciclos hasta la falla, en escala logarítmica). Lo que importa en una soldadura es el **rango de tensiones** Δσ = σmáx − σmín.\n\n- Los aceros **sin soldar** y pulidos tienen un **límite de fatiga** (≈ 0,5 × σr): por debajo de él, vida \"infinita\".\n- Las **uniones soldadas** son mucho peores: el pie del cordón ya es una entalla con microdefectos y **tensiones residuales** cercanas al límite elástico. ¡La vida depende casi solo de Δσ y de la **geometría de la unión**, no de la resistencia del acero!\n\n# Las clases FAT (IIW, Eurocódigo 3)\n\nCada detalle soldado tiene una **clase FAT** = el rango de tensiones (MPa) que aguanta durante **2 millones de ciclos**. Ejemplos: a tope amolada a ras ≈ FAT 112; a tope tal como se soldó ≈ FAT 90; filete transversal (pie del cordón) ≈ FAT 80; extremo de un rigidizador longitudinal ≈ FAT 56–71. La curva tiene pendiente **m = 3**:\n\n```\nN = 2·10⁶ × (FAT / Δσ)³\n```\n\nDuplicar Δσ divide la vida por 2³ = **8**.\n\n# Carga variable: la regla de Miner\n\nEn la vida real los ciclos varían. La **regla de Palmgren–Miner** suma el \"daño\" de cada bloque de ciclos:\n\n```\nD = Σ nᵢ / Nᵢ        falla cuando D = 1\n```\n\n# Cómo aumentar la vida a fatiga\n\n- **Diseño**: evitar soldaduras en zonas de Δσ alto, transiciones suaves, uniones a tope en lugar de filetes, sin \"puntas\" de rigidizadores.\n- **Ejecución**: evitar mordeduras, falta de penetración, salpicaduras y cebados de arco sobre la pieza.\n- **Mejora del pie del cordón**: **amolado** (radio suave), **refusión TIG** (TIG dressing), **martillado** y **HFMI** (impacto mecánico de alta frecuencia), que introducen **tensiones de compresión**.\n- Un refuerzo excesivo **empeora** la fatiga: aumenta el ángulo en el pie del cordón y la concentración de tensiones."
+    },
+    "met-19-qualificacao": {
+      "hints": [
+        "El material tiene que ser el de la unión: SAE 1045 (σr = 565 MPa). El aluminio ni siquiera llega al mínimo exigido.",
+        "Fuerza = σr × A0. Para 30–40 kN con 565 MPa, A0 tiene que quedar entre 53 y 71 mm².",
+        "A0 = π·d²/4: d entre ~8,2 y ~9,5 mm. Con 9,5 mm la fuerza supera un poco los 40 kN."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la diferencia entre la **WPS** y el **PQR**?",
+          "options": [
+            "Son el mismo documento con nombres distintos",
+            "La WPS es la \"receta\" de cómo soldar; el PQR es el registro del ensayo que demostró que la receta produce buenas soldaduras",
+            "La WPS califica al soldador y el PQR califica la máquina",
+            "El PQR se hace después de cada soldadura de producción"
+          ],
+          "explanation": "La WPS dice cómo soldar (con rangos de parámetros). El PQR registra la soldadura de prueba real y los resultados de los ensayos que la calificaron."
+        },
+        {
+          "prompt": "Una probeta rectangular de **19 mm × 10 mm** rompe con **110 kN**. ¿Cuál es su resistencia a la tracción?",
+          "options": [],
+          "explanation": "A0 = 19 × 10 = 190 mm². σr = 110 000 / 190 ≈ 579 MPa, por encima de los 565 MPa del SAE 1045: aprobada.",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "¿Cuál de estos cambios es una **variable esencial** típica (exige recalificar el procedimiento según ASME IX)?",
+          "options": [
+            "Cambiar el proceso de soldadura (de electrodo revestido a MIG)",
+            "Cambiar la marca del electrodo, manteniendo la misma clasificación AWS",
+            "Cambiar el método de limpieza entre pasadas",
+            "Cambiar el soldador por otro también calificado"
+          ],
+          "explanation": "El proceso es siempre esencial. La marca del consumible en la misma clasificación y la limpieza son no esenciales; cambiar de soldador es asunto de la calificación del soldador, no del procedimiento."
+        },
+        {
+          "prompt": "El **ensayo de doblado guiado** sirve principalmente para…",
+          "options": [
+            "medir la dureza de la ZAT",
+            "medir la energía de impacto",
+            "medir el límite elástico",
+            "revelar falta de fusión, inclusiones y otras discontinuidades, que se abren cuando se dobla la soldadura"
+          ],
+          "explanation": "Doblada a 180°, el metal de soldadura se estira mucho: los defectos de fusión y las inclusiones se abren como grietas visibles. Por eso es el ensayo más usado para calificar soldadores."
+        },
+        {
+          "prompt": "¿Con qué fuerza rompe una probeta cilíndrica de **9 mm** de diámetro de un acero con **σr = 565 MPa**?",
+          "options": [],
+          "explanation": "A0 = π × 9² / 4 = 63,6 mm². F = 565 × 63,6 ≈ 35 940 N ≈ 35,9 kN.",
+          "unit": "kN"
+        }
+      ],
+      "goals": [
+        "Resistencia a la tracción ≥ 565 MPa (mínimo del SAE 1045)",
+        "Alargamiento de al menos 14%",
+        "Fuerza de rotura entre 30 y 40 kN (dentro de la capacidad de la máquina)"
+      ],
+      "title": "Calificación de procedimientos y soldadores: WPS, PQR y los ensayos",
+      "theory": "# Por qué calificar\n\nUna soldadura que se ve bien por fuera puede esconder falta de fusión, una ZAT frágil o un metal de aporte débil. En estructuras, recipientes a presión, tuberías y plataformas, las normas exigen **demostrar antes** que el procedimiento y el soldador producen soldaduras sanas. Los documentos:\n\n- **WPS / EPS** (Especificación del Procedimiento de Soldadura): la \"receta\": proceso, metal base, espesores, consumible, gas, posición, rangos de corriente/tensión/velocidad, aporte térmico, precalentamiento, temperatura entre pasadas, TTPS…\n- **PQR** (Registro de Calificación del Procedimiento): el **registro del ensayo**: se suelda una chapa o un tubo siguiendo la WPS propuesta, se anotan los valores reales y las probetas se **ensayan**. Si todas aprueban, la WPS queda calificada.\n- **WPQ** (Calificación del soldador): cada soldador suelda una probeta (normalmente evaluada por **doblado** o radiografía) y queda calificado para los procesos, posiciones y rangos de espesor ensayados.\n\nNormas más usadas: **ASME IX** (recipientes y tuberías), **AWS D1.1** (estructuras de acero), **ISO 15614-1** (procedimientos) e **ISO 9606-1** (soldadores).\n\n# Variables esenciales\n\nCada norma lista las variables que, si cambian, **exigen recalificar** el procedimiento. Ejemplos típicos en ASME IX: cambiar el **proceso**, cambiar el grupo del metal base (número P), cambiar la clasificación del consumible (número F/A), reducir el **precalentamiento** en más de 55 °C, empezar o dejar de aplicar **TTPS**, aumentar el **aporte térmico** cuando hay requisitos de impacto. En cambio, cambiar la marca del electrodo de la misma clasificación o el método de limpieza suele ser **no esencial**.\n\n# Los ensayos del PQR\n\n- **Tracción transversal**: la probeta atraviesa la soldadura. Criterio (ASME IX): la **resistencia a la tracción** tiene que ser **≥ el mínimo especificado del metal base**. Si rompe fuera de la soldadura, en el metal base, se acepta hasta el 95% de ese mínimo.\n- **Doblado guiado** (de cara, de raíz o lateral): la probeta se dobla 180° sobre un mandril; no puede abrir una grieta mayor que ~3 mm. Revela falta de fusión e inclusiones.\n- **Impacto Charpy** (cuando se exige): en el metal de soldadura y en la ZAT, a la temperatura de diseño.\n- **Macrografía** y **dureza** (p. ej. ≤ 350 HV, o ≤ 248–250 HV en servicio con H₂S).\n\n# El ensayo de tracción del PQR\n\n```\nσr = Fmáx / A0        (MPa = N/mm²)\nRectangular: A0 = ancho × espesor      Cilíndrica: A0 = π·d²/4\n```\n\nPara chapas gruesas, la ASME IX permite probetas **cilíndricas mecanizadas**. El diámetro también se elige según la **capacidad de la máquina**: la fuerza de rotura tiene que caber en ella con margen.\n\n# En el simulador\n\nLa unión es de acero **SAE 1045** (σr mínimo especificado: **565 MPa**). La máquina de tracción del laboratorio es de **50 kN** y, por seguridad, la fuerza de rotura debe quedar entre **30 y 40 kN**.",
+      "task": "Prepara el ensayo de tracción del PQR: selecciona el material de la unión (**SAE 1045**) y el **diámetro** de la probeta para que rompa entre **30 y 40 kN**, comprobando **σr ≥ 565 MPa** y **alargamiento ≥ 14%**.",
+      "safety": "En el ensayo de tracción la probeta acumula **mucha energía elástica** y puede soltar fragmentos al romperse: usa **gafas de seguridad** y la protección de la máquina. Las probetas se sueldan, cortan y mecanizan con el EPP de cada proceso, siempre con un **instructor calificado** y un inspector de soldadura."
+    },
+    "met-20-ttps": {
+      "hints": [
+        "No cambies el temple: austeniza a 840 °C y enfría en agua para representar la ZAT dura.",
+        "El revenido a 375 °C de la lección de tratamientos térmicos dejaba la pieza en ~48 HRC. El TTPS de acero al carbono se hace mucho más caliente.",
+        "Los aceros al carbono reciben TTPS entre 595 y 650 °C, siempre por debajo de A1 (727 °C)."
+      ],
+      "questions": [
+        {
+          "prompt": "Una barra de acero (**E = 200 GPa**, **α = 12·10⁻⁶ /°C**) totalmente impedida de dilatarse se calienta **100 °C**. ¿Qué tensión se genera?",
+          "options": [],
+          "explanation": "σ = E·α·ΔT = 200 000 MPa × 12·10⁻⁶ × 100 = 240 MPa, más que el límite elástico de un acero 1020 (210 MPa).",
+          "unit": "MPa"
+        },
+        {
+          "prompt": "Según la regla de **1 hora por cada 25 mm**, ¿cuál es el tiempo de mantenimiento del TTPS de una chapa de **38 mm**?",
+          "options": [],
+          "explanation": "38 / 25 = 1,52 h (cerca de 1 h 31 min).",
+          "unit": "h"
+        },
+        {
+          "prompt": "Calcula el **parámetro de Hollomon–Jaffe** de un revenido a **620 °C** durante **1 hora** (C = 20).",
+          "options": [],
+          "explanation": "T = 620 + 273,15 = 893,15 K; log 1 = 0. P = 893,15 × (20 + 0) ≈ 17 863.",
+          "unit": ""
+        },
+        {
+          "prompt": "¿Por qué el TTPS de acero al carbono se hace **por debajo de 727 °C (A1)**?",
+          "options": [
+            "Porque por encima el acero se funde",
+            "Porque por encima de A1 las tensiones aumentan en vez de bajar",
+            "Porque por encima de A1 el acero vuelve a formar austenita, que al enfriarse puede convertirse en nueva martensita o en una estructura gruesa",
+            "Porque los hornos no pasan de 700 °C"
+          ],
+          "explanation": "El objetivo es revenir y aliviar tensiones sin cambiar de fase. Pasando de A1, la ZAT se reaustenizaría en parte y el problema volvería."
+        },
+        {
+          "prompt": "Las **tensiones residuales** en un cordón recién hecho suelen ser…",
+          "options": [
+            "de tracción, del orden del límite elástico, en el cordón y la ZAT",
+            "nulas, porque el metal se enfría libremente",
+            "de compresión en todo el cordón",
+            "pequeñas, menos del 1% del límite elástico"
+          ],
+          "explanation": "El cordón quiere contraerse al enfriarse y el metal frío de alrededor se lo impide: queda traccionado hasta fluir. Más lejos, la pieza queda comprimida para equilibrar."
+        },
+        {
+          "prompt": "¿Cuál de estas técnicas **reduce la distorsión** en la soldadura?",
+          "options": [
+            "Hacer filetes mucho más grandes de lo necesario",
+            "Soldar en secuencia equilibrada (alternando los lados) y usar el paso de peregrino",
+            "Soldar todo por un solo lado, de una vez",
+            "Aumentar al máximo el aporte térmico"
+          ],
+          "explanation": "Equilibrar el calor en los dos lados y dividir el cordón en tramos que avanzan al revés hace que las contracciones se compensen. Demasiado metal y demasiado calor aumentan la distorsión."
+        }
+      ],
+      "goals": [
+        "Dureza de como máximo 22 HRC (NACE MR0175)",
+        "Al menos 90% de martensita (revenida)",
+        "Tenacidad de al menos 70/100"
+      ],
+      "title": "Tensiones residuales, distorsión y tratamiento térmico posterior a la soldadura (TTPS)",
+      "theory": "# Lo que deja la soldadura\n\nDurante la soldadura, el metal junto al cordón se calienta, intenta dilatarse, el metal frío de alrededor se lo impide y **fluye**. Al enfriarse intenta contraerse y otra vez se lo impiden. Resultado: ya fría, la unión queda con **tensiones residuales** de **tracción** en el cordón y la ZAT, del orden del **límite elástico**, equilibradas por compresión más lejos.\n\nUna estimación de la tensión de una barra totalmente impedida de dilatarse:\n\n```\nσ = E · α · ΔT\nAcero: E ≈ 200 GPa, α ≈ 12·10⁻⁶ /°C  →  solo 100 °C ya dan 240 MPa\n```\n\n# Consecuencias\n\n- **Distorsión**: si la pieza puede moverse, las tensiones se convierten en deformación: angular, longitudinal, pandeo de chapas finas.\n- **Grietas**: tracción residual + ZAT dura + hidrógeno = grieta en frío.\n- La **fatiga** y la **corrosión bajo tensión** (H₂S, cloruros en el inoxidable, soda cáustica) empeoran mucho.\n- **Fractura frágil** a baja temperatura.\n\n## Controlar la distorsión\n\nMenos metal depositado (biseles más pequeños, filetes del tamaño justo), **secuencia equilibrada** (soldar alternando los lados), **paso de peregrino** (back-step), **predeformación** (colocar la pieza torcida hacia el lado opuesto), plantillas y sargentos, punteado bien distribuido.\n\n# El tratamiento térmico posterior a la soldadura (TTPS / PWHT)\n\nSe calienta la pieza soldada (entera, en un horno, o solo la zona de la soldadura, con mantas eléctricas) a **595–650 °C** en los aceros al carbono, se mantiene la temperatura durante un tiempo proporcional al espesor y se enfría despacio y de forma controlada. Efectos:\n\n1. **Alivio de tensiones**: en caliente el límite elástico baja y las tensiones residuales \"se relajan\" por fluencia hasta una fracción del valor inicial.\n2. **Revenido de la ZAT**: la martensita dura de la ZAT se reviene: la **dureza baja** y la **tenacidad sube**.\n3. **Salida del hidrógeno** que quedaba.\n\nReglas importantes:\n\n- Quedarse **por debajo de A1 (727 °C)**: por encima, el acero volvería a formar austenita y, al enfriarse, nueva martensita o una estructura gruesa.\n- Tiempo de mantenimiento típico (ASME VIII, aceros P-1): **1 hora por cada 25 mm** de espesor (mínimo 15 minutos), hasta 50 mm.\n- Velocidades de calentamiento y enfriamiento controladas por encima de ~425 °C, para no crear nuevas tensiones.\n\nEl efecto combinado de temperatura y tiempo en el revenido se resume con el **parámetro de Hollomon–Jaffe**:\n\n```\nP = T(K) × (C + log t)        C ≈ 20, t en horas\n```\n\nUna temperatura más alta durante menos tiempo puede dar el mismo efecto que una más baja durante más tiempo.\n\n## Servicio ácido (H₂S)\n\nEn petróleo y gas con H₂S, la norma **NACE MR0175 / ISO 15156** limita la dureza de los aceros al carbono, incluidas la soldadura y la ZAT, a **22 HRC** (~248–250 HV), para evitar las grietas por H₂S. El TTPS es la herramienta clásica para lograrlo.\n\n# En el simulador\n\nPara representar la **ZAT endurecida** de una soldadura en acero **SAE 1045**, el simulador templa el acero en agua (100% martensita, ~58 HRC). El TTPS es el **revenido**: elige su temperatura.",
+      "task": "Simula el **TTPS** de la ZAT martensítica del SAE 1045: mantén el temple (al menos **90% de martensita**, luego revenida) y elige la temperatura de revenido para llegar a **como máximo 22 HRC** (el límite NACE para servicio con H₂S) con una **tenacidad ≥ 70/100**.",
+      "safety": "El TTPS trabaja a **600–650 °C** durante horas, con hornos o **mantas eléctricas de resistencia** conectadas a fuentes de alta corriente: riesgo de **quemaduras graves, choque eléctrico e incendio**. La zona se aísla y señaliza, la temperatura se mide con **termopares** y solo personal entrenado opera el equipo. Aprende con un **instructor calificado**."
     }
   }
 }

@@ -43,5 +43,10 @@
   "{0}: valor \"{1}\" não entendido": "{0}: valor \"{1}\" no entendido",
   "{0}: falta o valor": "{0}: falta el valor",
   "Nome repetido: {0}": "Nombre repetido: {0}",
-  "f atual: {0}": "f actual: {0}"
+  "f atual: {0}": "f actual: {0}",
+  "1,5 mm²": "1,5 mm²",
+  "2,5 mm²": "2,5 mm²",
+  "4 mm²": "4 mm²",
+  "6 mm²": "6 mm²",
+  "10 mm²": "10 mm²"
 }

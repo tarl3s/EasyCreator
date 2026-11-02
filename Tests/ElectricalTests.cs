@@ -7,7 +7,7 @@ namespace EasyCreator;
 /// <summary>Unit tests of the circuit simulator (Labs/Electrical): SI values, DC (divider, Wheatstone, sources, LED,
 /// switch), errors, transient (RC/RL time constants, rectifier ripple), AC (RLC resonance, power factor, three-phase).
 /// Runs on the UI thread (the lab is a WPF control).</summary>
-public static class ElectricalTests
+public static partial class ElectricalTests
 {
     public static int Run(TextWriter log)
     {
@@ -179,6 +179,7 @@ public static class ElectricalTests
             Check("frequency input + sweep: near resonance", Math.Abs(M(fr, "phase")) < 3, $"(phase {M(fr, "phase"):0.##})");
 
             TextbookCases((a, b, c) => Check(a, b, c), (a, b, c, d) => Near(a, b, c, d), p => Lab(p), log);
+            AdvancedLessons((a, b, c) => Check(a, b, c), (a, b, c, d) => Near(a, b, c, d), p => Lab(p), log);
         }
         catch (Exception ex) { fails++; log.WriteLine("CRASH " + ex); }
         log.WriteLine($"== Electrical: {passes} passed, {fails} failed");

@@ -6,7 +6,7 @@ namespace EasyCreator;
 /// efficiencies (EN 1011-1), CE(IIW), t8/5 (EN 1011-2), Düren's HAZ hardness, the Fe–Fe₃C diagram and the lever rule,
 /// martensite hardness, the tensile material table (handbook values) and the numbers quoted by the lessons.
 /// Runs on the UI thread (the tensile lab is a control).</summary>
-public static class MetallurgyTests
+public static partial class MetallurgyTests
 {
     public static int Run(TextWriter log)
     {
@@ -190,6 +190,7 @@ public static class MetallurgyTests
                 foreach (var l in track.Lessons.Where(l => l.Lab == "welding" || l.Id == "met-05-seguranca"))
                     Check($"{l.Id}: safety text with PPE and an instructor",
                         l.Safety.Length > 0 && l.Safety.Contains("instrutor", StringComparison.OrdinalIgnoreCase));
+                AdvancedLessons(track, Check, Near, Between, log);
             }
         }
         catch (Exception ex) { fails++; log.WriteLine("  FAIL crash " + ex); }
