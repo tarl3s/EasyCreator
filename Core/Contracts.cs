@@ -63,6 +63,19 @@ public sealed class Lesson
     [JsonPropertyName("checks")] public List<SimCheck> Checks { get; set; } = new();
     /// <summary>1 (beginner) … 5 (university).</summary>
     [JsonPropertyName("level")] public int Level { get; set; } = 1;
+
+    /// <summary>"code" (default: editor + tests or simulator checks), "quiz" (questions only), "lab" (interactive
+    /// simulator + goals + optional questions).</summary>
+    [JsonPropertyName("kind")] public string Kind { get; set; } = "code";
+    [JsonPropertyName("questions")] public List<Question> Questions { get; set; } = new();
+    /// <summary>Lab id (see <see cref="LabAttribute"/>).</summary>
+    [JsonPropertyName("lab")] public string Lab { get; set; } = "";
+    [JsonPropertyName("labParams")] public Dictionary<string, string> LabParams { get; set; } = new();
+    [JsonPropertyName("goals")] public List<SimGoal> Goals { get; set; } = new();
+    /// <summary>Lab inputs that meet every goal (used by tests; never shown).</summary>
+    [JsonPropertyName("solutionInputs")] public Dictionary<string, string> SolutionInputs { get; set; } = new();
+    /// <summary>Optional safety warning shown in a highlighted box above the theory.</summary>
+    [JsonPropertyName("safety")] public string Safety { get; set; } = "";
 }
 
 /// <summary>One track = one Content/*/&lt;id&gt;.json file. Lessons unlock in order.</summary>

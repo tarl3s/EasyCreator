@@ -32,16 +32,17 @@ public static class Pages
 
     public static UIElement Home(MainWindow w)
     {
-        var row = Columns(
-            AreaCard(w, "programming", "💻 Programação",
-                "Escolha uma linguagem e aprenda do primeiro print até algoritmos de faculdade."),
-            AreaCard(w, "robotics", "🤖 Robótica",
-                "Monte circuitos num Arduino simulado e evolua até robôs autônomos."));
         var body = new StackPanel();
-        body.Children.Add(row);
+        var cards = Areas.All.Select(a => AreaCard(w, a.Id, $"{a.Icon} {a.Title}", a.Description)).ToArray();
+        for (int i = 0; i < cards.Length; i += 3)
+        {
+            var row = Columns(cards.Skip(i).Take(3).Cast<FrameworkElement>().ToArray());
+            row.Margin = new Thickness(0, 0, 0, 16);
+            body.Children.Add(row);
+        }
         if (ContentStore.Errors.Count > 0)
             body.Children.Add(Ui.Label("⚠ " + string.Join("\n", ContentStore.Errors), 13, Ui.Bad));
-        return Frame(w, "EasyCreator", "Aprenda programação e robótica, um desafio de cada vez.", body, back: false);
+        return Frame(w, "EasyCreator", "Aprenda programação, robótica e engenharia, um desafio de cada vez.", body, back: false);
     }
 
     static Border AreaCard(MainWindow w, string area, string title, string text)
@@ -56,7 +57,7 @@ public static class Pages
         p.Children.Add(Bar(done, total, Ui.AreaBrush(area)));
         p.Children.Add(Ui.Label($"{done} de {total} desafios", 13, Ui.TextDim));
         var card = Clickable(p, () => w.Go(() => Area(w, area)));
-        card.MinHeight = 220;
+        card.MinHeight = 200;
         return card;
     }
 
@@ -77,8 +78,8 @@ public static class Pages
             list.Children.Add(card);
         }
         if (list.Children.Count == 0) list.Children.Add(Ui.Label("Nenhuma trilha encontrada.", 15, Ui.TextDim));
-        return Frame(w, area == "robotics" ? "🤖 Robótica" : "💻 Programação",
-            area == "robotics" ? "Simulação de Arduino, eletrônica e robôs." : "Escolha a linguagem que quer aprender.", list);
+        var info = Areas.Get(area);
+        return Frame(w, $"{info.Icon} {info.Title}", info.Description, list);
     }
 
     static readonly string[] LevelNames = { "", "Iniciante", "Básico", "Intermediário", "Avançado", "Faculdade" };
@@ -104,7 +105,7 @@ public static class Pages
             info.Children.Add(Ui.Label($"Nível {l.Level} · {LevelNames[Math.Clamp(l.Level, 1, 5)]}", 13, Ui.TextDim));
             row.Children.Add(info);
             int index = i;
-            var card = open ? Clickable(row, () => w.Go(() => new LessonView(w, t, index))) : Ui.Card(row);
+            var card = open ? Clickable(row, () => w.Go(() => LessonText.Open(w, t, index))) : Ui.Card(row);
             card.Margin = new Thickness(0, 0, 0, 10);
             if (!open) card.Opacity = 0.6;
             list.Children.Add(card);

@@ -18,7 +18,6 @@ public sealed partial class LessonView : Grid, IDisposable
     readonly StackPanel _results = new();
     readonly StackPanel _actions = new() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
     readonly Grid _right = new();
-    int _hintsShown;
 
     bool IsRobotics => _track.Area == "robotics";
 
@@ -42,59 +41,7 @@ public sealed partial class LessonView : Grid, IDisposable
         _code.TextChanged += (_, _) => Progress.Current.Code[Progress.Key(_track, _lesson)] = _code.Text;
     }
 
-    UIElement BuildLeft()
-    {
-        var p = new StackPanel { Margin = new Thickness(0, 0, 12, 0) };
-        var back = Ui.Button("← Trilha");
-        back.HorizontalAlignment = HorizontalAlignment.Left;
-        back.Margin = new Thickness(0, 0, 0, 12);
-        back.Click += (_, _) => _w.Back();
-        p.Children.Add(back);
-        p.Children.Add(Ui.Label($"{_track.Title} · Lição {_index + 1} de {_track.Lessons.Count}", 13, Ui.TextDim));
-        p.Children.Add(Ui.Label(_lesson.Title, 24, Ui.AreaBrush(_track.Area), true));
-        p.Children.Add(new Border { Height = 12 });
-        p.Children.Add(Markdown.Render(_lesson.Theory));
-
-        var task = new StackPanel();
-        task.Children.Add(Ui.Label("🎯 Desafio", 16, bold: true));
-        task.Children.Add(Markdown.Render(_lesson.Task));
-        var taskCard = Ui.Card(task, Ui.Bg2);
-        taskCard.Margin = new Thickness(0, 12, 0, 12);
-        p.Children.Add(taskCard);
-
-        var hints = new StackPanel();
-        var hintBtn = Ui.Button("💡 Mostrar dica");
-        hintBtn.HorizontalAlignment = HorizontalAlignment.Left;
-        hintBtn.IsEnabled = _lesson.Hints.Count > 0;
-        hintBtn.Click += (_, _) =>
-        {
-            if (_hintsShown >= _lesson.Hints.Count) return;
-            var h = Ui.Card(Markdown.Render(_lesson.Hints[_hintsShown]), Ui.Bg2, 10);
-            h.Margin = new Thickness(0, 8, 0, 0);
-            hints.Children.Add(h);
-            _hintsShown++;
-            if (_hintsShown >= _lesson.Hints.Count) hintBtn.IsEnabled = false;
-        };
-        p.Children.Add(hintBtn);
-        p.Children.Add(hints);
-
-        var sol = Ui.Button("👀 Ver solução");
-        sol.HorizontalAlignment = HorizontalAlignment.Left;
-        sol.Margin = new Thickness(0, 12, 0, 0);
-        sol.Click += (_, _) =>
-        {
-            if (MessageBox.Show("Tentar mais um pouco ensina mais. Quer mesmo ver a solução?", "Solução",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
-            var box = Ui.CodeBox(readOnly: true);
-            box.Text = _lesson.Solution;
-            box.Margin = new Thickness(0, 8, 0, 0);
-            p.Children.Add(box);
-            sol.IsEnabled = false;
-        };
-        p.Children.Add(sol);
-
-        return new ScrollViewer { Content = p, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-    }
+    UIElement BuildLeft() => new ScrollViewer { Content = LessonText.Left(_w, _track, _index), VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
 
     void BuildRight()
     {
@@ -177,20 +124,7 @@ public sealed partial class LessonView : Grid, IDisposable
         }
     }
 
-    void Finished()
-    {
-        Progress.Current.Done.Add(Progress.Key(_track, _lesson));
-        Progress.Current.Save();
-        var p = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 10, 0, 0) };
-        if (_index + 1 < _track.Lessons.Count)
-        {
-            var next = Ui.Button("Próxima lição →", Ui.Good);
-            next.Click += (_, _) => { _w.Back(); _w.Go(() => new LessonView(_w, _track, _index + 1)); };
-            p.Children.Add(next);
-        }
-        else p.Children.Add(Ui.Label("🏆 Você terminou a trilha!", 15, Ui.Good, true));
-        _results.Children.Add(p);
-    }
+    void Finished() => LessonText.Finished(_w, _track, _index, _results);
 
     public void Dispose()
     {

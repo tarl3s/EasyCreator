@@ -39,6 +39,11 @@ public static partial class TestEntry
         int a = Tests.ArduinoTestEntry.RunToLog();
         log.WriteLine($"Arduino/C: {a} failures (see easycreator_arduino_tests.log)");
         f += a;
+        var labLog = new StringWriter();
+        int l = LabTests.Run(labLog);
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_labtests.log"), labLog.ToString());
+        log.WriteLine($"Labs/quizzes: {l} failures (see easycreator_labtests.log)");
+        f += l;
         log.WriteLine($"Runners: {f} failures (see easycreator_runnertests.log)");
         return f;
     }
