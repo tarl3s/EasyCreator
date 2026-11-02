@@ -7,10 +7,12 @@ namespace EasyCreator;
 /// <summary>Palette and small factory helpers shared by every page (dark theme).</summary>
 public static class Ui
 {
-    public static readonly Brush Bg0 = Make("#14161C"), Bg1 = Make("#1C1F27"), Bg2 = Make("#262A35"), Bg3 = Make("#323745"),
-        Border = Make("#3A4050"), Text = Make("#E8EAF0"), TextDim = Make("#A3A9B8"),
-        Prog = Make("#4C8DFF"), Robo = Make("#FF8A3D"), Good = Make("#3DD68C"), Bad = Make("#FF5C6C"),
-        Code = Make("#0F1117"), OnAccent = Make("#0B0D12");
+    // Same dark palette and green accent as EasyEngine (engine/Theme.cs) so the family looks alike.
+    public static readonly Brush Bg0 = Make("#141418"), Bg1 = Make("#1C1C22"), Bg2 = Make("#24242B"), Bg3 = Make("#2E2E37"),
+        Border = Make("#35353F"), Text = Make("#E6E6EA"), TextDim = Make("#A0A0AA"),
+        Accent = Make("#18B98A"), AccentHover = Make("#1ED29B"),
+        Prog = Accent, Robo = Accent, Good = Accent, Bad = Make("#FF5C6C"),
+        Code = Make("#0F0F13"), OnAccent = Make("#062018");
 
     public static readonly FontFamily Mono = new("Cascadia Mono, Consolas");
 
