@@ -5,7 +5,7 @@ using System.Windows.Documents;
 
 namespace EasyCreator;
 
-/// <summary>Renders the small Markdown subset used by lessons (#, ##, -, ``` blocks, **bold**, `code`) into a panel.</summary>
+/// <summary>Renders the small Markdown subset used by lessons (#, ##, -, ``` blocks, **bold**, *italic*, `code`) into a panel.</summary>
 public static class Markdown
 {
     public static StackPanel Render(string md)
@@ -48,13 +48,15 @@ public static class Markdown
 
     static void AddInlines(InlineCollection inlines, string text)
     {
-        foreach (var part in Regex.Split(text, @"(\*\*[^*]+\*\*|`[^`]+`)"))
+        foreach (var part in Regex.Split(text, @"(\*\*[^*]+\*\*|`[^`]+`|(?<![\w*])\*[^*\s](?:[^*]*[^*\s])?\*(?![\w*]))"))
         {
             if (part.Length == 0) continue;
             if (part.StartsWith("**") && part.EndsWith("**") && part.Length > 4)
                 inlines.Add(new Bold(new Run(part[2..^2])));
             else if (part.StartsWith('`') && part.EndsWith('`') && part.Length > 2)
                 inlines.Add(new Run(part[1..^1]) { FontFamily = Ui.Mono, Background = Ui.Bg3 });
+            else if (part.Length > 2 && part[0] == '*' && part[^1] == '*')
+                inlines.Add(new Italic(new Run(part[1..^1])));
             else inlines.Add(new Run(part));
         }
     }

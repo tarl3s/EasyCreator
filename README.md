@@ -19,7 +19,7 @@ Unzip anywhere and run `EasyCreator.exe`. No installation, no .NET needed.
 | 🔥 Metallurgy & welding | Atoms to weld beads | Welding simulator (SMAW, MIG/MAG, TIG), heat treatment and tensile test. **Real welding needs hands-on training with a qualified instructor and proper PPE.** |
 | 🚀 Projects | Rockets, submarines, cars, aircraft & helicopters, drones | Design and fly/drive/dive them in simulators, from basics to a full design project. |
 
-Every track has 10 lessons, levels 1 (beginner) to 5 (university). Lessons unlock in order and your progress is saved.
+Every track has 20 lessons, levels 1 (beginner) to 5 (university). Lessons unlock in order and your progress is saved.
 
 **🧪 Sandbox** — free mode: write programs in any of the four languages, or build your own Arduino circuit (pick the parts and pins) and simulate it.
 

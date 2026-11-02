@@ -19,7 +19,7 @@ Descompacte em qualquer pasta e abra o `EasyCreator.exe`. Não precisa instalar 
 | 🔥 Metalurgia e Solda | Do átomo ao cordão | Simulador de solda (eletrodo revestido, MIG/MAG, TIG), tratamento térmico e ensaio de tração. **Soldar de verdade exige prática com instrutor qualificado e EPI adequado.** |
 | 🚀 Projetos | Foguetes, submarinos, carros, aviões e helicópteros, drones | Projete e teste nos simuladores, do básico a um projeto completo. |
 
-Cada trilha tem 10 lições, do nível 1 (iniciante) ao 5 (faculdade). As lições liberam em ordem e o progresso fica salvo.
+Cada trilha tem 20 lições, do nível 1 (iniciante) ao 5 (faculdade). As lições liberam em ordem e o progresso fica salvo.
 
 **🧪 Sandbox** — modo livre: programe em qualquer uma das quatro linguagens, ou monte seu próprio circuito de Arduino (escolhendo peças e pinos) e simule.
 
