@@ -66,6 +66,11 @@ public static partial class TestEntry
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_projects.log"), prLog.ToString());
         log.WriteLine($"Projects: {pr} failures (see easycreator_projects.log)");
         f += pr;
+        var vehLog = new StringWriter();
+        int veh = VehiclesTests.Run(vehLog);
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_vehicles.log"), vehLog.ToString());
+        log.WriteLine($"Vehicles: {veh} failures (see easycreator_vehicles.log)");
+        f += veh;
         var i18nLog = new StringWriter();
         int i18n = I18nTests.Run(i18nLog);
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_i18n.log"), i18nLog.ToString());
