@@ -6,7 +6,8 @@ namespace EasyCreator;
 /// <summary>Mass on a horizontal ideal spring (massless spring, no friction with the floor), released from rest at
 /// x = amplitude, optional viscous damping F = −b·v. m·x'' = −k·x − b·x', integrated with RK4.
 /// Metrics: period (s, measured from zero crossings), frequency (Hz), omega (rad/s, √(k/m)), energy (J, ½·k·A²),
-/// maxSpeed (m/s, measured), energyEnd (J, at the end of the run), plus the inputs (mass, k, amplitude, damping).</summary>
+/// maxSpeed (m/s, measured), energyEnd (J, at the end of the run), overshoot (% of the amplitude the mass
+/// passes beyond x = 0), settleTime (s, last time |x| was above 2 % of the amplitude; ∞ if it never settles in the run), plus the inputs (mass, k, amplitude, damping).</summary>
 [Lab("spring")]
 public sealed class SpringLab : PhysLab
 {
@@ -31,6 +32,7 @@ public sealed class SpringLab : PhysLab
         _s.Add((0, x, v));
         var crossings = new List<double>();
         _vMax = 0;
+        double xMin = 0, lastOut = 0;
         int n = (int)(_tSim / dt), every = Math.Max(1, n / 900);
         double Acc(double px, double pv) => (-k * px - b * pv) / m;
         for (int i = 1; i <= n; i++)
@@ -43,6 +45,8 @@ public sealed class SpringLab : PhysLab
             if (x != 0 && Math.Sign(nx) != Math.Sign(x)) crossings.Add(t + dt * x / (x - nx));
             x = nx; v = nv; t += dt;
             _vMax = Math.Max(_vMax, Math.Abs(v));
+            xMin = Math.Min(xMin, x);
+            if (Math.Abs(x) > 0.02 * A) lastOut = t;
             if (i % every == 0) _s.Add((t, x, v));
         }
         _period = PeriodFromCrossings(crossings);
@@ -52,6 +56,8 @@ public sealed class SpringLab : PhysLab
         M["energy"] = 0.5 * k * A * A;
         M["maxSpeed"] = _vMax;
         M["energyEnd"] = 0.5 * k * x * x + 0.5 * m * v * v;
+        M["overshoot"] = 100 * -xMin / A;
+        M["settleTime"] = lastOut >= t - dt / 2 ? double.PositiveInfinity : lastOut;
         AnimSeconds = Math.Min(_tSim, 6);
     }
 
@@ -76,6 +82,8 @@ public sealed class SpringLab : PhysLab
         yield return (L.T("Energia"), F(M["energy"], "0.00") + " J");
         yield return (L.T("Vel. máxima"), F(_vMax, "0.00") + " m/s");
         if (V("damping") > 0) yield return (L.T("Energia no fim"), F(M["energyEnd"], "0.00") + " J");
+        if (V("damping") > 0) yield return (L.T("Ultrapassagem"), F(M["overshoot"], "0.0") + " %");
+        if (V("damping") > 0) yield return (L.T("Acomoda em"), F(M["settleTime"], "0.00") + " s");
     }
 
     protected override void Paint(DrawingContext dc)

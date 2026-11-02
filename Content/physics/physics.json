@@ -407,6 +407,756 @@
           "explanation": "γ = 1/√(1 − 0,36) = 1/√0,64 = 1/0,8 = 1,25: um relógio da nave marca 1 h enquanto se passam 1 h 15 min na Terra."
         }
       ]
+    },
+    {
+      "id": "fis-11-rotacao",
+      "title": "Rotação: torque, momento de inércia e rolamento",
+      "level": 5,
+      "kind": "lab",
+      "lab": "rolling",
+      "labParams": {
+        "length": "2",
+        "angle": "30",
+        "lock": "angle"
+      },
+      "theory": "# Girar também custa energia\n\nAté aqui tratamos os corpos como pontos. Mas uma roda, uma bola ou um planeta também **giram**, e a rotação tem suas próprias versões das leis de Newton:\n\n- **Torque** (o \"empurrão de girar\"): `τ = r · F · sen θ` (N·m). Por isso uma chave de roda comprida solta parafusos que a mão sozinha não solta.\n- **Momento de inércia** `I` (kg·m²): a \"massa\" da rotação. Depende de **como** a massa está distribuída em volta do eixo: `I = Σ m·r²`.\n- **2ª lei para rotação:** `τ = I · α` (α = aceleração angular, rad/s²).\n- **Energia de rotação:** `K = ½ · I · ω²`, e **momento angular** `L = I · ω`.\n\nPara corpos simétricos, `I = k · m · R²`, com um fator `k` que vem de uma integral sobre o volume:\n\n- esfera maciça: **k = 2/5**\n- cilindro (ou disco) maciço: **k = 1/2**\n- esfera oca: **k = 2/3**\n- aro (anel fino): **k = 1** (toda a massa está na borda)\n\n# A corrida na rampa\n\nSolte uma esfera, um cilindro e um aro do alto da mesma rampa. Quem chega primeiro? Rolando **sem deslizar** (`v = ω·R`), a energia potencial vira translação **e** rotação:\n\n```\nm·g·h = ½·m·v² + ½·I·ω² = ½·m·v²·(1 + k)\nv = √(2·g·h / (1 + k))        a = g·sen θ / (1 + k)\n```\n\nA **massa e o raio se cancelam**! Só importa o fator k: quanto mais massa longe do eixo, mais energia vai para a rotação e **mais devagar** o corpo desce. A esfera maciça ganha sempre; o aro sempre perde. Um bloco deslizando sem atrito (k = 0) ganharia de todos — mas não rola.\n\nQuem faz a bola girar é o **atrito estático** no ponto de contato. Ele não realiza trabalho (o ponto de contato está parado), mas precisa ser grande o bastante: `μ ≥ k·tan θ / (1 + k)`. Numa rampa íngreme e lisa demais, a bola **escorrega** em vez de rolar.\n\n# Conservação do momento angular\n\nSem torque externo, `L = I·ω` se conserva. A patinadora que encolhe os braços diminui I e **gira mais rápido**; estrelas que colapsam viram pulsares girando centenas de vezes por segundo.",
+      "task": "A rampa tem **2 m** de comprimento e **30°** de inclinação (travada). Escolha o corpo que desce a rampa em um tempo **entre 1,05 e 1,09 s** e guarda **no máximo 30%** da energia cinética na rotação. Antes de rodar, calcule `a = g·sen θ / (1 + k)` e `t = √(2L/a)` para cada formato.",
+      "hints": [
+        "Com sen 30° = 0,5 e L = 2 m: t = √(4·(1 + k) / 4,905). Teste k = 2/5, 1/2, 2/3 e 1.",
+        "A fração de energia na rotação é k / (1 + k): esfera 28,6%, cilindro 33,3%, esfera oca 40%, aro 50%.",
+        "A massa e o raio não mudam o tempo — só o formato (o fator k) importa."
+      ],
+      "goals": [
+        {
+          "metric": "time",
+          "op": "between",
+          "value": 1.05,
+          "max": 1.09,
+          "description": "Desce a rampa em 1,05 a 1,09 s"
+        },
+        {
+          "metric": "rotFraction",
+          "op": "<=",
+          "value": 30,
+          "description": "No máximo 30% da energia cinética na rotação"
+        }
+      ],
+      "solutionInputs": {
+        "shape": "sphere",
+        "angle": "30",
+        "mass": "1",
+        "radius": "0.1"
+      },
+      "questions": [
+        {
+          "prompt": "Qual é o momento de inércia de um **disco maciço** de **2 kg** e raio **0,1 m** girando em torno do seu eixo?",
+          "kind": "number",
+          "answer": "0.01",
+          "tolerance": 2,
+          "unit": "kg·m²",
+          "explanation": "I = ½·m·R² = 0,5 · 2 · 0,1² = 0,01 kg·m²."
+        },
+        {
+          "prompt": "Você empurra a ponta de uma chave de roda de **0,3 m** com **50 N**, perpendicular à chave. Qual é o torque no parafuso?",
+          "kind": "number",
+          "answer": "15",
+          "tolerance": 2,
+          "unit": "N·m",
+          "explanation": "τ = r·F·sen 90° = 0,3 · 50 = 15 N·m. Com uma chave do dobro do tamanho, a mesma força dá o dobro de torque."
+        },
+        {
+          "prompt": "Uma patinadora gira a **2 rad/s** com momento de inércia **4 kg·m²**. Ela encolhe os braços e o momento de inércia cai para **1,6 kg·m²**. Qual é a nova velocidade angular?",
+          "kind": "number",
+          "answer": "5",
+          "tolerance": 2,
+          "unit": "rad/s",
+          "explanation": "Sem torque externo, L = I·ω se conserva: 4 · 2 = 1,6 · ω → ω = 8 / 1,6 = 5 rad/s."
+        },
+        {
+          "prompt": "Uma esfera maciça, um cilindro maciço e um aro, de massas e raios diferentes, são soltos juntos do alto da mesma rampa e rolam sem deslizar. Quem chega primeiro embaixo?",
+          "kind": "choice",
+          "options": [
+            "A esfera maciça",
+            "O cilindro maciço",
+            "O aro",
+            "O mais pesado, seja qual for o formato"
+          ],
+          "answer": "0",
+          "explanation": "a = g·sen θ / (1 + k) não depende da massa nem do raio. O menor k (esfera, 2/5) dá a maior aceleração; o aro (k = 1) é o mais lento."
+        }
+      ]
+    },
+    {
+      "id": "fis-12-fluidos",
+      "title": "Fluidos: pressão, empuxo e o jato de Torricelli",
+      "level": 5,
+      "kind": "lab",
+      "lab": "fluid",
+      "labParams": {
+        "level": "1",
+        "targetX": "0.8",
+        "targetWidth": "0.04",
+        "lock": "level"
+      },
+      "theory": "# Pressão num líquido\n\nPressão é força por área: `p = F / A` (pascal, Pa = N/m²). Num líquido parado, a pressão **aumenta com a profundidade**, porque cada camada sustenta o peso das de cima:\n\n```\np = p0 + ρ·g·h          (lei de Stevin)\n```\n\nNa água (ρ = 1000 kg/m³), cada **10 m** de profundidade somam ~**1 atmosfera** (≈ 100 kPa). É por isso que mergulhadores sentem dor no ouvido e submarinos precisam de cascos grossos.\n\n- **Princípio de Pascal:** uma pressão aplicada num líquido fechado se transmite inteira. Na **prensa hidráulica**, `F1/A1 = F2/A2`: um pistão pequeno empurrado com pouca força levanta um carro num pistão grande.\n- **Princípio de Arquimedes:** um corpo mergulhado recebe um **empuxo** para cima igual ao peso do líquido que ele desloca: `E = ρ·g·V`. Se o empuxo vence o peso, ele flutua.\n\n# Fluidos em movimento\n\nPara um fluido ideal (incompressível, sem viscosidade) escoando de forma estável:\n\n- **Continuidade:** o que entra sai. `A1·v1 = A2·v2` — onde o cano estreita, o fluido acelera (é o dedo na ponta da mangueira).\n- **Bernoulli:** ao longo de uma linha de corrente, a energia por volume se conserva:\n\n```\np + ½·ρ·v² + ρ·g·y = constante\n```\n\nOnde a velocidade aumenta, a pressão cai. Isso explica (em parte) a sustentação de asas, o funcionamento de carburadores e do tubo de Venturi.\n\n# O jato de Torricelli\n\nAbra um furo na lateral de um tanque, a uma profundidade `h` abaixo da superfície. Aplicando Bernoulli entre a superfície (parada, pressão atmosférica) e o furo (também na pressão atmosférica):\n\n```\nv = √(2·g·h)\n```\n\nA água sai com a mesma velocidade que teria se **caísse** da altura h! Se o furo está a uma altura `y` do chão, o jato é um **lançamento horizontal**: cai em `t = √(2y/g)` e chega a\n\n```\nx = v·t = 2·√(h·y)\n```\n\nRepare que `h·y` é o mesmo trocando h por y: **dois furos diferentes acertam o mesmo ponto**. O alcance máximo é quando o furo fica na metade da altura da água (h = y), e vale exatamente a altura da coluna de água.",
+      "task": "A água está a **1,00 m** do chão (nível travado) e há um balde a **0,80 m** do tanque. Escolha a **altura do furo** para o jato cair **no balde** e com velocidade de saída de **pelo menos 3 m/s**. Use `x = 2·√(h·y)` com `h + y = 1 m`: há duas alturas que acertam o balde — só uma delas tem a velocidade pedida.",
+      "hints": [
+        "Com h = 1 − y: 2·√((1 − y)·y) = 0,8 → y·(1 − y) = 0,16 → y² − y + 0,16 = 0.",
+        "As raízes são y = 0,2 m e y = 0,8 m. Calcule v = √(2·g·h) para cada uma.",
+        "O furo baixo fica mais fundo (h = 0,8 m) e o jato sai mais rápido: √(2·9,81·0,8) ≈ 3,96 m/s."
+      ],
+      "goals": [
+        {
+          "metric": "hitTarget",
+          "op": ">=",
+          "value": 1,
+          "description": "O jato cai no balde (0,80 m ± 2 cm)"
+        },
+        {
+          "metric": "exitSpeed",
+          "op": ">=",
+          "value": 3,
+          "description": "A água sai a pelo menos 3 m/s"
+        }
+      ],
+      "solutionInputs": {
+        "level": "1",
+        "hole": "0.2",
+        "diameter": "5"
+      },
+      "questions": [
+        {
+          "prompt": "Qual é a pressão da água (além da atmosférica) a **10 m** de profundidade? Use ρ = 1000 kg/m³ e g = 9,81 m/s².",
+          "kind": "number",
+          "answer": "98.1",
+          "tolerance": 2,
+          "unit": "kPa",
+          "explanation": "p = ρ·g·h = 1000 · 9,81 · 10 = 98 100 Pa ≈ 98,1 kPa — quase uma atmosfera a mais."
+        },
+        {
+          "prompt": "Um bloco de **2 litros** é totalmente mergulhado em água. Qual é o empuxo sobre ele (g = 9,81 m/s²)?",
+          "kind": "number",
+          "answer": "19.62",
+          "tolerance": 2,
+          "unit": "N",
+          "explanation": "E = ρ·g·V = 1000 · 9,81 · 0,002 = 19,62 N. O empuxo só depende do volume deslocado, não do material do bloco."
+        },
+        {
+          "prompt": "A água passa de um cano para outro com a **metade do diâmetro**. O que acontece com a velocidade dela?",
+          "kind": "choice",
+          "options": [
+            "Cai pela metade",
+            "Dobra",
+            "Fica 4 vezes maior",
+            "Não muda"
+          ],
+          "answer": "2",
+          "explanation": "Continuidade: A1·v1 = A2·v2. A área depende do diâmetro ao quadrado: metade do diâmetro → 1/4 da área → velocidade 4 vezes maior."
+        },
+        {
+          "prompt": "Numa prensa hidráulica, o pistão pequeno tem **10 cm²** e o grande **500 cm²**. Empurrando o pequeno com **100 N**, que força o grande faz?",
+          "kind": "number",
+          "answer": "5000",
+          "tolerance": 2,
+          "unit": "N",
+          "explanation": "Pascal: F2 = F1 · A2 / A1 = 100 · 500 / 10 = 5000 N. Mas o pistão pequeno precisa descer 50 vezes mais: a energia se conserva."
+        }
+      ]
+    },
+    {
+      "id": "fis-13-ondas-som",
+      "title": "Ondas e som: cordas que vibram e a afinação",
+      "level": 5,
+      "kind": "lab",
+      "lab": "string",
+      "labParams": {
+        "length": "0.325",
+        "density": "0.6",
+        "lock": "length,density"
+      },
+      "theory": "# O que é uma onda\n\nUma onda transporta **energia**, não matéria: a corda sobe e desce, mas não viaja. Toda onda periódica tem:\n\n- **comprimento de onda** λ (m), **frequência** f (Hz) e **velocidade** `v = λ·f`.\n\nO **som** é uma onda **longitudinal** de pressão no ar, a ~**343 m/s** a 20 °C. Ouvimos de ~20 Hz a ~20 000 Hz.\n\n# A corda de um instrumento\n\nNuma corda esticada, a velocidade da onda depende da **tensão** T e da **densidade linear** μ (massa por metro):\n\n```\nv = √(T / μ)\n```\n\nPresa nas duas pontas, a corda só vibra em padrões em que as pontas ficam paradas (**nós**): as **ondas estacionárias**. Cabem números inteiros de meias-ondas no comprimento L:\n\n```\nλn = 2L / n        fn = n · v / (2L) = (n / 2L) · √(T/μ)\n```\n\n- n = 1 é a **fundamental** (a nota que ouvimos); n = 2, 3… são os **harmônicos**, múltiplos inteiros dela. A mistura de harmônicos é o **timbre**: por isso um violino e uma flauta tocando a mesma nota soam diferentes.\n- **Afinar** é mudar T (a cravelha); **apertar o dedo** encurta L e sobe a nota; cordas **grossas** (μ maior) são graves.\n\n# Intensidade e decibéis\n\nO ouvido percebe intensidades de 10⁻¹² W/m² até ~1 W/m². Para caber essa faixa, usamos uma escala **logarítmica**:\n\n```\nβ = 10 · log10(I / I0)   [dB]\n```\n\nCada **×10** na intensidade soma **10 dB**; ×100 soma 20 dB.\n\n# Batimentos e efeito Doppler\n\n- Duas notas próximas (440 e 444 Hz) somadas fazem o som \"pulsar\" com `fbat = |f1 − f2|` = 4 vezes por segundo. Músicos afinam até os batimentos sumirem.\n- **Doppler:** uma fonte que se **aproxima** soa mais aguda; que se afasta, mais grave. Com fonte a `vs` e ouvinte parado: `f' = f · v / (v − vs)` (aproximando).",
+      "task": "Uma corda de violino tem **L = 32,5 cm** e **μ = 0,6 g/m** (travados). Ajuste a **tensão** para que a nota **fundamental** (n = 1) seja o **Lá de 440 Hz** (entre 438 e 442 Hz). Calcule antes: `T = μ · (2·L·f)²`.",
+      "hints": [
+        "Converta: μ = 0,6 g/m = 0,0006 kg/m; L = 0,325 m.",
+        "A velocidade necessária é v = 2·L·f = 2 · 0,325 · 440 = 286 m/s.",
+        "T = μ·v² = 0,0006 · 286² ≈ 49,1 N. Deixe o harmônico em n = 1."
+      ],
+      "goals": [
+        {
+          "metric": "frequency",
+          "op": "between",
+          "value": 438,
+          "max": 442,
+          "description": "Frequência entre 438 e 442 Hz"
+        },
+        {
+          "metric": "harmonic",
+          "op": "<=",
+          "value": 1,
+          "description": "Vibrando na fundamental (n = 1)"
+        }
+      ],
+      "solutionInputs": {
+        "tension": "49.1",
+        "harmonic": "1"
+      },
+      "questions": [
+        {
+          "prompt": "Qual é o comprimento de onda, no ar (v = 343 m/s), do Lá de **440 Hz**?",
+          "kind": "number",
+          "answer": "0.78",
+          "tolerance": 2,
+          "unit": "m",
+          "explanation": "λ = v / f = 343 / 440 ≈ 0,78 m."
+        },
+        {
+          "prompt": "Dois diapasões, de **440 Hz** e **444 Hz**, tocam juntos. Quantos batimentos por segundo se ouvem?",
+          "kind": "number",
+          "answer": "4",
+          "tolerance": 2,
+          "unit": "Hz",
+          "explanation": "fbat = |444 − 440| = 4 Hz: o volume sobe e desce 4 vezes por segundo."
+        },
+        {
+          "prompt": "A intensidade de um som fica **100 vezes** maior. Quantos decibéis ele ganha?",
+          "kind": "number",
+          "answer": "20",
+          "tolerance": 2,
+          "unit": "dB",
+          "explanation": "Δβ = 10 · log10(100) = 10 · 2 = 20 dB."
+        },
+        {
+          "prompt": "Uma ambulância com sirene de **700 Hz** se aproxima de você a **20 m/s** (som a 343 m/s). Que frequência você ouve?",
+          "kind": "number",
+          "answer": "743.3",
+          "tolerance": 2,
+          "unit": "Hz",
+          "explanation": "f' = f · v / (v − vs) = 700 · 343 / 323 ≈ 743,3 Hz — mais aguda. Quando ela passa e se afasta, cai para 700 · 343 / 363 ≈ 661 Hz."
+        }
+      ]
+    },
+    {
+      "id": "fis-14-calor",
+      "title": "Calor: calorimetria, mudanças de fase e transmissão",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# Temperatura não é calor\n\n**Temperatura** mede a agitação média das moléculas (em kelvin: `T(K) = T(°C) + 273,15`). **Calor** é energia **em trânsito** por causa de uma diferença de temperatura — sempre do mais quente para o mais frio.\n\n# Calor sensível e latente\n\n- **Calor sensível** muda a temperatura: `Q = m · c · ΔT`. O **calor específico** c da água é enorme, **4186 J/(kg·K)** — por isso o mar demora a esquentar e regula o clima das cidades costeiras.\n- **Calor latente** muda a **fase** sem mudar a temperatura: `Q = m · L`. Para derreter gelo a 0 °C, `Lf = 334 kJ/kg`; para ferver água a 100 °C, `Lv = 2260 kJ/kg`. Enquanto o gelo derrete, a energia vai para **quebrar as ligações** entre as moléculas, e o termômetro fica parado em 0 °C.\n\n# Calorimetria\n\nNum recipiente isolado, o calor que um corpo perde é o que o outro ganha: `Σ Q = 0`. Misturando massas de água m1 (a T1) e m2 (a T2):\n\n```\nTf = (m1·T1 + m2·T2) / (m1 + m2)\n```\n\n# Os três jeitos de transmitir calor\n\n- **Condução:** de molécula em molécula, num material. Lei de Fourier: `P = k · A · ΔT / L` (k = condutividade: cobre ~400, vidro ~0,8, isopor ~0,03 W/(m·K)). Paredes grossas e isolantes conduzem menos.\n- **Convecção:** o fluido quente, menos denso, **sobe** e leva o calor junto — correntes no ar, na água da panela, nos ventos e nas correntes oceânicas.\n- **Radiação:** ondas eletromagnéticas (infravermelho); funciona até no **vácuo** (é assim que o Sol nos aquece). Lei de Stefan-Boltzmann:\n\n```\nP = ε · σ · A · T⁴        σ = 5,67×10⁻⁸ W/(m²·K⁴)\n```\n\nO T está em **kelvin** e na **quarta potência**: dobrar a temperatura absoluta multiplica a radiação por 16. Um corpo também **absorve** radiação do ambiente, então a perda líquida é `ε·σ·A·(T⁴ − Tamb⁴)`.\n\nA garrafa térmica combate os três: vácuo entre as paredes (sem condução nem convecção) e paredes espelhadas (pouca radiação).",
+      "task": "Responda às perguntas. Use `c(água) = 4186 J/(kg·K)`, `Lf(gelo) = 334 kJ/kg` e `σ = 5,67×10⁻⁸ W/(m²·K⁴)`. Escreva números como `0,4` ou `3e-2`.",
+      "hints": [
+        "Em Q = m·c·ΔT, ΔT em °C ou em K dá o mesmo número; responda em kJ quando pedido (÷ 1000).",
+        "Na lei de Fourier, converta a espessura para metros: 4 mm = 0,004 m.",
+        "Na radiação, use temperaturas em kelvin e eleve à quarta potência antes de subtrair."
+      ],
+      "questions": [
+        {
+          "prompt": "Quanto calor é preciso para aquecer **2 kg** de água de **20 °C** a **80 °C**?",
+          "kind": "number",
+          "answer": "502.3",
+          "tolerance": 2,
+          "unit": "kJ",
+          "explanation": "Q = m·c·ΔT = 2 · 4186 · 60 = 502 320 J ≈ 502,3 kJ."
+        },
+        {
+          "prompt": "Você mistura **1 kg** de água a **80 °C** com **3 kg** a **20 °C** num recipiente isolado. Qual é a temperatura final?",
+          "kind": "number",
+          "answer": "35",
+          "tolerance": 2,
+          "unit": "°C",
+          "explanation": "Tf = (1·80 + 3·20) / (1 + 3) = 140 / 4 = 35 °C. A água fria, em maior quantidade, \"puxa\" a média para perto dela."
+        },
+        {
+          "prompt": "Quanto calor é preciso para derreter **0,5 kg** de gelo que já está a **0 °C**?",
+          "kind": "number",
+          "answer": "167",
+          "tolerance": 2,
+          "unit": "kJ",
+          "explanation": "Q = m·Lf = 0,5 · 334 = 167 kJ — e a temperatura continua em 0 °C até o último pedaço derreter."
+        },
+        {
+          "prompt": "Uma janela de vidro (k = 0,8 W/(m·K)) tem **2 m²** e **4 mm** de espessura. Dentro faz 20 °C a mais que fora. Que potência de calor atravessa o vidro?",
+          "kind": "number",
+          "answer": "8000",
+          "tolerance": 2,
+          "unit": "W",
+          "explanation": "P = k·A·ΔT / L = 0,8 · 2 · 20 / 0,004 = 8000 W. Por isso janelas de vidro duplo (com ar parado no meio) economizam tanta energia."
+        },
+        {
+          "prompt": "Uma pessoa com **1,8 m²** de pele a **306 K** (33 °C), emissividade **0,97**, está numa sala a **293 K** (20 °C). Qual é a potência líquida que ela perde por radiação?",
+          "kind": "number",
+          "answer": "138",
+          "tolerance": 3,
+          "unit": "W",
+          "explanation": "P = ε·σ·A·(T⁴ − Tamb⁴) = 0,97 · 5,67×10⁻⁸ · 1,8 · (306⁴ − 293⁴) ≈ 138 W — mais que o metabolismo em repouso (~100 W); por isso a roupa importa."
+        },
+        {
+          "prompt": "Enquanto um cubo de gelo derrete num copo, por que a temperatura da mistura fica em 0 °C?",
+          "kind": "choice",
+          "options": [
+            "Porque o gelo não recebe calor",
+            "Porque a energia recebida vai para quebrar as ligações do sólido (calor latente)",
+            "Porque a água isola o gelo",
+            "Porque o termômetro não mede abaixo da água"
+          ],
+          "answer": "1",
+          "explanation": "Na mudança de fase, o calor recebido é calor latente: muda a organização das moléculas, não a agitação média delas."
+        },
+        {
+          "prompt": "Como o aquecedor no chão de um quarto esquenta o ar de todo o cômodo?",
+          "kind": "choice",
+          "options": [
+            "Por radiação apenas",
+            "Por condução pelo ar parado",
+            "Por convecção: o ar quente sobe, o frio desce e forma uma corrente",
+            "Pelo vácuo entre as moléculas"
+          ],
+          "answer": "2",
+          "explanation": "O ar aquecido fica menos denso e sobe; o ar frio desce para perto do aquecedor e é aquecido: uma corrente de convecção. Por isso aquecedores vão embaixo e ar-condicionado vai em cima."
+        }
+      ]
+    },
+    {
+      "id": "fis-15-kepler-hohmann",
+      "title": "Gravitação: leis de Kepler e a transferência de Hohmann",
+      "level": 5,
+      "kind": "lab",
+      "lab": "orbit",
+      "labParams": {
+        "altitude": "400",
+        "lock": "altitude,planet"
+      },
+      "theory": "# As leis de Kepler\n\nAnalisando as observações de Tycho Brahe, Kepler descobriu três leis que Newton depois explicou com a gravitação:\n\n1. As órbitas são **elipses** com o planeta (ou estrela) num dos **focos**.\n2. A linha planeta–satélite varre **áreas iguais em tempos iguais**: o satélite é mais rápido no **periapse** (ponto mais próximo) e mais lento no **apoapse** (mais distante). É a conservação do momento angular.\n3. `T² = (4π² / GM) · a³`: o quadrado do período é proporcional ao cubo do **semieixo maior** `a = (rp + ra) / 2`.\n\n# Energia e a equação vis-viva\n\nA energia de uma órbita só depende de `a`: `E = −G·M·m / (2a)`. Daí sai a **vis-viva**, a equação mais útil da astronáutica:\n\n```\nv² = μ · (2/r − 1/a)          μ = G·M  (Terra: 398 600 km³/s²)\n```\n\n- órbita circular (a = r): `v = √(μ/r)`\n- escape (a → ∞): `v = √(2μ/r)`\n\n# A transferência de Hohmann\n\nComo levar um satélite de uma órbita baixa (400 km) para a **órbita geoestacionária** (35 786 km de altitude, período de 1 dia sideral)? A manobra mais econômica entre duas órbitas circulares, descoberta por Walter Hohmann em 1925, usa uma **meia elipse** que toca as duas:\n\n1. **1ª queima** (no periapse, a 400 km): acelera de `√(μ/r1)` até a velocidade da elipse de transferência, com `a = (r1 + r2)/2`. O satélite sobe.\n2. **Meia volta** de \"planeio\" sem motor: metade do período da elipse.\n3. **2ª queima** (no apoapse, a 35 786 km): acelera de novo até `√(μ/r2)` e circulariza.\n\nCom r1 = 6771 km e r2 = 42 157 km: a = 24 464 km, e a vis-viva dá a velocidade no periapse:\n\n```\nvp = √(398600 · (2/6771 − 1/24464)) ≈ 10,07 km/s\n```\n\ncontra 7,67 km/s da órbita circular baixa: um **Δv de 2,40 km/s**. O custo total de uma missão se mede em **Δv**, e a equação do foguete (veja a trilha de foguetes) transforma Δv em combustível.",
+      "task": "O satélite está a **400 km** de altitude (travado). Encontre a velocidade horizontal da **1ª queima de Hohmann**: a órbita deve ficar fechada com o **apoapse na altitude geoestacionária** (entre 35 400 e 36 200 km). Calcule com a vis-viva antes de testar.",
+      "hints": [
+        "r1 = 6371 + 400 = 6771 km; r2 = 6371 + 35 786 = 42 157 km; a = (r1 + r2) / 2.",
+        "vp = √(μ · (2/r1 − 1/a)) com μ = 398 600 km³/s².",
+        "O resultado é ≈ 10,07 km/s. O apoapse é muito sensível: 0,01 km/s a mais sobe o apoapse ~600 km."
+      ],
+      "goals": [
+        {
+          "metric": "orbitType",
+          "op": "between",
+          "value": 0.5,
+          "max": 1.5,
+          "description": "O satélite fica em órbita fechada"
+        },
+        {
+          "metric": "apoapsisAlt",
+          "op": "between",
+          "value": 35400,
+          "max": 36200,
+          "description": "Apoapse na altitude geoestacionária (35 400 a 36 200 km)"
+        },
+        {
+          "metric": "altitude",
+          "op": "between",
+          "value": 390,
+          "max": 410,
+          "description": "Lançado a 400 km de altitude"
+        }
+      ],
+      "solutionInputs": {
+        "altitude": "400",
+        "speed": "10.07",
+        "planet": "earth"
+      },
+      "questions": [
+        {
+          "prompt": "Quanto tempo dura a **viagem** de 400 km até a órbita geoestacionária (meia elipse, a = 24 464 km)? Responda em horas.",
+          "kind": "number",
+          "answer": "5.29",
+          "tolerance": 2,
+          "unit": "h",
+          "explanation": "T = 2π·√(a³/μ) = 2π·√(24 464³ / 398 600) ≈ 38 080 s ≈ 10,58 h; a viagem é metade: ≈ 5,29 h."
+        },
+        {
+          "prompt": "No apoapse da transferência o satélite anda a **1,62 km/s**, mas a órbita geoestacionária exige **3,07 km/s**. Qual é o Δv da 2ª queima?",
+          "kind": "number",
+          "answer": "1.46",
+          "tolerance": 2,
+          "unit": "km/s",
+          "explanation": "Δv2 = 3,07 − 1,62 ≈ 1,46 km/s (com mais casas: 3,0749 − 1,6177 = 1,457 km/s). Somando a 1ª queima (2,40 km/s), a manobra custa ~3,86 km/s."
+        },
+        {
+          "prompt": "Pela 3ª lei de Kepler, se o semieixo maior de uma órbita fica **4 vezes maior**, o período…",
+          "kind": "choice",
+          "options": [
+            "fica 4 vezes maior",
+            "fica 16 vezes maior",
+            "fica 8 vezes maior",
+            "fica 2 vezes maior"
+          ],
+          "answer": "2",
+          "explanation": "T ∝ a^(3/2): 4^(3/2) = (√4)³ = 2³ = 8."
+        }
+      ]
+    },
+    {
+      "id": "fis-16-amortecimento",
+      "title": "Oscilações amortecidas: o amortecimento crítico",
+      "level": 5,
+      "kind": "lab",
+      "lab": "spring",
+      "labParams": {
+        "mass": "0.5",
+        "k": "10",
+        "amplitude": "0.1",
+        "lock": "mass,k,amplitude"
+      },
+      "theory": "# A mola que perde energia\n\nUm oscilador real perde energia: atrito, resistência do ar, um amortecedor. O modelo mais usado é uma força **viscosa**, proporcional à velocidade: `F = −b·v`. A equação do movimento vira uma **equação diferencial de 2ª ordem**:\n\n```\nm·x'' + b·x' + k·x = 0\n```\n\nTentando soluções do tipo `x = e^(s·t)`, chegamos a `m·s² + b·s + k = 0`. Tudo depende do **fator de amortecimento**:\n\n```\nζ = b / (2·√(k·m))        ω0 = √(k/m)\n```\n\n# Três regimes\n\n- **Subamortecido (ζ < 1):** oscila com amplitude que decai como `e^(−ζ·ω0·t)`, numa frequência um pouco menor: `ωd = ω0·√(1 − ζ²)`. Passa do ponto de equilíbrio: a **ultrapassagem** (*overshoot*) vale `e^(−π·ζ/√(1−ζ²))` da amplitude.\n- **Crítico (ζ = 1, b = 2·√(k·m)):** a raiz é dupla e `x = A·(1 + ω0·t)·e^(−ω0·t)`. **Não oscila** e volta ao equilíbrio o **mais rápido possível** sem passar dele.\n- **Superamortecido (ζ > 1):** também não oscila, mas volta **devagar**, \"atolado\" no amortecimento.\n\n# Onde isso importa\n\n- **Suspensão de carro:** perto do crítico — sem ficar quicando depois de um buraco, mas sem ficar duro demais.\n- **Portas com mola** e ponteiros de instrumentos: crítico, para parar rápido sem bater e voltar.\n- **Controle (PID):** um controlador bem ajustado faz o sistema responder como um oscilador quase crítico — é o mesmo problema da lição de PID na trilha de Arduino.\n- **Prédios e pontes:** amortecedores de massa sintonizada tiram energia das oscilações causadas por vento e terremotos.\n\n# Tempo de acomodação\n\nEngenheiros medem quão rápido o sistema \"sossega\" pelo **tempo de acomodação**: o instante a partir do qual |x| fica para sempre abaixo de **2%** da amplitude inicial. Com pouco amortecimento ele é longo (oscila muito); com amortecimento demais, também (volta devagar); o mínimo fica perto do crítico.",
+      "task": "O bloco tem **0,5 kg**, a mola **k = 10 N/m** e é puxado **0,1 m** (travados). Ajuste o **amortecimento b** para que ele volte ao equilíbrio passando **no máximo 1%** além dele e se **acomode (2%) em até 1,4 s**. Calcule o amortecimento crítico `b = 2·√(k·m)` antes.",
+      "hints": [
+        "b crítico = 2·√(10 · 0,5) = 2·√5 ≈ 4,47 kg/s.",
+        "Com b bem menor ele oscila e passa do ponto; com b bem maior volta devagar demais.",
+        "b = 4,5 kg/s (ζ ≈ 1,006, quase crítico) cumpre os dois objetivos."
+      ],
+      "goals": [
+        {
+          "metric": "overshoot",
+          "op": "<=",
+          "value": 1,
+          "description": "Ultrapassagem de no máximo 1% da amplitude"
+        },
+        {
+          "metric": "settleTime",
+          "op": "<=",
+          "value": 1.4,
+          "description": "Acomoda (|x| < 2% da amplitude) em até 1,4 s"
+        }
+      ],
+      "solutionInputs": {
+        "mass": "0.5",
+        "k": "10",
+        "amplitude": "0.1",
+        "damping": "4.5"
+      },
+      "questions": [
+        {
+          "prompt": "Qual é o amortecimento crítico para uma massa de **2 kg** numa mola de **50 N/m**?",
+          "kind": "number",
+          "answer": "20",
+          "tolerance": 2,
+          "unit": "kg/s",
+          "explanation": "b = 2·√(k·m) = 2·√(50 · 2) = 2·√100 = 20 kg/s."
+        },
+        {
+          "prompt": "Uma massa de **1 kg** numa mola de **100 N/m** tem amortecimento **b = 2 kg/s**. Qual é o fator de amortecimento ζ?",
+          "kind": "number",
+          "answer": "0.1",
+          "tolerance": 2,
+          "unit": "",
+          "explanation": "ζ = b / (2·√(k·m)) = 2 / (2·√100) = 2 / 20 = 0,1: bem subamortecido, oscila muitas vezes antes de parar."
+        },
+        {
+          "prompt": "Um carro passa num buraco e fica quicando várias vezes antes de estabilizar. O amortecedor está…",
+          "kind": "choice",
+          "options": [
+            "superamortecido (b grande demais)",
+            "subamortecido (b pequeno demais — amortecedor gasto)",
+            "no amortecimento crítico",
+            "sem mola"
+          ],
+          "answer": "1",
+          "explanation": "Oscilar várias vezes é sinal de ζ bem menor que 1: o amortecedor perdeu óleo ou pressão e dissipa pouca energia."
+        }
+      ]
+    },
+    {
+      "id": "fis-17-espectrometro",
+      "title": "Campo magnético: o espectrômetro de massa",
+      "level": 5,
+      "kind": "lab",
+      "lab": "spectrometer",
+      "labParams": {
+        "ion": "c14",
+        "voltage": "2000",
+        "targetX": "0.30",
+        "targetWidth": "0.02",
+        "lock": "ion,voltage"
+      },
+      "theory": "# Pesando átomos um a um\n\nComo medir a massa de um único átomo? E separar o carbono-14 (radioativo, usado na datação de fósseis) do carbono-12, se quimicamente eles são idênticos? O **espectrômetro de massa** faz isso com campos elétricos e magnéticos.\n\n# 1. Acelerar com um campo elétrico\n\nO íon (carga q, massa m) parte do repouso e atravessa uma diferença de potencial V. O campo elétrico realiza trabalho `q·V`, que vira energia cinética:\n\n```\nq·V = ½·m·v²     →     v = √(2·q·V / m)\n```\n\nÍons mais leves saem mais rápidos. A energia de uma carga elementar acelerada por 1 V é **1 elétron-volt** (1 eV = 1,602×10⁻¹⁹ J).\n\n# 2. Curvar com um campo magnético\n\nDentro de um campo **B** perpendicular à velocidade, a **força de Lorentz** `F = q·v·B` é sempre perpendicular ao movimento: ela não muda a rapidez, só a direção. O íon faz um **movimento circular uniforme**, e a força magnética é a resultante centrípeta:\n\n```\nq·v·B = m·v² / r     →     r = m·v / (q·B)\n```\n\nJuntando as duas etapas:\n\n```\nr = (1/B) · √(2·m·V / q)\n```\n\nO raio cresce com a **raiz da massa**. Depois de meia volta, o íon bate no detector a uma distância **2r** da entrada: cada massa cai num lugar diferente, como as cores num arco-íris — daí \"espectro\".\n\n# O período não depende da velocidade\n\nO tempo de uma volta é `T = 2π·m / (q·B)`, sem v! Íons mais rápidos fazem círculos maiores, mas na mesma frequência — a **frequência de cíclotron**. É o princípio do acelerador **cíclotron** e da ressonância magnética.\n\n# Aplicações\n\nDatação por carbono-14 (com espectrômetros aceleradores), controle de doping, análise de poluentes, separação de isótopos de urânio (Projeto Manhattan) e identificação de proteínas em biologia.\n\nMassas: 1 u = 1,6605×10⁻²⁷ kg; ¹²C = 12 u, ¹⁴C = 14,0032 u; carga do íon = +e = 1,602×10⁻¹⁹ C.",
+      "task": "Íons de **carbono-14** (carga +e) são acelerados por **2000 V** (travados). Ajuste o **campo magnético** para que eles caiam no **detector a 30 cm** da entrada (± 1 cm). Calcule antes: o diâmetro é `2r = (2/B)·√(2·m·V/q)`.",
+      "hints": [
+        "m = 14,0032 · 1,6605×10⁻²⁷ ≈ 2,325×10⁻²⁶ kg; v = √(2·q·V/m) ≈ 1,66×10⁵ m/s.",
+        "Para 2r = 0,30 m, r = 0,15 m e B = m·v / (q·r).",
+        "B ≈ 2,325×10⁻²⁶ · 1,66×10⁵ / (1,602×10⁻¹⁹ · 0,15) ≈ 0,161 T."
+      ],
+      "goals": [
+        {
+          "metric": "hitTarget",
+          "op": ">=",
+          "value": 1,
+          "description": "Os íons de carbono-14 caem no detector (30 cm ± 1 cm)"
+        }
+      ],
+      "solutionInputs": {
+        "ion": "c14",
+        "voltage": "2000",
+        "field": "0.161"
+      },
+      "questions": [
+        {
+          "prompt": "Com que velocidade os íons de carbono-14 saem do acelerador de **2000 V**? Responda em km/s.",
+          "kind": "number",
+          "answer": "166",
+          "tolerance": 2,
+          "unit": "km/s",
+          "explanation": "v = √(2·q·V/m) = √(2 · 1,602×10⁻¹⁹ · 2000 / 2,325×10⁻²⁶) ≈ 1,66×10⁵ m/s = 166 km/s."
+        },
+        {
+          "prompt": "Com o mesmo campo (**0,161 T**) e a mesma tensão, a que distância da entrada caem os íons de **carbono-12**? Responda em cm.",
+          "kind": "number",
+          "answer": "27.7",
+          "tolerance": 2,
+          "unit": "cm",
+          "explanation": "2r ∝ √m: 29,93 cm · √(12 / 14,0032) ≈ 27,7 cm. Os dois isótopos ficam ~2 cm separados no detector."
+        },
+        {
+          "prompt": "Se você **dobrar o campo magnético**, o tempo que o íon leva para fazer a meia volta…",
+          "kind": "choice",
+          "options": [
+            "dobra",
+            "cai pela metade",
+            "não muda",
+            "fica 4 vezes menor"
+          ],
+          "answer": "1",
+          "explanation": "T = 2π·m/(q·B): com B dobrado, o período (e a meia volta) cai pela metade. O raio também cai pela metade, mas a velocidade não muda."
+        }
+      ]
+    },
+    {
+      "id": "fis-18-inducao",
+      "title": "Indução eletromagnética: geradores e transformadores",
+      "level": 5,
+      "kind": "quiz",
+      "safety": "Transformadores e geradores trabalham com tensões perigosas. Não abra fontes, carregadores ou motores ligados à tomada: capacitores internos guardam carga mesmo desligados.",
+      "theory": "# Fluxo magnético\n\nO **fluxo magnético** através de uma espira mede \"quantas linhas de campo\" a atravessam:\n\n```\nΦ = B · A · cos θ       (weber, Wb = T·m²)\n```\n\n# Lei de Faraday-Lenz\n\nUma tensão (força eletromotriz, **fem**) aparece numa bobina de N espiras sempre que o fluxo **varia**:\n\n```\nε = −N · ΔΦ / Δt\n```\n\nO fluxo pode variar porque B muda (um ímã se aproximando), porque a área muda, ou porque o ângulo muda (a espira gira). O sinal de menos é a **lei de Lenz**: a corrente induzida cria um campo que **se opõe à variação** que a criou. Se não fosse assim, a energia surgiria do nada. É por isso que um ímã que cai dentro de um tubo de cobre desce devagar (correntes de Foucault) — o mesmo princípio dos freios eletromagnéticos de trens.\n\n# Fem de movimento\n\nUma barra de comprimento L andando a velocidade v, perpendicular a um campo B, tem as cargas empurradas pela força de Lorentz: `ε = B · L · v`.\n\n# O gerador\n\nUma bobina de N espiras e área A girando com velocidade angular ω num campo B tem `Φ = B·A·cos(ωt)`. Derivando:\n\n```\nε(t) = N · B · A · ω · sen(ωt)        pico: ε0 = N·B·A·ω\n```\n\nÉ uma tensão **alternada** senoidal: a origem da corrente alternada das usinas (60 Hz no Brasil, ω = 2π·60 ≈ 377 rad/s).\n\n# O transformador\n\nDuas bobinas no mesmo núcleo de ferro: a corrente alternada no primário cria um fluxo variável que induz tensão no secundário. Como o fluxo é o mesmo:\n\n```\nVs / Vp = Ns / Np        e (ideal)  Vp·Ip = Vs·Is\n```\n\nTransformadores só funcionam com corrente **alternada** (com contínua não há variação de fluxo). Eles permitem **transmitir energia em alta tensão**: para a mesma potência, a corrente é menor, e a perda nos fios `P = R·I²` cai com o quadrado da corrente.\n\n# Energia no campo\n\nUma bobina (indutor, L em henries) com corrente I guarda energia no campo magnético: `U = ½·L·I²`.",
+      "task": "Responda às perguntas. Escreva números como `0,4` ou `3e-2`.",
+      "hints": [
+        "Em Faraday, ΔΦ = A·ΔB quando a área e o ângulo não mudam.",
+        "No gerador, ω = 2π·f; o pico é N·B·A·ω.",
+        "No transformador, as tensões são proporcionais ao número de espiras."
+      ],
+      "questions": [
+        {
+          "prompt": "Uma bobina de **200 espiras** e área **0,01 m²** está num campo que sobe de **0 a 0,5 T** em **0,1 s**. Qual é a fem induzida (em módulo)?",
+          "kind": "number",
+          "answer": "10",
+          "tolerance": 2,
+          "unit": "V",
+          "explanation": "ε = N·A·ΔB/Δt = 200 · 0,01 · 0,5 / 0,1 = 10 V."
+        },
+        {
+          "prompt": "Uma barra de **0,2 m** se move a **3 m/s**, perpendicular a um campo de **0,5 T**. Qual é a fem entre as pontas dela?",
+          "kind": "number",
+          "answer": "0.3",
+          "tolerance": 2,
+          "unit": "V",
+          "explanation": "ε = B·L·v = 0,5 · 0,2 · 3 = 0,3 V."
+        },
+        {
+          "prompt": "Um transformador baixa **127 V** para **12 V**. O primário tem **1270 espiras**. Quantas espiras tem o secundário?",
+          "kind": "number",
+          "answer": "120",
+          "tolerance": 2,
+          "unit": "",
+          "explanation": "Ns = Np · Vs/Vp = 1270 · 12 / 127 = 120 espiras."
+        },
+        {
+          "prompt": "Um gerador tem **100 espiras** de área **0,05 m²** girando a **60 Hz** num campo de **0,2 T**. Qual é a fem de pico?",
+          "kind": "number",
+          "answer": "377",
+          "tolerance": 2,
+          "unit": "V",
+          "explanation": "ε0 = N·B·A·ω = 100 · 0,2 · 0,05 · 2π·60 ≈ 377 V."
+        },
+        {
+          "prompt": "Quanta energia guarda um indutor de **0,2 H** com corrente de **3 A**?",
+          "kind": "number",
+          "answer": "0.9",
+          "tolerance": 2,
+          "unit": "J",
+          "explanation": "U = ½·L·I² = 0,5 · 0,2 · 9 = 0,9 J."
+        },
+        {
+          "prompt": "Você aproxima o polo **norte** de um ímã de uma bobina fechada. A corrente induzida…",
+          "kind": "choice",
+          "options": [
+            "cria um polo sul virado para o ímã, atraindo-o",
+            "cria um polo norte virado para o ímã, repelindo-o",
+            "não aparece, porque o ímã não toca na bobina",
+            "só aparece se o ímã ficar parado"
+          ],
+          "answer": "1",
+          "explanation": "Lenz: a bobina se opõe à aproximação criando um polo norte na face voltada para o ímã. Você precisa fazer força para empurrar — essa é a energia que vira corrente."
+        },
+        {
+          "prompt": "Por que as linhas de transmissão usam tensões altíssimas (centenas de kV)?",
+          "kind": "choice",
+          "options": [
+            "Porque a tensão alta viaja mais rápido",
+            "Porque os transformadores só funcionam em alta tensão",
+            "Para a mesma potência, a corrente fica menor e a perda R·I² nos fios cai muito",
+            "Para os fios esquentarem e não congelarem"
+          ],
+          "answer": "2",
+          "explanation": "P = V·I: subir a tensão 100 vezes baixa a corrente 100 vezes e a perda nos fios (R·I²) 10 000 vezes."
+        }
+      ]
+    },
+    {
+      "id": "fis-19-relatividade",
+      "title": "Relatividade restrita: tempo, espaço e energia",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# Os dois postulados\n\nEm 1905, Einstein partiu de duas ideias:\n\n1. As leis da física são as mesmas em qualquer referencial inercial (sem aceleração).\n2. A velocidade da luz no vácuo, **c ≈ 3×10⁸ m/s**, é a mesma para todos os observadores, não importa como se movam.\n\nA segunda é estranha: se você corre atrás de um raio de luz, ele continua se afastando a c. Para isso funcionar, **tempo e espaço** precisam mudar de observador para observador.\n\n# O fator de Lorentz\n\n```\nγ = 1 / √(1 − v²/c²)\n```\n\nPara velocidades do dia a dia γ ≈ 1 (a 300 m/s, γ − 1 ≈ 5×10⁻¹³). Perto de c, ele dispara: γ = 1,25 a 0,6c, 1,67 a 0,8c, ~10 a 0,995c.\n\n- **Dilatação do tempo:** um relógio em movimento anda mais devagar: `Δt = γ·Δt0` (Δt0 = **tempo próprio**, medido no referencial do relógio).\n- **Contração do comprimento:** um objeto em movimento fica mais curto na direção do movimento: `L = L0 / γ`.\n- **Simultaneidade é relativa:** dois eventos simultâneos para um observador podem não ser para outro.\n\n# A prova dos múons\n\nRaios cósmicos criam **múons** a ~15 km de altura. Eles vivem em média **2,2 μs**; mesmo a quase c, sem relatividade andariam só ~660 m antes de decair — e quase nenhum chegaria ao chão. Mas chegam muitos! Para nós, o relógio deles anda γ vezes mais devagar; para eles, a atmosfera está contraída. As duas descrições dão o mesmo resultado.\n\n# Soma de velocidades\n\nVelocidades não se somam simplesmente. Uma nave a u lança uma sonda a v' (em relação à nave):\n\n```\nv = (u + v') / (1 + u·v'/c²)\n```\n\nNunca passa de c: 0,5c \"mais\" 0,5c dá 0,8c.\n\n# E = mc²\n\nMassa é energia: `E0 = m·c²`. A energia total de um corpo em movimento é `E = γ·m·c²`. Como c² é enorme, um grama de massa equivale a 9×10¹³ J — mais que a bomba de Hiroshima. Nas usinas nucleares e no Sol, uma pequena fração da massa vira energia.\n\nO **GPS** precisa corrigir os relógios dos satélites pela relatividade restrita (eles se movem) e pela geral (estão mais longe da Terra): sem isso, erraria ~10 km por dia.",
+      "task": "Responda às perguntas. Use `c = 3×10⁸ m/s` e escreva números como `0,4` ou `9e13`.",
+      "hints": [
+        "γ = 1/√(1 − β²), com β = v/c. Para 0,8c: √(1 − 0,64) = 0,6.",
+        "O tempo próprio do múon (2,2 μs) é o medido no referencial dele; na Terra o tempo é γ vezes maior.",
+        "Na soma relativística, escreva as velocidades em unidades de c: (0,5 + 0,5)/(1 + 0,25)."
+      ],
+      "questions": [
+        {
+          "prompt": "Qual é o fator de Lorentz γ de uma nave a **0,8·c**?",
+          "kind": "number",
+          "answer": "1.667",
+          "tolerance": 2,
+          "unit": "",
+          "explanation": "γ = 1/√(1 − 0,64) = 1/0,6 ≈ 1,667."
+        },
+        {
+          "prompt": "Um múon vive **2,2 μs** no seu próprio referencial. Viajando a **0,995·c**, quanto tempo ele vive medido da Terra? Responda em μs.",
+          "kind": "number",
+          "answer": "22.0",
+          "tolerance": 2,
+          "unit": "μs",
+          "explanation": "γ = 1/√(1 − 0,995²) ≈ 10,01 → Δt = γ·Δt0 ≈ 10,01 · 2,2 ≈ 22,0 μs."
+        },
+        {
+          "prompt": "Nesse tempo dilatado (≈ 22,0 μs) a 0,995·c, quantos **quilômetros** o múon percorre?",
+          "kind": "number",
+          "answer": "6.58",
+          "tolerance": 3,
+          "unit": "km",
+          "explanation": "d = v·Δt = 0,995 · 3×10⁸ · 22,03×10⁻⁶ ≈ 6575 m ≈ 6,58 km — dez vezes mais que os ~660 m sem relatividade."
+        },
+        {
+          "prompt": "Uma nave mede **100 m** parada. Qual comprimento um observador na Terra mede quando ela passa a **0,6·c**?",
+          "kind": "number",
+          "answer": "80",
+          "tolerance": 2,
+          "unit": "m",
+          "explanation": "γ = 1/√(1 − 0,36) = 1,25 → L = L0/γ = 100/1,25 = 80 m."
+        },
+        {
+          "prompt": "Quanta energia equivale a **1 grama** de massa?",
+          "kind": "number",
+          "answer": "9e13",
+          "tolerance": 2,
+          "unit": "J",
+          "explanation": "E = m·c² = 0,001 · (3×10⁸)² = 9×10¹³ J."
+        },
+        {
+          "prompt": "Uma nave a **0,5·c** dispara para frente uma sonda a **0,5·c** em relação à nave. Qual é a velocidade da sonda vista da Terra, em unidades de c?",
+          "kind": "number",
+          "answer": "0.8",
+          "tolerance": 2,
+          "unit": "c",
+          "explanation": "v = (0,5 + 0,5)/(1 + 0,5·0,5) = 1/1,25 = 0,8 c — e nunca mais que c."
+        },
+        {
+          "prompt": "Dois relâmpagos caem ao mesmo tempo para quem está parado na plataforma. Para um passageiro do trem que passa muito rápido…",
+          "kind": "choice",
+          "options": [
+            "também são simultâneos, sempre",
+            "podem não ser simultâneos: a simultaneidade depende do referencial",
+            "um deles não acontece",
+            "eles acontecem depois para todos os passageiros"
+          ],
+          "answer": "1",
+          "explanation": "É a relatividade da simultaneidade: eventos separados no espaço que são simultâneos num referencial não são, em geral, simultâneos em outro."
+        }
+      ]
+    },
+    {
+      "id": "fis-20-quantica",
+      "title": "Física quântica: fótons, ondas de matéria e o átomo",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# A luz vem em pacotes\n\nEm 1900, Planck explicou a radiação dos corpos quentes supondo que a energia é trocada em **pacotes**. Einstein (1905) levou a ideia a sério: a luz é feita de **fótons**, cada um com energia\n\n```\nE = h·f = h·c / λ        h = 6,626×10⁻³⁴ J·s\n```\n\nUm atalho útil: `h·c ≈ 1240 eV·nm`, então um fóton de 500 nm (verde) tem 1240/500 = 2,48 eV.\n\n# O efeito fotoelétrico\n\nLuz arranca elétrons de um metal — mas só se **cada fóton** tiver energia suficiente para vencer a **função trabalho** W do metal:\n\n```\nKmax = h·f − W\n```\n\nLuz vermelha muito forte não arranca nada; ultravioleta fraco arranca. A intensidade só muda **quantos** elétrons saem, não a energia de cada um. Foi por isso (e não pela relatividade) que Einstein ganhou o Nobel.\n\n# Ondas de matéria\n\nDe Broglie (1924) propôs o inverso: partículas também são ondas, com\n\n```\nλ = h / p = h / (m·v)\n```\n\nUm elétron acelerado por V volts tem `p = √(2·m·e·V)`. Com 100 V, λ ≈ 0,12 nm — do tamanho dos átomos, por isso elétrons **difratam** em cristais e microscópios eletrônicos enxergam detalhes que a luz não alcança.\n\n# O átomo de Bohr\n\nNo hidrogênio, o elétron só pode ter energias `En = −13,6 eV / n²`. Ao cair de um nível para outro, emite um fóton com exatamente a diferença de energia. A queda de n = 3 para n = 2 dá a linha vermelha **Hα** (656 nm), que colore as nebulosas. Cada elemento tem suas linhas: é assim que sabemos do que as estrelas são feitas.\n\n# Incerteza e dualidade\n\n- **Heisenberg:** `Δx · Δp ≥ ħ/2` (ħ = h/2π = 1,055×10⁻³⁴ J·s). Quanto mais preso um elétron, mais incerta sua velocidade — é por isso que o átomo não colapsa.\n- **Dupla fenda:** elétrons enviados **um de cada vez** formam, aos poucos, um padrão de **interferência**: cada um se comporta como onda que passa pelas duas fendas, mas é detectado como partícula num ponto.\n- **Tunelamento:** uma partícula pode atravessar uma barreira que, classicamente, não teria energia para pular. Ele explica o decaimento alfa e é usado em microscópios de tunelamento e na memória flash.",
+      "task": "Responda às perguntas. Use `h·c = 1240 eV·nm`, `h = 6,626×10⁻³⁴ J·s`, `ħ = 1,055×10⁻³⁴ J·s`, `me = 9,11×10⁻³¹ kg` e `e = 1,602×10⁻¹⁹ C`.",
+      "hints": [
+        "Energia do fóton em eV: E = 1240 / λ(nm).",
+        "De Broglie para um elétron acelerado: λ = h / √(2·m·e·V).",
+        "Bohr: ΔE = 13,6·(1/n1² − 1/n2²) eV e λ = 1240 / ΔE nm."
+      ],
+      "questions": [
+        {
+          "prompt": "Qual é a energia de um fóton de luz verde de **500 nm**? Responda em eV.",
+          "kind": "number",
+          "answer": "2.48",
+          "tolerance": 2,
+          "unit": "eV",
+          "explanation": "E = 1240 / 500 = 2,48 eV (≈ 3,97×10⁻¹⁹ J)."
+        },
+        {
+          "prompt": "Luz ultravioleta de **250 nm** ilumina um metal de função trabalho **2,3 eV**. Qual é a energia cinética máxima dos elétrons arrancados?",
+          "kind": "number",
+          "answer": "2.66",
+          "tolerance": 2,
+          "unit": "eV",
+          "explanation": "Kmax = 1240/250 − 2,3 = 4,96 − 2,3 = 2,66 eV."
+        },
+        {
+          "prompt": "Qual é o comprimento de onda de de Broglie de um elétron acelerado por **100 V**? Responda em nm.",
+          "kind": "number",
+          "answer": "0.123",
+          "tolerance": 2,
+          "unit": "nm",
+          "explanation": "λ = h/√(2·m·e·V) = 6,626×10⁻³⁴ / √(2 · 9,11×10⁻³¹ · 1,602×10⁻¹⁹ · 100) ≈ 1,23×10⁻¹⁰ m ≈ 0,123 nm."
+        },
+        {
+          "prompt": "Qual é o comprimento de onda do fóton emitido quando o elétron do hidrogênio cai do nível **n = 3** para **n = 2**? Responda em nm.",
+          "kind": "number",
+          "answer": "656",
+          "tolerance": 2,
+          "unit": "nm",
+          "explanation": "ΔE = 13,6 · (1/4 − 1/9) = 13,6 · 5/36 ≈ 1,889 eV → λ = 1240 / 1,889 ≈ 656 nm (a linha vermelha Hα)."
+        },
+        {
+          "prompt": "Um elétron está preso numa região de **0,1 nm** (Δx). Qual é a incerteza mínima da sua velocidade? Responda em km/s.",
+          "kind": "number",
+          "answer": "579",
+          "tolerance": 3,
+          "unit": "km/s",
+          "explanation": "Δv ≥ ħ / (2·m·Δx) = 1,055×10⁻³⁴ / (2 · 9,11×10⁻³¹ · 10⁻¹⁰) ≈ 5,79×10⁵ m/s ≈ 579 km/s."
+        },
+        {
+          "prompt": "Na experiência da dupla fenda, elétrons são enviados **um de cada vez**. Depois de muitos elétrons, a tela mostra…",
+          "kind": "choice",
+          "options": [
+            "duas faixas, uma atrás de cada fenda",
+            "um ponto só, no centro",
+            "um padrão de interferência, com várias faixas claras e escuras",
+            "nada, porque um elétron sozinho não interfere"
+          ],
+          "answer": "2",
+          "explanation": "Cada elétron chega num ponto (partícula), mas a distribuição dos pontos é a de uma onda que passou pelas duas fendas e interferiu consigo mesma."
+        },
+        {
+          "prompt": "Por que luz vermelha muito intensa não arranca elétrons de um metal que o ultravioleta fraco arranca?",
+          "kind": "choice",
+          "options": [
+            "Porque a luz vermelha é mais lenta",
+            "Porque cada fóton vermelho tem energia menor que a função trabalho, não importa quantos sejam",
+            "Porque o metal reflete toda a luz vermelha",
+            "Porque a intensidade da luz vermelha é sempre menor"
+          ],
+          "answer": "1",
+          "explanation": "Um elétron absorve um fóton por vez. Se E = h·f < W, nenhum fóton sozinho consegue arrancá-lo; mais intensidade só significa mais fótons fracos."
+        }
+      ]
     }
   ]
 }

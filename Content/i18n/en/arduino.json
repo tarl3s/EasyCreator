@@ -175,6 +175,203 @@
         "With an obstacle on the line, the robot stops",
         "…and stops without hitting the obstacle"
       ]
+    },
+    "ard-11-debounce": {
+      "title": "Debounce: counting presses without mistakes",
+      "theory": "# The button that \"bounces\"\n\nA button looks perfect: press, it connects; release, it disconnects. But inside there are two metal blades that hit each other — and, like a rubber ball, they **bounce** a few times before settling. For 1 to 10 milliseconds the contact opens and closes several times.\n\nTo us that is invisible. To the Arduino, which reads the pin **thousands of times per second**, a single press becomes a burst:\n\n```\npressed ─┐ ┌─┐ ┌───────────────\n         └─┘ └─┘\n         ←  ~8 ms →\n```\n\nA program that counts \"every time the pin went LOW\" counts **3 or 4 presses** instead of 1. If the button toggles a lamp, it flickers and may end in the wrong state.\n\n# Detecting the edge\n\nBefore debouncing, remember the idea of an **edge**: we want the *moment* the button goes from released to pressed, not \"while it is pressed\". We keep the previous reading and compare:\n\n```\nif (leitura == LOW && anterior == HIGH) { /* just pressed */ }\nanterior = leitura;\n```\n\n# Time-based debounce\n\nThe classic solution (the one in the official Arduino example) is to **distrust any change** until it has stayed still for a while — typically **50 ms**:\n\n1. Every time the reading **changes**, note `ultimaMudanca = millis()`.\n2. Only accept the reading as the new **stable state** when `millis() - ultimaMudanca >= 50`.\n3. Count the press when the **stable** state goes from HIGH to LOW.\n\nThese are two different variables: `ultimaLeitura` (what the pin showed in the previous pass, bounces and all) and `estadoEstavel` (what we decided is true). Note there is **no `delay()`**: `loop()` keeps spinning freely, ready to do other things.\n\n# Other ways to solve it\n\n- **Hardware:** a 100 nF capacitor across the button forms an RC filter that \"smooths\" the bounces (with a Schmitt trigger it becomes perfect).\n- **Sample counter:** only accept the change after N equal readings in a row.\n- `delay(50)` after detecting the press also works, but it **freezes** the program — and you already know why that is bad.",
+      "task": "The button is on pin **2** (with `INPUT_PULLUP`) and the LED on **13**. The starter code counts presses, but every bounce of the contact becomes an extra press. Fix it with a **50 ms debounce using `millis()`**: on each real press add 1, **toggle the LED** and show `Apertos: N` on the Serial Monitor.",
+      "hints": [
+        "Create the variables ultimaLeitura, estadoEstavel (both starting at HIGH) and unsigned long ultimaMudanca = 0.",
+        "If leitura != ultimaLeitura, do ultimaMudanca = millis(). At the end of loop, ultimaLeitura = leitura.",
+        "Only count when millis() - ultimaMudanca >= 50 AND leitura != estadoEstavel: then update estadoEstavel and, if it is LOW, count the press."
+      ],
+      "checks": [
+        "Without pressing, nothing is counted",
+        "A bouncy press counts as 1",
+        "…and not as 2",
+        "The LED toggles (turns on) on the first press",
+        "Two bouncy presses count 2",
+        "…and not 3 or more",
+        "The second press turns the LED off again"
+      ]
+    },
+    "ard-12-multitarefa": {
+      "title": "Multitasking with millis(): several things at once",
+      "theory": "# One processor, several tasks\n\nThe Arduino Uno has **a single core** and no operating system. Even so, real robots do many things \"at the same time\": they blink status LEDs, read sensors, drive motors, talk over serial. The trick is called **cooperative multitasking**: each task does a quick little piece of its work and **gives the turn back**, and `loop()` passes through all of them thousands of times per second.\n\nThe golden rule: **no task may use `delay()`**. A `delay(250)` freezes every other task for 250 ms.\n\n# The \"is it time yet?\" pattern\n\nEach periodic task gets its own time variable:\n\n```\nunsigned long ultimoRapido = 0;\n\nif (millis() - ultimoRapido >= 250) {\n  ultimoRapido += 250;          // schedule the next one\n  // ...do the task (toggle the LED)\n}\n```\n\nNote the `ultimoRapido += 250` instead of `ultimoRapido = millis()`. If loop is 3 ms late in one pass, `= millis()` pushes all the following events 3 ms forward and the error **accumulates** (the clock \"drifts\"). With `+= 250` the next event stays on the right grid: 250, 500, 750… This matters in everything that measures time — clocks, sample rates, controllers.\n\n# Independent tasks\n\nThis circuit has three tasks:\n\n- **Task 1:** toggles the LED on pin 13 every **250 ms**.\n- **Task 2:** toggles the LED on pin 12 every **400 ms**.\n- **Task 3:** copies the button on pin 2 to the LED on pin 11, **all the time**.\n\nSince 250 and 400 are not multiples of each other, there is **no way** to do this with `delay()`s in sequence. With `millis()` it is trivial: three independent `if`s in the same `loop()`.\n\n# How far does this go?\n\nThis is the same principle as the **schedulers** of embedded systems and *event loops* (JavaScript, games). When the tasks get too heavy, an **RTOS** (real-time operating system, such as FreeRTOS) is used: it switches tasks by itself on a timer interrupt — but the \"never block\" idea still holds.",
+      "task": "LEDs on pins **13** (fast), **12** (slow) and **11** (response); button on pin **2** (`INPUT_PULLUP`). All start off. LED 13 must **toggle every 250 ms**, LED 12 **every 400 ms**, and LED 11 must stay on **while the button is pressed**, responding at once. No `delay()`.",
+      "hints": [
+        "Create unsigned long ultimoRapido = 0, ultimoLento = 0; and int estadoRapido = LOW, estadoLento = LOW; outside the functions.",
+        "Task 1: if (millis() - ultimoRapido >= 250) { ultimoRapido += 250; estadoRapido = !estadoRapido; digitalWrite(13, estadoRapido); } — task 2 is the same with 400.",
+        "Delete the delay()s: loop() should only have the three ifs, one per task."
+      ],
+      "checks": [
+        "The fast LED turns on at 250 ms",
+        "…and off at 500 ms",
+        "The slow LED turns on at 400 ms",
+        "…and off at 800 ms",
+        "The fast LED keeps the 250 ms rhythm",
+        "The slow LED keeps the 400 ms rhythm",
+        "Without pressing, the response LED stays off",
+        "Pressing the button turns the response LED on at once",
+        "The slow LED keeps its rhythm while the button is pressed",
+        "Releasing the button turns the response LED off",
+        "The fast LED doesn't lose its rhythm because of the button"
+      ]
+    },
+    "ard-13-rampa-pwm": {
+      "title": "Acceleration ramp: soft-starting a motor",
+      "theory": "# Why not switch it on at full power?\n\nA stopped DC motor has no **back-EMF** (the voltage it generates while spinning, which opposes the supply). At the instant it starts, the only thing limiting the current is the winding resistance, a few ohms: the starting current can be **5 to 10 times** the rated one. That drags the battery voltage down (the Arduino may reset!), heats the H-bridge and gives a mechanical **jolt** that wears gears and makes the robot skid or pop a wheelie.\n\nThe solution is a **ramp**: increase the PWM little by little.\n\n# Trapezoidal ramp\n\nThe most common profile has three phases — the speed graph looks like a trapezoid:\n\n```\nPWM 255 |      ________\n        |     /        \\\n        |    /          \\\n      0 |___/            \\______\n        0   1 s        3 s  4 s\n       accelerate cruise brake\n```\n\nDuring the ramp, the PWM is a **linear interpolation** of time:\n\n```\npwm = t · 255 / 1000          (0 ≤ t < 1000 ms)\n```\n\nAt 500 ms the motor is at 127 (half); at 1000 ms it reaches 255. Braking is the same calculation \"in reverse\": `pwm = (4000 − t) · 255 / 1000`.\n\nThe **acceleration** is the slope of the ramp: 255 units per second. A slower ramp draws less current and is smoother; a faster one responds better. The designer picks it from the driver's current limit and from how much the wheels can take without skidding (**static friction**: a = μ·g is the most a robot can accelerate without slipping).\n\n# Watch the types\n\n`t * 255` with `t` in milliseconds can exceed 32 767 — the limit of an `int` on the Arduino Uno. Use `unsigned long` (up to ~4.3 billion) in calculations with `millis()`.\n\n# Going further: the S-curve\n\nIn the trapezoidal ramp the acceleration jumps from **zero to maximum** suddenly — that is a \"jerk\" (in physics, *jerk* is the derivative of acceleration). Elevators, CNC machines and 3D printers use **S-curve ramps**, in which the acceleration itself also rises and falls smoothly. Same idea, one derivative higher.",
+      "task": "The motor is on an H-bridge: **IN1 = 8, IN2 = 7, EN = 5** (PWM). At power-up, make the motor spin **forward** with a trapezoidal ramp: **accelerate from 0 to 255 in 1 s**, stay at **255 for 2 s** (until 3 s), **brake to 0 in 1 s** (until 4 s) and then **stay stopped**. Use `millis()` to compute the PWM on every pass of `loop()`.",
+      "hints": [
+        "Compute unsigned long t = millis(); and choose the phase with if / else if: t < 1000, t < 3000, t < 4000, otherwise stopped.",
+        "Accelerating: pwm = t * 255 / 1000. Braking: pwm = (4000 - t) * 255 / 1000.",
+        "Use unsigned long in the calculations: t * 255 exceeds the limit of an int."
+      ],
+      "checks": [
+        "At 250 ms the motor is at the start of the ramp (PWM near 64)",
+        "At 500 ms the motor is halfway (PWM near 127)",
+        "The motor spins forward",
+        "At 2 s the motor is at full speed",
+        "At 3.5 s the motor is braking (PWM near 127)",
+        "After 4 s the motor is stopped"
+      ]
+    },
+    "ard-14-protocolo-serial": {
+      "title": "Serial protocol: commands from the computer",
+      "theory": "# Talking to the Arduino\n\nSo far the Serial Monitor was output only. But serial communication (UART) goes **both ways**: the computer — or a Raspberry Pi, a Bluetooth module, another microcontroller — can **send commands**. That is how a dashboard controls a robot, how a 3D printer receives G-code, how a drone receives orders.\n\nFor that we need a **protocol**: rules both sides agree on. Ours is text-based, one line per command:\n\n- `LIGA` → brightness 255, replies `OK`\n- `DESLIGA` → brightness 0, replies `OK`\n- `BRILHO n` → brightness n (0 to 255), replies `OK` — or `ERRO: valor` if n doesn't fit\n- `STATUS` → changes nothing, replies `BRILHO=n`\n- anything else → replies `ERRO: comando`\n\n(The commands are in Portuguese: *liga* = on, *desliga* = off, *brilho* = brightness, *erro* = error.)\n\n# Bytes arrive bit by bit\n\nSerial delivers **one character at a time**, and they don't all arrive together: at 9600 baud each byte takes ~1 ms, and a command may arrive split across two passes of `loop()`. That's why we **store** the characters in a **buffer** until the terminator `'\\n'` (end of line) arrives:\n\n```\nwhile (Serial.available() > 0) {\n  char c = Serial.read();\n  if (c == '\\n') { buffer[tamanho] = '\\0'; executar(buffer); tamanho = 0; }\n  else if (tamanho < 31) { buffer[tamanho] = c; tamanho++; }\n}\n```\n\nThe `'\\0'` at the end turns the array into a **C string**. The `tamanho < 31` test protects against **buffer overflow** — a giant line must not write past the array (on computers, that bug has brought down many systems and is a classic door for attacks).\n\n# Interpreting (parsing)\n\nWith the complete line, we compare using the `<string.h>` functions:\n\n- `strcmp(a, b) == 0` → the strings are equal.\n- `strncmp(cmd, \"BRILHO \", 7) == 0` → the command **starts** with \"BRILHO \".\n- `atoi(cmd + 7)` → converts the text from the 8th character on into a number. `cmd + 7` is **pointer arithmetic**: the address 7 positions ahead.\n\n# Validation\n\nNever trust what comes from outside! `BRILHO 300` doesn't fit in an 8-bit PWM: the protocol must **refuse** it (`ERRO: valor`) instead of applying a wrong value. Always replying (`OK` or `ERRO`) lets the other side know whether the command worked — that is an **acknowledgment**, the basis of reliable protocols.",
+      "task": "The LED is on pin **9** (PWM). Implement the protocol in the list: read the serial port **character by character** into a buffer until `'\\n'` and then run the command. `LIGA`, `DESLIGA` and `BRILHO n` reply `OK` (with `n` outside 0–255 reply `ERRO: valor` without changing the LED); `STATUS` replies `BRILHO=` and the current brightness; any other command replies `ERRO: comando`.",
+      "hints": [
+        "In loop: if c == '\\n', do buffer[tamanho] = '\\0'; executar(buffer); tamanho = 0; otherwise, if there is still room (tamanho < 31), store buffer[tamanho] = c; tamanho++.",
+        "In executar: strcmp(cmd, \"LIGA\") == 0 compares the whole line; strncmp(cmd, \"BRILHO \", 7) == 0 checks whether it starts with \"BRILHO \".",
+        "The BRILHO number is atoi(cmd + 7). Refuse it with Serial.println(\"ERRO: valor\") if it is less than 0 or greater than 255."
+      ],
+      "checks": [
+        "LIGA turns the LED on",
+        "LIGA replies OK",
+        "BRILHO 100 sets the LED brightness to 100",
+        "STATUS replies BRILHO=100",
+        "An unknown command replies ERRO: comando",
+        "BRILHO 300 replies ERRO: valor",
+        "…and doesn't change the LED",
+        "DESLIGA turns the LED off",
+        "A command that arrives split in two pieces also works"
+      ]
+    },
+    "ard-15-histerese": {
+      "title": "Averaging filter and hysteresis: a smart street light",
+      "theory": "# The street light that flickers\n\nAn automatic street light uses an LDR: dark, it turns on; bright, it turns off. The first idea is a single **threshold**:\n\n```\nif (luz < 400) acende(); else apaga();\n```\n\nAt dusk, however, the light stays **close to 400** for several minutes, and any noise (a cloud, a car's headlights, electrical interference) makes the reading cross the threshold back and forth: the lamp **flickers**, the relay clicks, everything wears out. Two problems, two tools.\n\n# 1. Hysteresis: two thresholds\n\nWe use **one threshold to turn on and another to turn off**:\n\n- off → only **turns on** when the light drops **below 300**;\n- on → only **turns off** when the light rises **above 500**.\n\nBetween 300 and 500 the lamp **keeps the state** it was in. The band between the thresholds (the **hysteresis band**) is larger than the noise, so the noise can no longer make the output oscillate. It is the same principle as a fridge **thermostat** and the **Schmitt trigger** component. The system now has **memory**: the output depends on the current value *and* on the previous state — one more state machine!\n\n# 2. Moving average: smoothing the noise\n\nA fast spike (a camera flash, headlights) can still cross both thresholds. For that we **filter** the reading: instead of the raw value, we use the **average of the last N readings**, kept in a **circular buffer**:\n\n```\nsoma -= leituras[pos];          // remove the oldest\nleituras[pos] = analogRead(A0); // put the new one in its place\nsoma += leituras[pos];\npos = (pos + 1) % N;            // the index \"wraps around\"\nmedia = soma / N;\n```\n\nKeeping `soma` up to date avoids adding the whole array every time. With N = 8 and one reading every 10 ms, the average \"sees\" the last 80 ms: a 30 ms spike barely moves it, but a real change shows up in less than 0.1 s.\n\nIn signal processing this is a **low-pass filter** of the FIR kind: it lets slow variations through and cuts fast ones. The price is a small **delay** in the response — there is always a trade-off between smoothness and speed.\n\nOne detail: in `setup()`, **fill the buffer** with the first reading. If it starts with zeros, the average starts at 0 (\"pitch dark\") and the lamp turns on by itself at power-up.",
+      "task": "The LDR is on **A0** and the lamp (LED) on pin **13**. Every **10 ms**, read the LDR and compute the **moving average of the last 8 readings** (fill the buffer with the first reading in `setup()`). Use **hysteresis** on the average: the lamp **turns on below 300** and **turns off above 500**; in between, it keeps its state.",
+      "hints": [
+        "Keep the 8 readings in int leituras[8] and a long soma: remove the old reading from the sum, add the new one, and advance posicao = (posicao + 1) % 8.",
+        "In setup(), read the sensor once and copy that value to the 8 positions (and soma = value * 8).",
+        "Hysteresis: if (!acesa && media < 300) acesa = true; else if (acesa && media > 500) acesa = false; — and write the LED according to acesa."
+      ],
+      "checks": [
+        "In daylight (600) the lamp stays off",
+        "At 400 (between the thresholds) it stays off",
+        "It got dark (250): the lamp turns on",
+        "Back to 400: it stays on (hysteresis)",
+        "It got bright (600): the lamp turns off",
+        "A 30 ms spike of darkness doesn't turn the lamp on",
+        "…not even after the spike"
+      ]
+    },
+    "ard-16-alarme": {
+      "title": "Alarm with a state machine: arm, trigger and disarm",
+      "theory": "# A real system\n\nA home alarm looks simple, but it has **rules that depend on the moment**: the same movement in front of the sensor is ignored when the alarm is disarmed and fires the siren when it is armed; the same button arms or disarms. Writing that with loose `if`s turns into a tangle. The professional way is a well-designed **finite state machine** (FSM).\n\n# States and transitions\n\n(The state names are in Portuguese: DESARMADO = disarmed, ARMANDO = arming, ARMADO = armed, DISPARADO = triggered.)\n\n```\n            button                3 s\nDESARMADO ───────→ ARMANDO ───────────→ ARMADO\n    ↑  ↑   button     │                   │ someone < 50 cm\n    │  └──────────────┘                   ↓\n    └─────────────── button ─────────── DISPARADO\n```\n\n- **DESARMADO:** LED and siren off; the sensor is ignored.\n- **ARMANDO:** this is the **exit delay** — 3 s for the person to leave home without setting off their own alarm. The LED blinks.\n- **ARMADO:** LED on; if the ultrasonic sensor measures less than 50 cm, go to DISPARADO.\n- **DISPARADO:** siren (`tone` at 2000 Hz) until someone presses the button.\n\nDrawing the diagram **before** programming is half the work: each arrow becomes an `if` inside the `case` of the state it leaves.\n\n# Entry actions\n\nSome things must happen **once, on entering** a state: reset the timer, report over serial. Put that in one function:\n\n```\nvoid mudarPara(int novo) {\n  estado = novo;\n  inicio = millis();\n  Serial.print(\"Estado: \");\n  // ...print the state's name\n}\n```\n\nLogging every transition on the Serial Monitor is gold for debugging: you see exactly the sequence the system went through.\n\n# Events, not levels\n\nThe button must act on the **press** (the edge), not \"while it is pressed\" — otherwise, holding the button, the alarm would arm and disarm in turn on every pass. Keep the previous reading and detect the change from HIGH to LOW (with debounce, if the button is real).\n\n# Why this matters\n\nState machines control elevators, traffic lights, network protocols, ATMs, game logic and drone flight modes. They make behavior **verifiable**: you can list every state and check, one by one, that no combination of events leads to a dangerous situation.",
+      "task": "Button on pin **2** (`INPUT_PULLUP`), ultrasonic sensor with **TRIG = 7, ECHO = 6**, buzzer on **8** and LED on **13**. Implement the state machine **DESARMADO → ARMANDO (3 s) → ARMADO → DISPARADO**: the button (on the press) arms when disarmed and disarms in any other state; when armed, a distance **under 50 cm** triggers `tone(8, 2000)`. On every change print `Estado: ` and the name of the new state (start by printing `Estado: DESARMADO`).",
+      "hints": [
+        "Create void mudarPara(int novo) that stores the state, resets inicio = millis() and prints \"Estado: \" followed by the name (a switch with the four names). Call mudarPara(DESARMADO) in setup().",
+        "Create bool apertou() that reads the button, compares it with botaoAnterior and returns true only when it went from HIGH to LOW.",
+        "In loop, a switch (estado): in ARMANDO, go to ARMADO when millis() - inicio >= 3000; in ARMADO, trigger if distanciaCm() < 50; in DISPARADO, tone(BUZZER, 2000)."
+      ],
+      "checks": [
+        "It starts disarmed (Estado: DESARMADO)",
+        "Disarmed, someone nearby doesn't set off the siren",
+        "…nor changes the state to DISPARADO",
+        "The button starts arming (Estado: ARMANDO)",
+        "During the exit delay it is not armed yet",
+        "After 3 s it is armed (Estado: ARMADO)",
+        "Armed, the LED stays on",
+        "Someone during the exit delay doesn't set off the siren",
+        "Armed with someone at 30 cm, the siren goes off",
+        "The siren sounds at 2000 Hz",
+        "The trigger shows on the Serial Monitor",
+        "The button turns the siren off",
+        "…and the LED off",
+        "After the trigger, the button disarms (Estado: DESARMADO)"
+      ]
+    },
+    "ard-17-seguidor-solar": {
+      "title": "Solar tracker: two sensors, a dead band and a servo",
+      "theory": "# Panels that follow the Sun\n\nA solar panel produces most when the light hits it **head-on**: the power falls with the cosine of the angle of incidence. A **solar tracker** turns the panel during the day and can produce 25 to 35% more than a fixed panel. The simplest sensor for this is **two LDRs** separated by a small wall: if the panel is turned too far to the right, the wall shades the right LDR, and the left one gets more light.\n\n# Measuring the error\n\nThe system's **error** is the difference between the two sensors:\n\n```\ndiferenca = analogRead(A0) - analogRead(A1);   // left − right\n```\n\n- `diferenca > 0` → more light on the left → turn left (increase the angle, towards 180°);\n- `diferenca < 0` → turn right (decrease it, towards 0°);\n- close to 0 → the panel points at the Sun.\n\n# Dead band\n\nTwo LDRs are never identical, and light is noisy: the difference is almost never exactly 0. If the servo moved on every tiny difference, it would keep jittering back and forth (wearing the servo and wasting the energy the panel should save). The solution is a **dead band**: **do nothing** while `|diferenca| ≤ 50`. It is a close relative of the hysteresis of the previous lesson.\n\n# Limiting the speed\n\nWe don't send the servo straight to 0° or 180°: we move **1 degree every 20 ms** (50°/s), always checking the sensors again. This is an **incremental** (or integral) control: the angle is the *sum* of the small corrections. It stops by itself when the sensors balance — or when it hits the limit, which is why we use `constrain(angulo, 0, 180)`.\n\nNote the difference from the P control of the robot lesson: there the correction was **proportional** to the error; here the servo moves at **constant speed** while there is error outside the dead band. Real controllers often combine both ideas.\n\n# Time without delay\n\nAs in the previous lessons, the 20 ms step is timed with `millis()`, leaving `loop()` free — in a real project it would also be reading the battery, showing data on a display, etc.",
+      "task": "Left LDR on **A0**, right LDR on **A1** and servo on pin **9**. Start with the servo at **90°**. Every **20 ms**, compute `left − right`: if it is **greater than 50**, increase the angle by 1°; if it is **less than −50**, decrease it by 1°; inside the dead band, don't move. Keep the angle between 0 and 180.",
+      "hints": [
+        "Time it as in the millis() lessons: if (millis() - ultimo < 20) return; ultimo += 20;",
+        "int diferenca = analogRead(A0) - analogRead(A1); then if (diferenca > 50) angulo++; else if (diferenca < -50) angulo--;",
+        "Before motor.write(angulo), limit it with angulo = constrain(angulo, 0, 180);"
+      ],
+      "checks": [
+        "More light on the left: after 1 s the servo is at ~140°",
+        "…and stops at 180°",
+        "More light on the right: after 1 s the servo is at ~40°",
+        "…and stops at 0°",
+        "Small difference (dead band): the servo stays at 90°",
+        "When the light balances, the servo stops where it is"
+      ]
+    },
+    "ard-18-pid-distancia": {
+      "title": "PID control: stopping 20 cm from the wall",
+      "theory": "# The problem\n\nThe robot is in an empty room, facing the wall, ~2 m away from it. Mission: **arrive and stop exactly 20 cm** from the wall, quickly and without crashing. Sounds easy — until you try.\n\n**Bang-bang** (\"drive at full speed until 20 cm, then stop\") gets there fast, but the robot has inertia: when the sensor says \"20\", the motors still take a moment to brake, and it stops **closer** than it should. Against a real wall, or with a heavier robot, that is a crash.\n\n# The PID controller\n\nThe **PID** computes the command by adding three terms of the **error** `e = distance − target`:\n\n```\nu = KP·e  +  KI·∫e dt  +  KD·de/dt\n```\n\n- **P (proportional):** far → fast; close → slow. It is the natural \"brake\".\n- **I (integral):** adds up the error over time. If the robot **gets stuck** with a small error, the integral grows until it beats whatever holds it back.\n- **D (derivative):** looks at **how fast** the error changes and brakes before overshooting, damping the motion.\n\n# Why P alone doesn't get there\n\nOur motors have a **dead zone**: with PWM below ~25 the wheel doesn't even move (friction, minimum voltage). With P only, near the target `KP·e` gets smaller than 25 and the robot **stops early**: with KP = 5, it gets stuck at about 25 cm. That is the famous **steady-state error**. Raising KP reduces the error but doesn't remove it (and, on real robots, makes it oscillate). What zeroes the error is the **I**: while there is error left, the integral grows.\n\n# Anti-windup\n\nThe integral has a flaw: during the approach, with errors of 150 cm for several seconds, it becomes **huge** (*windup*), and the robot overshoots the target while it \"empties\". The fix is simple: **only integrate near the target** (here, when |e| < 10 cm) and reset the integral outside that band.\n\n# Discrete implementation\n\nThe microcontroller computes the PID at instants separated by `dt` (here 20 ms, i.e. 50 Hz):\n\n```\nintegral += erro * dt;\nderivada = (erro - erroAnterior) / dt;\nerroAnterior = erro;\nu = KP * erro + KI * integral + KD * derivada;\n```\n\nMeasure `dt` for real with `millis()` and remember to start `erroAnterior` with the first error — otherwise the first derivative gives a huge \"kick\". Finally, limit the command (`constrain(u, -200, 200)`): it becomes the speed and direction of both wheels (negative = reverse, if it overshoots).\n\n**Tuning:** start with P only until the robot approaches well; add D if it overshoots; add I until the final error disappears. The values KP = 12, KI = 4 and KD = 1 work well for this robot.",
+      "task": "The robot starts ~2 m from the wall, facing it. Replace the bang-bang with a **PID control** that brings the ultrasonic reading to **20 cm** and stops there: `erro = distance − 20`, control at **50 Hz** (every 20 ms), **KP = 12, KI = 4, KD = 1**, integral **only when |erro| < 10** (outside that, reset it), command limited to ±200 and applied equally to both wheels.",
+      "hints": [
+        "Use millis() to run the control every 20 ms and compute float dt = (agora - ultimo) / 1000.0;",
+        "erro = distanciaCm() - 20; if -10 < erro < 10 do integral += erro * dt, otherwise integral = 0; derivada = (erro - erroAnterior) / dt;",
+        "u = 12 * erro + 4 * integral + 1 * derivada; int vel = constrain(u, -200, 200); and send vel to both motors."
+      ],
+      "checks": [
+        "Far from the wall, the robot drives fast",
+        "At the end, the ultrasonic sensor reads 20 cm (between 19.5 and 20.5)",
+        "The robot ends stopped",
+        "The robot doesn't hit the wall"
+      ]
+    },
+    "ard-19-odometria": {
+      "title": "Odometry: the kinematics of the differential-drive robot",
+      "theory": "# Navigating without seeing\n\nThere isn't always a line on the floor. Warehouse robots, robot vacuums and rovers estimate where they are by counting **how far each wheel has turned**: that is **odometry**. Here we'll do the simplest version — **by time** —, computing how long each movement must last.\n\n# The motor model\n\nMeasuring our robot on a straight line, we found:\n\n- below PWM **25** the wheel doesn't turn (dead zone);\n- with PWM **255** the wheel reaches **40 cm/s**;\n- in between, the speed grows in a straight line:\n\n```\nv = (PWM − 25) / 230 × 40      [cm/s]\n```\n\nWith PWM 150: v = 125 / 230 × 40 ≈ **21.7 cm/s**.\n\n# Differential kinematics\n\nWith speeds `vE` (left) and `vD` (right) and **track width** `b` (the distance between the wheels, here **12 cm**):\n\n```\nv = (vE + vD) / 2          speed of the robot's center\nω = (vE − vD) / b          turning speed (rad/s)\n```\n\n- **Straight line:** vE = vD = v → ω = 0. To travel a distance d: `t = d / v`. For 50 cm: 50 / 21.7 ≈ **2.30 s**.\n- **Turning in place:** vE = −v and vD = +v → the center stays put and each wheel runs on a circle of radius b/2. To turn an angle θ, each wheel travels the arc `(b/2)·θ`, so `t = (b/2)·θ / v`. For 90° (θ = π/2): 6 · 1.571 / 21.7 ≈ **0.434 s**.\n\nLeft wheel backward and right wheel forward turns the robot to the **left**.\n\n# A mission plan\n\nInstead of a giant `if`, we describe the path as **data**: an array of steps, each with the speed of both wheels and the duration.\n\n```\nstruct Passo { int esquerda; int direita; unsigned long duracao; };\n```\n\n`loop()` just runs the current step and, when its time is up, moves to the next one. To draw another shape, just change the plan — the program's \"engine\" stays the same. The 300 ms **pauses** between movements let the robot stop completely, so that one movement doesn't \"contaminate\" the next.\n\n# The limits of odometry\n\nSlipping tires, one wheel slightly bigger than the other, a draining battery… every small error **accumulates** at every step — and angle errors turn into ever-larger position errors. That is why real robots use wheel **encoders**, gyroscopes and, from time to time, correct their position with external landmarks (lines, cameras, GPS): that is **sensor fusion**.",
+      "task": "The robot is in an empty room, facing right. Make it draw a **square with 50 cm sides**, turning **90° to the left** at each corner, and **stop** where it started. Use PWM **150** on the straights and the turns, a **300 ms pause** after each movement, and compute `T_RETA` and `T_GIRO` with the motor model and the kinematics from the theory (12 cm track width).",
+      "hints": [
+        "Wheel speed: float V_RODA = (150 - 25) / 230.0 * 40.0; (≈ 21.7 cm/s). Straight: T_RETA = 50 / V_RODA * 1000 ms.",
+        "90° turn in place: T_GIRO = (PI / 2) * (12 / 2) / V_RODA * 1000 ms (≈ 434 ms), with rodas(-150, 150).",
+        "Build an array of steps (4 × straight, pause, turn, pause) and, in loop, move to the next step when millis() - inicio >= the current step's duracao."
+      ],
+      "checks": [
+        "After the first straight, the robot is 50 cm ahead (x ≈ 80)",
+        "…without drifting sideways (y ≈ 80)",
+        "The first turn leaves the robot facing up (−90°)",
+        "At the end, the robot is back at the starting point (x ≈ 30)",
+        "…(y ≈ 80)",
+        "…facing right again (0°)",
+        "The robot travelled about 200 cm (the 4 sides)",
+        "The robot ends stopped"
+      ]
+    },
+    "ard-20-missao-final": {
+      "title": "Final mission: avoid the obstacle and get back to the line",
+      "theory": "# Putting it all together\n\nThis is the graduation mission of the track. The robot of lesson 10 **stopped** in front of an obstacle. Now it must **go around it, find the line again and finish the course** — and stop by itself when the line ends. You'll use almost everything you've learned: P control, ultrasonic sensor, `millis()`, state machine and differential kinematics.\n\n# The mission's state machine\n\n(The state names are in Portuguese: SEGUINDO = following, GIRA_ESQ = turn left, CONTORNA = go around, GIRA_DIR = turn right, PROCURA = search, FIM = end.)\n\n- **SEGUINDO:** P control on the line (base 150, KP = 0.15). If the ultrasonic sensor reads **less than 15 cm** → GIRA_ESQ. If **both sensors** see only white floor (< 200) → FIM: the line is over.\n- **GIRA_ESQ:** turns left in place (wheels −150 and 150) for **300 ms**.\n- **CONTORNA:** drives straight for **1800 ms**, passing beside the obstacle.\n- **GIRA_DIR:** turns right for **430 ms**, pointing back towards the line.\n- **PROCURA:** drives slowly (130) until **one** of the sensors goes above **500** → SEGUINDO.\n- **FIM:** motors stopped. Mission accomplished.\n\nThe maneuver times are **odometry** (previous lesson): with PWM 150 the robot turns ~207°/s and drives ~21.7 cm/s. The maneuver draws a \"step\" over the obstacle; it doesn't need to be perfect, because the **PROCURA** state and the P control fix whatever is left. That combination — a rough plan plus a sensor that closes the loop — is the heart of mobile robotics.\n\n# Details that make a difference\n\n- **Order of the tests in SEGUINDO:** first the end of the line, then the obstacle. At the end of the course there is a wall right ahead; if the robot tested for the obstacle first, it would try to \"go around\" the wall.\n- **Hysteresis on the sensors:** \"found the line\" is **> 500**, but \"the line is over\" is **< 200**. With a single threshold, a sensor on the edge of the tape (reading ~500) would make the state jump back and forth.\n- **`mudarPara()`** resets each state's timer, as in the traffic light and the alarm.\n\n# What next?\n\nCompetition robots swap P for **PID**, timed maneuvers for **encoders** and the fixed detour for a **wall follower** that goes around obstacles of any size. Self-driving cars do the same thing on a giant scale: **perception → planning → control**, in a state machine that decides whether the car follows the lane, overtakes or stops. You have just built a pocket version of that.",
+      "task": "Complete the robot to accomplish the mission: **follow the line** (base 150, KP = 0.15) and, on seeing an obstacle **closer than 15 cm**, **go around it** on the left (turn 300 ms, drive 1800 ms, turn back 430 ms, drive until a sensor goes above 500) and **follow the line again**. When both sensors read **less than 200** (end of the line), **stop**. Use a state machine with `millis()` and end loop with `delay(5)`.",
+      "hints": [
+        "States: enum { SEGUINDO, GIRA_ESQ, CONTORNA, GIRA_DIR, PROCURA, FIM }; and a mudarPara(novo) that stores the state and inicio = millis().",
+        "In SEGUINDO test in this order: both sensors < 200 → FIM; distanciaCm() < 15 → GIRA_ESQ; otherwise P control as in lesson 10.",
+        "Maneuver: GIRA_ESQ = rodas(-150, 150) for 300 ms; CONTORNA = rodas(150, 150) for 1800 ms; GIRA_DIR = rodas(150, -150) for 430 ms; PROCURA = rodas(130, 130) until a sensor > 500."
+      ],
+      "checks": [
+        "With an obstacle on the line, the robot reaches the goal",
+        "…without hitting anything",
+        "…and stops at the end of the line",
+        "Without an obstacle, the robot also reaches the goal",
+        "…without hitting the wall at the end"
+      ]
     }
   }
 }

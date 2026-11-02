@@ -323,6 +323,105 @@ public static class PhysicsTests
                 Near("lesson 8 solution: W = 2494·ln 1,5 ≈ 1011 J", M(sol, "work"), nrt * Math.Log(1.5), 0.01);
             }
 
+            // ---------------------------------------------------------------- rolling
+            log.WriteLine("== Rolling without slipping (a = g·sinθ/(1 + k), I = k·m·r²)");
+            {
+                foreach (var (shape, k) in new[] { ("block", 0.0), ("sphere", 0.4), ("cylinder", 0.5), ("shell", 2.0 / 3), ("hoop", 1.0) })
+                {
+                    var l = Lab("rolling", ("length", "2"), ("shape", shape), ("angle", "30"), ("mass", "2"), ("radius", "0.1"));
+                    double a = g * 0.5 / (1 + k);
+                    Near($"{shape}: a = g·sin30°/(1 + k)", M(l, "acceleration"), a, 0.01);
+                    Near($"{shape}: t = √(2L/a)", M(l, "time"), Math.Sqrt(4 / a), 0.01);
+                    Near($"{shape}: v = √(2gh/(1 + k)) (energy)", M(l, "speed"), Math.Sqrt(2 * g * 1.0 / (1 + k)), 0.01);
+                    Near($"{shape}: I = k·m·r²", M(l, "inertia"), k * 2 * 0.01, 0.01);
+                    Near($"{shape}: rotation share k/(1 + k)", M(l, "rotFraction"), 100 * k / (1 + k), 0.01);
+                    Near($"{shape}: μmin = k·tanθ/(1 + k)", M(l, "minFriction"), k * Math.Tan(Deg(30)) / (1 + k), 0.01);
+                }
+                var heavy = Lab("rolling", ("length", "2"), ("shape", "sphere"), ("angle", "30"), ("mass", "9"), ("radius", "0.3"));
+                var light = Lab("rolling", ("length", "2"), ("shape", "sphere"), ("angle", "30"), ("mass", "0.2"), ("radius", "0.03"));
+                Near("mass and radius don't change the time", M(heavy, "time"), M(light, "time"), 0.01);
+                Check("lesson 11: only the sphere lands in 1,05–1,09 s at 30°",
+                    new[] { "block", "cylinder", "shell", "hoop" }.All(s => { var t = M(Lab("rolling", ("length", "2"), ("shape", s), ("angle", "30")), "time"); return t < 1.05 || t > 1.09; }));
+            }
+
+            // ---------------------------------------------------------------- fluid
+            log.WriteLine("== Torricelli's tank (v = √(2gh), x = 2√(h·y))");
+            {
+                var l = Lab("fluid", ("level", "1.5"), ("hole", "0.4"), ("diameter", "10"));
+                Near("exit speed = √(2g·1,1)", M(l, "exitSpeed"), Math.Sqrt(2 * g * 1.1), 0.01);
+                Near("range = 2·√(h·y)", M(l, "range"), 2 * Math.Sqrt(1.1 * 0.4), 0.01);
+                Near("range = v·√(2y/g) (projectile)", M(l, "range"), Math.Sqrt(2 * g * 1.1) * Math.Sqrt(0.8 / g), 0.01);
+                Near("flow = π·d²/4·v (L/s)", M(l, "flowRate"), Math.PI * 0.01 * 0.01 / 4 * Math.Sqrt(2 * g * 1.1) * 1000, 0.01);
+                Near("gauge pressure = ρgh", M(l, "pressure"), 1000 * g * 1.1, 0.01);
+                var lo = Lab("fluid", ("level", "1"), ("hole", "0.2"), ("targetX", "0.8"), ("targetWidth", "0.04"));
+                var hi = Lab("fluid", ("level", "1"), ("hole", "0.8"), ("targetX", "0.8"), ("targetWidth", "0.04"));
+                Check("lesson 12: holes at 0,2 m and 0,8 m both reach 0,8 m", M(lo, "hitTarget") == 1 && M(hi, "hitTarget") == 1,
+                    $"({M(lo, "range"):0.000} / {M(hi, "range"):0.000})");
+                Check("lesson 12: only the low hole is faster than 3 m/s", M(lo, "exitSpeed") >= 3 && M(hi, "exitSpeed") < 3);
+                var max = Lab("fluid", ("level", "1"), ("hole", "0.5"));
+                Near("hole at half height: range = level", M(max, "range"), 1, 0.01);
+            }
+
+            // ---------------------------------------------------------------- string
+            log.WriteLine("== Standing waves on a string (f = n·√(T/μ)/(2L))");
+            {
+                var l = Lab("string", ("tension", "80"), ("density", "2"), ("length", "0.6"), ("harmonic", "3"));
+                double v = Math.Sqrt(80 / 0.002);
+                Near("v = √(T/μ)", M(l, "waveSpeed"), v, 0.01);
+                Near("f3 = 3·v/(2L)", M(l, "frequency"), 3 * v / 1.2, 0.01);
+                Near("λ3 = 2L/3", M(l, "wavelength"), 0.4, 0.01);
+                Near("fundamental = v/(2L)", M(l, "fundamental"), v / 1.2, 0.01);
+                Check("nodes = n + 1", M(l, "nodes") == 4);
+                Near("lesson 13: T = 49,1 N on the violin A string gives 440 Hz", M(Lab("string", ("tension", "49.1"), ("density", "0.6"), ("length", "0.325")), "frequency"), 440, 0.1);
+                Check("note names: 440 Hz = A4, 261,63 Hz = C4", StringLab.Note(440).StartsWith("A4 +0") && StringLab.Note(261.63).StartsWith("C4"),
+                    StringLab.Note(440) + " / " + StringLab.Note(261.63));
+            }
+
+            // ---------------------------------------------------------------- spring: damping metrics
+            log.WriteLine("== Damped spring: overshoot and 2 % settling time");
+            {
+                double m = 0.5, k = 10, w0 = Math.Sqrt(k / m);
+                var under = Lab("spring", ("mass", "0.5"), ("k", "10"), ("amplitude", "0.1"), ("damping", "2"));
+                double zeta = 2 / (2 * Math.Sqrt(k * m));
+                Near("underdamped overshoot = e^(−πζ/√(1−ζ²))", M(under, "overshoot"), 100 * Math.Exp(-Math.PI * zeta / Math.Sqrt(1 - zeta * zeta)), 0.5);
+                var crit = Lab("spring", ("mass", "0.5"), ("k", "10"), ("amplitude", "0.1"), ("damping", "4.5"));
+                // near-critical: x/A ≈ (1 + ω0·t)·e^(−ω0·t) = 0.02 → ω0·t ≈ 5.83
+                Near("near-critical settling time ≈ 5,83/ω0", M(crit, "settleTime"), 5.8335 / w0, 3);
+                Check("near-critical: no overshoot", M(crit, "overshoot") < 0.01);
+                var free = Lab("spring", ("mass", "0.5"), ("k", "10"), ("amplitude", "0.1"), ("damping", "0"));
+                Check("undamped: never settles, overshoot 100 %", double.IsPositiveInfinity(M(free, "settleTime")) && Math.Abs(M(free, "overshoot") - 100) < 0.5);
+                var over = Lab("spring", ("mass", "0.5"), ("k", "10"), ("amplitude", "0.1"), ("damping", "5"));
+                Check("overdamped settles slower than critical", M(over, "settleTime") > M(crit, "settleTime"));
+            }
+
+            // ---------------------------------------------------------------- orbit: Hohmann
+            log.WriteLine("== Orbit: Hohmann transfer to GEO (vis-viva)");
+            {
+                const double mu = 398600.4, R = 6371;
+                double r1 = R + 400, r2 = R + 35786, a = (r1 + r2) / 2, vp = Math.Sqrt(mu * (2 / r1 - 1 / a));
+                var l = Lab("orbit", ("altitude", "400"), ("speed", vp.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)));
+                Near("vis-viva perigee speed (rounded to the slider's 0,01) puts the apogee near GEO", M(l, "apoapsisAlt"), 35786, 1);
+                Near("transfer orbit period = 2π√(a³/μ)", M(l, "period"), 2 * Math.PI * Math.Sqrt(a * a * a / mu) / 60, 1);
+                var s = Lab("orbit", ("altitude", "400"), ("speed", "10.07"));
+                Check("lesson 15: 10,07 km/s gives an apogee of 35 400–36 200 km", M(s, "apoapsisAlt") is >= 35400 and <= 36200, $"({M(s, "apoapsisAlt"):0})");
+            }
+
+            // ---------------------------------------------------------------- spectrometer
+            log.WriteLine("== Mass spectrometer (v = √(2qV/m), r = mv/(qB))");
+            {
+                const double e = 1.602176634e-19, u = 1.66053906660e-27;
+                double m = 12 * u, v = Math.Sqrt(2 * e * 1000 / m);
+                var l = Lab("spectrometer", ("ion", "c12"), ("voltage", "1000"), ("field", "0.2"));
+                Near("speed = √(2qV/m)", M(l, "speed"), v, 0.01);
+                Near("radius = mv/(qB)", M(l, "radius"), m * v / (e * 0.2), 0.01);
+                Near("landing = 2r", M(l, "landingX"), 2 * m * v / (e * 0.2), 0.01);
+                Near("period = 2πm/(qB) (no v)", M(l, "period"), 2 * Math.PI * m / (e * 0.2), 0.01);
+                var p = Lab("spectrometer", ("ion", "h1"), ("voltage", "1000"), ("field", "0.2"));
+                Near("r ∝ √m (proton vs carbon-12)", M(l, "radius") / M(p, "radius"), Math.Sqrt(12 / 1.007276), 0.01);
+                var c14 = Lab("spectrometer", ("ion", "c14"), ("voltage", "2000"), ("field", "0.161"), ("targetX", "0.30"), ("targetWidth", "0.02"));
+                Check("lesson 17: B = 0,161 T puts carbon-14 on the 30 cm detector", M(c14, "hitTarget") == 1, $"({M(c14, "landingX"):0.0000} m)");
+            }
+
             // ---------------------------------------------------------------- lesson answers
             log.WriteLine("== Physics track: every numeric answer recomputed");
             {
@@ -342,7 +441,19 @@ public static class PhysicsTests
                         ["fis-08-termodinamica"] = new[] { 8.314 * 300 / 0.0249 / 1000, (1 - 300 / 600.0) * 100, double.NaN },
                         ["fis-09-eletromagnetismo"] = new[] { 9e9 * 2e-6 * 2e-6 / 0.09, 12 / 4.0, 4 * 9.0, double.NaN, 1.67e-27 * 2e6 / (1.6e-19 * 0.5) * 100, 5e4 / 0.1, double.NaN },
                         ["fis-10-arrasto-numerico"] = new[] { Math.Sqrt(9.81 / 0.03), double.NaN, 1 / Math.Sqrt(1 - 0.36) },
+                        ["fis-11-rotacao"] = new[] { 0.5 * 2 * 0.1 * 0.1, 0.3 * 50, 4 * 2 / 1.6, double.NaN },
+                        ["fis-12-fluidos"] = new[] { 1000 * 9.81 * 10 / 1000, 1000 * 9.81 * 0.002, double.NaN, 100 * 500 / 10.0 },
+                        ["fis-13-ondas-som"] = new[] { 343 / 440.0, 444 - 440.0, 10 * Math.Log10(100), 700 * 343 / (343 - 20.0) },
+                        ["fis-14-calor"] = new[] { 2 * 4186 * 60 / 1000.0, (1 * 80 + 3 * 20) / 4.0, 0.5 * 334, 0.8 * 2 * 20 / 0.004,
+                            0.97 * 5.67e-8 * 1.8 * (Math.Pow(306, 4) - Math.Pow(293, 4)), double.NaN, double.NaN },
+                        ["fis-15-kepler-hohmann"] = HohmannAnswers(),
+                        ["fis-16-amortecimento"] = new[] { 2 * Math.Sqrt(50 * 2.0), 2 / (2 * Math.Sqrt(100 * 1.0)), double.NaN },
+                        ["fis-17-espectrometro"] = SpectrometerAnswers(),
+                        ["fis-18-inducao"] = new[] { 200 * 0.01 * 0.5 / 0.1, 0.5 * 0.2 * 3, 1270 * 12 / 127.0, 100 * 0.2 * 0.05 * 2 * Math.PI * 60, 0.5 * 0.2 * 9, double.NaN, double.NaN },
+                        ["fis-19-relatividade"] = RelativityAnswers(),
+                        ["fis-20-quantica"] = QuantumAnswers(),
                     };
+                    Check($"physics track has 20 lessons ({track.Lessons.Count})", track.Lessons.Count == 20);
                     foreach (var l in track.Lessons)
                     {
                         if (!want.TryGetValue(l.Id, out var ans)) { Check($"{l.Id}: expected answers listed", false); continue; }
@@ -362,5 +473,40 @@ public static class PhysicsTests
         catch (Exception ex) { Check("crash", false, ex.ToString()); }
         log.WriteLine($"== {passes} passed, {fails} failed");
         return fails;
+    }
+
+    // Independent recomputations of the answers of lessons 15–20 (CODATA constants, not the lesson's rounded ones).
+    const double Qe = 1.602176634e-19, Au = 1.66053906660e-27, Hp = 6.62607015e-34, Me = 9.1093837015e-31, C0 = 299792458;
+
+    static double[] HohmannAnswers()
+    {
+        const double mu = 398600.4;
+        double r1 = 6371 + 400, r2 = 6371 + 35786, a = (r1 + r2) / 2;
+        return new[] { Math.PI * Math.Sqrt(a * a * a / mu) / 3600, Math.Sqrt(mu / r2) - Math.Sqrt(mu * (2 / r2 - 1 / a)), double.NaN };
+    }
+
+    static double[] SpectrometerAnswers()
+    {
+        double m14 = 14.003242 * Au, m12 = 12 * Au;
+        double v14 = Math.Sqrt(2 * Qe * 2000 / m14), v12 = Math.Sqrt(2 * Qe * 2000 / m12);
+        return new[] { v14 / 1000, 2 * m12 * v12 / (Qe * 0.161) * 100, double.NaN };
+    }
+
+    static double[] RelativityAnswers()
+    {
+        double G(double b) => 1 / Math.Sqrt(1 - b * b);
+        double tau = 2.2 * G(0.995);
+        return new[] { G(0.8), tau, 0.995 * 3e8 * tau * 1e-6 / 1000, 100 / G(0.6), 0.001 * 3e8 * 3e8, (0.5 + 0.5) / (1 + 0.25), double.NaN };
+    }
+
+    static double[] QuantumAnswers()
+    {
+        double hcEvNm = Hp * C0 / Qe * 1e9;   // ≈ 1239.84 eV·nm
+        double hbar = Hp / (2 * Math.PI);
+        return new[]
+        {
+            hcEvNm / 500, hcEvNm / 250 - 2.3, Hp / Math.Sqrt(2 * Me * Qe * 100) * 1e9,
+            hcEvNm / (13.6 * (1 / 4.0 - 1 / 9.0)), hbar / (2 * Me * 1e-10) / 1000, double.NaN, double.NaN,
+        };
     }
 }
