@@ -944,6 +944,1333 @@
         }
       ],
       "level": 5
+    },
+    {
+      "id": "ard-11-debounce",
+      "title": "Debounce: contando apertos sem enganos",
+      "theory": "# O botão que \"quica\"\n\nUm botão parece perfeito: apertou, liga; soltou, desliga. Mas por dentro ele tem duas lâminas de metal que se chocam — e, como uma bola de borracha, elas **quicam** algumas vezes antes de assentar. Durante 1 a 10 milissegundos o contato abre e fecha várias vezes.\n\nPara nós, isso é invisível. Para o Arduino, que lê o pino **milhares de vezes por segundo**, um único aperto vira uma rajada:\n\n```\napertou ─┐ ┌─┐ ┌───────────────\n         └─┘ └─┘\n         ←  ~8 ms →\n```\n\nUm programa que conta \"toda vez que o pino desceu para LOW\" conta **3 ou 4 apertos** em vez de 1. Se o botão liga e desliga uma lâmpada, ela pisca e pode terminar no estado errado.\n\n# Detectando a borda\n\nAntes do debounce, lembre a ideia de **borda**: queremos o *momento* em que o botão passa de solto para apertado, não \"enquanto está apertado\". Guardamos a leitura anterior e comparamos:\n\n```\nif (leitura == LOW && anterior == HIGH) { /* acabou de apertar */ }\nanterior = leitura;\n```\n\n# Debounce por tempo\n\nA solução clássica (é a do exemplo oficial do Arduino) é **desconfiar de qualquer mudança** até ela ficar parada por um tempo — tipicamente **50 ms**:\n\n1. Toda vez que a leitura **muda**, anote `ultimaMudanca = millis()`.\n2. Só aceite a leitura como o novo **estado estável** quando `millis() - ultimaMudanca >= 50`.\n3. Conte o aperto quando o estado **estável** passar de HIGH para LOW.\n\nSão duas variáveis diferentes: `ultimaLeitura` (o que o pino mostrava na volta anterior, com quiques e tudo) e `estadoEstavel` (o que decidimos que é verdade). Note que **não há `delay()`**: o `loop()` continua girando livre, pronto para fazer outras coisas.\n\n# Outras formas de resolver\n\n- **Hardware:** um capacitor de 100 nF em paralelo com o botão forma um filtro RC que \"alisa\" os quiques (com um Schmitt trigger, fica perfeito).\n- **Contador de amostras:** só aceitar a mudança depois de N leituras iguais seguidas.\n- `delay(50)` depois de detectar o aperto também funciona, mas **trava** o programa — e você já sabe por que isso é ruim.",
+      "task": "O botão está no pino **2** (com `INPUT_PULLUP`) e o LED no **13**. O código inicial conta os apertos, mas cada quique do contato vira um aperto a mais. Corrija com **debounce de 50 ms usando `millis()`**: a cada aperto de verdade some 1, **inverta o LED** e mostre no Monitor Serial `Apertos: N`.",
+      "starter": "const int BOTAO = 2;\nconst int LED = 13;\n\nint anterior = HIGH;\nint apertos = 0;\nint ledAceso = LOW;\n\nvoid setup() {\n  pinMode(BOTAO, INPUT_PULLUP);\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int leitura = digitalRead(BOTAO);\n  // PROBLEMA: cada quique do contato conta como um aperto novo!\n  if (leitura == LOW && anterior == HIGH) {\n    apertos++;\n    ledAceso = !ledAceso;\n    digitalWrite(LED, ledAceso);\n    Serial.print(\"Apertos: \");\n    Serial.println(apertos);\n  }\n  anterior = leitura;\n}",
+      "solution": "const int BOTAO = 2;\nconst int LED = 13;\nconst unsigned long ESPERA = 50;   // ms que a leitura precisa ficar parada\n\nint ultimaLeitura = HIGH;          // a leitura da volta anterior (com quiques)\nint estadoEstavel = HIGH;          // o estado \"de verdade\", já sem ruído\nunsigned long ultimaMudanca = 0;\nint apertos = 0;\nint ledAceso = LOW;\n\nvoid setup() {\n  pinMode(BOTAO, INPUT_PULLUP);\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int leitura = digitalRead(BOTAO);\n  if (leitura != ultimaLeitura) {\n    ultimaMudanca = millis();      // mexeu: zera o cronômetro\n  }\n  if (millis() - ultimaMudanca >= ESPERA && leitura != estadoEstavel) {\n    estadoEstavel = leitura;\n    if (estadoEstavel == LOW) {    // borda de descida = um aperto de verdade\n      apertos++;\n      ledAceso = !ledAceso;\n      digitalWrite(LED, ledAceso);\n      Serial.print(\"Apertos: \");\n      Serial.println(apertos);\n    }\n  }\n  ultimaLeitura = leitura;\n}",
+      "hints": [
+        "Crie as variáveis ultimaLeitura, estadoEstavel (as duas começando em HIGH) e unsigned long ultimaMudanca = 0.",
+        "Se leitura != ultimaLeitura, faça ultimaMudanca = millis(). No fim do loop, ultimaLeitura = leitura.",
+        "Só conte quando millis() - ultimaMudanca >= 50 E leitura != estadoEstavel: aí atualize estadoEstavel e, se ele for LOW, conte o aperto."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "led1",
+          "type": "led",
+          "pins": {
+            "pin": 13
+          },
+          "color": "red"
+        },
+        {
+          "id": "btn1",
+          "type": "button",
+          "pins": {
+            "pin": 2
+          },
+          "color": ""
+        }
+      ],
+      "checks": [
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "!Apertos",
+          "atMs": 1000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Sem apertar, nada é contado"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Apertos: 1",
+          "atMs": 1300,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904"
+          ],
+          "description": "Um aperto com quiques conta como 1"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "!Apertos: 2",
+          "atMs": 1300,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904"
+          ],
+          "description": "…e não como 2"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "on",
+          "atMs": 1300,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904"
+          ],
+          "description": "O LED inverte (acende) no primeiro aperto"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Apertos: 2",
+          "atMs": 2500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904",
+            "button:btn1=pressed@1500",
+            "button:btn1=released@1502",
+            "button:btn1=pressed@1504",
+            "button:btn1=released@1506",
+            "button:btn1=pressed@1508",
+            "button:btn1=released@1900",
+            "button:btn1=pressed@1902",
+            "button:btn1=released@1904"
+          ],
+          "description": "Dois apertos com quiques contam 2"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "!Apertos: 3",
+          "atMs": 2500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904",
+            "button:btn1=pressed@1500",
+            "button:btn1=released@1502",
+            "button:btn1=pressed@1504",
+            "button:btn1=released@1506",
+            "button:btn1=pressed@1508",
+            "button:btn1=released@1900",
+            "button:btn1=pressed@1902",
+            "button:btn1=released@1904"
+          ],
+          "description": "…e não 3 ou mais"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 2500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@502",
+            "button:btn1=pressed@504",
+            "button:btn1=released@506",
+            "button:btn1=pressed@508",
+            "button:btn1=released@900",
+            "button:btn1=pressed@902",
+            "button:btn1=released@904",
+            "button:btn1=pressed@1500",
+            "button:btn1=released@1502",
+            "button:btn1=pressed@1504",
+            "button:btn1=released@1506",
+            "button:btn1=pressed@1508",
+            "button:btn1=released@1900",
+            "button:btn1=pressed@1902",
+            "button:btn1=released@1904"
+          ],
+          "description": "O segundo aperto apaga o LED de novo"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-12-multitarefa",
+      "title": "Multitarefa com millis(): várias coisas ao mesmo tempo",
+      "theory": "# Um processador, várias tarefas\n\nO Arduino Uno tem **um único núcleo** e não tem sistema operacional. Mesmo assim, robôs de verdade fazem muitas coisas \"ao mesmo tempo\": piscam LEDs de status, leem sensores, controlam motores, conversam pela serial. O truque se chama **multitarefa cooperativa**: cada tarefa faz um pedacinho rápido do seu trabalho e **devolve a vez**, e o `loop()` passa por todas elas milhares de vezes por segundo.\n\nA regra de ouro: **nenhuma tarefa pode usar `delay()`**. Um `delay(250)` congela todas as outras tarefas por 250 ms.\n\n# O padrão \"já deu a hora?\"\n\nCada tarefa periódica ganha sua própria variável de tempo:\n\n```\nunsigned long ultimoRapido = 0;\n\nif (millis() - ultimoRapido >= 250) {\n  ultimoRapido += 250;          // agenda a próxima\n  // ...faz a tarefa (inverte o LED)\n}\n```\n\nRepare no `ultimoRapido += 250` em vez de `ultimoRapido = millis()`. Se o loop atrasar 3 ms numa volta, `= millis()` empurra todos os próximos eventos 3 ms para frente e o erro **acumula** (o relógio \"escorrega\"). Com `+= 250` o próximo evento continua marcado na grade certa: 250, 500, 750… Isso é importante em tudo que mede tempo — relógios, taxas de amostragem, controladores.\n\n# Tarefas independentes\n\nNeste circuito há três tarefas:\n\n- **Tarefa 1:** inverte o LED do pino 13 a cada **250 ms**.\n- **Tarefa 2:** inverte o LED do pino 12 a cada **400 ms**.\n- **Tarefa 3:** copia o botão do pino 2 para o LED do pino 11, **o tempo todo**.\n\nComo 250 e 400 não são múltiplos um do outro, **não existe** um jeito de fazer isso com `delay()`s em sequência. Com `millis()` é trivial: são três `if` independentes no mesmo `loop()`.\n\n# Até onde isso vai?\n\nEsse é o mesmo princípio dos **escalonadores** de sistemas embarcados e dos *event loops* (JavaScript, jogos). Quando as tarefas ficam pesadas demais, usa-se um **RTOS** (sistema operacional de tempo real, como o FreeRTOS), que troca de tarefa sozinho por interrupção de timer — mas a ideia de \"nunca bloquear\" continua valendo.",
+      "task": "LEDs nos pinos **13** (rápido), **12** (lento) e **11** (resposta); botão no pino **2** (`INPUT_PULLUP`). Todos começam apagados. O LED 13 deve **inverter a cada 250 ms**, o LED 12 **a cada 400 ms** e o LED 11 deve ficar aceso **enquanto o botão estiver apertado**, respondendo na hora. Sem `delay()`.",
+      "starter": "const int LED_RAPIDO = 13;\nconst int LED_LENTO = 12;\nconst int LED_BOTAO = 11;\nconst int BOTAO = 2;\n\nvoid setup() {\n  pinMode(LED_RAPIDO, OUTPUT);\n  pinMode(LED_LENTO, OUTPUT);\n  pinMode(LED_BOTAO, OUTPUT);\n  pinMode(BOTAO, INPUT_PULLUP);\n}\n\nvoid loop() {\n  // pisca o LED rápido... mas enquanto o delay() espera, nada mais acontece!\n  digitalWrite(LED_RAPIDO, HIGH);\n  delay(250);\n  digitalWrite(LED_RAPIDO, LOW);\n  delay(250);\n}",
+      "solution": "const int LED_RAPIDO = 13;\nconst int LED_LENTO = 12;\nconst int LED_BOTAO = 11;\nconst int BOTAO = 2;\n\nunsigned long ultimoRapido = 0;\nunsigned long ultimoLento = 0;\nint estadoRapido = LOW;\nint estadoLento = LOW;\n\nvoid setup() {\n  pinMode(LED_RAPIDO, OUTPUT);\n  pinMode(LED_LENTO, OUTPUT);\n  pinMode(LED_BOTAO, OUTPUT);\n  pinMode(BOTAO, INPUT_PULLUP);\n}\n\nvoid loop() {\n  unsigned long agora = millis();\n\n  // tarefa 1: LED rápido, a cada 250 ms\n  if (agora - ultimoRapido >= 250) {\n    ultimoRapido += 250;\n    estadoRapido = !estadoRapido;\n    digitalWrite(LED_RAPIDO, estadoRapido);\n  }\n\n  // tarefa 2: LED lento, a cada 400 ms\n  if (agora - ultimoLento >= 400) {\n    ultimoLento += 400;\n    estadoLento = !estadoLento;\n    digitalWrite(LED_LENTO, estadoLento);\n  }\n\n  // tarefa 3: o botão acende o LED de resposta na hora\n  if (digitalRead(BOTAO) == LOW) {\n    digitalWrite(LED_BOTAO, HIGH);\n  } else {\n    digitalWrite(LED_BOTAO, LOW);\n  }\n}",
+      "hints": [
+        "Crie unsigned long ultimoRapido = 0, ultimoLento = 0; e int estadoRapido = LOW, estadoLento = LOW; fora das funções.",
+        "Tarefa 1: if (millis() - ultimoRapido >= 250) { ultimoRapido += 250; estadoRapido = !estadoRapido; digitalWrite(13, estadoRapido); } — a tarefa 2 é igual com 400.",
+        "Apague os delay(): o loop() só deve ter os três if, um para cada tarefa."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "rapido",
+          "type": "led",
+          "pins": {
+            "pin": 13
+          },
+          "color": "red"
+        },
+        {
+          "id": "lento",
+          "type": "led",
+          "pins": {
+            "pin": 12
+          },
+          "color": "yellow"
+        },
+        {
+          "id": "resposta",
+          "type": "led",
+          "pins": {
+            "pin": 11
+          },
+          "color": "green"
+        },
+        {
+          "id": "btn1",
+          "type": "button",
+          "pins": {
+            "pin": 2
+          },
+          "color": ""
+        }
+      ],
+      "checks": [
+        {
+          "kind": "component",
+          "target": "rapido",
+          "value": "on",
+          "atMs": 375,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O LED rápido acende em 250 ms"
+        },
+        {
+          "kind": "component",
+          "target": "rapido",
+          "value": "off",
+          "atMs": 625,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…e apaga em 500 ms"
+        },
+        {
+          "kind": "component",
+          "target": "lento",
+          "value": "on",
+          "atMs": 600,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O LED lento acende em 400 ms"
+        },
+        {
+          "kind": "component",
+          "target": "lento",
+          "value": "off",
+          "atMs": 1000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…e apaga em 800 ms"
+        },
+        {
+          "kind": "component",
+          "target": "rapido",
+          "value": "on",
+          "atMs": 1375,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O LED rápido continua no ritmo de 250 ms"
+        },
+        {
+          "kind": "component",
+          "target": "lento",
+          "value": "on",
+          "atMs": 2200,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O LED lento continua no ritmo de 400 ms"
+        },
+        {
+          "kind": "component",
+          "target": "resposta",
+          "value": "off",
+          "atMs": 500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Sem apertar, o LED de resposta fica apagado"
+        },
+        {
+          "kind": "component",
+          "target": "resposta",
+          "value": "on",
+          "atMs": 1030,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@1010",
+            "button:btn1=released@1300"
+          ],
+          "description": "Apertando o botão, o LED de resposta acende na hora"
+        },
+        {
+          "kind": "component",
+          "target": "lento",
+          "value": "off",
+          "atMs": 1100,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@1010",
+            "button:btn1=released@1300"
+          ],
+          "description": "O LED lento não perde o ritmo enquanto o botão está apertado"
+        },
+        {
+          "kind": "component",
+          "target": "resposta",
+          "value": "off",
+          "atMs": 1330,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@1010",
+            "button:btn1=released@1300"
+          ],
+          "description": "Soltando o botão, o LED de resposta apaga"
+        },
+        {
+          "kind": "component",
+          "target": "rapido",
+          "value": "on",
+          "atMs": 1375,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@1010",
+            "button:btn1=released@1300"
+          ],
+          "description": "O LED rápido não perde o ritmo por causa do botão"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-13-rampa-pwm",
+      "title": "Rampa de aceleração: partida suave de um motor",
+      "theory": "# Por que não ligar com tudo?\n\nUm motor DC parado não tem **força contraeletromotriz** (a tensão que ele gera ao girar e que se opõe à da fonte). No instante da partida, a única coisa que limita a corrente é a resistência do enrolamento, de poucos ohms: a corrente de partida pode ser **5 a 10 vezes** a nominal. Isso derruba a tensão da bateria (o Arduino pode reiniciar!), esquenta a ponte H e dá um **tranco** mecânico que gasta engrenagens e faz o robô patinar ou empinar.\n\nA solução é a **rampa**: aumentar o PWM aos poucos.\n\n# Rampa trapezoidal\n\nO perfil mais usado tem três fases — o gráfico da velocidade parece um trapézio:\n\n```\nPWM 255 |      ________\n        |     /        \\\n        |    /          \\\n      0 |___/            \\______\n        0   1 s        3 s  4 s\n          acelera cruzeiro freia\n```\n\nDurante a rampa, o PWM é uma **interpolação linear** do tempo:\n\n```\npwm = t · 255 / 1000          (0 ≤ t < 1000 ms)\n```\n\nEm 500 ms o motor está em 127 (metade); em 1000 ms chega a 255. A frenagem é a mesma conta \"ao contrário\": `pwm = (4000 − t) · 255 / 1000`.\n\nA **aceleração** é a inclinação da rampa: 255 unidades por segundo. Uma rampa mais lenta pede menos corrente e é mais suave; mais rápida, responde melhor. Quem projeta escolhe pelo limite de corrente do driver e pelo quanto as rodas aguentam sem patinar (**atrito estático**: a = μ·g é o máximo que um robô consegue acelerar sem derrapar).\n\n# Cuidado com os tipos\n\n`t * 255` com `t` em milissegundos pode passar de 32 767 — o limite de um `int` no Arduino Uno. Use `unsigned long` (até ~4,3 bilhões) nas contas com `millis()`.\n\n# Indo além: a curva em S\n\nNa rampa trapezoidal a aceleração muda de **zero para o máximo** de repente — isso é um \"solavanco\" (em física, *jerk*, a derivada da aceleração). Elevadores, CNCs e impressoras 3D usam **rampas em S**, em que a própria aceleração também sobe e desce suavemente. É a mesma ideia, uma derivada acima.",
+      "task": "O motor está numa ponte H: **IN1 = 8, IN2 = 7, EN = 5** (PWM). Ao ligar, faça o motor girar **para frente** com uma rampa trapezoidal: **acelerar de 0 a 255 em 1 s**, ficar em **255 por 2 s** (até 3 s), **frear até 0 em 1 s** (até 4 s) e então **ficar parado**. Use `millis()` para calcular o PWM a cada volta do `loop()`.",
+      "starter": "const int IN1 = 8;\nconst int IN2 = 7;\nconst int EN = 5;\n\nvoid setup() {\n  pinMode(IN1, OUTPUT);\n  pinMode(IN2, OUTPUT);\n  pinMode(EN, OUTPUT);\n  digitalWrite(IN1, HIGH);   // sentido: para frente\n  digitalWrite(IN2, LOW);\n}\n\nvoid loop() {\n  // liga de uma vez, com tudo (tranco!) e nunca para...\n  analogWrite(EN, 255);\n}",
+      "solution": "const int IN1 = 8;\nconst int IN2 = 7;\nconst int EN = 5;\nconst unsigned long RAMPA = 1000;      // ms para acelerar (e para frear)\nconst unsigned long CRUZEIRO = 2000;   // ms na velocidade máxima\n\nvoid setup() {\n  pinMode(IN1, OUTPUT);\n  pinMode(IN2, OUTPUT);\n  pinMode(EN, OUTPUT);\n  digitalWrite(IN1, HIGH);   // sentido: para frente\n  digitalWrite(IN2, LOW);\n}\n\nvoid loop() {\n  unsigned long t = millis();\n  unsigned long fimCruzeiro = RAMPA + CRUZEIRO;\n  unsigned long fim = fimCruzeiro + RAMPA;\n  int pwm;\n  if (t < RAMPA) {\n    pwm = t * 255 / RAMPA;                    // acelerando\n  } else if (t < fimCruzeiro) {\n    pwm = 255;                                // cruzeiro\n  } else if (t < fim) {\n    pwm = (fim - t) * 255 / RAMPA;            // freando\n  } else {\n    pwm = 0;                                  // parado\n  }\n  analogWrite(EN, pwm);\n}",
+      "hints": [
+        "Calcule unsigned long t = millis(); e escolha a fase com if / else if: t < 1000, t < 3000, t < 4000, senão parado.",
+        "Na aceleração: pwm = t * 255 / 1000. Na frenagem: pwm = (4000 - t) * 255 / 1000.",
+        "Use unsigned long nas contas: t * 255 passa do limite de um int."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "motor1",
+          "type": "motor",
+          "pins": {
+            "in1": 8,
+            "in2": 7,
+            "en": 5
+          },
+          "color": ""
+        }
+      ],
+      "checks": [
+        {
+          "kind": "component",
+          "target": "motor1",
+          "value": "55..72",
+          "atMs": 250,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Em 250 ms o motor está no começo da rampa (PWM perto de 64)"
+        },
+        {
+          "kind": "component",
+          "target": "motor1",
+          "value": "115..140",
+          "atMs": 500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Em 500 ms o motor está na metade (PWM perto de 127)"
+        },
+        {
+          "kind": "component",
+          "target": "motor1.dir",
+          "value": "forward",
+          "atMs": 500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O motor gira para frente"
+        },
+        {
+          "kind": "component",
+          "target": "motor1",
+          "value": ">=250",
+          "atMs": 2000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Em 2 s o motor está na velocidade máxima"
+        },
+        {
+          "kind": "component",
+          "target": "motor1",
+          "value": "115..140",
+          "atMs": 3500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Em 3,5 s o motor está freando (PWM perto de 127)"
+        },
+        {
+          "kind": "component",
+          "target": "motor1",
+          "value": "0",
+          "atMs": 4500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Depois de 4 s o motor está parado"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-14-protocolo-serial",
+      "title": "Protocolo serial: comandos vindos do computador",
+      "theory": "# Conversando com o Arduino\n\nAté agora o Monitor Serial era só uma saída. Mas a comunicação serial (UART) é de **mão dupla**: o computador — ou um Raspberry Pi, um módulo Bluetooth, outro microcontrolador — pode **mandar comandos**. É assim que um painel controla um robô, que uma impressora 3D recebe G-code, que um drone recebe ordens.\n\nPara isso precisamos de um **protocolo**: regras que os dois lados combinam. O nosso é baseado em texto, uma linha por comando:\n\n- `LIGA` → brilho 255, responde `OK`\n- `DESLIGA` → brilho 0, responde `OK`\n- `BRILHO n` → brilho n (0 a 255), responde `OK` — ou `ERRO: valor` se n não couber\n- `STATUS` → não muda nada, responde `BRILHO=n`\n- qualquer outra coisa → responde `ERRO: comando`\n\n# Os bytes chegam aos poucos\n\nA serial entrega **um caractere de cada vez**, e eles não chegam todos juntos: a 9600 bauds cada byte leva ~1 ms, e um comando pode chegar partido em duas voltas do `loop()`. Por isso **guardamos** os caracteres num **buffer** até chegar o terminador `'\\n'` (fim de linha):\n\n```\nwhile (Serial.available() > 0) {\n  char c = Serial.read();\n  if (c == '\\n') { buffer[tamanho] = '\\0'; executar(buffer); tamanho = 0; }\n  else if (tamanho < 31) { buffer[tamanho] = c; tamanho++; }\n}\n```\n\nO `'\\0'` no fim transforma o vetor numa **string de C**. O teste `tamanho < 31` protege contra **estouro de buffer** — uma linha gigante não pode escrever além do vetor (essa falha, em computadores, já derrubou muitos sistemas e é uma porta clássica para ataques).\n\n# Interpretando (parsing)\n\nCom a linha completa, comparamos com as funções de `<string.h>`:\n\n- `strcmp(a, b) == 0` → as strings são iguais.\n- `strncmp(cmd, \"BRILHO \", 7) == 0` → o comando **começa** com \"BRILHO \".\n- `atoi(cmd + 7)` → converte o texto a partir do 8º caractere em número. `cmd + 7` é **aritmética de ponteiros**: o endereço 7 posições à frente.\n\n# Validação\n\nNunca confie no que vem de fora! `BRILHO 300` não cabe num PWM de 8 bits: o protocolo deve **recusar** (`ERRO: valor`) em vez de aplicar um valor errado. Responder sempre (`OK` ou `ERRO`) deixa o outro lado saber se o comando funcionou — isso é um **acknowledgment**, a base dos protocolos confiáveis.",
+      "task": "O LED está no pino **9** (PWM). Implemente o protocolo da tabela: leia a serial **caractere por caractere** num buffer até o `'\\n'` e então execute o comando. `LIGA`, `DESLIGA` e `BRILHO n` respondem `OK` (com `n` fora de 0–255 responda `ERRO: valor` sem mudar o LED); `STATUS` responde `BRILHO=` e o brilho atual; qualquer outro comando responde `ERRO: comando`.",
+      "starter": "const int LED = 9;\n\nchar buffer[32];\nint tamanho = 0;\nint brilho = 0;\n\nvoid executar(char *cmd) {\n  // TODO: comparar cmd com \"LIGA\", \"DESLIGA\", \"BRILHO \", \"STATUS\"\n}\n\nvoid setup() {\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  while (Serial.available() > 0) {\n    char c = Serial.read();\n    // TODO: guardar c no buffer até chegar '\\n' e então chamar executar(buffer)\n  }\n}",
+      "solution": "const int LED = 9;\n\nchar buffer[32];\nint tamanho = 0;\nint brilho = 0;\n\nvoid aplicar(int valor) {\n  brilho = valor;\n  analogWrite(LED, brilho);\n  Serial.println(\"OK\");\n}\n\nvoid executar(char *cmd) {\n  if (strcmp(cmd, \"LIGA\") == 0) {\n    aplicar(255);\n  } else if (strcmp(cmd, \"DESLIGA\") == 0) {\n    aplicar(0);\n  } else if (strncmp(cmd, \"BRILHO \", 7) == 0) {\n    int valor = atoi(cmd + 7);\n    if (valor < 0 || valor > 255) {\n      Serial.println(\"ERRO: valor\");\n    } else {\n      aplicar(valor);\n    }\n  } else if (strcmp(cmd, \"STATUS\") == 0) {\n    Serial.print(\"BRILHO=\");\n    Serial.println(brilho);\n  } else {\n    Serial.println(\"ERRO: comando\");\n  }\n}\n\nvoid setup() {\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  while (Serial.available() > 0) {\n    char c = Serial.read();\n    if (c == '\\r') continue;          // ignora o \\r de quem manda \\r\\n\n    if (c == '\\n') {\n      buffer[tamanho] = '\\0';         // fecha a string\n      executar(buffer);\n      tamanho = 0;\n    } else if (tamanho < 31) {        // nunca escreve além do vetor\n      buffer[tamanho] = c;\n      tamanho++;\n    }\n  }\n}",
+      "hints": [
+        "No loop: se c == '\\n', faça buffer[tamanho] = '\\0'; executar(buffer); tamanho = 0; senão, se ainda couber (tamanho < 31), guarde buffer[tamanho] = c; tamanho++.",
+        "Em executar: strcmp(cmd, \"LIGA\") == 0 compara a linha inteira; strncmp(cmd, \"BRILHO \", 7) == 0 vê se ela começa com \"BRILHO \".",
+        "O número do BRILHO é atoi(cmd + 7). Recuse com Serial.println(\"ERRO: valor\") se ele for menor que 0 ou maior que 255."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "led1",
+          "type": "led",
+          "pins": {
+            "pin": 9
+          },
+          "color": "blue"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "on",
+          "atMs": 300,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=LIGA\\n@100"
+          ],
+          "description": "LIGA acende o LED"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "OK",
+          "atMs": 300,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=LIGA\\n@100"
+          ],
+          "description": "LIGA responde OK"
+        },
+        {
+          "kind": "component",
+          "target": "led1.brightness",
+          "value": "100",
+          "atMs": 300,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=BRILHO 100\\n@100",
+            "serial:=STATUS\\n@400"
+          ],
+          "description": "BRILHO 100 deixa o LED com brilho 100"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "BRILHO=100",
+          "atMs": 600,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=BRILHO 100\\n@100",
+            "serial:=STATUS\\n@400"
+          ],
+          "description": "STATUS responde BRILHO=100"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "ERRO: comando",
+          "atMs": 300,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=PISCA\\n@100",
+            "serial:=BRILHO 300\\n@400"
+          ],
+          "description": "Um comando desconhecido responde ERRO: comando"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "ERRO: valor",
+          "atMs": 600,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=PISCA\\n@100",
+            "serial:=BRILHO 300\\n@400"
+          ],
+          "description": "BRILHO 300 responde ERRO: valor"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 600,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=PISCA\\n@100",
+            "serial:=BRILHO 300\\n@400"
+          ],
+          "description": "…e não muda o LED"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 600,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=LIGA\\n@100",
+            "serial:=DESLIGA\\n@400"
+          ],
+          "description": "DESLIGA apaga o LED"
+        },
+        {
+          "kind": "component",
+          "target": "led1.brightness",
+          "value": "50",
+          "atMs": 400,
+          "tolerance": 0,
+          "stimulus": [
+            "serial:=BRIL@100",
+            "serial:=HO 50\\n@200"
+          ],
+          "description": "Um comando que chega partido em dois pedaços também funciona"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-15-histerese",
+      "title": "Filtro de média e histerese: um poste de luz inteligente",
+      "theory": "# O poste que pisca\n\nUm poste de luz automático usa um LDR: escureceu, acende; clareou, apaga. A primeira ideia é um **limiar** único:\n\n```\nif (luz < 400) acende(); else apaga();\n```\n\nNo fim da tarde, porém, a luz fica **perto de 400** por vários minutos, e qualquer ruído (uma nuvem, um farol, interferência elétrica) faz a leitura cruzar o limiar para lá e para cá: a lâmpada **pisca**, o relé estala, tudo se desgasta. Dois problemas, duas ferramentas.\n\n# 1. Histerese: dois limiares\n\nUsamos **um limiar para ligar e outro para desligar**:\n\n- apagada → só **acende** quando a luz cair **abaixo de 300**;\n- acesa → só **apaga** quando a luz subir **acima de 500**.\n\nEntre 300 e 500 a lâmpada **mantém o estado** em que estava. A faixa entre os limiares (a **banda de histerese**) é maior que o ruído, então ele não consegue mais fazer a saída oscilar. É o mesmo princípio do **termostato** da geladeira e do componente **Schmitt trigger**. O sistema passa a ter **memória**: a saída depende do valor atual *e* do estado anterior — mais uma máquina de estados!\n\n# 2. Média móvel: alisando o ruído\n\nUm pico rápido (um flash de câmera, um farol) ainda pode atravessar os dois limiares. Para isso **filtramos** a leitura: em vez do valor cru, usamos a **média das últimas N leituras**, guardadas num **buffer circular**:\n\n```\nsoma -= leituras[pos];          // tira a mais antiga\nleituras[pos] = analogRead(A0); // põe a nova no lugar\nsoma += leituras[pos];\npos = (pos + 1) % N;            // o índice \"dá a volta\"\nmedia = soma / N;\n```\n\nManter a `soma` atualizada evita somar o vetor inteiro a cada vez. Com N = 8 e uma leitura a cada 10 ms, a média \"enxerga\" os últimos 80 ms: um pico de 30 ms quase não a move, mas uma mudança verdadeira aparece em menos de 0,1 s.\n\nEm processamento de sinais isso é um **filtro passa-baixas** do tipo FIR: ele deixa passar as variações lentas e corta as rápidas. O preço é um pequeno **atraso** na resposta — sempre há um compromisso entre suavidade e rapidez.\n\nUm detalhe: no `setup()`, **encha o buffer** com a primeira leitura. Se ele começar com zeros, a média começa em 0 (\"escuríssimo\") e a lâmpada acende sozinha ao ligar.",
+      "task": "O LDR está em **A0** e a lâmpada (LED) no pino **13**. A cada **10 ms**, leia o LDR e calcule a **média móvel das últimas 8 leituras** (encha o buffer com a primeira leitura no `setup()`). Use **histerese** sobre a média: a lâmpada **acende abaixo de 300** e **apaga acima de 500**; entre os dois, mantém o estado.",
+      "starter": "const int SENSOR = A0;\nconst int LAMPADA = 13;\n\nvoid setup() {\n  pinMode(LAMPADA, OUTPUT);\n}\n\nvoid loop() {\n  int luz = analogRead(SENSOR);\n  // um limiar só e sem filtro: pisca perto de 400 e com qualquer pico\n  if (luz < 400) {\n    digitalWrite(LAMPADA, HIGH);\n  } else {\n    digitalWrite(LAMPADA, LOW);\n  }\n  delay(10);\n}",
+      "solution": "const int SENSOR = A0;\nconst int LAMPADA = 13;\nconst int N = 8;                 // tamanho da média móvel\nconst int LIGA_ABAIXO = 300;\nconst int DESLIGA_ACIMA = 500;\n\nint leituras[N];\nint posicao = 0;\nlong soma = 0;\nbool acesa = false;\nunsigned long ultimaLeitura = 0;\n\nvoid setup() {\n  pinMode(LAMPADA, OUTPUT);\n  int primeira = analogRead(SENSOR);\n  for (int i = 0; i < N; i++) {\n    leituras[i] = primeira;      // começa com o buffer cheio\n  }\n  soma = (long)primeira * N;\n}\n\nvoid loop() {\n  if (millis() - ultimaLeitura < 10) return;\n  ultimaLeitura += 10;\n\n  soma -= leituras[posicao];\n  leituras[posicao] = analogRead(SENSOR);\n  soma += leituras[posicao];\n  posicao = (posicao + 1) % N;\n  int media = soma / N;\n\n  if (!acesa && media < LIGA_ABAIXO) {\n    acesa = true;\n  } else if (acesa && media > DESLIGA_ACIMA) {\n    acesa = false;\n  }\n  digitalWrite(LAMPADA, acesa ? HIGH : LOW);\n}",
+      "hints": [
+        "Guarde as 8 leituras em int leituras[8] e mantenha long soma: tire a leitura antiga da soma, ponha a nova, e avance posicao = (posicao + 1) % 8.",
+        "No setup(), leia o sensor uma vez e copie esse valor para as 8 posições (e soma = valor * 8).",
+        "Histerese: if (!acesa && media < 300) acesa = true; else if (acesa && media > 500) acesa = false; — e escreva o LED de acordo com acesa."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "ldr1",
+          "type": "ldr",
+          "pins": {
+            "pin": 14
+          },
+          "color": ""
+        },
+        {
+          "id": "led1",
+          "type": "led",
+          "pins": {
+            "pin": 13
+          },
+          "color": "yellow"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 500,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "De dia (600) a lâmpada fica apagada"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 1500,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "Com 400 (entre os limiares) ela continua apagada"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "on",
+          "atMs": 2500,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "Escureceu (250): a lâmpada acende"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "on",
+          "atMs": 3500,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "Voltou a 400: ela continua acesa (histerese)"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 4500,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "Clareou (600): a lâmpada apaga"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 5020,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "Um pico de escuro de 30 ms não acende a lâmpada"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 5300,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldr1=600@0",
+            "ldr:ldr1=400@1000",
+            "ldr:ldr1=250@2000",
+            "ldr:ldr1=400@3000",
+            "ldr:ldr1=600@4000",
+            "ldr:ldr1=100@5000",
+            "ldr:ldr1=600@5030"
+          ],
+          "description": "…nem depois do pico"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-16-alarme",
+      "title": "Alarme com máquina de estados: armar, disparar e desarmar",
+      "theory": "# Um sistema de verdade\n\nUm alarme residencial parece simples, mas tem **regras que dependem do momento**: o mesmo movimento na frente do sensor é ignorado quando o alarme está desarmado e dispara a sirene quando está armado; o mesmo botão arma ou desarma. Escrever isso com `if`s soltos vira um emaranhado. O jeito profissional é uma **máquina de estados finita** (FSM) bem desenhada.\n\n# Os estados e as transições\n\n```\n            botão                 3 s\nDESARMADO ───────→ ARMANDO ───────────→ ARMADO\n    ↑  ↑   botão      │                   │ alguém a < 50 cm\n    │  └──────────────┘                   ↓\n    └──────────────── botão ─────────── DISPARADO\n```\n\n- **DESARMADO:** LED e sirene desligados; o sensor é ignorado.\n- **ARMANDO:** é o **tempo de saída** — 3 s para a pessoa sair de casa sem disparar o próprio alarme. O LED pisca.\n- **ARMADO:** LED aceso; se o ultrassom medir menos de 50 cm, vai para DISPARADO.\n- **DISPARADO:** sirene (`tone` de 2000 Hz) até alguém apertar o botão.\n\nDesenhar o diagrama **antes** de programar é metade do trabalho: cada seta vira um `if` dentro do `case` do estado de origem.\n\n# Ações de entrada\n\nAlgumas coisas devem acontecer **uma vez, ao entrar** num estado: zerar o cronômetro, avisar pela serial. Centralize isso numa função:\n\n```\nvoid mudarPara(int novo) {\n  estado = novo;\n  inicio = millis();\n  Serial.print(\"Estado: \");\n  // ...imprime o nome do estado\n}\n```\n\nO registro (*log*) de cada transição no Monitor Serial é ouro para depurar: você vê exatamente a sequência que o sistema percorreu.\n\n# Eventos, não níveis\n\nO botão deve agir no **aperto** (borda), não \"enquanto está apertado\" — senão, segurando o botão, o alarme armaria e desarmaria em sequência a cada volta. Guarde a leitura anterior e detecte a passagem de HIGH para LOW (com debounce, se o botão for real).\n\n# Por que isso importa\n\nMáquinas de estados controlam elevadores, semáforos, protocolos de rede, caixas eletrônicos, a lógica de jogos e os modos de voo de drones. Elas tornam o comportamento **verificável**: dá para listar todos os estados e conferir, um a um, que nenhuma combinação de eventos leva a uma situação perigosa.",
+      "task": "Botão no pino **2** (`INPUT_PULLUP`), ultrassom com **TRIG = 7, ECHO = 6**, buzzer no **8** e LED no **13**. Implemente a máquina de estados **DESARMADO → ARMANDO (3 s) → ARMADO → DISPARADO**: o botão (no aperto) arma quando desarmado e desarma em qualquer outro estado; armado, uma distância **menor que 50 cm** dispara `tone(8, 2000)`. A cada mudança imprima `Estado: ` e o nome do novo estado (comece imprimindo `Estado: DESARMADO`).",
+      "starter": "const int BOTAO = 2;\nconst int TRIG = 7;\nconst int ECHO = 6;\nconst int BUZZER = 8;\nconst int LED = 13;\n\nenum { DESARMADO, ARMANDO, ARMADO, DISPARADO };\nint estado = DESARMADO;\nunsigned long inicio = 0;\nint botaoAnterior = HIGH;\n\nlong distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 999;   // nada à frente\n  return duracao / 58;\n}\n\nvoid setup() {\n  pinMode(BOTAO, INPUT_PULLUP);\n  pinMode(TRIG, OUTPUT);\n  pinMode(ECHO, INPUT);\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // TODO: detectar o aperto do botão e usar switch (estado)\n}",
+      "solution": "const int BOTAO = 2;\nconst int TRIG = 7;\nconst int ECHO = 6;\nconst int BUZZER = 8;\nconst int LED = 13;\nconst long DISTANCIA_ALARME = 50;\nconst unsigned long TEMPO_SAIDA = 3000;\n\nenum { DESARMADO, ARMANDO, ARMADO, DISPARADO };\nint estado = DESARMADO;\nunsigned long inicio = 0;\nint botaoAnterior = HIGH;\n\nlong distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 999;   // nada à frente\n  return duracao / 58;\n}\n\nvoid mudarPara(int novo) {\n  estado = novo;\n  inicio = millis();\n  Serial.print(\"Estado: \");\n  switch (novo) {\n    case DESARMADO: Serial.println(\"DESARMADO\"); break;\n    case ARMANDO:   Serial.println(\"ARMANDO\"); break;\n    case ARMADO:    Serial.println(\"ARMADO\"); break;\n    case DISPARADO: Serial.println(\"DISPARADO\"); break;\n  }\n}\n\n// true só no instante em que o botão é apertado (borda HIGH -> LOW)\nbool apertou() {\n  int agora = digitalRead(BOTAO);\n  bool borda = (agora == LOW && botaoAnterior == HIGH);\n  botaoAnterior = agora;\n  return borda;\n}\n\nvoid setup() {\n  pinMode(BOTAO, INPUT_PULLUP);\n  pinMode(TRIG, OUTPUT);\n  pinMode(ECHO, INPUT);\n  pinMode(LED, OUTPUT);\n  Serial.begin(9600);\n  mudarPara(DESARMADO);\n}\n\nvoid loop() {\n  bool clique = apertou();\n  switch (estado) {\n    case DESARMADO:\n      digitalWrite(LED, LOW);\n      noTone(BUZZER);\n      if (clique) mudarPara(ARMANDO);\n      break;\n    case ARMANDO:\n      digitalWrite(LED, (millis() / 250) % 2);   // pisca enquanto arma\n      if (clique) mudarPara(DESARMADO);\n      else if (millis() - inicio >= TEMPO_SAIDA) mudarPara(ARMADO);\n      break;\n    case ARMADO:\n      digitalWrite(LED, HIGH);\n      if (clique) mudarPara(DESARMADO);\n      else if (distanciaCm() < DISTANCIA_ALARME) mudarPara(DISPARADO);\n      break;\n    case DISPARADO:\n      digitalWrite(LED, HIGH);\n      tone(BUZZER, 2000);\n      if (clique) {\n        noTone(BUZZER);\n        mudarPara(DESARMADO);\n      }\n      break;\n  }\n  delay(10);\n}",
+      "hints": [
+        "Crie void mudarPara(int novo) que guarda o estado, zera inicio = millis() e imprime \"Estado: \" seguido do nome (um switch com os quatro nomes). Chame mudarPara(DESARMADO) no setup().",
+        "Crie bool apertou() que lê o botão, compara com botaoAnterior e devolve true só quando passou de HIGH para LOW.",
+        "No loop, um switch (estado): em ARMANDO, mude para ARMADO quando millis() - inicio >= 3000; em ARMADO, dispare se distanciaCm() < 50; em DISPARADO, tone(BUZZER, 2000)."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "btn1",
+          "type": "button",
+          "pins": {
+            "pin": 2
+          },
+          "color": ""
+        },
+        {
+          "id": "us1",
+          "type": "ultrasonic",
+          "pins": {
+            "trig": 7,
+            "echo": 6
+          },
+          "color": ""
+        },
+        {
+          "id": "buzzer1",
+          "type": "buzzer",
+          "pins": {
+            "pin": 8
+          },
+          "color": ""
+        },
+        {
+          "id": "led1",
+          "type": "led",
+          "pins": {
+            "pin": 13
+          },
+          "color": "red"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Estado: DESARMADO",
+          "atMs": 300,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Começa desarmado (Estado: DESARMADO)"
+        },
+        {
+          "kind": "component",
+          "target": "buzzer1",
+          "value": "off",
+          "atMs": 2000,
+          "tolerance": 0,
+          "stimulus": [
+            "ultrasonic:us1=30@0"
+          ],
+          "description": "Desarmado, alguém perto não dispara a sirene"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "!Estado: DISPARADO",
+          "atMs": 2000,
+          "tolerance": 0,
+          "stimulus": [
+            "ultrasonic:us1=30@0"
+          ],
+          "description": "…nem muda o estado para DISPARADO"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Estado: ARMANDO",
+          "atMs": 1000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600"
+          ],
+          "description": "O botão começa a armar (Estado: ARMANDO)"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "!Estado: ARMADO",
+          "atMs": 3000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600"
+          ],
+          "description": "Durante o tempo de saída ainda não está armado"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Estado: ARMADO",
+          "atMs": 4000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600"
+          ],
+          "description": "Depois de 3 s fica armado (Estado: ARMADO)"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "on",
+          "atMs": 4000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600"
+          ],
+          "description": "Armado, o LED fica aceso"
+        },
+        {
+          "kind": "component",
+          "target": "buzzer1",
+          "value": "off",
+          "atMs": 2500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "Alguém no tempo de saída não dispara a sirene"
+        },
+        {
+          "kind": "component",
+          "target": "buzzer1",
+          "value": "on",
+          "atMs": 4000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "Armado com alguém a 30 cm, a sirene dispara"
+        },
+        {
+          "kind": "component",
+          "target": "buzzer1.freq",
+          "value": "2000",
+          "atMs": 4000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "A sirene toca em 2000 Hz"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "Estado: DISPARADO",
+          "atMs": 4000,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "O disparo aparece no Monitor Serial"
+        },
+        {
+          "kind": "component",
+          "target": "buzzer1",
+          "value": "off",
+          "atMs": 5500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "O botão desliga a sirene"
+        },
+        {
+          "kind": "component",
+          "target": "led1",
+          "value": "off",
+          "atMs": 5500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "…e apaga o LED"
+        },
+        {
+          "kind": "serial",
+          "target": "",
+          "value": "DISPARADO\nEstado: DESARMADO",
+          "atMs": 5500,
+          "tolerance": 0,
+          "stimulus": [
+            "button:btn1=pressed@500",
+            "button:btn1=released@600",
+            "ultrasonic:us1=30@1500",
+            "button:btn1=pressed@5000",
+            "button:btn1=released@5100"
+          ],
+          "description": "Depois do disparo, o botão desarma (Estado: DESARMADO)"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-17-seguidor-solar",
+      "title": "Seguidor solar: dois sensores, zona morta e um servo",
+      "theory": "# Painéis que acompanham o Sol\n\nUm painel solar gera mais quando a luz bate **de frente**: a potência cai com o cosseno do ângulo de incidência. Um **seguidor solar** gira o painel ao longo do dia e pode gerar 25 a 35% a mais que um painel fixo. O sensor mais simples para isso são **dois LDRs** separados por uma pequena parede: se o painel está virado demais para a direita, a parede faz sombra no LDR da direita, e o da esquerda recebe mais luz.\n\n# Medindo o erro\n\nO **erro** do sistema é a diferença entre os dois sensores:\n\n```\ndiferenca = analogRead(A0) - analogRead(A1);   // esquerda − direita\n```\n\n- `diferenca > 0` → mais luz à esquerda → gire para a esquerda (aumente o ângulo, rumo a 180°);\n- `diferenca < 0` → gire para a direita (diminua, rumo a 0°);\n- perto de 0 → o painel está apontado para o Sol.\n\n# Zona morta\n\nDois LDRs nunca são idênticos, e a luz tem ruído: a diferença quase nunca é exatamente 0. Se o servo se mexer a cada diferença mínima, ele fica tremendo para lá e para cá (o que gasta o servo e a energia que o painel deveria economizar). A solução é uma **zona morta** (*dead band*): **não fazer nada** enquanto `|diferenca| ≤ 50`. É parente próxima da histerese da lição anterior.\n\n# Limitando a velocidade\n\nNão mandamos o servo direto para 0° ou 180°: andamos **1 grau a cada 20 ms** (50°/s), sempre conferindo os sensores de novo. Isso é um **controle incremental** (ou integral): o ângulo é a *soma* das pequenas correções. Ele para sozinho quando os sensores se equilibram — ou quando bate no limite, por isso usamos `constrain(angulo, 0, 180)`.\n\nRepare na diferença para o controle P da lição do robô: lá a correção era **proporcional** ao erro; aqui o servo anda a **velocidade constante** enquanto houver erro fora da zona morta. Controladores reais muitas vezes combinam as duas ideias.\n\n# Tempo sem delay\n\nComo nas lições anteriores, o passo de 20 ms é marcado com `millis()`, deixando o `loop()` livre — num projeto real ele também estaria lendo a bateria, mostrando dados num display, etc.",
+      "task": "LDR esquerdo em **A0**, LDR direito em **A1** e servo no pino **9**. Comece com o servo em **90°**. A cada **20 ms**, calcule `esquerda − direita`: se for **maior que 50**, aumente o ângulo em 1°; se for **menor que −50**, diminua 1°; dentro da zona morta, não mexa. Mantenha o ângulo entre 0 e 180.",
+      "starter": "#include <Servo.h>\n\nServo motor;\nconst int LDR_ESQ = A0;\nconst int LDR_DIR = A1;\n\nint angulo = 90;\n\nvoid setup() {\n  motor.attach(9);\n  motor.write(angulo);\n}\n\nvoid loop() {\n  // TODO: a cada 20 ms, comparar os dois LDRs e mexer o servo 1 grau\n}",
+      "solution": "#include <Servo.h>\n\nServo motor;\nconst int LDR_ESQ = A0;\nconst int LDR_DIR = A1;\nconst int ZONA_MORTA = 50;\nconst unsigned long PASSO_MS = 20;\n\nint angulo = 90;\nunsigned long ultimo = 0;\n\nvoid setup() {\n  motor.attach(9);\n  motor.write(angulo);\n}\n\nvoid loop() {\n  if (millis() - ultimo < PASSO_MS) return;\n  ultimo += PASSO_MS;\n\n  int diferenca = analogRead(LDR_ESQ) - analogRead(LDR_DIR);\n  if (diferenca > ZONA_MORTA) {\n    angulo++;                 // mais luz à esquerda\n  } else if (diferenca < -ZONA_MORTA) {\n    angulo--;                 // mais luz à direita\n  }\n  angulo = constrain(angulo, 0, 180);\n  motor.write(angulo);\n}",
+      "hints": [
+        "Marque o tempo como nas lições de millis(): if (millis() - ultimo < 20) return; ultimo += 20;",
+        "int diferenca = analogRead(A0) - analogRead(A1); depois if (diferenca > 50) angulo++; else if (diferenca < -50) angulo--;",
+        "Antes de motor.write(angulo), limite com angulo = constrain(angulo, 0, 180);"
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "ldrEsq",
+          "type": "ldr",
+          "pins": {
+            "pin": 14
+          },
+          "color": ""
+        },
+        {
+          "id": "ldrDir",
+          "type": "ldr",
+          "pins": {
+            "pin": 15
+          },
+          "color": ""
+        },
+        {
+          "id": "servo1",
+          "type": "servo",
+          "pins": {
+            "pin": 9
+          },
+          "color": ""
+        }
+      ],
+      "checks": [
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": "130..150",
+          "atMs": 1000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=800@0",
+            "ldr:ldrDir=200@0"
+          ],
+          "description": "Mais luz à esquerda: em 1 s o servo foi para ~140°"
+        },
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": ">=178",
+          "atMs": 3000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=800@0",
+            "ldr:ldrDir=200@0"
+          ],
+          "description": "…e para em 180°"
+        },
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": "30..50",
+          "atMs": 1000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=200@0",
+            "ldr:ldrDir=800@0"
+          ],
+          "description": "Mais luz à direita: em 1 s o servo foi para ~40°"
+        },
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": "<=2",
+          "atMs": 3000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=200@0",
+            "ldr:ldrDir=800@0"
+          ],
+          "description": "…e para em 0°"
+        },
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": "88..92",
+          "atMs": 2000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=520@0",
+            "ldr:ldrDir=500@0"
+          ],
+          "description": "Diferença pequena (zona morta): o servo fica em 90°"
+        },
+        {
+          "kind": "component",
+          "target": "servo1",
+          "value": "130..150",
+          "atMs": 2000,
+          "tolerance": 0,
+          "stimulus": [
+            "ldr:ldrEsq=800@0",
+            "ldr:ldrDir=200@0",
+            "ldr:ldrDir=800@1000"
+          ],
+          "description": "Quando a luz se equilibra, o servo para onde está"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-18-pid-distancia",
+      "title": "Controle PID: parar a 20 cm da parede",
+      "theory": "# O problema\n\nO robô está numa sala vazia, de frente para a parede, a ~2 m dela. Missão: **chegar e parar a exatamente 20 cm** da parede, depressa e sem bater. Parece fácil — até você tentar.\n\n**Liga-desliga** (\"anda com tudo até 20 cm, depois para\") chega rápido, mas o robô tem inércia: quando o sensor diz \"20\", os motores ainda levam um tempinho para frear, e ele para **mais perto** do que devia. Numa parede real, ou num robô mais pesado, isso é batida.\n\n# O controlador PID\n\nO **PID** calcula o comando somando três termos do **erro** `e = distância − alvo`:\n\n```\nu = KP·e  +  KI·∫e dt  +  KD·de/dt\n```\n\n- **P (proporcional):** longe → rápido; perto → devagar. É o \"freio\" natural.\n- **I (integral):** soma o erro ao longo do tempo. Se o robô **empaca** com um erro pequeno, a integral cresce até vencer o que o segura.\n- **D (derivativo):** olha a **velocidade** com que o erro muda e freia antes de passar do ponto, amortecendo o movimento.\n\n# Por que o P sozinho não chega lá\n\nOs nossos motores têm uma **zona morta**: com PWM abaixo de ~25 a roda nem se mexe (atrito, tensão mínima). Com só o P, perto do alvo `KP·e` fica menor que 25 e o robô **para antes**: com KP = 5, ele empaca a uns 25 cm. Esse é o famoso **erro em regime permanente**. Aumentar o KP diminui o erro, mas não o elimina (e, em robôs reais, faz oscilar). Quem zera o erro é o **I**: enquanto sobrar erro, a integral cresce.\n\n# Anti-windup\n\nA integral tem um defeito: na aproximação, com erros de 150 cm por vários segundos, ela fica **enorme** (*windup*), e o robô passa direto do alvo enquanto ela \"esvazia\". A correção é simples: **só integrar perto do alvo** (aqui, quando |e| < 10 cm) e zerar a integral fora dessa faixa.\n\n# Implementação discreta\n\nO microcontrolador calcula o PID em instantes separados por `dt` (aqui, 20 ms, ou seja, 50 Hz):\n\n```\nintegral += erro * dt;\nderivada = (erro - erroAnterior) / dt;\nerroAnterior = erro;\nu = KP * erro + KI * integral + KD * derivada;\n```\n\nMeça `dt` de verdade com `millis()` e lembre de iniciar `erroAnterior` com o primeiro erro — senão a primeira derivada dá um \"chute\" enorme. Por fim, limite o comando (`constrain(u, -200, 200)`): ele vira velocidade e sentido das duas rodas (negativo = ré, se passar do ponto).\n\n**Ajuste (*tuning*):** comece só com P até o robô se aproximar bem; acrescente D se passar do ponto; acrescente I até o erro final sumir. Os valores KP = 12, KI = 4 e KD = 1 funcionam bem para este robô.",
+      "task": "O robô começa a ~2 m da parede, de frente para ela. Troque o liga-desliga por um **controle PID** que leve o ultrassom a medir **20 cm** e pare ali: `erro = distância − 20`, controle a **50 Hz** (a cada 20 ms), **KP = 12, KI = 4, KD = 1**, integral **só quando |erro| < 10** (fora disso, zere), comando limitado a ±200 e aplicado igual às duas rodas.",
+      "starter": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\nconst int TRIG = 10, ECHO = 11;        // ultrassom na frente\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nfloat distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 400;   // nada no alcance\n  return duracao / 58.0;\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);\n}\n\nvoid loop() {\n  // liga-desliga: anda com tudo até 20 cm e para de repente\n  if (distanciaCm() > 20) {\n    motor(IN1, IN2, ENA, 255);\n    motor(IN3, IN4, ENB, 255);\n  } else {\n    motor(IN1, IN2, ENA, 0);\n    motor(IN3, IN4, ENB, 0);\n  }\n}",
+      "solution": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\nconst int TRIG = 10, ECHO = 11;        // ultrassom na frente\n\nconst float ALVO = 20.0;               // cm da parede\nconst float KP = 12.0;\nconst float KI = 4.0;\nconst float KD = 1.0;\nconst float ZONA_INTEGRAL = 10.0;      // só integra perto do alvo (anti-windup)\n\nfloat integral = 0;\nfloat erroAnterior = 0;\nbool primeira = true;\nunsigned long ultimo = 0;\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nfloat distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 400;   // nada no alcance\n  return duracao / 58.0;\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);\n}\n\nvoid loop() {\n  unsigned long agora = millis();\n  if (agora - ultimo < 20) return;           // controle a 50 Hz\n  float dt = (agora - ultimo) / 1000.0;\n  ultimo = agora;\n\n  float erro = distanciaCm() - ALVO;         // > 0: longe da parede\n  if (primeira) { erroAnterior = erro; primeira = false; }\n\n  if (erro > -ZONA_INTEGRAL && erro < ZONA_INTEGRAL) {\n    integral += erro * dt;\n  } else {\n    integral = 0;\n  }\n  float derivada = (erro - erroAnterior) / dt;\n  erroAnterior = erro;\n\n  float u = KP * erro + KI * integral + KD * derivada;\n  int vel = constrain(u, -200, 200);\n  motor(IN1, IN2, ENA, vel);\n  motor(IN3, IN4, ENB, vel);\n}",
+      "hints": [
+        "Use millis() para rodar o controle a cada 20 ms e calcule float dt = (agora - ultimo) / 1000.0;",
+        "erro = distanciaCm() - 20; se -10 < erro < 10 faça integral += erro * dt, senão integral = 0; derivada = (erro - erroAnterior) / dt;",
+        "u = 12 * erro + 4 * integral + 1 * derivada; int vel = constrain(u, -200, 200); e mande vel para os dois motores."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "robo",
+          "type": "robot",
+          "pins": {
+            "in1": 8,
+            "in2": 7,
+            "ena": 5,
+            "in3": 4,
+            "in4": 2,
+            "enb": 6,
+            "trig": 10,
+            "echo": 11,
+            "lineL": 14,
+            "lineR": 15
+          },
+          "color": "open"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "robot",
+          "target": "speed",
+          "value": ">=20",
+          "atMs": 3000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Longe da parede, o robô anda rápido"
+        },
+        {
+          "kind": "robot",
+          "target": "sonar",
+          "value": "19.5..20.5",
+          "atMs": 12000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "No fim, o ultrassom mede 20 cm (entre 19,5 e 20,5)"
+        },
+        {
+          "kind": "robot",
+          "target": "stopped",
+          "value": "true",
+          "atMs": 12000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O robô termina parado"
+        },
+        {
+          "kind": "robot",
+          "target": "collisions",
+          "value": "0",
+          "atMs": 12000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O robô não bate na parede"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-19-odometria",
+      "title": "Odometria: a cinemática do robô diferencial",
+      "theory": "# Navegar sem enxergar\n\nNem sempre há uma linha no chão. Robôs de armazém, aspiradores e rovers estimam onde estão contando **quanto cada roda andou**: é a **odometria**. Aqui faremos a versão mais simples — **por tempo** —, calculando quanto tempo cada movimento precisa durar.\n\n# O modelo do motor\n\nMedindo o nosso robô em linha reta, descobrimos:\n\n- abaixo de PWM **25** a roda não gira (zona morta);\n- com PWM **255** a roda chega a **40 cm/s**;\n- entre os dois, a velocidade cresce em linha reta:\n\n```\nv = (PWM − 25) / 230 × 40      [cm/s]\n```\n\nCom PWM 150: v = 125 / 230 × 40 ≈ **21,7 cm/s**.\n\n# A cinemática diferencial\n\nCom velocidades `vE` (esquerda) e `vD` (direita) e **bitola** `b` (distância entre as rodas, aqui **12 cm**):\n\n```\nv = (vE + vD) / 2          velocidade do centro do robô\nω = (vE − vD) / b          velocidade de giro (rad/s)\n```\n\n- **Reta:** vE = vD = v → ω = 0. Para andar uma distância d: `t = d / v`. Para 50 cm: 50 / 21,7 ≈ **2,30 s**.\n- **Giro no lugar:** vE = −v e vD = +v → o centro fica parado e cada roda descreve um círculo de raio b/2. Para girar um ângulo θ, cada roda percorre o arco `(b/2)·θ`, então `t = (b/2)·θ / v`. Para 90° (θ = π/2): 6 · 1,571 / 21,7 ≈ **0,434 s**.\n\nRoda esquerda para trás e direita para frente gira o robô para a **esquerda**.\n\n# Um plano de missão\n\nEm vez de um `if` gigante, descrevemos a trajetória como **dados**: um vetor de passos, cada um com a velocidade das duas rodas e a duração.\n\n```\nstruct Passo { int esquerda; int direita; unsigned long duracao; };\n```\n\nO `loop()` só executa o passo atual e, quando o tempo dele acaba, avança para o próximo. Para desenhar outra figura, basta trocar o plano — o \"motor\" do programa continua igual. As **pausas** de 300 ms entre os movimentos deixam o robô parar por completo, para que um movimento não \"contamine\" o seguinte.\n\n# Os limites da odometria\n\nPneus que patinam, uma roda um pouco maior que a outra, bateria descarregando… cada pequeno erro se **acumula** a cada passo — e erros de ângulo viram erros de posição cada vez maiores. Por isso robôs reais usam **encoders** nas rodas, giroscópios e, de tempos em tempos, corrigem a posição com marcos externos (linhas, câmeras, GPS): é a **fusão de sensores**.",
+      "task": "O robô está numa sala vazia, virado para a direita. Faça-o desenhar um **quadrado de 50 cm de lado**, virando **90° para a esquerda** em cada canto, e **parar** onde começou. Use PWM **150** nas retas e nos giros, uma **pausa de 300 ms** depois de cada movimento, e calcule `T_RETA` e `T_GIRO` com o modelo do motor e a cinemática da teoria (bitola de 12 cm).",
+      "starter": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\n\nconst int VEL = 150;                   // PWM usado nas retas e nos giros\nconst float LADO = 50.0;               // cm\nconst float BITOLA = 12.0;             // cm entre as rodas\nconst unsigned long PAUSA = 300;       // ms parado entre os movimentos\n\n// TODO: calcule a velocidade da roda (cm/s) e os tempos com as fórmulas da teoria\nconst unsigned long T_RETA = 1000;\nconst unsigned long T_GIRO = 1000;\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nvoid rodas(int esquerda, int direita) {\n  motor(IN1, IN2, ENA, esquerda);\n  motor(IN3, IN4, ENB, direita);\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n}\n\nvoid loop() {\n  // TODO: executar o plano: 4 × (reta, pausa, giro de 90° à esquerda, pausa) e parar\n}",
+      "solution": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\n\nconst int VEL = 150;                   // PWM usado nas retas e nos giros\nconst float LADO = 50.0;               // cm\nconst float BITOLA = 12.0;             // cm entre as rodas\nconst unsigned long PAUSA = 300;       // ms parado entre os movimentos\n\n// modelo do motor: zona morta de 25, 40 cm/s com PWM 255\nconst float V_RODA = (VEL - 25) / 230.0 * 40.0;                     // ≈ 21,7 cm/s\nconst unsigned long T_RETA = LADO / V_RODA * 1000;                   // ≈ 2300 ms\nconst unsigned long T_GIRO = (PI / 2) * (BITOLA / 2) / V_RODA * 1000; // ≈ 434 ms\n\nstruct Passo {\n  int esquerda;\n  int direita;\n  unsigned long duracao;\n};\n\nPasso plano[16];\nint nPassos = 0;\nint atual = 0;\nunsigned long inicio = 0;\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nvoid rodas(int esquerda, int direita) {\n  motor(IN1, IN2, ENA, esquerda);\n  motor(IN3, IN4, ENB, direita);\n}\n\nvoid adicionar(int esquerda, int direita, unsigned long duracao) {\n  plano[nPassos].esquerda = esquerda;\n  plano[nPassos].direita = direita;\n  plano[nPassos].duracao = duracao;\n  nPassos++;\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n  for (int i = 0; i < 4; i++) {\n    adicionar(VEL, VEL, T_RETA);       // reta de 50 cm\n    adicionar(0, 0, PAUSA);\n    adicionar(-VEL, VEL, T_GIRO);      // 90° para a esquerda, no lugar\n    adicionar(0, 0, PAUSA);\n  }\n  rodas(plano[0].esquerda, plano[0].direita);\n  inicio = millis();\n}\n\nvoid loop() {\n  if (atual >= nPassos) {              // plano cumprido\n    rodas(0, 0);\n    return;\n  }\n  if (millis() - inicio >= plano[atual].duracao) {\n    atual++;\n    inicio += plano[atual - 1].duracao;\n    if (atual < nPassos) rodas(plano[atual].esquerda, plano[atual].direita);\n  }\n}",
+      "hints": [
+        "Velocidade da roda: float V_RODA = (150 - 25) / 230.0 * 40.0; (≈ 21,7 cm/s). Reta: T_RETA = 50 / V_RODA * 1000 ms.",
+        "Giro de 90° no lugar: T_GIRO = (PI / 2) * (12 / 2) / V_RODA * 1000 ms (≈ 434 ms), com rodas(-150, 150).",
+        "Monte um vetor de passos (4 × reta, pausa, giro, pausa) e, no loop, avance para o próximo passo quando millis() - inicio >= duracao do passo atual."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "robo",
+          "type": "robot",
+          "pins": {
+            "in1": 8,
+            "in2": 7,
+            "ena": 5,
+            "in3": 4,
+            "in4": 2,
+            "enb": 6,
+            "trig": 10,
+            "echo": 11,
+            "lineL": 14,
+            "lineR": 15
+          },
+          "color": "open"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "robot",
+          "target": "x",
+          "value": "75..85",
+          "atMs": 2550,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Depois da primeira reta, o robô está 50 cm à frente (x ≈ 80)"
+        },
+        {
+          "kind": "robot",
+          "target": "y",
+          "value": "75..85",
+          "atMs": 2550,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…sem desviar para os lados (y ≈ 80)"
+        },
+        {
+          "kind": "robot",
+          "target": "angle",
+          "value": "-100..-80",
+          "atMs": 3200,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O primeiro giro deixa o robô virado para cima (−90°)"
+        },
+        {
+          "kind": "robot",
+          "target": "x",
+          "value": "22..38",
+          "atMs": 14500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "No fim, o robô volta ao ponto de partida (x ≈ 30)"
+        },
+        {
+          "kind": "robot",
+          "target": "y",
+          "value": "72..88",
+          "atMs": 14500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…(y ≈ 80)"
+        },
+        {
+          "kind": "robot",
+          "target": "angle",
+          "value": "-15..15",
+          "atMs": 14500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…virado para a direita de novo (0°)"
+        },
+        {
+          "kind": "robot",
+          "target": "distance",
+          "value": "190..215",
+          "atMs": 14500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O robô percorreu cerca de 200 cm (os 4 lados)"
+        },
+        {
+          "kind": "robot",
+          "target": "stopped",
+          "value": "true",
+          "atMs": 14500,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "O robô termina parado"
+        }
+      ],
+      "level": 5
+    },
+    {
+      "id": "ard-20-missao-final",
+      "title": "Missão final: desviar do obstáculo e voltar para a linha",
+      "theory": "# Juntando tudo\n\nEsta é a missão de formatura da trilha. O robô da lição 10 **parava** diante de um obstáculo. Agora ele precisa **contorná-lo, reencontrar a linha e terminar o percurso** — e parar sozinho quando a linha acabar. Você vai usar quase tudo que aprendeu: controle P, ultrassom, `millis()`, máquina de estados e cinemática diferencial.\n\n# A máquina de estados da missão\n\n- **SEGUINDO:** controle P na linha (base 150, KP = 0,15). Se o ultrassom medir **menos de 15 cm** → GIRA_ESQ. Se os **dois sensores** virem só chão branco (< 200) → FIM: a linha acabou.\n- **GIRA_ESQ:** gira no lugar para a esquerda (rodas −150 e 150) por **300 ms**.\n- **CONTORNA:** anda em frente por **1800 ms**, passando ao lado do obstáculo.\n- **GIRA_DIR:** gira para a direita por **430 ms**, apontando de volta para a linha.\n- **PROCURA:** anda devagar (130) até **um** dos sensores passar de **500** → SEGUINDO.\n- **FIM:** motores parados. Missão cumprida.\n\nOs tempos da manobra são **odometria** (lição anterior): com PWM 150 o robô gira ~207°/s e anda ~21,7 cm/s. A manobra desenha um \"degrau\" por cima do obstáculo; não precisa ser perfeita, porque o estado **PROCURA** e o controle P corrigem o que sobrar. Essa combinação — um plano aproximado mais um sensor que fecha a malha — é o coração da robótica móvel.\n\n# Detalhes que fazem diferença\n\n- **Ordem dos testes em SEGUINDO:** primeiro o fim da linha, depois o obstáculo. No fim do percurso há uma parede logo à frente; se o robô testasse o obstáculo primeiro, tentaria \"contornar\" a parede.\n- **Histerese nos sensores:** \"achou a linha\" é **> 500**, mas \"a linha acabou\" é **< 200**. Com um limiar só, um sensor na borda da fita (lendo ~500) faria o estado pular para lá e para cá.\n- **`mudarPara()`** zera o cronômetro de cada estado, como no semáforo e no alarme.\n\n# E depois?\n\nRobôs de competição trocam o P por **PID**, as manobras por tempo por **encoders** e o desvio fixo por um **seguidor de parede** que contorna obstáculos de qualquer tamanho. Carros autônomos fazem a mesma coisa em escala gigante: **percepção → planejamento → controle**, numa máquina de estados que decide se o carro segue a faixa, ultrapassa ou para. Você acabou de construir uma versão de bolso disso.",
+      "task": "Complete o robô para cumprir a missão: **seguir a linha** (base 150, KP = 0,15), e, ao ver um obstáculo a **menos de 15 cm**, **contorná-lo** pela esquerda (gira 300 ms, anda 1800 ms, gira de volta 430 ms, avança até um sensor passar de 500) e **voltar a seguir a linha**. Quando os dois sensores lerem **menos de 200** (fim da linha), **pare**. Use uma máquina de estados com `millis()` e termine o loop com `delay(5)`.",
+      "starter": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\nconst int TRIG = 10, ECHO = 11;        // ultrassom\nconst int SENSOR_ESQ = A0, SENSOR_DIR = A1;\n\nconst int BASE = 150;\nconst float KP = 0.15;\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nvoid rodas(int esquerda, int direita) {\n  motor(IN1, IN2, ENA, esquerda);\n  motor(IN3, IN4, ENB, direita);\n}\n\nlong distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 999;\n  return duracao / 58;\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);\n}\n\nvoid loop() {\n  // por enquanto só segue a linha (lição 10)...\n  // TODO: máquina de estados: desviar do obstáculo, reencontrar a linha e parar no fim\n  int esquerdo = analogRead(SENSOR_ESQ);\n  int direito = analogRead(SENSOR_DIR);\n  int correcao = KP * (esquerdo - direito);\n  rodas(BASE - correcao, BASE + correcao);\n  delay(5);\n}",
+      "solution": "const int IN1 = 8, IN2 = 7, ENA = 5;   // motor esquerdo\nconst int IN3 = 4, IN4 = 2, ENB = 6;   // motor direito\nconst int TRIG = 10, ECHO = 11;        // ultrassom\nconst int SENSOR_ESQ = A0, SENSOR_DIR = A1;\n\nconst int BASE = 150;\nconst float KP = 0.15;\nconst int LINHA = 500;                 // acima disso o sensor está sobre a linha\nconst int BRANCO = 200;                // abaixo disso o sensor só vê chão branco\n\nenum { SEGUINDO, GIRA_ESQ, CONTORNA, GIRA_DIR, PROCURA, FIM };\nint estado = SEGUINDO;\nunsigned long inicio = 0;\n\n// velocidade de -255 (ré) a 255 (frente)\nvoid motor(int in1, int in2, int en, int vel) {\n  vel = constrain(vel, -255, 255);\n  if (vel >= 0) {\n    digitalWrite(in1, HIGH);\n    digitalWrite(in2, LOW);\n  } else {\n    digitalWrite(in1, LOW);\n    digitalWrite(in2, HIGH);\n    vel = -vel;\n  }\n  analogWrite(en, vel);\n}\n\nvoid rodas(int esquerda, int direita) {\n  motor(IN1, IN2, ENA, esquerda);\n  motor(IN3, IN4, ENB, direita);\n}\n\nlong distanciaCm() {\n  digitalWrite(TRIG, LOW);\n  delayMicroseconds(2);\n  digitalWrite(TRIG, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(TRIG, LOW);\n  long duracao = pulseIn(ECHO, HIGH, 30000);\n  if (duracao == 0) return 999;\n  return duracao / 58;\n}\n\nvoid mudarPara(int novo) {\n  estado = novo;\n  inicio = millis();\n}\n\nvoid setup() {\n  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT); pinMode(ENA, OUTPUT);\n  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT); pinMode(ENB, OUTPUT);\n  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);\n}\n\nvoid loop() {\n  unsigned long t = millis() - inicio;\n  int esquerdo = analogRead(SENSOR_ESQ);\n  int direito = analogRead(SENSOR_DIR);\n  switch (estado) {\n    case SEGUINDO:\n      if (esquerdo < BRANCO && direito < BRANCO) {\n        rodas(0, 0);                     // a linha acabou: missão cumprida\n        mudarPara(FIM);\n      } else if (distanciaCm() < 15) {\n        rodas(0, 0);\n        mudarPara(GIRA_ESQ);\n      } else {\n        int correcao = KP * (esquerdo - direito);\n        rodas(BASE - correcao, BASE + correcao);\n      }\n      break;\n    case GIRA_ESQ:                       // vira para a esquerda no lugar\n      rodas(-150, 150);\n      if (t >= 300) mudarPara(CONTORNA);\n      break;\n    case CONTORNA:                       // anda em frente, passando ao lado do obstáculo\n      rodas(150, 150);\n      if (t >= 1800) mudarPara(GIRA_DIR);\n      break;\n    case GIRA_DIR:                       // vira de volta, apontando para a linha\n      rodas(150, -150);\n      if (t >= 430) mudarPara(PROCURA);\n      break;\n    case PROCURA:                        // anda até um sensor achar a linha\n      rodas(130, 130);\n      if (esquerdo > LINHA || direito > LINHA) mudarPara(SEGUINDO);\n      break;\n    case FIM:\n      rodas(0, 0);\n      break;\n  }\n  delay(5);\n}",
+      "hints": [
+        "Estados: enum { SEGUINDO, GIRA_ESQ, CONTORNA, GIRA_DIR, PROCURA, FIM }; e uma mudarPara(novo) que guarda o estado e inicio = millis().",
+        "Em SEGUINDO teste nesta ordem: os dois sensores < 200 → FIM; distanciaCm() < 15 → GIRA_ESQ; senão controle P como na lição 10.",
+        "Manobra: GIRA_ESQ = rodas(-150, 150) por 300 ms; CONTORNA = rodas(150, 150) por 1800 ms; GIRA_DIR = rodas(150, -150) por 430 ms; PROCURA = rodas(130, 130) até um sensor > 500."
+      ],
+      "tests": [],
+      "components": [
+        {
+          "id": "robo",
+          "type": "robot",
+          "pins": {
+            "in1": 8,
+            "in2": 7,
+            "ena": 5,
+            "in3": 4,
+            "in4": 2,
+            "enb": 6,
+            "trig": 10,
+            "echo": 11,
+            "lineL": 14,
+            "lineR": 15
+          },
+          "color": "line"
+        }
+      ],
+      "checks": [
+        {
+          "kind": "robot",
+          "target": "goal",
+          "value": "true",
+          "atMs": 30000,
+          "tolerance": 0,
+          "stimulus": [
+            "obstacle:robo=70@0"
+          ],
+          "description": "Com um obstáculo na linha, o robô chega ao objetivo"
+        },
+        {
+          "kind": "robot",
+          "target": "collisions",
+          "value": "0",
+          "atMs": 30000,
+          "tolerance": 0,
+          "stimulus": [
+            "obstacle:robo=70@0"
+          ],
+          "description": "…sem bater em nada"
+        },
+        {
+          "kind": "robot",
+          "target": "stopped",
+          "value": "true",
+          "atMs": 30000,
+          "tolerance": 0,
+          "stimulus": [
+            "obstacle:robo=70@0"
+          ],
+          "description": "…e para no fim da linha"
+        },
+        {
+          "kind": "robot",
+          "target": "goal",
+          "value": "true",
+          "atMs": 20000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "Sem obstáculo, o robô também chega ao objetivo"
+        },
+        {
+          "kind": "robot",
+          "target": "collisions",
+          "value": "0",
+          "atMs": 20000,
+          "tolerance": 0,
+          "stimulus": [],
+          "description": "…sem bater na parede do fim"
+        }
+      ],
+      "level": 5
     }
   ]
 }

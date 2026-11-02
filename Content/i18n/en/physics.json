@@ -310,6 +310,419 @@
           "explanation": "γ = 1/√(1 − 0.36) = 1/√0.64 = 1/0.8 = 1.25: a clock on the ship shows 1 h while 1 h 15 min pass on Earth."
         }
       ]
+    },
+    "fis-11-rotacao": {
+      "title": "Rotation: torque, moment of inertia and rolling",
+      "theory": "# Spinning costs energy too\n\nSo far we treated bodies as points. But a wheel, a ball or a planet also **spins**, and rotation has its own versions of Newton's laws:\n\n- **Torque** (the \"turning push\"): `τ = r · F · sin θ` (N·m). That's why a long wheel wrench loosens bolts the bare hand can't.\n- **Moment of inertia** `I` (kg·m²): the \"mass\" of rotation. It depends on **how** the mass is distributed around the axis: `I = Σ m·r²`.\n- **Newton's 2nd law for rotation:** `τ = I · α` (α = angular acceleration, rad/s²).\n- **Rotational energy:** `K = ½ · I · ω²`, and **angular momentum** `L = I · ω`.\n\nFor symmetric bodies, `I = k · m · R²`, with a factor `k` that comes from an integral over the volume:\n\n- solid sphere: **k = 2/5**\n- solid cylinder (or disc): **k = 1/2**\n- hollow sphere: **k = 2/3**\n- hoop (thin ring): **k = 1** (all the mass is on the rim)\n\n# The race down the ramp\n\nRelease a sphere, a cylinder and a hoop from the top of the same ramp. Who arrives first? Rolling **without slipping** (`v = ω·R`), the potential energy turns into translation **and** rotation:\n\n```\nm·g·h = ½·m·v² + ½·I·ω² = ½·m·v²·(1 + k)\nv = √(2·g·h / (1 + k))        a = g·sin θ / (1 + k)\n```\n\n**Mass and radius cancel out!** Only the factor k matters: the more mass far from the axis, the more energy goes into rotation and the **slower** the body goes down. The solid sphere always wins; the hoop always loses. A block sliding without friction (k = 0) would beat them all — but it doesn't roll.\n\nWhat makes the ball spin is **static friction** at the contact point. It does no work (the contact point is at rest), but it must be large enough: `μ ≥ k·tan θ / (1 + k)`. On a ramp that is too steep and slippery, the ball **slides** instead of rolling.\n\n# Conservation of angular momentum\n\nWith no external torque, `L = I·ω` is conserved. A skater who pulls in her arms lowers I and **spins faster**; collapsing stars become pulsars spinning hundreds of times per second.",
+      "task": "The ramp is **2 m** long and inclined at **30°** (locked). Choose the body that goes down the ramp in a time **between 1.05 and 1.09 s** and keeps **at most 30%** of its kinetic energy in rotation. Before running, compute `a = g·sin θ / (1 + k)` and `t = √(2L/a)` for each shape.",
+      "hints": [
+        "With sin 30° = 0.5 and L = 2 m: t = √(4·(1 + k) / 4.905). Try k = 2/5, 1/2, 2/3 and 1.",
+        "The share of energy in rotation is k / (1 + k): sphere 28.6%, cylinder 33.3%, hollow sphere 40%, hoop 50%.",
+        "Mass and radius don't change the time — only the shape (the factor k) matters."
+      ],
+      "goals": [
+        "Goes down the ramp in 1.05 to 1.09 s",
+        "At most 30% of the kinetic energy in rotation"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the moment of inertia of a **solid disc** of **2 kg** and radius **0.1 m** spinning about its axis?",
+          "explanation": "I = ½·m·R² = 0.5 · 2 · 0.1² = 0.01 kg·m²."
+        },
+        {
+          "prompt": "You push the end of a **0.3 m** wheel wrench with **50 N**, perpendicular to the wrench. What is the torque on the bolt?",
+          "explanation": "τ = r·F·sin 90° = 0.3 · 50 = 15 N·m. With a wrench twice as long, the same force gives twice the torque."
+        },
+        {
+          "prompt": "A skater spins at **2 rad/s** with a moment of inertia of **4 kg·m²**. She pulls in her arms and the moment of inertia drops to **1.6 kg·m²**. What is the new angular speed?",
+          "explanation": "With no external torque, L = I·ω is conserved: 4 · 2 = 1.6 · ω → ω = 8 / 1.6 = 5 rad/s."
+        },
+        {
+          "prompt": "A solid sphere, a solid cylinder and a hoop, with different masses and radii, are released together from the top of the same ramp and roll without slipping. Which reaches the bottom first?",
+          "options": [
+            "The solid sphere",
+            "The solid cylinder",
+            "The hoop",
+            "The heaviest one, whatever its shape"
+          ],
+          "explanation": "a = g·sin θ / (1 + k) depends on neither mass nor radius. The smallest k (sphere, 2/5) gives the largest acceleration; the hoop (k = 1) is the slowest."
+        }
+      ]
+    },
+    "fis-12-fluidos": {
+      "title": "Fluids: pressure, buoyancy and Torricelli's jet",
+      "theory": "# Pressure in a liquid\n\nPressure is force per area: `p = F / A` (pascal, Pa = N/m²). In a still liquid, pressure **increases with depth**, because each layer holds up the weight of the ones above:\n\n```\np = p0 + ρ·g·h          (hydrostatic law)\n```\n\nIn water (ρ = 1000 kg/m³), every **10 m** of depth adds ~**1 atmosphere** (≈ 100 kPa). That's why divers feel pain in their ears and submarines need thick hulls.\n\n- **Pascal's principle:** a pressure applied to an enclosed liquid is transmitted in full. In a **hydraulic press**, `F1/A1 = F2/A2`: a small piston pushed with little force lifts a car on a large piston.\n- **Archimedes' principle:** a submerged body gets an upward **buoyant force** equal to the weight of the liquid it displaces: `E = ρ·g·V`. If the buoyancy beats the weight, it floats.\n\n# Fluids in motion\n\nFor an ideal fluid (incompressible, no viscosity) flowing steadily:\n\n- **Continuity:** what goes in comes out. `A1·v1 = A2·v2` — where the pipe narrows, the fluid speeds up (it's the thumb over the end of the hose).\n- **Bernoulli:** along a streamline, the energy per volume is conserved:\n\n```\np + ½·ρ·v² + ρ·g·y = constant\n```\n\nWhere the speed increases, the pressure drops. This explains (in part) the lift of wings and how carburetors and the Venturi tube work.\n\n# Torricelli's jet\n\nDrill a hole in the side of a tank, at a depth `h` below the surface. Applying Bernoulli between the surface (still, at atmospheric pressure) and the hole (also at atmospheric pressure):\n\n```\nv = √(2·g·h)\n```\n\nThe water leaves at the same speed it would have if it **fell** from height h! If the hole is at a height `y` above the floor, the jet is a **horizontal launch**: it falls in `t = √(2y/g)` and reaches\n\n```\nx = v·t = 2·√(h·y)\n```\n\nNote that `h·y` is the same if you swap h and y: **two different holes hit the same spot**. The maximum range is when the hole is at half the water's height (h = y), and it equals the height of the water column exactly.",
+      "task": "The water is **1.00 m** above the floor (level locked) and there is a bucket **0.80 m** from the tank. Choose the **hole height** so the jet lands **in the bucket** with an exit speed of **at least 3 m/s**. Use `x = 2·√(h·y)` with `h + y = 1 m`: two heights hit the bucket — only one of them has the required speed.",
+      "hints": [
+        "With h = 1 − y: 2·√((1 − y)·y) = 0.8 → y·(1 − y) = 0.16 → y² − y + 0.16 = 0.",
+        "The roots are y = 0.2 m and y = 0.8 m. Compute v = √(2·g·h) for each.",
+        "The low hole is deeper (h = 0.8 m) and the jet leaves faster: √(2·9.81·0.8) ≈ 3.96 m/s."
+      ],
+      "goals": [
+        "The jet lands in the bucket (0.80 m ± 2 cm)",
+        "The water leaves at at least 3 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the water pressure (on top of the atmospheric one) at a depth of **10 m**? Use ρ = 1000 kg/m³ and g = 9.81 m/s².",
+          "explanation": "p = ρ·g·h = 1000 · 9.81 · 10 = 98 100 Pa ≈ 98.1 kPa — almost one extra atmosphere."
+        },
+        {
+          "prompt": "A **2-liter** block is fully submerged in water. What is the buoyant force on it (g = 9.81 m/s²)?",
+          "explanation": "E = ρ·g·V = 1000 · 9.81 · 0.002 = 19.62 N. Buoyancy only depends on the displaced volume, not on what the block is made of."
+        },
+        {
+          "prompt": "Water flows from one pipe into another with **half the diameter**. What happens to its speed?",
+          "options": [
+            "It halves",
+            "It doubles",
+            "It becomes 4 times greater",
+            "It doesn't change"
+          ],
+          "explanation": "Continuity: A1·v1 = A2·v2. The area depends on the diameter squared: half the diameter → 1/4 of the area → 4 times the speed."
+        },
+        {
+          "prompt": "In a hydraulic press, the small piston has **10 cm²** and the large one **500 cm²**. Pushing the small one with **100 N**, what force does the large one exert?",
+          "explanation": "Pascal: F2 = F1 · A2 / A1 = 100 · 500 / 10 = 5000 N. But the small piston has to move 50 times farther: energy is conserved."
+        }
+      ]
+    },
+    "fis-13-ondas-som": {
+      "title": "Waves and sound: vibrating strings and tuning",
+      "theory": "# What is a wave\n\nA wave carries **energy**, not matter: the string goes up and down, but doesn't travel. Every periodic wave has:\n\n- a **wavelength** λ (m), a **frequency** f (Hz) and a **speed** `v = λ·f`.\n\n**Sound** is a **longitudinal** pressure wave in air, at ~**343 m/s** at 20 °C. We hear from ~20 Hz to ~20 000 Hz.\n\n# The string of an instrument\n\nOn a stretched string, the wave speed depends on the **tension** T and the **linear density** μ (mass per meter):\n\n```\nv = √(T / μ)\n```\n\nFixed at both ends, the string can only vibrate in patterns where the ends stay still (**nodes**): **standing waves**. A whole number of half-waves fits in the length L:\n\n```\nλn = 2L / n        fn = n · v / (2L) = (n / 2L) · √(T/μ)\n```\n\n- n = 1 is the **fundamental** (the note we hear); n = 2, 3… are the **harmonics**, whole multiples of it. The mix of harmonics is the **timbre**: that's why a violin and a flute playing the same note sound different.\n- **Tuning** means changing T (the tuning peg); **pressing a finger** shortens L and raises the note; **thick** strings (larger μ) are low.\n\n# Intensity and decibels\n\nThe ear perceives intensities from 10⁻¹² W/m² up to ~1 W/m². To fit that range, we use a **logarithmic** scale:\n\n```\nβ = 10 · log10(I / I0)   [dB]\n```\n\nEvery **×10** in intensity adds **10 dB**; ×100 adds 20 dB.\n\n# Beats and the Doppler effect\n\n- Two close notes (440 and 444 Hz) played together make the sound \"pulse\" with `fbeat = |f1 − f2|` = 4 times per second. Musicians tune until the beats disappear.\n- **Doppler:** a source **approaching** sounds higher; moving away, lower. With the source at `vs` and the listener at rest: `f' = f · v / (v − vs)` (approaching).",
+      "task": "A violin string has **L = 32.5 cm** and **μ = 0.6 g/m** (locked). Set the **tension** so the **fundamental** note (n = 1) is the **A at 440 Hz** (between 438 and 442 Hz). Compute it first: `T = μ · (2·L·f)²`.",
+      "hints": [
+        "Convert: μ = 0.6 g/m = 0.0006 kg/m; L = 0.325 m.",
+        "The required speed is v = 2·L·f = 2 · 0.325 · 440 = 286 m/s.",
+        "T = μ·v² = 0.0006 · 286² ≈ 49.1 N. Keep the harmonic at n = 1."
+      ],
+      "goals": [
+        "Frequency between 438 and 442 Hz",
+        "Vibrating in the fundamental (n = 1)"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the wavelength, in air (v = 343 m/s), of the **440 Hz** A?",
+          "explanation": "λ = v / f = 343 / 440 ≈ 0.78 m."
+        },
+        {
+          "prompt": "Two tuning forks, of **440 Hz** and **444 Hz**, sound together. How many beats per second do you hear?",
+          "explanation": "fbeat = |444 − 440| = 4 Hz: the volume rises and falls 4 times per second."
+        },
+        {
+          "prompt": "The intensity of a sound becomes **100 times** larger. How many decibels does it gain?",
+          "explanation": "Δβ = 10 · log10(100) = 10 · 2 = 20 dB."
+        },
+        {
+          "prompt": "An ambulance with a **700 Hz** siren approaches you at **20 m/s** (sound at 343 m/s). What frequency do you hear?",
+          "explanation": "f' = f · v / (v − vs) = 700 · 343 / 323 ≈ 743.3 Hz — higher. When it passes and moves away, it drops to 700 · 343 / 363 ≈ 661 Hz."
+        }
+      ]
+    },
+    "fis-14-calor": {
+      "title": "Heat: calorimetry, phase changes and heat transfer",
+      "theory": "# Temperature is not heat\n\n**Temperature** measures the average agitation of the molecules (in kelvin: `T(K) = T(°C) + 273.15`). **Heat** is energy **in transit** because of a temperature difference — always from the hotter to the colder.\n\n# Sensible and latent heat\n\n- **Sensible heat** changes the temperature: `Q = m · c · ΔT`. The **specific heat** c of water is huge, **4186 J/(kg·K)** — that's why the sea is slow to warm up and regulates the climate of coastal cities.\n- **Latent heat** changes the **phase** without changing the temperature: `Q = m · L`. To melt ice at 0 °C, `Lf = 334 kJ/kg`; to boil water at 100 °C, `Lv = 2260 kJ/kg`. While the ice melts, the energy goes into **breaking the bonds** between molecules, and the thermometer stays at 0 °C.\n\n# Calorimetry\n\nIn an insulated container, the heat one body loses is what the other gains: `Σ Q = 0`. Mixing masses of water m1 (at T1) and m2 (at T2):\n\n```\nTf = (m1·T1 + m2·T2) / (m1 + m2)\n```\n\n# The three ways heat travels\n\n- **Conduction:** from molecule to molecule, through a material. Fourier's law: `P = k · A · ΔT / L` (k = conductivity: copper ~400, glass ~0.8, styrofoam ~0.03 W/(m·K)). Thick, insulating walls conduct less.\n- **Convection:** the hot fluid, less dense, **rises** and carries the heat with it — currents in the air, in the water in a pot, in winds and ocean currents.\n- **Radiation:** electromagnetic waves (infrared); it works even in a **vacuum** (that's how the Sun warms us). Stefan–Boltzmann law:\n\n```\nP = ε · σ · A · T⁴        σ = 5.67×10⁻⁸ W/(m²·K⁴)\n```\n\nT is in **kelvin** and to the **fourth power**: doubling the absolute temperature multiplies the radiation by 16. A body also **absorbs** radiation from its surroundings, so the net loss is `ε·σ·A·(T⁴ − Tsurr⁴)`.\n\nA thermos fights all three: a vacuum between the walls (no conduction or convection) and mirrored walls (little radiation).",
+      "task": "Answer the questions. Use `c(water) = 4186 J/(kg·K)`, `Lf(ice) = 334 kJ/kg` and `σ = 5.67×10⁻⁸ W/(m²·K⁴)`. Write numbers like `0.4` or `3e-2`.",
+      "hints": [
+        "In Q = m·c·ΔT, ΔT in °C or in K gives the same number; answer in kJ when asked (÷ 1000).",
+        "In Fourier's law, convert the thickness to meters: 4 mm = 0.004 m.",
+        "For radiation, use temperatures in kelvin and raise them to the fourth power before subtracting."
+      ],
+      "questions": [
+        {
+          "prompt": "How much heat is needed to warm **2 kg** of water from **20 °C** to **80 °C**?",
+          "explanation": "Q = m·c·ΔT = 2 · 4186 · 60 = 502 320 J ≈ 502.3 kJ."
+        },
+        {
+          "prompt": "You mix **1 kg** of water at **80 °C** with **3 kg** at **20 °C** in an insulated container. What is the final temperature?",
+          "explanation": "Tf = (1·80 + 3·20) / (1 + 3) = 140 / 4 = 35 °C. The cold water, being more, \"pulls\" the average towards it."
+        },
+        {
+          "prompt": "How much heat is needed to melt **0.5 kg** of ice that is already at **0 °C**?",
+          "explanation": "Q = m·Lf = 0.5 · 334 = 167 kJ — and the temperature stays at 0 °C until the last piece melts."
+        },
+        {
+          "prompt": "A glass window (k = 0.8 W/(m·K)) has **2 m²** and is **4 mm** thick. Inside it is 20 °C warmer than outside. What heat power goes through the glass?",
+          "explanation": "P = k·A·ΔT / L = 0.8 · 2 · 20 / 0.004 = 8000 W. That's why double-glazed windows (with still air in between) save so much energy."
+        },
+        {
+          "prompt": "A person with **1.8 m²** of skin at **306 K** (33 °C), emissivity **0.97**, is in a room at **293 K** (20 °C). What net power do they lose by radiation?",
+          "explanation": "P = ε·σ·A·(T⁴ − Tsurr⁴) = 0.97 · 5.67×10⁻⁸ · 1.8 · (306⁴ − 293⁴) ≈ 138 W — more than the resting metabolism (~100 W); that's why clothing matters."
+        },
+        {
+          "prompt": "While an ice cube melts in a glass, why does the temperature of the mixture stay at 0 °C?",
+          "options": [
+            "Because the ice receives no heat",
+            "Because the energy received goes into breaking the bonds of the solid (latent heat)",
+            "Because the water insulates the ice",
+            "Because the thermometer can't measure below the water"
+          ],
+          "explanation": "During a phase change, the heat received is latent heat: it changes how the molecules are organized, not their average agitation."
+        },
+        {
+          "prompt": "How does a heater on the floor of a room warm the air of the whole room?",
+          "options": [
+            "By radiation only",
+            "By conduction through still air",
+            "By convection: the warm air rises, the cold air sinks and a current forms",
+            "Through the vacuum between the molecules"
+          ],
+          "explanation": "Heated air becomes less dense and rises; cold air sinks near the heater and gets heated: a convection current. That's why heaters go low and air conditioners go high."
+        }
+      ]
+    },
+    "fis-15-kepler-hohmann": {
+      "title": "Gravitation: Kepler's laws and the Hohmann transfer",
+      "theory": "# Kepler's laws\n\nAnalyzing Tycho Brahe's observations, Kepler discovered three laws that Newton later explained with gravitation:\n\n1. Orbits are **ellipses** with the planet (or star) at one of the **foci**.\n2. The planet–satellite line sweeps **equal areas in equal times**: the satellite is fastest at **periapsis** (closest point) and slowest at **apoapsis** (farthest). It is conservation of angular momentum.\n3. `T² = (4π² / GM) · a³`: the square of the period is proportional to the cube of the **semi-major axis** `a = (rp + ra) / 2`.\n\n# Energy and the vis-viva equation\n\nThe energy of an orbit depends only on `a`: `E = −G·M·m / (2a)`. From it comes **vis-viva**, the most useful equation in astronautics:\n\n```\nv² = μ · (2/r − 1/a)          μ = G·M  (Earth: 398 600 km³/s²)\n```\n\n- circular orbit (a = r): `v = √(μ/r)`\n- escape (a → ∞): `v = √(2μ/r)`\n\n# The Hohmann transfer\n\nHow do you take a satellite from a low orbit (400 km) to **geostationary orbit** (35 786 km altitude, period of one sidereal day)? The most economical maneuver between two circular orbits, found by Walter Hohmann in 1925, uses **half an ellipse** that touches both:\n\n1. **1st burn** (at periapsis, at 400 km): speed up from `√(μ/r1)` to the speed of the transfer ellipse, with `a = (r1 + r2)/2`. The satellite climbs.\n2. **Half a lap** of unpowered \"gliding\": half the period of the ellipse.\n3. **2nd burn** (at apoapsis, at 35 786 km): speed up again to `√(μ/r2)` and circularize.\n\nWith r1 = 6771 km and r2 = 42 157 km: a = 24 464 km, and vis-viva gives the speed at periapsis:\n\n```\nvp = √(398600 · (2/6771 − 1/24464)) ≈ 10.07 km/s\n```\n\nversus 7.67 km/s of the low circular orbit: a **Δv of 2.40 km/s**. The total cost of a mission is measured in **Δv**, and the rocket equation (see the rockets track) turns Δv into fuel.",
+      "task": "The satellite is at **400 km** altitude (locked). Find the horizontal speed of the **1st Hohmann burn**: the orbit must stay closed with its **apoapsis at geostationary altitude** (between 35 400 and 36 200 km). Compute it with vis-viva before testing.",
+      "hints": [
+        "r1 = 6371 + 400 = 6771 km; r2 = 6371 + 35 786 = 42 157 km; a = (r1 + r2) / 2.",
+        "vp = √(μ · (2/r1 − 1/a)) with μ = 398 600 km³/s².",
+        "The result is ≈ 10.07 km/s. The apoapsis is very sensitive: 0.01 km/s more raises it by ~600 km."
+      ],
+      "goals": [
+        "The satellite stays in a closed orbit",
+        "Apoapsis at geostationary altitude (35 400 to 36 200 km)",
+        "Launched at 400 km altitude"
+      ],
+      "questions": [
+        {
+          "prompt": "How long does the **trip** from 400 km to geostationary orbit take (half an ellipse, a = 24 464 km)? Answer in hours.",
+          "explanation": "T = 2π·√(a³/μ) = 2π·√(24 464³ / 398 600) ≈ 38 080 s ≈ 10.58 h; the trip is half of it: ≈ 5.29 h."
+        },
+        {
+          "prompt": "At the transfer's apoapsis the satellite moves at **1.62 km/s**, but geostationary orbit requires **3.07 km/s**. What is the Δv of the 2nd burn?",
+          "explanation": "Δv2 = 3.07 − 1.62 ≈ 1.46 km/s (with more digits: 3.0749 − 1.6177 = 1.457 km/s). Adding the 1st burn (2.40 km/s), the maneuver costs ~3.86 km/s."
+        },
+        {
+          "prompt": "By Kepler's 3rd law, if an orbit's semi-major axis becomes **4 times larger**, the period…",
+          "options": [
+            "becomes 4 times larger",
+            "becomes 16 times larger",
+            "becomes 8 times larger",
+            "becomes 2 times larger"
+          ],
+          "explanation": "T ∝ a^(3/2): 4^(3/2) = (√4)³ = 2³ = 8."
+        }
+      ]
+    },
+    "fis-16-amortecimento": {
+      "title": "Damped oscillations: critical damping",
+      "theory": "# The spring that loses energy\n\nA real oscillator loses energy: friction, air resistance, a damper. The most used model is a **viscous** force, proportional to velocity: `F = −b·v`. The equation of motion becomes a **2nd-order differential equation**:\n\n```\nm·x'' + b·x' + k·x = 0\n```\n\nTrying solutions of the form `x = e^(s·t)`, we get `m·s² + b·s + k = 0`. Everything depends on the **damping ratio**:\n\n```\nζ = b / (2·√(k·m))        ω0 = √(k/m)\n```\n\n# Three regimes\n\n- **Underdamped (ζ < 1):** it oscillates with an amplitude that decays as `e^(−ζ·ω0·t)`, at a slightly lower frequency: `ωd = ω0·√(1 − ζ²)`. It goes past the equilibrium point: the **overshoot** is `e^(−π·ζ/√(1−ζ²))` of the amplitude.\n- **Critical (ζ = 1, b = 2·√(k·m)):** the root is double and `x = A·(1 + ω0·t)·e^(−ω0·t)`. It **doesn't oscillate** and returns to equilibrium **as fast as possible** without passing it.\n- **Overdamped (ζ > 1):** it doesn't oscillate either, but returns **slowly**, \"bogged down\" by the damping.\n\n# Where it matters\n\n- **Car suspension:** close to critical — no bouncing after a pothole, but not too stiff.\n- **Spring-loaded doors** and instrument needles: critical, to stop fast without slamming back.\n- **Control (PID):** a well-tuned controller makes the system respond like an almost critical oscillator — it's the same problem as the PID lesson in the Arduino track.\n- **Buildings and bridges:** tuned mass dampers take energy out of oscillations caused by wind and earthquakes.\n\n# Settling time\n\nEngineers measure how fast the system \"calms down\" by the **settling time**: the instant after which |x| stays below **2%** of the initial amplitude forever. With little damping it is long (it oscillates a lot); with too much damping, too (it returns slowly); the minimum is near critical.",
+      "task": "The block has **0.5 kg**, the spring **k = 10 N/m** and it is pulled **0.1 m** (locked). Set the **damping b** so it returns to equilibrium overshooting by **at most 1%** and **settles (2%) within 1.4 s**. Compute the critical damping `b = 2·√(k·m)` first.",
+      "hints": [
+        "Critical b = 2·√(10 · 0.5) = 2·√5 ≈ 4.47 kg/s.",
+        "With b much smaller it oscillates and overshoots; with b much larger it returns too slowly.",
+        "b = 4.5 kg/s (ζ ≈ 1.006, almost critical) meets both goals."
+      ],
+      "goals": [
+        "Overshoot of at most 1% of the amplitude",
+        "Settles (|x| < 2% of the amplitude) within 1.4 s"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the critical damping for a **2 kg** mass on a **50 N/m** spring?",
+          "explanation": "b = 2·√(k·m) = 2·√(50 · 2) = 2·√100 = 20 kg/s."
+        },
+        {
+          "prompt": "A **1 kg** mass on a **100 N/m** spring has damping **b = 2 kg/s**. What is the damping ratio ζ?",
+          "explanation": "ζ = b / (2·√(k·m)) = 2 / (2·√100) = 2 / 20 = 0.1: strongly underdamped, it oscillates many times before stopping."
+        },
+        {
+          "prompt": "A car goes over a pothole and keeps bouncing several times before settling. The shock absorber is…",
+          "options": [
+            "overdamped (b too large)",
+            "underdamped (b too small — worn shock absorber)",
+            "critically damped",
+            "missing its spring"
+          ],
+          "explanation": "Oscillating several times is a sign of ζ well below 1: the shock absorber has lost oil or pressure and dissipates little energy."
+        }
+      ]
+    },
+    "fis-17-espectrometro": {
+      "title": "Magnetic field: the mass spectrometer",
+      "theory": "# Weighing atoms one by one\n\nHow do you measure the mass of a single atom? And separate carbon-14 (radioactive, used to date fossils) from carbon-12, if chemically they are identical? The **mass spectrometer** does it with electric and magnetic fields.\n\n# 1. Accelerate with an electric field\n\nThe ion (charge q, mass m) starts at rest and crosses a potential difference V. The electric field does work `q·V`, which becomes kinetic energy:\n\n```\nq·V = ½·m·v²     →     v = √(2·q·V / m)\n```\n\nLighter ions come out faster. The energy of one elementary charge accelerated through 1 V is **1 electronvolt** (1 eV = 1.602×10⁻¹⁹ J).\n\n# 2. Bend with a magnetic field\n\nInside a field **B** perpendicular to the velocity, the **Lorentz force** `F = q·v·B` is always perpendicular to the motion: it doesn't change the speed, only the direction. The ion moves in **uniform circular motion**, and the magnetic force is the centripetal force:\n\n```\nq·v·B = m·v² / r     →     r = m·v / (q·B)\n```\n\nPutting both stages together:\n\n```\nr = (1/B) · √(2·m·V / q)\n```\n\nThe radius grows with the **square root of the mass**. After half a turn, the ion hits the detector at a distance **2r** from the entrance: each mass lands in a different place, like the colors of a rainbow — hence \"spectrum\".\n\n# The period doesn't depend on the speed\n\nThe time of one turn is `T = 2π·m / (q·B)`, with no v! Faster ions make larger circles, but at the same frequency — the **cyclotron frequency**. It is the principle of the **cyclotron** accelerator and of magnetic resonance.\n\n# Applications\n\nCarbon-14 dating (with accelerator mass spectrometers), doping control, pollutant analysis, uranium isotope separation (Manhattan Project) and protein identification in biology.\n\nMasses: 1 u = 1.6605×10⁻²⁷ kg; ¹²C = 12 u, ¹⁴C = 14.0032 u; ion charge = +e = 1.602×10⁻¹⁹ C.",
+      "task": "**Carbon-14** ions (charge +e) are accelerated through **2000 V** (locked). Set the **magnetic field** so they land on the **detector 30 cm** from the entrance (± 1 cm). Compute it first: the diameter is `2r = (2/B)·√(2·m·V/q)`.",
+      "hints": [
+        "m = 14.0032 · 1.6605×10⁻²⁷ ≈ 2.325×10⁻²⁶ kg; v = √(2·q·V/m) ≈ 1.66×10⁵ m/s.",
+        "For 2r = 0.30 m, r = 0.15 m and B = m·v / (q·r).",
+        "B ≈ 2.325×10⁻²⁶ · 1.66×10⁵ / (1.602×10⁻¹⁹ · 0.15) ≈ 0.161 T."
+      ],
+      "goals": [
+        "The carbon-14 ions land on the detector (30 cm ± 1 cm)"
+      ],
+      "questions": [
+        {
+          "prompt": "At what speed do the carbon-14 ions leave the **2000 V** accelerator? Answer in km/s.",
+          "explanation": "v = √(2·q·V/m) = √(2 · 1.602×10⁻¹⁹ · 2000 / 2.325×10⁻²⁶) ≈ 1.66×10⁵ m/s = 166 km/s."
+        },
+        {
+          "prompt": "With the same field (**0.161 T**) and the same voltage, how far from the entrance do **carbon-12** ions land? Answer in cm.",
+          "explanation": "2r ∝ √m: 29.93 cm · √(12 / 14.0032) ≈ 27.7 cm. The two isotopes end up ~2 cm apart on the detector."
+        },
+        {
+          "prompt": "If you **double the magnetic field**, the time the ion takes to make the half turn…",
+          "options": [
+            "doubles",
+            "halves",
+            "doesn't change",
+            "becomes 4 times shorter"
+          ],
+          "explanation": "T = 2π·m/(q·B): with B doubled, the period (and the half turn) is halved. The radius is halved too, but the speed doesn't change."
+        }
+      ]
+    },
+    "fis-18-inducao": {
+      "title": "Electromagnetic induction: generators and transformers",
+      "theory": "# Magnetic flux\n\nThe **magnetic flux** through a loop measures \"how many field lines\" cross it:\n\n```\nΦ = B · A · cos θ       (weber, Wb = T·m²)\n```\n\n# Faraday–Lenz law\n\nA voltage (electromotive force, **emf**) appears in a coil of N turns whenever the flux **changes**:\n\n```\nε = −N · ΔΦ / Δt\n```\n\nThe flux can change because B changes (a magnet approaching), because the area changes, or because the angle changes (the loop spins). The minus sign is **Lenz's law**: the induced current creates a field that **opposes the change** that created it. If it weren't so, energy would come out of nothing. That's why a magnet dropped inside a copper tube falls slowly (eddy currents) — the same principle as the electromagnetic brakes of trains.\n\n# Motional emf\n\nA rod of length L moving at speed v, perpendicular to a field B, has its charges pushed by the Lorentz force: `ε = B · L · v`.\n\n# The generator\n\nA coil of N turns and area A spinning with angular speed ω in a field B has `Φ = B·A·cos(ωt)`. Taking the derivative:\n\n```\nε(t) = N · B · A · ω · sin(ωt)        peak: ε0 = N·B·A·ω\n```\n\nIt is a sinusoidal **alternating** voltage: the origin of the alternating current from power plants (60 Hz in Brazil and the US, ω = 2π·60 ≈ 377 rad/s).\n\n# The transformer\n\nTwo coils on the same iron core: the alternating current in the primary creates a changing flux that induces a voltage in the secondary. Since the flux is the same:\n\n```\nVs / Vp = Ns / Np        and (ideal)  Vp·Ip = Vs·Is\n```\n\nTransformers only work with **alternating** current (with direct current there is no change in flux). They allow **transmitting power at high voltage**: for the same power, the current is lower, and the loss in the wires `P = R·I²` drops with the square of the current.\n\n# Energy in the field\n\nA coil (inductor, L in henries) carrying current I stores energy in its magnetic field: `U = ½·L·I²`.",
+      "task": "Answer the questions. Write numbers like `0.4` or `3e-2`.",
+      "safety": "Transformers and generators work with dangerous voltages. Don't open power supplies, chargers or motors plugged into the wall: internal capacitors hold charge even when switched off.",
+      "hints": [
+        "In Faraday's law, ΔΦ = A·ΔB when the area and angle don't change.",
+        "For the generator, ω = 2π·f; the peak is N·B·A·ω.",
+        "In a transformer, the voltages are proportional to the number of turns."
+      ],
+      "questions": [
+        {
+          "prompt": "A coil of **200 turns** and area **0.01 m²** is in a field that rises from **0 to 0.5 T** in **0.1 s**. What is the induced emf (magnitude)?",
+          "explanation": "ε = N·A·ΔB/Δt = 200 · 0.01 · 0.5 / 0.1 = 10 V."
+        },
+        {
+          "prompt": "A **0.2 m** rod moves at **3 m/s**, perpendicular to a **0.5 T** field. What is the emf between its ends?",
+          "explanation": "ε = B·L·v = 0.5 · 0.2 · 3 = 0.3 V."
+        },
+        {
+          "prompt": "A transformer steps **127 V** down to **12 V**. The primary has **1270 turns**. How many turns does the secondary have?",
+          "explanation": "Ns = Np · Vs/Vp = 1270 · 12 / 127 = 120 turns."
+        },
+        {
+          "prompt": "A generator has **100 turns** of area **0.05 m²** spinning at **60 Hz** in a **0.2 T** field. What is the peak emf?",
+          "explanation": "ε0 = N·B·A·ω = 100 · 0.2 · 0.05 · 2π·60 ≈ 377 V."
+        },
+        {
+          "prompt": "How much energy does a **0.2 H** inductor carrying **3 A** store?",
+          "explanation": "U = ½·L·I² = 0.5 · 0.2 · 9 = 0.9 J."
+        },
+        {
+          "prompt": "You bring the **north** pole of a magnet towards a closed coil. The induced current…",
+          "options": [
+            "creates a south pole facing the magnet, attracting it",
+            "creates a north pole facing the magnet, repelling it",
+            "doesn't appear, because the magnet doesn't touch the coil",
+            "only appears if the magnet stays still"
+          ],
+          "explanation": "Lenz: the coil opposes the approach by creating a north pole on the face towards the magnet. You have to push — that is the energy that becomes current."
+        },
+        {
+          "prompt": "Why do transmission lines use very high voltages (hundreds of kV)?",
+          "options": [
+            "Because high voltage travels faster",
+            "Because transformers only work at high voltage",
+            "For the same power, the current is lower and the R·I² loss in the wires drops a lot",
+            "So the wires get warm and don't freeze"
+          ],
+          "explanation": "P = V·I: raising the voltage 100 times lowers the current 100 times and the loss in the wires (R·I²) 10 000 times."
+        }
+      ]
+    },
+    "fis-19-relatividade": {
+      "title": "Special relativity: time, space and energy",
+      "theory": "# The two postulates\n\nIn 1905, Einstein started from two ideas:\n\n1. The laws of physics are the same in every inertial frame (without acceleration).\n2. The speed of light in vacuum, **c ≈ 3×10⁸ m/s**, is the same for all observers, no matter how they move.\n\nThe second is strange: if you run after a light beam, it keeps moving away at c. For that to work, **time and space** must change from observer to observer.\n\n# The Lorentz factor\n\n```\nγ = 1 / √(1 − v²/c²)\n```\n\nAt everyday speeds γ ≈ 1 (at 300 m/s, γ − 1 ≈ 5×10⁻¹³). Close to c, it shoots up: γ = 1.25 at 0.6c, 1.67 at 0.8c, ~10 at 0.995c.\n\n- **Time dilation:** a moving clock runs slower: `Δt = γ·Δt0` (Δt0 = **proper time**, measured in the clock's own frame).\n- **Length contraction:** a moving object is shorter along its motion: `L = L0 / γ`.\n- **Simultaneity is relative:** two events simultaneous for one observer may not be for another.\n\n# The muon proof\n\nCosmic rays create **muons** ~15 km up. They live **2.2 μs** on average; even at nearly c, without relativity they would travel only ~660 m before decaying — and almost none would reach the ground. But many do! For us, their clock runs γ times slower; for them, the atmosphere is contracted. Both descriptions give the same result.\n\n# Adding velocities\n\nVelocities don't simply add. A ship moving at u launches a probe at v' (relative to the ship):\n\n```\nv = (u + v') / (1 + u·v'/c²)\n```\n\nIt never exceeds c: 0.5c \"plus\" 0.5c gives 0.8c.\n\n# E = mc²\n\nMass is energy: `E0 = m·c²`. The total energy of a moving body is `E = γ·m·c²`. Since c² is enormous, one gram of mass equals 9×10¹³ J — more than the Hiroshima bomb. In nuclear plants and in the Sun, a small fraction of the mass turns into energy.\n\n**GPS** has to correct the satellites' clocks for special relativity (they move) and general relativity (they are farther from the Earth): without that, it would drift ~10 km per day.",
+      "task": "Answer the questions. Use `c = 3×10⁸ m/s` and write numbers like `0.4` or `9e13`.",
+      "hints": [
+        "γ = 1/√(1 − β²), with β = v/c. For 0.8c: √(1 − 0.64) = 0.6.",
+        "The muon's proper time (2.2 μs) is the one measured in its own frame; on Earth the time is γ times longer.",
+        "For relativistic addition, write the speeds in units of c: (0.5 + 0.5)/(1 + 0.25)."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the Lorentz factor γ of a ship at **0.8·c**?",
+          "explanation": "γ = 1/√(1 − 0.64) = 1/0.6 ≈ 1.667."
+        },
+        {
+          "prompt": "A muon lives **2.2 μs** in its own frame. Travelling at **0.995·c**, how long does it live as measured from Earth? Answer in μs.",
+          "explanation": "γ = 1/√(1 − 0.995²) ≈ 10.01 → Δt = γ·Δt0 ≈ 10.01 · 2.2 ≈ 22.0 μs."
+        },
+        {
+          "prompt": "In that dilated time (≈ 22.0 μs) at 0.995·c, how many **kilometers** does the muon travel?",
+          "explanation": "d = v·Δt = 0.995 · 3×10⁸ · 22.03×10⁻⁶ ≈ 6575 m ≈ 6.58 km — ten times more than the ~660 m without relativity."
+        },
+        {
+          "prompt": "A ship measures **100 m** at rest. What length does an observer on Earth measure when it passes at **0.6·c**?",
+          "explanation": "γ = 1/√(1 − 0.36) = 1.25 → L = L0/γ = 100/1.25 = 80 m."
+        },
+        {
+          "prompt": "How much energy is equivalent to **1 gram** of mass?",
+          "explanation": "E = m·c² = 0.001 · (3×10⁸)² = 9×10¹³ J."
+        },
+        {
+          "prompt": "A ship at **0.5·c** fires a probe forward at **0.5·c** relative to the ship. What is the probe's speed seen from Earth, in units of c?",
+          "explanation": "v = (0.5 + 0.5)/(1 + 0.5·0.5) = 1/1.25 = 0.8 c — and never more than c."
+        },
+        {
+          "prompt": "Two lightning bolts strike at the same time for someone standing on the platform. For a passenger on a train passing very fast…",
+          "options": [
+            "they are also simultaneous, always",
+            "they may not be simultaneous: simultaneity depends on the frame",
+            "one of them doesn't happen",
+            "they happen later for all the passengers"
+          ],
+          "explanation": "That is the relativity of simultaneity: events separated in space that are simultaneous in one frame are not, in general, simultaneous in another."
+        }
+      ]
+    },
+    "fis-20-quantica": {
+      "title": "Quantum physics: photons, matter waves and the atom",
+      "theory": "# Light comes in packets\n\nIn 1900, Planck explained the radiation of hot bodies by assuming energy is exchanged in **packets**. Einstein (1905) took the idea seriously: light is made of **photons**, each with energy\n\n```\nE = h·f = h·c / λ        h = 6.626×10⁻³⁴ J·s\n```\n\nA handy shortcut: `h·c ≈ 1240 eV·nm`, so a 500 nm (green) photon has 1240/500 = 2.48 eV.\n\n# The photoelectric effect\n\nLight knocks electrons out of a metal — but only if **each photon** has enough energy to overcome the metal's **work function** W:\n\n```\nKmax = h·f − W\n```\n\nVery strong red light knocks out nothing; weak ultraviolet does. The intensity only changes **how many** electrons come out, not the energy of each one. That (and not relativity) is what won Einstein the Nobel Prize.\n\n# Matter waves\n\nDe Broglie (1924) proposed the reverse: particles are waves too, with\n\n```\nλ = h / p = h / (m·v)\n```\n\nAn electron accelerated through V volts has `p = √(2·m·e·V)`. With 100 V, λ ≈ 0.12 nm — the size of atoms, which is why electrons **diffract** in crystals and electron microscopes see details light can't reach.\n\n# The Bohr atom\n\nIn hydrogen, the electron can only have energies `En = −13.6 eV / n²`. When it drops from one level to another, it emits a photon with exactly the energy difference. The drop from n = 3 to n = 2 gives the red **Hα** line (656 nm), which colors nebulae. Each element has its own lines: that's how we know what stars are made of.\n\n# Uncertainty and duality\n\n- **Heisenberg:** `Δx · Δp ≥ ħ/2` (ħ = h/2π = 1.055×10⁻³⁴ J·s). The more confined an electron is, the more uncertain its velocity — which is why the atom doesn't collapse.\n- **Double slit:** electrons sent **one at a time** slowly build up an **interference** pattern: each behaves as a wave that goes through both slits, but is detected as a particle at one point.\n- **Tunneling:** a particle can cross a barrier that, classically, it wouldn't have the energy to jump over. It explains alpha decay and is used in scanning tunneling microscopes and flash memory.",
+      "task": "Answer the questions. Use `h·c = 1240 eV·nm`, `h = 6.626×10⁻³⁴ J·s`, `ħ = 1.055×10⁻³⁴ J·s`, `me = 9.11×10⁻³¹ kg` and `e = 1.602×10⁻¹⁹ C`.",
+      "hints": [
+        "Photon energy in eV: E = 1240 / λ(nm).",
+        "De Broglie for an accelerated electron: λ = h / √(2·m·e·V).",
+        "Bohr: ΔE = 13.6·(1/n1² − 1/n2²) eV and λ = 1240 / ΔE nm."
+      ],
+      "questions": [
+        {
+          "prompt": "What is the energy of a photon of green light of **500 nm**? Answer in eV.",
+          "explanation": "E = 1240 / 500 = 2.48 eV (≈ 3.97×10⁻¹⁹ J)."
+        },
+        {
+          "prompt": "Ultraviolet light of **250 nm** shines on a metal with a work function of **2.3 eV**. What is the maximum kinetic energy of the ejected electrons?",
+          "explanation": "Kmax = 1240/250 − 2.3 = 4.96 − 2.3 = 2.66 eV."
+        },
+        {
+          "prompt": "What is the de Broglie wavelength of an electron accelerated through **100 V**? Answer in nm.",
+          "explanation": "λ = h/√(2·m·e·V) = 6.626×10⁻³⁴ / √(2 · 9.11×10⁻³¹ · 1.602×10⁻¹⁹ · 100) ≈ 1.23×10⁻¹⁰ m ≈ 0.123 nm."
+        },
+        {
+          "prompt": "What is the wavelength of the photon emitted when hydrogen's electron drops from level **n = 3** to **n = 2**? Answer in nm.",
+          "explanation": "ΔE = 13.6 · (1/4 − 1/9) = 13.6 · 5/36 ≈ 1.889 eV → λ = 1240 / 1.889 ≈ 656 nm (the red Hα line)."
+        },
+        {
+          "prompt": "An electron is confined in a region of **0.1 nm** (Δx). What is the minimum uncertainty in its velocity? Answer in km/s.",
+          "explanation": "Δv ≥ ħ / (2·m·Δx) = 1.055×10⁻³⁴ / (2 · 9.11×10⁻³¹ · 10⁻¹⁰) ≈ 5.79×10⁵ m/s ≈ 579 km/s."
+        },
+        {
+          "prompt": "In the double-slit experiment, electrons are sent **one at a time**. After many electrons, the screen shows…",
+          "options": [
+            "two bands, one behind each slit",
+            "a single spot, in the center",
+            "an interference pattern, with several bright and dark bands",
+            "nothing, because a single electron doesn't interfere"
+          ],
+          "explanation": "Each electron arrives at one point (particle), but the distribution of the points is that of a wave that went through both slits and interfered with itself."
+        },
+        {
+          "prompt": "Why doesn't very intense red light knock electrons out of a metal that weak ultraviolet does?",
+          "options": [
+            "Because red light is slower",
+            "Because each red photon has less energy than the work function, no matter how many there are",
+            "Because the metal reflects all red light",
+            "Because the intensity of red light is always lower"
+          ],
+          "explanation": "An electron absorbs one photon at a time. If E = h·f < W, no single photon can eject it; more intensity just means more weak photons."
+        }
+      ]
     }
   }
 }

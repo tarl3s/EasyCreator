@@ -349,7 +349,7 @@ public static partial class ArduinoTests
         try { track = JsonSerializer.Deserialize<Track>(File.ReadAllText(path)); }
         catch (Exception e) { Fail("lições: JSON", e.Message); return; }
         if (track == null) { Fail("lições: JSON", "vazio"); return; }
-        Check("lições: trilha robotics/c", track.Area == "robotics" && track.Language == "c" && track.Id.Length > 0 && track.Lessons.Count >= 10,
+        Check("lições: trilha robotics/c", track.Area == "robotics" && track.Language == "c" && track.Id.Length > 0 && track.Lessons.Count == 20,
             $"area={track.Area} language={track.Language} lessons={track.Lessons.Count}");
         var ids = new HashSet<string>();
         int prevLevel = 0;
