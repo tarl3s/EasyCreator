@@ -5,7 +5,7 @@ namespace EasyCreator;
 
 /// <summary>Quiz and lab lessons: theory on the left; on the right the simulator (lab), its goals, and the questions.
 /// The lesson is done when every goal is met and every question is answered right.</summary>
-public sealed class LabView : Grid, IDisposable
+public sealed partial class LabView : Grid, IDisposable
 {
     readonly MainWindow _w;
     readonly Track _track;

@@ -8,7 +8,7 @@ public static partial class TestEntry
 {
     public static bool TryRun(string[] args)
     {
-        if (args.Contains("--snap"))
+        if (args.Contains("--snap") || args.Contains("--snap-labs"))
         {
             Progress.ReadOnly = true;
             var w = new MainWindow();

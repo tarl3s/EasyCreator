@@ -45,6 +45,22 @@ public static partial class TestEntry
                 view.SnapStartSolution();
                 await Shot($"robotics_{i + 1}", 2500);
             }
+            // Every lab lesson (or only the area given after --snap-labs), with its solution inputs already run.
+            if (Environment.GetCommandLineArgs().Contains("--snap-labs"))
+            {
+                var args = Environment.GetCommandLineArgs();
+                int at = Array.IndexOf(args, "--snap-labs");
+                string? only = at + 1 < args.Length ? args[at + 1] : null;
+                foreach (var t in ContentStore.Tracks.Where(t => only == null || t.Area == only))
+                    for (int i = 0; i < t.Lessons.Count; i++)
+                    {
+                        if (t.Lessons[i].Kind != "lab") continue;
+                        var view = new LabView(w, t, i);
+                        w.Go(() => view);
+                        view.SnapSolve();
+                        await Shot($"lab_{t.Id}_{i + 1}", 1500);
+                    }
+            }
         }
         catch (Exception ex) { File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_snap_error.txt"), ex.ToString()); }
         Application.Current.Shutdown();
@@ -58,5 +74,18 @@ public sealed partial class LessonView
     {
         _code.Text = _lesson.Solution;
         if (IsRobotics) StartSim();
+    }
+}
+
+public sealed partial class LabView
+{
+    /// <summary>Snapshot helper: applies the solution inputs and runs the experiment.</summary>
+    internal void SnapSolve()
+    {
+        if (_lab == null) return;
+        _lab.SetInputs(_lesson.SolutionInputs);
+        _lab.RunToEnd();
+        _labRan = true;
+        ShowGoals();
     }
 }
