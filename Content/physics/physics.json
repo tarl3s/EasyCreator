@@ -1,0 +1,410 @@
+{
+  "id": "physics",
+  "title": "Física: do movimento à física moderna",
+  "area": "physics",
+  "language": "",
+  "description": "Do lançamento de uma bola até órbitas, oscilações, lentes, calor, eletromagnetismo e métodos numéricos de faculdade — cada lei com um laboratório para você experimentar.",
+  "lessons": [
+    {
+      "id": "fis-01-cinematica",
+      "title": "Cinemática: o lançamento de um projétil",
+      "level": 1,
+      "kind": "lab",
+      "lab": "projectile",
+      "labParams": { "targetX": "30", "targetWidth": "2", "hide": "drag,planet" },
+      "theory": "# O que é cinemática?\n\nA **cinemática** descreve **como** as coisas se movem, sem perguntar ainda **por quê** (isso é a dinâmica, na próxima lição). Ela usa três grandezas:\n\n- **Posição** `x` — onde o corpo está, em metros (m).\n- **Velocidade** `v = Δx / Δt` — quanto a posição muda por segundo (m/s).\n- **Aceleração** `a = Δv / Δt` — quanto a velocidade muda por segundo (m/s²).\n\n## Movimento uniformemente variado (MUV)\n\nQuando a aceleração é constante, valem três equações que você vai usar a vida toda:\n\n```\nv = v0 + a·t\nx = x0 + v0·t + a·t²/2\nv² = v0² + 2·a·Δx        (Torricelli)\n```\n\nPerto da superfície da Terra, todo corpo em queda livre tem a mesma aceleração para baixo: **g ≈ 9,81 m/s²** — uma pedra e uma pena caem juntas no vácuo!\n\n# Lançamento oblíquo\n\nO truque de Galileu: **separe o movimento em dois**. Um canhão lança a bola com velocidade `v0` e ângulo `θ`:\n\n- Na **horizontal** nada empurra nem freia a bola: velocidade constante `vx = v0·cos θ`.\n- Na **vertical** ela sobe freando e desce acelerando, com `a = −g`: começa com `vy = v0·sin θ`.\n\n```\nx(t) = v0·cos θ · t\ny(t) = h0 + v0·sin θ · t − g·t²/2\n```\n\nLançando do chão (`h0 = 0`), resolvendo `y = 0`:\n\n```\ntempo de voo:   T = 2·v0·sin θ / g\nalcance:        A = v0²·sin(2θ) / g\naltura máxima:  H = (v0·sin θ)² / (2·g)\n```\n\n## O que o alcance ensina\n\n- `sin(2θ)` é máximo quando `2θ = 90°`: **45° dá o maior alcance** (sem ar).\n- Ângulos **complementares** (30° e 60°, 20° e 70°) dão o **mesmo alcance** — mas o mais alto voa muito mais tempo.\n- Dobrar a velocidade **quadruplica** o alcance (`v0²`).\n\n## Hipóteses do modelo\n\n- Sem resistência do ar (veremos o ar na última lição).\n- `g` constante e Terra plana — bom para alcances de alguns quilômetros.\n- A bola é um ponto: não gira nem tem tamanho.",
+      "task": "Acerte a bandeira verde a **30 m** de distância (a bola precisa cair entre 29 e 31 m) com um **tempo de voo menor que 3 s**. Mexa na velocidade e no ângulo e clique em **▶ Rodar** a cada tentativa.",
+      "hints": [
+        "Do chão, o alcance é `A = v0²·sin(2θ)/g`. Com 45°, `sin 90° = 1`, então `A = v0²/g`.",
+        "Para A = 30 m com 45°: `v0 = √(30 · 9,81) ≈ 17,2 m/s`.",
+        "Ângulos altos como 60° também acertam, mas a bola sobe muito e demora mais de 3 s: prefira ângulos até 45°."
+      ],
+      "goals": [
+        { "metric": "hitTarget", "op": ">=", "value": 1, "description": "A bola cai no alvo (30 m ± 1 m)" },
+        { "metric": "flightTime", "op": "<", "value": 3, "description": "Tempo de voo menor que 3 s" }
+      ],
+      "solutionInputs": { "speed": "17.2", "angle": "45", "height": "0" },
+      "questions": [
+        {
+          "prompt": "Uma bola rola para fora de uma mesa e cai de **20 m** de altura (sem ar, g = 9,8 m/s²). Quanto tempo ela leva para chegar ao chão?",
+          "kind": "number", "answer": "2.02", "tolerance": 3, "unit": "s",
+          "explanation": "Na vertical ela parte do repouso: 20 = 9,8·t²/2 → t = √(40/9,8) ≈ 2,02 s. A velocidade horizontal não muda esse tempo!"
+        },
+        {
+          "prompt": "Sem resistência do ar, lançando do chão, qual ângulo dá o **maior alcance**?",
+          "kind": "choice", "options": ["30°", "45°", "60°", "90°"], "answer": "1",
+          "explanation": "O alcance é v0²·sin(2θ)/g, máximo quando sin(2θ) = 1, ou seja, 2θ = 90° → θ = 45°."
+        },
+        {
+          "prompt": "Um carro parte do repouso com aceleração constante de **3 m/s²**. Qual é a velocidade dele depois de **4 s**?",
+          "kind": "number", "answer": "12", "tolerance": 2, "unit": "m/s",
+          "explanation": "v = v0 + a·t = 0 + 3·4 = 12 m/s (≈ 43 km/h)."
+        }
+      ]
+    },
+    {
+      "id": "fis-02-newton",
+      "title": "Leis de Newton: o bloco na rampa",
+      "level": 1,
+      "kind": "lab",
+      "lab": "incline",
+      "labParams": { "length": "6", "lock": "mass,friction" },
+      "theory": "# As três leis de Newton\n\nA cinemática diz como algo se move; a **dinâmica** diz por quê. Tudo cabe em três leis:\n\n- **1ª lei (inércia):** se a força resultante é zero, o corpo continua parado ou em movimento retilíneo com velocidade constante.\n- **2ª lei:** a força resultante produz aceleração: `F_resultante = m·a`. Força em **newtons** (N), massa em kg.\n- **3ª lei (ação e reação):** se A empurra B, B empurra A com força igual e oposta — em corpos **diferentes**, por isso não se anulam.\n\n# As forças que aparecem em quase todo problema\n\n- **Peso** `P = m·g` — a Terra puxa o bloco para baixo (5 kg → 49 N).\n- **Normal** `N` — a superfície empurra o bloco, sempre **perpendicular** a ela.\n- **Atrito** — sempre **contra** o movimento (ou contra a tendência de se mover):\n  - parado: o atrito estático se ajusta, até o máximo `Fat ≤ μ·N`;\n  - deslizando: atrito cinético `Fat = μ·N`.\n\n## Decompondo o peso numa rampa\n\nNuma rampa de ângulo `θ`, use eixos **ao longo** e **perpendicular** à rampa:\n\n```\nP paralelo      = m·g·sin θ  (rampa abaixo)\nP perpendicular = m·g·cos θ  (contra a rampa)\nN               = m·g·cos θ\n```\n\nAo longo da rampa, com uma força `F` puxando para cima e o bloco subindo:\n\n```\nF − m·g·sin θ − μ·m·g·cos θ = m·a\n```\n\n## Exemplo\n\nBloco de 5 kg, rampa de 30°, μ = 0,2, sem força aplicada: `P paralelo = 24,5 N` e o atrito máximo é `0,2 · 42,5 = 8,5 N`. Como 24,5 > 8,5, ele **desce** com `a = (24,5 − 8,5)/5 ≈ 3,2 m/s²`.\n\n## Hipóteses do simulador\n\n- `g = 9,81 m/s²`; o bloco é rígido e parte do repouso no meio da rampa.\n- Um único μ vale para o atrito estático e o cinético (na vida real o estático costuma ser um pouco maior).\n- A força aplicada é paralela à rampa (positiva = rampa acima). O diagrama à direita mostra todas as forças.",
+      "task": "O bloco tem **5 kg** e o atrito é **μ = 0,2** (travados). Escolha a força para que ele **suba** a rampa com aceleração entre **1,8 e 2,2 m/s²**, numa rampa de **pelo menos 30°**.",
+      "hints": [
+        "Some as forças ao longo da rampa: `F − P·sin θ − Fat = m·a`.",
+        "Com 30°: `P·sin 30° = 5·9,81·0,5 ≈ 24,5 N`; `N = 5·9,81·cos 30° ≈ 42,5 N`; `Fat = 0,2·42,5 ≈ 8,5 N`.",
+        "Para a = 2 m/s²: `F = 5·2 + 24,5 + 8,5 ≈ 43 N`."
+      ],
+      "goals": [
+        { "metric": "acceleration", "op": "between", "value": 1.8, "max": 2.2, "description": "O bloco sobe com aceleração entre 1,8 e 2,2 m/s²" },
+        { "metric": "angle", "op": ">=", "value": 30, "description": "Rampa com pelo menos 30° de inclinação" }
+      ],
+      "solutionInputs": { "mass": "5", "angle": "30", "friction": "0.2", "force": "43" },
+      "questions": [
+        {
+          "prompt": "Um bloco de **5 kg** está parado numa rampa de **30°** (g = 9,8 m/s²). Qual é a força normal?",
+          "kind": "number", "answer": "42.4", "tolerance": 2, "unit": "N",
+          "explanation": "N = m·g·cos θ = 5·9,8·0,866 ≈ 42,4 N. A normal é menor que o peso (49 N) porque só equilibra a parte do peso perpendicular à rampa."
+        },
+        {
+          "prompt": "Pela 3ª lei de Newton, qual é a **reação** ao peso do bloco (a Terra puxando o bloco)?",
+          "kind": "choice",
+          "options": ["A força normal que a rampa faz no bloco", "A força com que o bloco puxa a Terra para cima", "O atrito entre o bloco e a rampa", "Não existe reação ao peso"],
+          "answer": "1",
+          "explanation": "Ação e reação são do mesmo tipo e agem em corpos diferentes: a Terra atrai o bloco e o bloco atrai a Terra com a mesma força. A normal NÃO é a reação do peso."
+        },
+        {
+          "prompt": "Com **μ = 0,5**, qual é o **maior ângulo** de rampa em que um bloco fica parado sozinho?",
+          "kind": "number", "answer": "26.57", "tolerance": 2, "unit": "°",
+          "explanation": "No limite, m·g·sin θ = μ·m·g·cos θ → tan θ = μ = 0,5 → θ ≈ 26,6°. Repare que a massa nem entra na conta!"
+        }
+      ]
+    },
+    {
+      "id": "fis-03-energia",
+      "title": "Energia e trabalho: a mola que lança",
+      "level": 2,
+      "kind": "lab",
+      "lab": "spring",
+      "labParams": { "hide": "damping" },
+      "theory": "# Trabalho: força ao longo de um caminho\n\nUma força **realiza trabalho** quando desloca alguma coisa:\n\n```\nW = F·d·cos θ        (joules: 1 J = 1 N·m)\n```\n\n`θ` é o ângulo entre a força e o deslocamento. Empurrar a favor do movimento dá trabalho **positivo**; o atrito, que vai contra, dá trabalho **negativo**; a normal, perpendicular, não realiza trabalho nenhum.\n\n# Formas de energia\n\n- **Cinética** (movimento): `Ec = m·v²/2`\n- **Potencial gravitacional** (altura): `Ep = m·g·h`\n- **Potencial elástica** (mola esticada ou comprimida): `Ee = k·x²/2`\n\n## Teorema trabalho–energia\n\nO trabalho **total** sobre um corpo vira variação da sua energia cinética: `W_total = ΔEc`.\n\n## Conservação da energia mecânica\n\nSem atrito nem resistência do ar, a energia só **troca de forma** — a soma fica constante:\n\n```\nEc + Ep + Ee = constante\n```\n\n# A mola (lei de Hooke)\n\nUma mola puxa de volta proporcionalmente ao quanto foi deformada: `F = −k·x`. A **constante elástica** `k` (N/m) diz o quão dura ela é.\n\nNo laboratório o bloco é puxado até `x = A` e solto. Lá toda a energia é elástica; ao passar por `x = 0` toda ela virou cinética:\n\n```\nk·A²/2 = m·v_max²/2   →   v_max = A·√(k/m)\n```\n\nAs barras mostram a energia passando de elástica para cinética e de volta, com o total constante.\n\n## Potência\n\n`P = W / Δt` (watts). Um motor de 100 W entrega 100 J a cada segundo.\n\n## Hipóteses do simulador\n\n- Mola ideal e sem massa; chão sem atrito; bloco rígido.",
+      "task": "Monte um lançador de mola que faça o bloco atingir **velocidade máxima entre 3,8 e 4,2 m/s** guardando **no máximo 10 J** de energia na mola.",
+      "hints": [
+        "A velocidade máxima é `v_max = A·√(k/m)` e a energia guardada é `E = k·A²/2 = m·v_max²/2`.",
+        "Com v = 4 m/s, a energia é `8·m`: para ficar abaixo de 10 J, a massa precisa ser no máximo 1,25 kg.",
+        "Exemplo: m = 1 kg, k = 200 N/m e A = 0,28 m → v_max ≈ 3,96 m/s e E ≈ 7,8 J."
+      ],
+      "goals": [
+        { "metric": "maxSpeed", "op": "between", "value": 3.8, "max": 4.2, "description": "Velocidade máxima entre 3,8 e 4,2 m/s" },
+        { "metric": "energy", "op": "<=", "value": 10, "description": "Energia guardada na mola de no máximo 10 J" }
+      ],
+      "solutionInputs": { "mass": "1", "k": "200", "amplitude": "0.28" },
+      "questions": [
+        {
+          "prompt": "Uma mola de **k = 400 N/m** é comprimida **0,1 m**. Quanta energia ela guarda?",
+          "kind": "number", "answer": "2", "tolerance": 2, "unit": "J",
+          "explanation": "Ee = k·x²/2 = 400·0,01/2 = 2 J."
+        },
+        {
+          "prompt": "Um bloco de **2 kg** escorrega sem atrito de uma altura de **5 m** (g = 9,8 m/s²). Com que velocidade chega embaixo?",
+          "kind": "number", "answer": "9.9", "tolerance": 2, "unit": "m/s",
+          "explanation": "m·g·h = m·v²/2 → v = √(2·g·h) = √98 ≈ 9,9 m/s. A massa se cancela!"
+        },
+        {
+          "prompt": "Uma caixa é arrastada 3 m pelo chão. O trabalho da **força de atrito** sobre ela é…",
+          "kind": "choice",
+          "options": ["positivo, porque ela se moveu", "zero, porque o atrito não se move", "negativo, porque o atrito é contrário ao deslocamento", "igual ao trabalho do peso"],
+          "answer": "2",
+          "explanation": "W = F·d·cos 180° = −F·d: o atrito tira energia cinética do corpo e a transforma em calor."
+        }
+      ]
+    },
+    {
+      "id": "fis-04-colisoes",
+      "title": "Quantidade de movimento e colisões",
+      "level": 2,
+      "kind": "lab",
+      "lab": "collisions",
+      "theory": "# Quantidade de movimento (momento linear)\n\nUm caminhão a 10 km/h é mais difícil de parar que uma bicicleta na mesma velocidade. A grandeza que mede isso é a **quantidade de movimento**:\n\n```\np = m·v        (kg·m/s, é um vetor: tem sentido!)\n```\n\n## Impulso\n\nUma força agindo por um tempo muda o momento: `I = F·Δt = Δp`. É por isso que o airbag salva vidas: ele **aumenta o tempo** da parada, diminuindo a força.\n\n# Conservação do momento\n\nSe nenhuma força **externa** age no sistema, o momento total não muda — mesmo numa batida violenta, porque as forças entre os carrinhos são ação e reação (3ª lei) e se cancelam no total:\n\n```\nm1·v1 + m2·v2 = m1·v1' + m2·v2'\n```\n\n## Tipos de colisão\n\nO momento **sempre** se conserva; a energia cinética **nem sempre**. O **coeficiente de restituição** mede o quanto os corpos se afastam depois, comparado com o quanto se aproximavam antes:\n\n```\ne = (v2' − v1') / (v1 − v2)\n```\n\n- `e = 1` — **elástica**: a energia cinética também se conserva (bolas de bilhar, quase).\n- `0 < e < 1` — **parcialmente inelástica**: parte da energia vira calor, som, deformação.\n- `e = 0` — **perfeitamente inelástica**: os corpos grudam e seguem juntos. É a que mais perde energia.\n\nJuntando as duas equações, as velocidades depois são:\n\n```\nv1' = (m1·v1 + m2·v2 + m2·e·(v2 − v1)) / (m1 + m2)\nv2' = (m1·v1 + m2·v2 + m1·e·(v1 − v2)) / (m1 + m2)\n```\n\n## Hipóteses do simulador\n\n- Trilho reto sem atrito (a única força horizontal é a da batida).\n- Colisão instantânea, em uma dimensão. Velocidade positiva = para a direita.",
+      "task": "Reproduza o famoso **pêndulo de Newton**: faça o carrinho 1 **parar completamente** depois da batida, entregando todo o movimento ao carrinho 2, **sem perder energia cinética** (perda de no máximo 1%).",
+      "hints": [
+        "Para não perder energia, a colisão tem que ser elástica: `e = 1`.",
+        "Numa colisão elástica entre massas **iguais**, os carrinhos simplesmente trocam de velocidade.",
+        "Exemplo: m1 = m2 = 2 kg, v1 = 2 m/s, v2 = 0 e e = 1."
+      ],
+      "goals": [
+        { "metric": "collided", "op": ">=", "value": 1, "description": "Os carrinhos colidem" },
+        { "metric": "v1After", "op": "between", "value": -0.05, "max": 0.05, "description": "O carrinho 1 fica parado depois da batida (|v1'| ≤ 0,05 m/s)" },
+        { "metric": "keLostPct", "op": "<=", "value": 1, "description": "Energia cinética conservada (perda de no máximo 1%)" }
+      ],
+      "solutionInputs": { "m1": "2", "v1": "2", "m2": "2", "v2": "0", "e": "1" },
+      "questions": [
+        {
+          "prompt": "Um carrinho de **2 kg** a **3 m/s** bate num carrinho de **1 kg** parado e os dois **grudam**. Qual a velocidade do conjunto?",
+          "kind": "number", "answer": "2", "tolerance": 2, "unit": "m/s",
+          "explanation": "Momento antes: 2·3 = 6 kg·m/s. Depois: (2 + 1)·v = 6 → v = 2 m/s."
+        },
+        {
+          "prompt": "Na batida da pergunta anterior, quanta **energia cinética foi perdida**?",
+          "kind": "number", "answer": "3", "tolerance": 2, "unit": "J",
+          "explanation": "Antes: 2·3²/2 = 9 J. Depois: 3·2²/2 = 6 J. Perdeu 3 J, que viraram calor, som e deformação."
+        },
+        {
+          "prompt": "Numa colisão em que nenhuma força externa age, o que **sempre** se conserva?",
+          "kind": "choice",
+          "options": ["A energia cinética total", "A quantidade de movimento total", "A velocidade de cada corpo", "As duas: energia cinética e quantidade de movimento"],
+          "answer": "1",
+          "explanation": "O momento total sempre se conserva sem forças externas. A energia cinética só se conserva nas colisões elásticas."
+        }
+      ]
+    },
+    {
+      "id": "fis-05-orbitas",
+      "title": "Movimento circular e gravitação: um satélite em órbita",
+      "level": 3,
+      "kind": "lab",
+      "lab": "orbit",
+      "theory": "# Movimento circular\n\nUm corpo girando em círculo com velocidade de módulo constante **está acelerando**: a direção da velocidade muda o tempo todo. Essa aceleração aponta para o centro (**centrípeta**):\n\n```\nv  = 2·π·r / T          (T = período)\nω  = 2·π / T = v / r    (velocidade angular, rad/s)\nac = v² / r = ω²·r\n```\n\nPela 2ª lei, alguma força precisa puxar para o centro: `Fc = m·v²/r`. Num carro na curva é o atrito dos pneus; numa pedra no barbante, a tração; num satélite, **a gravidade**.\n\n# Gravitação universal\n\nNewton percebeu que a força que derruba a maçã é a mesma que segura a Lua:\n\n```\nF = G·M·m / r²        G = 6,67×10⁻¹¹ N·m²/kg²\n```\n\n`r` é a distância entre os **centros**. Para a Terra, `G·M ≈ 398 600 km³/s²`.\n\n## O canhão de Newton\n\nImagine um canhão no alto de uma montanha. Quanto mais rápido a bala sai, mais longe ela cai — até que, numa certa velocidade, a Terra \"curva para longe\" na mesma medida em que a bala cai: ela **cai para sempre ao redor da Terra**. Isso é uma órbita! Igualando gravidade e força centrípeta:\n\n```\nG·M·m/r² = m·v²/r\nv_circular = √(G·M / r)\nT = 2·π·√(r³ / (G·M))    (Kepler: T² ∝ r³)\nv_escape = √(2·G·M / r) = √2 · v_circular\n```\n\n## Órbitas elípticas\n\n- Mais lento que `v_circular`: a órbita vira uma **elipse** que desce (e pode bater no planeta).\n- Mais rápido: elipse que sobe até um **apogeu** distante.\n- A partir de `v_escape`: o satélite **escapa** e não volta.\n\nA **excentricidade** `e` mede o achatamento: 0 = círculo, perto de 1 = elipse muito esticada.\n\n## Hipóteses do simulador\n\n- Planeta esférico, sem atmosfera e sem outros corpos (Lua, Sol).\n- Lançamento horizontal (perpendicular ao raio). Altitude = distância acima da superfície.",
+      "task": "Coloque um satélite numa **órbita circular a 400 km** de altitude, como a Estação Espacial Internacional: ele não pode cair nem escapar, a excentricidade deve ser **no máximo 0,01** e o período entre **90 e 95 minutos**.",
+      "hints": [
+        "Use `v = √(G·M/r)` com `r` medido do **centro** da Terra: r = 6371 + 400 = 6771 km.",
+        "√(398 600 / 6771) ≈ 7,67 km/s — cerca de 27 600 km/h!",
+        "Se o satélite cair, aumente a velocidade; se a órbita esticar demais, diminua. Ajuste fino de 0,01 km/s."
+      ],
+      "goals": [
+        { "metric": "orbitType", "op": "between", "value": 0.5, "max": 1.5, "description": "O satélite fica em órbita (não cai nem escapa)" },
+        { "metric": "eccentricity", "op": "<=", "value": 0.01, "description": "Órbita quase circular (excentricidade ≤ 0,01)" },
+        { "metric": "period", "op": "between", "value": 90, "max": 95, "description": "Período entre 90 e 95 minutos" }
+      ],
+      "solutionInputs": { "altitude": "400", "speed": "7.67", "planet": "earth" },
+      "questions": [
+        {
+          "prompt": "Qual seria a velocidade de uma órbita circular **rasante** na Lua (r = 1737 km, G·M = 4903 km³/s²)?",
+          "kind": "number", "answer": "1.68", "tolerance": 2, "unit": "km/s",
+          "explanation": "v = √(G·M/r) = √(4903/1737) ≈ 1,68 km/s — bem menos que na Terra, porque a Lua tem muito menos massa."
+        },
+        {
+          "prompt": "Por que os astronautas **flutuam** dentro da Estação Espacial, a só 400 km de altitude?",
+          "kind": "choice",
+          "options": ["Porque lá não existe gravidade", "Porque estão em queda livre junto com a estação", "Porque o ar lá em cima os empurra para cima", "Porque a Lua os atrai na direção oposta"],
+          "answer": "1",
+          "explanation": "A 400 km a gravidade ainda é ~89% da da superfície! Estação e astronautas caem juntos ao redor da Terra, por isso nada pressiona os astronautas contra o chão."
+        },
+        {
+          "prompt": "Um carro faz uma curva de raio **50 m** a **20 m/s**. Qual é a aceleração centrípeta?",
+          "kind": "number", "answer": "8", "tolerance": 2, "unit": "m/s²",
+          "explanation": "ac = v²/r = 400/50 = 8 m/s² — quase 1 g! Quem fornece essa força é o atrito dos pneus."
+        }
+      ]
+    },
+    {
+      "id": "fis-06-pendulo",
+      "title": "Oscilações: o pêndulo que bate o segundo",
+      "level": 3,
+      "kind": "lab",
+      "lab": "pendulum",
+      "theory": "# Movimento harmônico simples (MHS)\n\nMuita coisa **vai e volta**: balanço, corda de violão, átomos num cristal, circuitos elétricos. Quando a força de retorno é proporcional ao deslocamento (`F = −k·x`), o movimento é um **MHS**:\n\n```\nx(t) = A·cos(ω·t)\nT = 2·π / ω        (período, s)\nf = 1 / T          (frequência, Hz)\n```\n\nPara o sistema **massa–mola**: `ω = √(k/m)`, então `T = 2·π·√(m/k)`.\n\n# O pêndulo simples\n\nUma massa presa num fio de comprimento `L`. A componente do peso que puxa de volta é `m·g·sin θ`, e a equação do movimento é:\n\n```\nθ'' = −(g/L)·sin θ\n```\n\nPara **ângulos pequenos** (até uns 15°), `sin θ ≈ θ` (em radianos) e ela vira um MHS:\n\n```\nT = 2·π·√(L / g)\n```\n\n## Coisas surpreendentes\n\n- O período **não depende da massa**: chumbo ou isopor, mesmo período.\n- Para oscilações pequenas, também **não depende da amplitude** (isocronismo, descoberto por Galileu olhando um lustre na igreja). Por isso o pêndulo virou relógio.\n- Para amplitudes grandes o período **aumenta**: `T ≈ T0·(1 + θ0²/16)` com θ0 em radianos — a 40° são uns 3% a mais.\n- Na Lua (g = 1,62 m/s²) o mesmo pêndulo oscila ~2,5 vezes mais devagar.\n\n## Amortecimento e ressonância\n\nO atrito com o ar faz a amplitude cair aos poucos (**amortecimento**). Empurrar no ritmo certo — na frequência natural — faz a amplitude crescer muito: é a **ressonância**, que você usa no balanço do parquinho.\n\n## Hipóteses do simulador\n\n- Massa pontual num fio sem massa e inextensível.\n- O simulador resolve a equação **completa** (com `sin θ`) numericamente, então ele mostra o efeito das amplitudes grandes. O período é medido no próprio movimento.",
+      "task": "Construa na Terra um **pêndulo de segundos** (cada ida ou volta dura 1 s): período entre **1,98 e 2,02 s**, com amplitude de no máximo **15°** para valer a fórmula das oscilações pequenas.",
+      "hints": [
+        "Isole L em `T = 2·π·√(L/g)`: `L = g·(T / 2π)²`.",
+        "Com T = 2 s e g = 9,81 m/s²: L = 9,81 · (2/6,283)² ≈ 0,99 m.",
+        "Use uma amplitude pequena (por exemplo 5°) e deixe o planeta na Terra."
+      ],
+      "goals": [
+        { "metric": "period", "op": "between", "value": 1.98, "max": 2.02, "description": "Período entre 1,98 e 2,02 s" },
+        { "metric": "amplitude", "op": "<=", "value": 15, "description": "Amplitude de no máximo 15°" }
+      ],
+      "solutionInputs": { "length": "0.99", "amplitude": "5", "mass": "1", "damping": "0", "planet": "earth" },
+      "questions": [
+        {
+          "prompt": "Qual é o período de um pêndulo de **1 m** na **Lua** (g = 1,62 m/s²), com oscilações pequenas?",
+          "kind": "number", "answer": "4.94", "tolerance": 2, "unit": "s",
+          "explanation": "T = 2π·√(1/1,62) ≈ 2π·0,786 ≈ 4,94 s — 2,5 vezes mais lento que na Terra (2,0 s)."
+        },
+        {
+          "prompt": "Para oscilações pequenas, o que muda o período de um pêndulo simples?",
+          "kind": "choice",
+          "options": ["Só a massa", "O comprimento e a gravidade", "A massa e a amplitude", "Só a amplitude"],
+          "answer": "1",
+          "explanation": "T = 2π·√(L/g): só o comprimento e a gravidade. A massa não entra, e a amplitude só importa quando é grande."
+        },
+        {
+          "prompt": "Uma massa de **0,5 kg** presa numa mola de **k = 200 N/m** oscila. Qual é o período?",
+          "kind": "number", "answer": "0.314", "tolerance": 2, "unit": "s",
+          "explanation": "T = 2π·√(m/k) = 2π·√(0,0025) = 2π·0,05 ≈ 0,314 s."
+        }
+      ]
+    },
+    {
+      "id": "fis-07-optica",
+      "title": "Ondas e óptica: formando imagens com lentes",
+      "level": 3,
+      "kind": "lab",
+      "lab": "lens",
+      "theory": "# Ondas\n\nUma **onda** transporta energia sem transportar matéria: a onda do estádio anda, as pessoas ficam no lugar. Toda onda periódica obedece a:\n\n```\nv = λ·f\n```\n\n- `λ` (lambda) — **comprimento de onda**, distância entre duas cristas (m).\n- `f` — **frequência**, quantas cristas passam por segundo (Hz).\n- `v` — velocidade de propagação: som no ar ≈ 340 m/s; luz no vácuo `c ≈ 3×10⁸ m/s`.\n\nO som é uma onda **mecânica** (precisa de meio). A luz é uma onda **eletromagnética** (anda no vácuo); a cor depende do comprimento de onda: violeta ~400 nm, vermelho ~700 nm.\n\nQuando duas ondas se encontram elas se somam (**interferência**): cristas com cristas reforçam, cristas com vales se apagam — é o que faz as cores numa bolha de sabão.\n\n# Refração\n\nAo mudar de meio a luz muda de velocidade e **desvia** (lei de Snell): `n1·sin θ1 = n2·sin θ2`, com `n = c / v` (índice de refração; vidro ≈ 1,5). As lentes usam isso para dobrar os raios.\n\n# Lentes delgadas\n\n- **Convergente** (mais grossa no meio): junta os raios paralelos num **foco** F', a uma distância `f`.\n- **Divergente** (mais fina no meio): espalha os raios, como se viessem de um foco virtual.\n\n## Os três raios principais\n\n- Raio **paralelo** ao eixo → sai passando pelo foco F' (ou se afastando de F, na divergente).\n- Raio pelo **centro** da lente → passa reto.\n- Raio pelo **foco** F → sai paralelo ao eixo.\n\nOnde os raios (ou seus prolongamentos) se cruzam, nasce a **imagem**.\n\n## Equação de Gauss e aumento\n\n```\n1/f = 1/do + 1/di\nm = −di / do          (aumento)\n```\n\n- `di > 0`: imagem **real** (do outro lado, dá para projetar numa tela).\n- `di < 0`: imagem **virtual** (do mesmo lado, só vista através da lente — a lupa).\n- `m < 0`: imagem **invertida**; `|m| > 1`: maior que o objeto.\n- Convergente: `f > 0`; divergente: `f < 0`. Vergência `D = 1/f` em dioptrias (f em metros) — o \"grau\" dos óculos.\n\n## Hipóteses do simulador\n\n- Lente fina, raios próximos do eixo (aproximação paraxial).\n- No desenho a altura está ampliada em relação à distância, para ficar legível; as linhas continuam retas e se cruzam no lugar certo.",
+      "task": "Com a lente **convergente**, monte um **projetor**: forme uma imagem **real, invertida e duas vezes maior** que o objeto (aumento entre −2,1 e −1,9).",
+      "hints": [
+        "Aumento −2 significa `di = 2·do` (imagem real, do outro lado, duas vezes mais longe).",
+        "Na equação de Gauss: `1/f = 1/do + 1/(2·do) = 3/(2·do)` → `do = 1,5·f`.",
+        "Com f = 10 cm, coloque o objeto a 15 cm da lente."
+      ],
+      "goals": [
+        { "metric": "real", "op": ">=", "value": 1, "description": "A imagem é real (forma-se do outro lado da lente)" },
+        { "metric": "magnification", "op": "between", "value": -2.1, "max": -1.9, "description": "Imagem invertida e duas vezes maior (aumento entre −2,1 e −1,9)" }
+      ],
+      "solutionInputs": { "kind": "converging", "focal": "10", "objDist": "15", "objHeight": "2" },
+      "questions": [
+        {
+          "prompt": "Um som de **680 Hz** viaja no ar a **340 m/s**. Qual é o comprimento de onda?",
+          "kind": "number", "answer": "0.5", "tolerance": 2, "unit": "m",
+          "explanation": "λ = v / f = 340 / 680 = 0,5 m."
+        },
+        {
+          "prompt": "Uma lente convergente tem **f = 20 cm** e o objeto está a **60 cm** dela. A que distância da lente se forma a imagem?",
+          "kind": "number", "answer": "30", "tolerance": 2, "unit": "cm",
+          "explanation": "1/di = 1/20 − 1/60 = 2/60 → di = 30 cm (real, invertida e com metade do tamanho, m = −0,5)."
+        },
+        {
+          "prompt": "A imagem de um objeto real formada por uma lente **divergente** é sempre…",
+          "kind": "choice",
+          "options": ["real, invertida e maior", "real, invertida e menor", "virtual, direita e menor", "virtual, invertida e maior"],
+          "answer": "2",
+          "explanation": "A divergente espalha os raios; seus prolongamentos se cruzam do mesmo lado do objeto, mais perto da lente: imagem virtual, direita e menor (como num olho mágico de porta)."
+        }
+      ]
+    },
+    {
+      "id": "fis-08-termodinamica",
+      "title": "Termodinâmica: o gás ideal e a primeira lei",
+      "level": 4,
+      "kind": "lab",
+      "lab": "gas",
+      "labParams": { "moles": "1", "T1": "300", "V1": "10", "lock": "moles,T1,V1" },
+      "safety": "Nunca aqueça **recipientes fechados** (latas, frascos, panela de pressão com a válvula entupida): pela lei dos gases, a pressão sobe com a temperatura até o recipiente explodir.",
+      "theory": "# Temperatura, pressão e gás ideal\n\n- **Temperatura** mede a agitação das moléculas. Em física usamos **kelvin**: `T(K) = T(°C) + 273,15`. Zero kelvin é o zero absoluto.\n- **Pressão** é força por área: `p = F / A` (pascal, Pa = N/m²). O ar ao nível do mar empurra com ~101 kPa.\n- 1 litro = 0,001 m³.\n\nUm **gás ideal** (moléculas pontuais que só batem umas nas outras) segue:\n\n```\np·V = n·R·T        R = 8,314 J/(mol·K)\n```\n\nNo laboratório as moléculas (pontos amarelos) andam mais rápido quando o gás esquenta: a velocidade média cresce com `√T`.\n\n# Energia interna, calor e trabalho\n\n- **Energia interna** `U` — a energia das moléculas. Num gás ideal monoatômico: `U = (3/2)·n·R·T` — só depende da temperatura!\n- **Calor** `Q` — energia que entra por diferença de temperatura (Q > 0 entrando).\n- **Trabalho** `W` — energia que o gás entrega empurrando o pistão. Com pressão variando, `W` é a **área sob a curva** no gráfico p–V (W > 0 quando o gás expande).\n\n## Primeira lei (conservação da energia)\n\n```\nΔU = Q − W\n```\n\n## Os processos clássicos\n\n- **Isotérmico** (T constante): `ΔU = 0`, então `Q = W = n·R·T·ln(V2/V1)`. Todo o calor recebido vira trabalho.\n- **Isobárico** (p constante): `W = p·(V2 − V1)`; o gás esquenta ao expandir.\n- **Isocórico** (V constante): `W = 0`, todo calor vira energia interna.\n- **Adiabático** (sem trocar calor, Q = 0): `p·V^γ` constante, com `γ = 5/3` no gás monoatômico; ao expandir o gás **esfria** (`W = −ΔU`) — é por isso que um spray fica gelado.\n\n# Segunda lei e máquinas térmicas\n\nCalor flui sozinho do quente para o frio, e nenhuma máquina transforma **todo** o calor em trabalho num ciclo. O limite é o **rendimento de Carnot**:\n\n```\nη_max = 1 − T_fria / T_quente   (em kelvin)\n```\n\n## Hipóteses do simulador\n\n- Gás ideal monoatômico, processos lentos (quase estáticos), pistão sem atrito.",
+      "task": "Comece com **1 mol a 300 K em 10 L** (travados). Escolha o processo e o volume final para que o gás **realize cerca de 1000 J de trabalho** (entre 950 e 1050 J) **sem mudar sua energia interna** (ΔU entre −1 e 1 J).",
+      "hints": [
+        "Energia interna constante significa temperatura constante: qual processo é esse?",
+        "No isotérmico, `W = n·R·T·ln(V2/V1)` e `n·R·T = 8,314·300 ≈ 2494 J`.",
+        "`ln(V2/V1) = 1000/2494 ≈ 0,40` → `V2/V1 ≈ 1,49` → V2 ≈ 15 L."
+      ],
+      "goals": [
+        { "metric": "work", "op": "between", "value": 950, "max": 1050, "description": "O gás realiza entre 950 e 1050 J de trabalho" },
+        { "metric": "deltaU", "op": "between", "value": -1, "max": 1, "description": "A energia interna não muda (ΔU entre −1 e 1 J)" }
+      ],
+      "solutionInputs": { "process": "isothermal", "moles": "1", "T1": "300", "V1": "10", "V2": "15" },
+      "questions": [
+        {
+          "prompt": "Qual é a pressão de **1 mol** de gás ideal a **300 K** ocupando **24,9 L**?",
+          "kind": "number", "answer": "100.2", "tolerance": 2, "unit": "kPa",
+          "explanation": "p = n·R·T / V = 8,314·300 / 0,0249 ≈ 100 200 Pa ≈ 100 kPa — praticamente a pressão atmosférica."
+        },
+        {
+          "prompt": "Qual é o **rendimento máximo** (Carnot) de uma máquina que trabalha entre **600 K** e **300 K**?",
+          "kind": "number", "answer": "50", "tolerance": 2, "unit": "%",
+          "explanation": "η = 1 − 300/600 = 0,5 = 50%. Máquinas reais ficam bem abaixo disso."
+        },
+        {
+          "prompt": "Numa **expansão adiabática**, o que acontece com a temperatura do gás?",
+          "kind": "choice",
+          "options": ["Aumenta, porque o volume aumenta", "Fica igual, porque não troca calor", "Diminui, porque o gás gasta energia interna para realizar trabalho", "Depende da cor do recipiente"],
+          "answer": "2",
+          "explanation": "Com Q = 0, ΔU = −W: o trabalho de empurrar o pistão sai da energia interna, e a temperatura cai."
+        }
+      ]
+    },
+    {
+      "id": "fis-09-eletromagnetismo",
+      "title": "Eletricidade e magnetismo: cargas, campos e correntes",
+      "level": 4,
+      "kind": "quiz",
+      "safety": "A tomada de casa (127 V ou 220 V) **mata**. Nunca mexa em fios energizados; experimentos de eletricidade se fazem com pilhas e baterias de baixa tensão.",
+      "theory": "# Carga elétrica e lei de Coulomb\n\nA matéria tem cargas **positivas** (prótons) e **negativas** (elétrons). Cargas iguais se repelem, opostas se atraem. A carga se mede em **coulombs** (C); um elétron tem `1,6×10⁻¹⁹ C`.\n\n```\nF = k·|q1·q2| / r²        k ≈ 9×10⁹ N·m²/C²\n```\n\nRepare na semelhança com a gravitação: também cai com `1/r²`, mas é **muito** mais forte e pode repelir.\n\n# Campo e potencial\n\n- **Campo elétrico** `E = F / q` (N/C ou V/m): a força por unidade de carga em cada ponto do espaço. As linhas de campo saem das cargas positivas e entram nas negativas.\n- **Potencial** e **diferença de potencial** (ddp, tensão) `U` em volts: energia por unidade de carga. Uma pilha de 1,5 V dá 1,5 J a cada coulomb que passa.\n\n# Corrente e circuitos\n\n- **Corrente** `I = ΔQ / Δt` (ampères): quanta carga passa por segundo.\n- **Lei de Ohm:** `U = R·I` (R em ohms, Ω).\n- **Potência:** `P = U·I = R·I² = U²/R` (watts).\n- Resistores em **série** somam: `R = R1 + R2`. Em **paralelo**: `1/R = 1/R1 + 1/R2` — o equivalente fica **menor** que o menor deles.\n\n# Magnetismo\n\nCorrentes e ímãs criam **campo magnético** `B` (tesla, T). Uma carga em movimento dentro de `B` sente a **força de Lorentz**, perpendicular à velocidade:\n\n```\nF = |q|·v·B·sin θ\n```\n\nComo a força é perpendicular, ela só **curva** a trajetória: a carga faz um círculo de raio\n\n```\nr = m·v / (|q|·B)\n```\n\nCom um campo elétrico cruzado, as forças elétrica e magnética se cancelam quando `q·E = q·v·B`, isto é, `v = E / B`: é o **seletor de velocidades** dos espectrômetros de massa.\n\n# Indução: a eletricidade que vem do movimento\n\n**Lei de Faraday:** um fluxo magnético **variando** através de uma espira gera tensão: `ε = −ΔΦ / Δt`. O sinal de menos (**lei de Lenz**) diz que a corrente induzida se opõe à variação. É assim que funcionam usinas, dínamos, transformadores e carregadores por indução.\n\nMaxwell juntou tudo e descobriu que campos elétricos e magnéticos variando se sustentam e viajam a `c = 1/√(μ0·ε0) ≈ 3×10⁸ m/s`: **a luz é uma onda eletromagnética**.",
+      "task": "Responda às perguntas. Use `k = 9×10⁹ N·m²/C²` e escreva números como `0,4` ou `3e-2`.",
+      "hints": [
+        "μC é micro-coulomb: 1 μC = 10⁻⁶ C.",
+        "Na lei de Coulomb o r é elevado ao quadrado; em `P = R·I²` a corrente é que é elevada ao quadrado.",
+        "No raio da órbita magnética, converta o resultado de metros para centímetros (× 100)."
+      ],
+      "questions": [
+        {
+          "prompt": "Duas cargas de **2 μC** cada estão a **0,3 m** uma da outra. Qual é a força entre elas?",
+          "kind": "number", "answer": "0.4", "tolerance": 2, "unit": "N",
+          "explanation": "F = 9×10⁹ · (2×10⁻⁶)² / 0,3² = 9×10⁹ · 4×10⁻¹² / 0,09 = 0,4 N (repulsão)."
+        },
+        {
+          "prompt": "Uma bateria de **12 V** está ligada a um resistor de **4 Ω**. Qual é a corrente?",
+          "kind": "number", "answer": "3", "tolerance": 2, "unit": "A",
+          "explanation": "Lei de Ohm: I = U / R = 12 / 4 = 3 A."
+        },
+        {
+          "prompt": "Qual é a potência dissipada nesse resistor de 4 Ω com 3 A?",
+          "kind": "number", "answer": "36", "tolerance": 2, "unit": "W",
+          "explanation": "P = R·I² = 4·9 = 36 W (o mesmo que U·I = 12·3)."
+        },
+        {
+          "prompt": "Dois resistores de **6 Ω** ligados em **paralelo** equivalem a…",
+          "kind": "choice", "options": ["12 Ω", "6 Ω", "3 Ω", "36 Ω"], "answer": "2",
+          "explanation": "1/R = 1/6 + 1/6 = 2/6 → R = 3 Ω. Em paralelo a corrente tem dois caminhos, então a resistência total cai."
+        },
+        {
+          "prompt": "Um próton (m = 1,67×10⁻²⁷ kg, q = 1,6×10⁻¹⁹ C) entra a **2×10⁶ m/s** perpendicular a um campo de **0,5 T**. Qual o raio da trajetória circular?",
+          "kind": "number", "answer": "4.18", "tolerance": 3, "unit": "cm",
+          "explanation": "r = m·v / (q·B) = 1,67×10⁻²⁷ · 2×10⁶ / (1,6×10⁻¹⁹ · 0,5) ≈ 0,0418 m ≈ 4,18 cm."
+        },
+        {
+          "prompt": "Num seletor de velocidades com **E = 5×10⁴ V/m** e **B = 0,1 T**, qual velocidade passa sem desviar?",
+          "kind": "number", "answer": "500000", "tolerance": 2, "unit": "m/s",
+          "explanation": "As forças se cancelam quando q·E = q·v·B → v = E / B = 5×10⁴ / 0,1 = 5×10⁵ m/s."
+        },
+        {
+          "prompt": "O que faz aparecer corrente induzida numa bobina?",
+          "kind": "choice",
+          "options": ["Um ímã parado dentro dela", "Uma variação do fluxo magnético através dela", "Qualquer campo elétrico constante", "Aquecer a bobina"],
+          "answer": "1",
+          "explanation": "Lei de Faraday: só a VARIAÇÃO do fluxo (ímã se mexendo, corrente variando, espira girando) induz tensão. Um ímã parado não gera nada."
+        }
+      ]
+    },
+    {
+      "id": "fis-10-arrasto-numerico",
+      "title": "Física universitária: resistência do ar e métodos numéricos",
+      "level": 5,
+      "kind": "lab",
+      "lab": "projectile",
+      "labParams": { "targetX": "40", "targetWidth": "2", "drag": "0.03", "lock": "drag", "hide": "planet" },
+      "theory": "# Quando a fórmula acaba\n\nNa lição 1 o alcance tinha fórmula fechada. Basta colocar o **ar** para ela sumir. A força de arrasto em velocidades do dia a dia cresce com o **quadrado** da velocidade e aponta contra ela:\n\n```\nF_arrasto = ½·ρ·C·A·v²\n```\n\n`ρ` é a densidade do ar (~1,2 kg/m³), `C` o coeficiente de forma (esfera ≈ 0,47), `A` a área frontal. Dividindo pela massa, a equação do movimento fica:\n\n```\na = −g·ŷ − k·|v|·v\nk = ρ·C·A / (2·m)      (unidade: 1/m)\n```\n\nO termo `|v|·v` **acopla** x e y: frear na horizontal depende da velocidade vertical e vice-versa. Não existe solução em funções elementares — precisamos de um **método numérico**.\n\n# Integração numérica\n\nA ideia: avançar o tempo em passos pequenos `dt`, usando a derivada para estimar o próximo estado.\n\n## Método de Euler\n\n```\nwhile y >= 0:\n    v_mod = sqrt(vx*vx + vy*vy)\n    ax = -k*v_mod*vx\n    ay = -g - k*v_mod*vy\n    x, y   = x + vx*dt, y + vy*dt\n    vx, vy = vx + ax*dt, vy + ay*dt\n    t = t + dt\n```\n\nSimples, mas o erro total é **proporcional a dt** (método de 1ª ordem): para ganhar uma casa decimal, 10 vezes mais passos.\n\n## Runge–Kutta de 4ª ordem (RK4)\n\nCalcula a derivada em 4 pontos do intervalo (começo, dois no meio, fim) e faz uma média ponderada `(k1 + 2·k2 + 2·k3 + k4)/6`. O erro cai com **dt⁴**: dividir o passo por 2 deixa o resultado 16 vezes mais preciso. É o que este simulador usa (dt = 0,5 ms).\n\n# O que o ar muda\n\n- **Velocidade terminal:** caindo, o arrasto cresce até igualar o peso: `k·v² = g` → `v_t = √(g/k)`.\n- O alcance cai muito, e o **ângulo ótimo fica abaixo de 45°**: subir muito gasta tempo no ar, e o ar continua roubando velocidade.\n- A trajetória deixa de ser simétrica: a descida é mais íngreme que a subida. A curva tracejada mostra a mesma bola no vácuo.\n\n# Para ir além: a visão de Lagrange\n\nNa mecânica analítica não se começa pelas forças, e sim pela **lagrangiana** `L = T − V` (energia cinética menos potencial), escrita em coordenadas convenientes `q`. O movimento real obedece a equação de Euler–Lagrange:\n\n```\nd/dt (∂L/∂q') − ∂L/∂q = 0\n```\n\nPara o pêndulo, com `q = θ`: `L = m·L²·θ'²/2 + m·g·L·cos θ` dá direto `θ'' = −(g/L)·sin θ` — a equação que o laboratório de oscilações resolve. Forças que dissipam energia, como o arrasto, não cabem num `V` e entram como **forças generalizadas**.\n\n## E quando a velocidade chega perto da luz?\n\nA mecânica de Newton também tem limite: perto de `c`, a relatividade especial manda usar o fator de Lorentz `γ = 1/√(1 − v²/c²)`. Relógios em movimento andam `γ` vezes mais devagar e o momento vira `p = γ·m·v`.\n\n## Hipóteses do simulador\n\n- Arrasto quadrático com `k` constante (densidade do ar e coeficiente fixos), sem vento e sem rotação da bola (sem efeito Magnus).",
+      "task": "Uma bolinha de plástico leve (arrasto **k = 0,03 1/m**, travado) precisa cair no alvo a **40 m**. Com o ar, 45° não é mais o melhor ângulo: acerte o alvo lançando com velocidade de **no máximo 36,2 m/s**.",
+      "hints": [
+        "Sem ar bastariam √(40·9,81) ≈ 19,8 m/s. Com o ar, a 45° você precisa de mais de 37 m/s.",
+        "Experimente ângulos menores, entre 33° e 40°, e ajuste a velocidade até acertar.",
+        "Exemplo: 36° com cerca de 35,8 m/s."
+      ],
+      "goals": [
+        { "metric": "hitTarget", "op": ">=", "value": 1, "description": "A bola cai no alvo (40 m ± 1 m)" },
+        { "metric": "speed", "op": "<=", "value": 36.2, "description": "Velocidade de lançamento de no máximo 36,2 m/s" }
+      ],
+      "solutionInputs": { "speed": "35.8", "angle": "36", "height": "0" },
+      "questions": [
+        {
+          "prompt": "Qual é a **velocidade terminal** de queda dessa bolinha (k = 0,03 1/m, g = 9,81 m/s²)?",
+          "kind": "number", "answer": "18.08", "tolerance": 2, "unit": "m/s",
+          "explanation": "No equilíbrio k·v² = g → v_t = √(9,81/0,03) = √327 ≈ 18,1 m/s. Por mais alto que caia, ela não passa disso."
+        },
+        {
+          "prompt": "Você dividiu o passo `dt` por 10. Quanto diminui o erro total do método de **Euler**?",
+          "kind": "choice",
+          "options": ["Não muda", "Cerca de 10 vezes", "Cerca de 100 vezes", "Cerca de 10 000 vezes"],
+          "answer": "1",
+          "explanation": "Euler é de 1ª ordem: erro ∝ dt, então 10 vezes menor. Com RK4 (erro ∝ dt⁴) seria ~10 000 vezes."
+        },
+        {
+          "prompt": "Uma nave passa pela Terra a **0,6·c**. Qual é o fator de Lorentz γ?",
+          "kind": "number", "answer": "1.25", "tolerance": 2, "unit": "",
+          "explanation": "γ = 1/√(1 − 0,36) = 1/√0,64 = 1/0,8 = 1,25: um relógio da nave marca 1 h enquanto se passam 1 h 15 min na Terra."
+        }
+      ]
+    }
+  ]
+}
