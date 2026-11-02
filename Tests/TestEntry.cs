@@ -56,6 +56,11 @@ public static partial class TestEntry
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_metallurgy.log"), metLog.ToString());
         log.WriteLine($"Metallurgy: {met} failures (see easycreator_metallurgy.log)");
         f += met;
+        var phLog = new StringWriter();
+        int ph = PhysicsTests.Run(phLog);
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_physics.log"), phLog.ToString());
+        log.WriteLine($"Physics: {ph} failures (see easycreator_physics.log)");
+        f += ph;
         var i18nLog = new StringWriter();
         int i18n = I18nTests.Run(i18nLog);
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_i18n.log"), i18nLog.ToString());
