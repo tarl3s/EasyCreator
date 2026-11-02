@@ -1,0 +1,465 @@
+{
+  "id": "aircraft",
+  "title": "Aviões e helicópteros",
+  "area": "projects",
+  "description": "Como uma asa sustenta um avião, por que ele estola, quanto de pista precisa e até onde voa — e como o rotor de um helicóptero paira, vence o torque e pousa sem motor. Termina com o dimensionamento de um avião pela equação de Breguet.",
+  "lessons": [
+    {
+      "id": "aero-01-sustentacao",
+      "title": "Como a asa gera sustentação",
+      "level": 1,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "lift", "show": "speed,aoa,wingArea" },
+      "theory": "# Empurrando o ar para baixo\n\nUma asa é inclinada e curvada de um jeito que **desvia o ar para baixo**. Pela **3ª lei de Newton**, se a asa empurra o ar para baixo, o ar empurra a asa **para cima**. Visto de outro jeito (Bernoulli), o ar passa mais rápido por cima da asa e a **pressão em cima fica menor** que embaixo. As duas explicações descrevem o mesmo fenômeno.\n\n## A fórmula da sustentação\n\n```\nL = ½ · ρ · v² · S · CL\n```\n\n- `L` = sustentação (N)\n- `ρ` = densidade do ar (1,225 kg/m³ ao nível do mar)\n- `v` = velocidade em relação ao ar (m/s)\n- `S` = área da asa (m²)\n- `CL` = coeficiente de sustentação: depende do **ângulo de ataque** e do perfil da asa\n\nRepare no **v²**: o dobro da velocidade dá **quatro vezes** a sustentação.\n\n## Voo nivelado\n\nPara voar nivelado, a sustentação precisa ser **igual ao peso** (L = P = m·g). Se L > P o avião sobe; se L < P, desce. O piloto ajusta o ângulo de ataque (puxando ou empurrando o manche) conforme a velocidade.\n\nNo simulador, o avião (estilo Cessna 172: 1100 kg, 16 m² de asa) está a 150 km/h. As setas mostram a sustentação (verde) e o peso (vermelho).",
+      "task": "Faça o avião voar **nivelado**: sustentação entre **100% e 110% do peso**, sem estolar.",
+      "hints": [
+        "Aumente o ângulo de ataque aos poucos e observe a seta verde.",
+        "A 150 km/h, um ângulo de ataque de 5,5° deixa a sustentação um pouco acima do peso."
+      ],
+      "goals": [
+        { "metric": "liftToWeight", "op": "between", "value": 1.0, "max": 1.1, "description": "Sustentação entre 100% e 110% do peso" },
+        { "metric": "stalled", "op": "=", "value": 0, "description": "Sem estol" }
+      ],
+      "solutionInputs": { "aoa": "5.5" },
+      "questions": [
+        {
+          "prompt": "Uma asa de **10 m²** voa a **50 m/s** com CL = **0,5** (ρ = 1,2 kg/m³). Qual a sustentação?",
+          "kind": "number", "answer": "7500", "unit": "N", "tolerance": 2,
+          "explanation": "L = ½ × 1,2 × 50² × 10 × 0,5 = 0,5 × 1,2 × 2500 × 10 × 0,5 = 7500 N."
+        },
+        {
+          "prompt": "Se a velocidade **dobra** (mesmo ângulo), a sustentação…",
+          "kind": "choice",
+          "options": ["dobra", "fica igual", "quadruplica", "cai pela metade"],
+          "answer": "2",
+          "explanation": "L depende de v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "Qual destas frases descreve corretamente como a asa sustenta o avião?",
+          "kind": "choice",
+          "options": [
+            "O ar de cima e o de baixo precisam chegar juntos no fim da asa",
+            "A asa desvia o ar para baixo, e o ar reage empurrando a asa para cima; ao mesmo tempo a pressão em cima é menor",
+            "O motor puxa o avião para cima",
+            "A asa é mais leve que o ar"
+          ],
+          "answer": "1",
+          "explanation": "Newton (desvio do ar para baixo) e Bernoulli (diferença de pressão) são duas faces do mesmo fenômeno. A ideia de que o ar precisa \"chegar junto\" é um mito."
+        }
+      ]
+    },
+    {
+      "id": "aero-02-angulo-ataque",
+      "title": "Perfis e ângulo de ataque",
+      "level": 2,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "lift", "speed": "120", "altitude": "2000", "show": "aoa,wingArea,flaps" },
+      "theory": "# O ângulo de ataque\n\nO **ângulo de ataque (α)** é o ângulo entre a **corda** da asa (a linha do bordo de ataque ao bordo de fuga) e o **vento relativo** — não é o mesmo que o ângulo do nariz em relação ao horizonte.\n\n## A curva de sustentação\n\nAté perto do estol, CL cresce em **linha reta** com α:\n\n```\nCL = a · (α − α0)\n```\n\n- Perfis com **arqueamento** (curvados) sustentam mesmo com α = 0: o α0 deles é negativo (aqui, −2°).\n- Uma asa finita tem inclinação menor que o perfil 2D: `a = 2π · AR / (AR + 2)` por radiano. Para AR = 7,5: 4,96/rad = **0,0866 por grau**.\n- Acima do **ângulo crítico** (~15°), o escoamento **descola** do extradorso, CL despenca e o arrasto dispara: é o **estol**.\n\n## Altitude\n\nA 2000 m o ar tem só ~82% da densidade do nível do mar (ρ = 1,007 kg/m³). Com a mesma velocidade, é preciso **mais CL** — mais ângulo de ataque, mais área ou **flapes**, que aumentam o arqueamento e o CL da asa.\n\nNeste voo lento (120 km/h) a 2000 m de altitude, você precisa de bastante CL sem passar do limite.",
+      "task": "A **120 km/h e 2000 m**, faça o avião voar **nivelado** (sustentação entre 100% e 110% do peso) **sem estolar**.",
+      "hints": [
+        "Calcule o CL necessário: CL = 2·P / (ρ·v²·S).",
+        "Cerca de 12,5° de ângulo de ataque dão o CL certo; acima de ~15° a asa estola."
+      ],
+      "goals": [
+        { "metric": "liftToWeight", "op": "between", "value": 1.0, "max": 1.1, "description": "Sustentação entre 100% e 110% do peso" },
+        { "metric": "stalled", "op": "=", "value": 0, "description": "Sem estol" }
+      ],
+      "solutionInputs": { "aoa": "12.5" },
+      "questions": [
+        {
+          "prompt": "Com CL = 0,0866·(α + 2°) e **CL máximo = 1,5**, a partir de que ângulo de ataque a asa estola?",
+          "kind": "number", "answer": "15.3", "unit": "°", "tolerance": 3,
+          "explanation": "1,5 = 0,0866·(α + 2) → α + 2 = 17,3 → α ≈ 15,3°."
+        },
+        {
+          "prompt": "O ângulo de ataque é o ângulo entre…",
+          "kind": "choice",
+          "options": [
+            "o nariz do avião e o horizonte",
+            "a corda da asa e o vento relativo",
+            "a asa e a fuselagem",
+            "o avião e a pista"
+          ],
+          "answer": "1",
+          "explanation": "O nariz pode estar alto e o ângulo de ataque baixo (subindo) ou vice-versa; o que importa para a asa é o vento relativo."
+        },
+        {
+          "prompt": "Voando mais alto, na mesma velocidade, o que o piloto precisa fazer para manter o voo nivelado?",
+          "kind": "choice",
+          "options": [
+            "Diminuir o ângulo de ataque",
+            "Aumentar o ângulo de ataque (o ar é menos denso)",
+            "Nada muda",
+            "Recolher os flapes"
+          ],
+          "answer": "1",
+          "explanation": "Com ρ menor, L = ½·ρ·v²·S·CL cai; é preciso mais CL (ou mais velocidade) para igualar o peso."
+        }
+      ]
+    },
+    {
+      "id": "aero-03-arrasto-polar",
+      "title": "Arrasto e a polar de arrasto",
+      "level": 3,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "polar", "show": "aspectRatio,oswald,cd0,aoa" },
+      "theory": "# Dois tipos de arrasto\n\nO arrasto total de um avião é a soma de:\n\n- **Arrasto parasita** (`CD0`): atrito do ar na superfície, forma da fuselagem, trem de pouso, antenas. Cresce com a velocidade.\n- **Arrasto induzido**: o \"preço\" de gerar sustentação. Nas pontas da asa o ar de baixo escapa para cima e forma **vórtices**. Ele é maior em **baixa velocidade** (CL alto).\n\n```\nCD = CD0 + CL² / (π · e · AR)\n```\n\n- `AR` = alongamento = envergadura² / área. Planadores: 20–30; caças: 2–4.\n- `e` = fator de Oswald (0,7–0,9): o quão perto a distribuição de sustentação está da ideal (elíptica).\n\n## A polar e o L/D máximo\n\nO gráfico CL × CD é a **polar de arrasto**. A reta que sai da origem e toca a curva marca o melhor **L/D** (sustentação/arrasto, a \"eficiência\" do avião):\n\n```\n(L/D)máx = ½ · √(π · e · AR / CD0)      no ponto em que CD induzido = CD0\n```\n\nCom L/D = 15, o avião **plana 15 m para frente a cada 1 m que desce**. Planadores chegam a 50–60!\n\nClique em ▶ Rodar: o ângulo de ataque varre de −4° a 16° e você vê o ponto andar pela polar.",
+      "task": "Projete uma asa e uma fuselagem com **L/D máximo de pelo menos 15**.",
+      "hints": [
+        "Alongamento maior reduz o arrasto induzido; CD0 menor reduz o parasita.",
+        "AR = 12, e = 0,85 e CD0 = 0,025 dão L/D ≈ 18."
+      ],
+      "goals": [
+        { "metric": "LDmax", "op": ">=", "value": 15, "description": "L/D máximo ≥ 15" }
+      ],
+      "solutionInputs": { "aspectRatio": "12", "oswald": "0.85", "cd0": "0.025" },
+      "questions": [
+        {
+          "prompt": "Asa com AR = **8**, e = **0,8**, voando com CL = **0,5**. Qual o coeficiente de arrasto **induzido**?",
+          "kind": "number", "answer": "0.00995", "tolerance": 3,
+          "explanation": "CDi = CL²/(π·e·AR) = 0,25 / (π × 0,8 × 8) = 0,25 / 20,11 ≈ 0,00995."
+        },
+        {
+          "prompt": "Um planador com **L/D = 15** está a **1000 m** de altura, sem vento. Quantos km ele consegue planar?",
+          "kind": "number", "answer": "15", "unit": "km", "tolerance": 2,
+          "explanation": "Distância = altura × L/D = 1000 × 15 = 15 000 m = 15 km."
+        },
+        {
+          "prompt": "Por que planadores têm asas longas e finas?",
+          "kind": "choice",
+          "options": [
+            "Para caber no hangar",
+            "Alongamento alto reduz o arrasto induzido e aumenta o L/D",
+            "Para ficarem mais pesados",
+            "Para voar mais rápido que aviões a jato"
+          ],
+          "answer": "1",
+          "explanation": "O arrasto induzido é CL²/(π·e·AR): quanto maior o AR, menor ele fica."
+        }
+      ]
+    },
+    {
+      "id": "aero-04-estol",
+      "title": "Estol e flapes",
+      "level": 2,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "stall", "show": "wingArea,clmax,flaps" },
+      "safety": "Estol perto do chão é uma das principais causas de acidentes na aviação geral. Pilotos treinam o reconhecimento e a recuperação do estol com instrutor e em altura segura.",
+      "theory": "# A velocidade mínima\n\nPara voar nivelado, L = P. Como o CL tem um máximo, existe uma **velocidade mínima**, a **velocidade de estol**:\n\n```\nVestol = √( 2 · P / (ρ · S · CLmáx) )\n```\n\nAbaixo dela não há ângulo de ataque que gere sustentação suficiente: a asa passa do ângulo crítico, o escoamento descola, o nariz cai e o avião perde altura.\n\n**Atenção**: o estol acontece por **ângulo de ataque**, não por velocidade. Numa curva fechada ou puxando o manche com força, o avião estola acima da Vestol nivelada.\n\n## Como pousar mais devagar\n\n- **Asa maior** (menor carga alar P/S).\n- **Flapes**: superfícies no bordo de fuga que aumentam o arqueamento e o CLmáx (aqui: +0,25 a 10°, +0,45 a 20°, +0,60 a 30°). Também aumentam o arrasto — útil no pouso.\n- **Slats** no bordo de ataque (aviões grandes) adiam o descolamento.\n\nOs pilotos se aproximam para pouso a **1,3 × Vestol**, uma margem de segurança. A Vestol \"indicada\" no velocímetro não muda com a altitude, por isso o simulador mostra o valor ao nível do mar.\n\nClique em ▶ Rodar: o avião desacelera até o estol.",
+      "task": "Faça a **velocidade de estol ficar em até 85 km/h** para pousar numa pista curta (sem mudar o peso do avião).",
+      "hints": [
+        "Flapes aumentam o CLmáx: Vestol cai com a raiz de CLmáx.",
+        "Flapes a 30° levam o CLmáx de 1,5 para 2,1."
+      ],
+      "goals": [
+        { "metric": "stallSpeed", "op": "<=", "value": 85, "description": "Velocidade de estol ≤ 85 km/h" }
+      ],
+      "solutionInputs": { "flaps": "30" },
+      "questions": [
+        {
+          "prompt": "Avião de peso **10 000 N**, asa de **15 m²**, CLmáx = **1,6**, ao nível do mar (ρ = 1,225). Qual a velocidade de estol?",
+          "kind": "number", "answer": "26.08", "unit": "m/s", "tolerance": 2,
+          "explanation": "Vs = √(2 × 10000 / (1,225 × 15 × 1,6)) = √(20000 / 29,4) = √680,3 ≈ 26,08 m/s (≈ 94 km/h)."
+        },
+        {
+          "prompt": "O que causa o estol?",
+          "kind": "choice",
+          "options": [
+            "O motor parar",
+            "A velocidade ficar abaixo de um valor fixo, sempre",
+            "O ângulo de ataque passar do ângulo crítico, e isso pode acontecer em qualquer velocidade",
+            "Voar alto demais"
+          ],
+          "answer": "2",
+          "explanation": "O estol é aerodinâmico: o escoamento descola quando α passa do crítico. Em curva ou numa puxada brusca isso acontece mesmo em alta velocidade."
+        },
+        {
+          "prompt": "Com Vestol = **80 km/h**, qual a velocidade de aproximação recomendada (1,3 × Vs)?",
+          "kind": "number", "answer": "104", "unit": "km/h", "tolerance": 2,
+          "explanation": "1,3 × 80 = 104 km/h."
+        }
+      ]
+    },
+    {
+      "id": "aero-05-decolagem",
+      "title": "Decolagem e subida",
+      "level": 3,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "takeoff", "airportAlt": "2500", "runway": "350", "show": "mass,wingArea,flaps,power,propEff" },
+      "theory": "# A corrida de decolagem\n\nNa pista, o avião acelera com:\n\n```\nm · a = Empuxo − Arrasto − μr · (Peso − Sustentação)\n```\n\n- μr ≈ 0,03: atrito de rolamento das rodas.\n- Ele sai do chão a ~**1,2 × Vestol** (velocidade de rotação/decolagem).\n- Uma estimativa rápida: `s ≈ V² / (2 · a_média)`.\n\nO **empuxo da hélice** é `T = ηp · P / v` (potência × eficiência da hélice ÷ velocidade); parado ele é limitado (empuxo estático).\n\n## Altitude e calor\n\nNum aeroporto **alto** (ou num dia **quente**) o ar é menos denso:\n\n- O motor perde potência (~proporcional à densidade).\n- A asa precisa de **mais velocidade** para a mesma sustentação.\n\nResultado: a corrida fica muito mais longa. Pilotos usam tabelas de desempenho antes de cada decolagem.\n\n## Subida\n\nDepois de sair do chão, a **razão de subida** é a potência que sobra dividida pelo peso:\n\n```\nRS = (P_disponível − P_necessária) / Peso        (m/s)\n```\n\nO padrão de certificação mede a distância até passar um obstáculo de **15 m** (50 pés).\n\nNeste problema o aeroporto fica a **2500 m** de altitude e a pista tem só **350 m**.",
+      "task": "Decole da pista de 350 m a 2500 m de altitude: **saia do chão dentro da pista**, passe **15 m de altura em até 350 m** e suba a **pelo menos 5 m/s**.",
+      "hints": [
+        "Flapes reduzem a velocidade de decolagem; mais potência dá mais empuxo e mais subida.",
+        "Flapes a 20° e um motor de 160 kW resolvem."
+      ],
+      "goals": [
+        { "metric": "tookOff", "op": "=", "value": 1, "description": "Sai do chão dentro da pista" },
+        { "metric": "takeoffTotal", "op": "<=", "value": 350, "description": "Passa 15 m de altura em até 350 m" },
+        { "metric": "climbRate", "op": ">=", "value": 5, "description": "Razão de subida ≥ 5 m/s" }
+      ],
+      "solutionInputs": { "flaps": "20", "power": "160" },
+      "questions": [
+        {
+          "prompt": "Pela atmosfera padrão (ISA), qual a densidade do ar a **2500 m**? (T = 288,15 − 0,0065·h; ρ = 1,225·(T/288,15)^4,256)",
+          "kind": "number", "answer": "0.957", "unit": "kg/m³", "tolerance": 3,
+          "explanation": "T = 288,15 − 16,25 = 271,9 K; (271,9/288,15)^4,256 = 0,781; ρ = 1,225 × 0,781 ≈ 0,957 kg/m³ (78% do nível do mar)."
+        },
+        {
+          "prompt": "Num dia muito quente, a corrida de decolagem…",
+          "kind": "choice",
+          "options": [
+            "fica mais curta, porque o ar quente sobe",
+            "fica mais longa, porque o ar quente é menos denso",
+            "não muda",
+            "só muda para aviões a jato"
+          ],
+          "answer": "1",
+          "explanation": "Ar quente é menos denso: a asa precisa de mais velocidade e o motor rende menos."
+        },
+        {
+          "prompt": "Um avião sai do chão a **35 m/s** com aceleração média de **2,5 m/s²**. Qual a corrida de decolagem aproximada?",
+          "kind": "number", "answer": "245", "unit": "m", "tolerance": 2,
+          "explanation": "s = V²/(2a) = 1225 / 5 = 245 m."
+        }
+      ]
+    },
+    {
+      "id": "aero-06-estabilidade",
+      "title": "Estabilidade e superfícies de controle",
+      "level": 4,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "stability", "show": "cg,tailVolume" },
+      "theory": "# Estável é o que volta sozinho\n\nUm avião é **estaticamente estável em arfagem** quando, ao levantar o nariz por uma rajada, surge um momento que **abaixa o nariz de volta**. Quem garante isso é a combinação do **centro de gravidade (CG)** com o **ponto neutro (PN)**.\n\n- O **ponto neutro** é o ponto onde atua o aumento de sustentação do avião inteiro (asa + estabilizador horizontal) quando o ângulo de ataque muda.\n- Se o **CG está à frente do PN**, um aumento de α gera um momento que abaixa o nariz: **estável**.\n- Se o **CG está atrás do PN**: o momento aumenta ainda mais o α — **instável** (só voa com computador, como caças modernos).\n\n```\nMargem estática = (h_PN − h_CG)  em % da corda média aerodinâmica (CMA)\n```\n\nAviões leves usam **5 a 20%**. Margem grande demais deixa o avião \"pesado\" e difícil de levantar o nariz.\n\n## O estabilizador horizontal\n\nA asa sozinha tem seu centro aerodinâmico a ~25% da corda. A **cauda** puxa o ponto neutro para trás. Quanto maior o **volume de cauda** `VH = (S_cauda · braço) / (S_asa · corda)`, mais para trás vai o PN (no simulador: h_PN = 25% + 40,5% × VH).\n\n## Superfícies de controle\n\n- **Profundor** (no estabilizador horizontal): arfagem — nariz para cima/baixo.\n- **Ailerons** (nas pontas das asas, movem em sentidos opostos): rolagem.\n- **Leme** (no estabilizador vertical): guinada — nariz para a esquerda/direita.",
+      "task": "Este avião foi carregado com o CG muito atrás e está **instável**. Mova o CG ou aumente a cauda até a **margem estática ficar entre 5% e 20%**.",
+      "hints": [
+        "O CG precisa ficar à frente do ponto neutro (número menor em % da corda).",
+        "Com VH = 0,45 o PN fica em 43%: um CG em 35% dá ~8% de margem."
+      ],
+      "goals": [
+        { "metric": "staticMargin", "op": "between", "value": 5, "max": 20, "description": "Margem estática entre 5% e 20% da CMA" }
+      ],
+      "solutionInputs": { "cg": "35" },
+      "questions": [
+        {
+          "prompt": "O ponto neutro está a **45%** da CMA e o CG a **30%**. Qual a margem estática (em %)?",
+          "kind": "number", "answer": "15", "unit": "%", "tolerance": 2,
+          "explanation": "ME = 45% − 30% = 15% da CMA — estável."
+        },
+        {
+          "prompt": "Qual superfície controla a **rolagem** (inclinar as asas)?",
+          "kind": "choice",
+          "options": ["Leme", "Profundor", "Ailerons", "Flapes"],
+          "answer": "2",
+          "explanation": "Os ailerons sobem de um lado e descem do outro, criando sustentação diferente em cada asa."
+        },
+        {
+          "prompt": "O que acontece se o CG ficar **atrás** do ponto neutro?",
+          "kind": "choice",
+          "options": [
+            "O avião fica mais estável",
+            "Qualquer perturbação em arfagem cresce: o avião é instável",
+            "O avião não consegue decolar",
+            "Nada, o CG não importa"
+          ],
+          "answer": "1",
+          "explanation": "Com margem estática negativa o momento de arfagem reforça a perturbação em vez de corrigi-la."
+        }
+      ]
+    },
+    {
+      "id": "aero-07-propulsao",
+      "title": "Propulsão: hélice ou jato?",
+      "level": 3,
+      "kind": "quiz",
+      "theory": "# Empuxo = acelerar ar para trás\n\nToda propulsão aérea funciona pela **3ª lei de Newton**: o motor joga ar (ou gás) para trás e o avião é empurrado para a frente.\n\n```\nEmpuxo = ṁ · (Ve − V0)\n```\n\n- `ṁ` = vazão de massa de ar (kg/s), `Ve` = velocidade do jato que sai, `V0` = velocidade do avião.\n\n## Eficiência propulsiva\n\nÉ mais eficiente acelerar **muito ar um pouquinho** do que **pouco ar muito**:\n\n```\nη_propulsiva = 2 / (1 + Ve/V0)\n```\n\n- **Hélice**: move uma massa enorme de ar devagar → muito eficiente em baixa velocidade (até ~600 km/h). Empuxo ≈ ηp · P / v.\n- **Turbojato**: jato rápido e estreito → eficiente só em velocidade muito alta (caças, Concorde).\n- **Turbofan**: um grande ventilador na frente desvia a maior parte do ar **por fora** do núcleo (razão de bypass 5–12 nos aviões comerciais) — o meio-termo que domina a aviação de linha.\n- **Turbo-hélice**: turbina girando uma hélice — aviões regionais (ATR, Embraer EMB 120).\n\n## Consumo\n\n- Motores a pistão/turbo-hélice: consumo específico em kg de combustível por kWh (~0,2–0,3).\n- Jatos: TSFC em g de combustível por kN de empuxo por segundo (~15–20 em turbofans modernos).",
+      "questions": [
+        {
+          "prompt": "Um motor a jato admite **100 kg/s** de ar e o expele a **400 m/s**; o avião voa a **200 m/s**. Qual o empuxo?",
+          "kind": "number", "answer": "20000", "unit": "N", "tolerance": 2,
+          "explanation": "T = ṁ·(Ve − V0) = 100 × (400 − 200) = 20 000 N."
+        },
+        {
+          "prompt": "Qual a eficiência propulsiva desse motor (Ve = 400 m/s, V0 = 200 m/s)?",
+          "kind": "number", "answer": "0.667", "tolerance": 2,
+          "explanation": "η = 2 / (1 + 400/200) = 2/3 ≈ 0,667."
+        },
+        {
+          "prompt": "Uma hélice com eficiência **0,8** recebe **100 kW** e o avião voa a **50 m/s**. Qual o empuxo?",
+          "kind": "number", "answer": "1600", "unit": "N", "tolerance": 2,
+          "explanation": "T = η·P/v = 0,8 × 100 000 / 50 = 1600 N."
+        },
+        {
+          "prompt": "Por que os aviões comerciais usam turbofans de **alta razão de bypass**?",
+          "kind": "choice",
+          "options": [
+            "Porque fazem mais barulho",
+            "Porque aceleram uma grande massa de ar com pouca variação de velocidade, o que é mais eficiente",
+            "Porque não precisam de combustível",
+            "Porque são mais leves que hélices"
+          ],
+          "answer": "1",
+          "explanation": "η_propulsiva = 2/(1 + Ve/V0): com Ve próximo de V0 a eficiência sobe. O bypass gera empuxo com ar \"lento\"."
+        },
+        {
+          "prompt": "Para um avião agrícola que voa a 200 km/h, qual propulsão faz mais sentido?",
+          "kind": "choice",
+          "options": ["Turbojato", "Hélice (pistão ou turbo-hélice)", "Foguete", "Turbofan de caça"],
+          "answer": "1",
+          "explanation": "Em baixa velocidade a hélice tem a melhor eficiência propulsiva e o menor consumo."
+        }
+      ]
+    },
+    {
+      "id": "aero-08-helicoptero-pairar",
+      "title": "Helicóptero: o rotor e o voo pairado",
+      "level": 3,
+      "kind": "lab",
+      "lab": "helicopter",
+      "labParams": { "mode": "hover", "show": "rotorRadius,rpm,blades,chord,collective,power" },
+      "theory": "# O rotor é uma asa que gira\n\nCada pá do rotor principal é uma asa. Girando, ela encontra o ar com velocidade que cresce do centro até a ponta (`v = Ω · r`). O piloto muda o **passo coletivo** (ângulo de todas as pás ao mesmo tempo) para aumentar ou diminuir o empuxo.\n\n## Teoria da quantidade de movimento\n\nPara pairar, o rotor precisa empurrar ar para baixo com força igual ao peso. A velocidade que ele dá ao ar (velocidade induzida) e a potência ideal são:\n\n```\nv_i = √( T / (2 · ρ · A) )          A = π · R²\nP_ideal = T · v_i = T^1,5 / √(2 · ρ · A)\n```\n\n- **Rotor maior** (A maior) → menos potência para o mesmo peso. Por isso helicópteros têm rotores enormes e drones de carga usam hélices grandes.\n- A **figura de mérito** (FM ≈ 0,7) é a razão P_ideal / P_real (perdas de perfil, pontas, rotação do ar).\n\n## Limites do rotor\n\n- **Estol das pás**: cada pá tem CL máximo; o empuxo de um rotor fica limitado a CT/σ ≈ 0,13 (σ = solidez = área das pás / área do disco). Mais pás, pás mais largas, mais rotação ou rotor maior aumentam o limite.\n- **Mach na ponta**: se a ponta da pá se aproxima da velocidade do som (Mach 0,9+), surgem ondas de choque, ruído e perda de eficiência. Pontas ficam em ~200–220 m/s (Mach 0,6–0,65).\n\nO simulador combina teoria do elemento de pá (o empuxo que o coletivo gera) com a potência do motor. Comece com o rotor pequeno demais e descubra o que mudar.",
+      "task": "Este helicóptero de 1100 kg **não sai do chão**. Ajuste o rotor para que ele **paire**, **sem estol das pás** e com a ponta da pá abaixo de **Mach 0,7**.",
+      "hints": [
+        "Rotor maior e mais rotação aumentam o empuxo — mas cuidado com o Mach da ponta.",
+        "Raio de 5 m e 420 rpm resolvem com o mesmo motor."
+      ],
+      "goals": [
+        { "metric": "canHover", "op": "=", "value": 1, "description": "Consegue pairar (empuxo ≥ peso)" },
+        { "metric": "bladeStall", "op": "=", "value": 0, "description": "Sem estol das pás" },
+        { "metric": "tipMach", "op": "<=", "value": 0.7, "description": "Ponta da pá abaixo de Mach 0,7" }
+      ],
+      "solutionInputs": { "rotorRadius": "5", "rpm": "420" },
+      "questions": [
+        {
+          "prompt": "Qual a potência **ideal** para pairar com empuxo de **10 000 N**, rotor de raio **5 m**, ρ = 1,225 kg/m³?",
+          "kind": "number", "answer": "72.1", "unit": "kW", "tolerance": 3,
+          "explanation": "A = π·5² = 78,54 m²; √(2·1,225·78,54) = √192,4 = 13,87; P = 10000^1,5 / 13,87 = 1 000 000 / 13,87 ≈ 72 100 W = 72,1 kW."
+        },
+        {
+          "prompt": "Nesse mesmo caso, qual a velocidade induzida do ar no rotor?",
+          "kind": "number", "answer": "7.21", "unit": "m/s", "tolerance": 3,
+          "explanation": "v_i = √(T/(2ρA)) = √(10000/192,4) = √52,0 ≈ 7,21 m/s."
+        },
+        {
+          "prompt": "Por que um rotor **maior** precisa de **menos** potência para sustentar o mesmo peso?",
+          "kind": "choice",
+          "options": [
+            "Porque gira mais devagar e por isso não gasta energia",
+            "Porque empurra mais ar com menor velocidade; a potência ideal é T^1,5/√(2ρA)",
+            "Porque é mais leve",
+            "Não é verdade: o rotor maior gasta mais"
+          ],
+          "answer": "1",
+          "explanation": "Para o mesmo empuxo, acelerar uma massa maior de ar a uma velocidade menor custa menos energia — a mesma ideia do turbofan."
+        }
+      ]
+    },
+    {
+      "id": "aero-09-cauda-autorrotacao",
+      "title": "Torque, rotor de cauda e autorrotação",
+      "level": 4,
+      "kind": "lab",
+      "lab": "helicopter",
+      "labParams": { "mode": "tail", "rotorRadius": "5", "rpm": "420", "tailMax": "400", "show": "tailArm,tailMax,rpm,power" },
+      "safety": "Rotores de cauda giram a milhares de rpm e são quase invisíveis. Em solo, nunca se aproxime de um helicóptero com rotores girando pela parte traseira; aproxime-se pela frente, à vista do piloto.",
+      "theory": "# Ação e reação no rotor\n\nO motor aplica um **torque** no rotor principal para girá-lo contra o arrasto das pás. Pela 3ª lei de Newton, o rotor aplica um torque igual e **oposto na fuselagem**: sem nada para impedir, o helicóptero giraria ao contrário do rotor.\n\n```\nTorque Q = P_rotor / Ω            (Ω em rad/s)\nEmpuxo da cauda = Q / braço        (braço = distância do rotor de cauda ao eixo)\n```\n\n- Mais potência → mais torque → mais empuxo de cauda.\n- **Mais rotação** com a mesma potência → menos torque.\n- **Braço mais longo** → menos empuxo de cauda (mas fuselagem mais comprida).\n\nOs pedais do piloto mudam o passo do rotor de cauda e controlam a **guinada**. O rotor de cauda consome ~10% da potência.\n\n## Outras soluções\n\n- **Rotores coaxiais** ou **em tandem** girando em sentidos opostos (Kamov, Chinook): os torques se cancelam.\n- **Fenestron** (rotor carenado) e **NOTAR** (jato de ar na cauda).\n\n## Autorrotação: pousar sem motor\n\nSe o motor para, o piloto **baixa o coletivo**. Descendo, o ar passa **de baixo para cima** pelo rotor e o mantém girando, como um cata-vento. O helicóptero desce de forma controlada (~10–17 m/s na vertical, menos com velocidade à frente). Perto do chão o piloto faz o **flare**: puxa o coletivo e usa a **energia cinética do rotor** (½·I·Ω²) para frear a descida e pousar suave. Rotores pesados e grandes guardam mais energia.",
+      "task": "O rotor de cauda deste helicóptero não aguenta o torque e a fuselagem gira. Faça a **proa ficar estável** com o rotor de cauda precisando de **no máximo 500 N**.",
+      "hints": [
+        "Empuxo de cauda = torque / braço: um braço maior reduz o empuxo necessário.",
+        "Braço de 5,5 m e cauda de 600 N resolvem."
+      ],
+      "goals": [
+        { "metric": "yawBalanced", "op": "=", "value": 1, "description": "A cauda equilibra o torque (proa estável)" },
+        { "metric": "tailThrust", "op": "<=", "value": 500, "description": "Empuxo necessário na cauda ≤ 500 N" }
+      ],
+      "solutionInputs": { "tailArm": "5.5", "tailMax": "600" },
+      "questions": [
+        {
+          "prompt": "O rotor recebe **150 kW** a **400 rpm** e o braço da cauda é de **5 m**. Qual o empuxo necessário no rotor de cauda?",
+          "kind": "number", "answer": "716.2", "unit": "N", "tolerance": 2,
+          "explanation": "Ω = 400·2π/60 = 41,89 rad/s; Q = 150 000/41,89 = 3581 N·m; T_cauda = 3581/5 ≈ 716 N."
+        },
+        {
+          "prompt": "Na autorrotação, o que mantém o rotor girando sem motor?",
+          "kind": "choice",
+          "options": [
+            "Uma bateria de emergência",
+            "O ar que atravessa o rotor de baixo para cima enquanto o helicóptero desce",
+            "O rotor de cauda",
+            "A inércia, apenas por alguns segundos"
+          ],
+          "answer": "1",
+          "explanation": "Com o coletivo baixo, o fluxo ascendente produz nas pás uma força que as empurra no sentido da rotação, como um cata-vento."
+        },
+        {
+          "prompt": "Por que helicópteros com **dois rotores contrarrotativos** (coaxiais ou em tandem) não precisam de rotor de cauda?",
+          "kind": "choice",
+          "options": [
+            "Porque são mais leves",
+            "Porque os torques de reação dos dois rotores têm sentidos opostos e se cancelam",
+            "Porque voam mais devagar",
+            "Porque usam motores elétricos"
+          ],
+          "answer": "1",
+          "explanation": "Cada rotor empurra a fuselagem para um lado; girando em sentidos opostos, os torques se anulam."
+        }
+      ]
+    },
+    {
+      "id": "aero-10-projeto-breguet",
+      "title": "Projeto: dimensionar um avião e o alcance de Breguet",
+      "level": 5,
+      "kind": "lab",
+      "lab": "airplane",
+      "labParams": { "mode": "range", "runway": "300", "show": "fuel,speed,altitude,aspectRatio,wingArea,flaps,power" },
+      "theory": "# Até onde um avião voa?\n\nConforme queima combustível, o avião fica mais leve. Integrando isso, Louis Breguet chegou à **equação do alcance** (para hélice):\n\n```\nAlcance = (ηp / (g · c)) · (L/D) · ln(W0 / W1)\n```\n\n- `ηp` = eficiência da hélice; `c` = consumo específico (kg de combustível por joule; 0,30 kg/kWh = 8,33·10⁻⁸ kg/J).\n- `L/D` = eficiência aerodinâmica **na velocidade de cruzeiro** (não necessariamente a máxima).\n- `W0/W1` = peso de decolagem / peso sem o combustível.\n\nPara jato: `Alcance = (V / (g · c_T)) · (L/D) · ln(W0/W1)` — por isso jatos cruzam rápido e alto.\n\n## Os compromissos do projeto\n\n- **Mais combustível** → ln(W0/W1) maior, mas o avião fica **mais pesado**: estol mais alto e decolagem mais longa.\n- **Asa maior** → estol menor, mas mais área molhada (mais arrasto parasita).\n- **Alongamento maior** → L/D maior (menos induzido), mas asa mais pesada e cara (aqui não modelado).\n- **Velocidade e altitude de cruzeiro**: o L/D depende do CL de cruzeiro = 2W/(ρ·V²·S). Voar mais alto (ar rarefeito) ou mais devagar aumenta o CL e aproxima o avião do L/D máximo.\n\nUm engenheiro de projeto conceitual faz exatamente isso: varre as opções e acha o ponto que atende **todos** os requisitos. Observe o gráfico de alcance × velocidade.",
+      "task": "Requisitos do cliente: **alcance de 2000 km**, decolar de uma pista de **300 m** (ao nível do mar) e **estol em até 95 km/h** na configuração de pouso.",
+      "hints": [
+        "Mais combustível aumenta o alcance mas sobe o estol: compense com asa maior e flapes.",
+        "Uma solução: 220 kg de combustível, AR 11, asa de 18 m², flapes a 10°, cruzeiro a 180 km/h e 3000 m."
+      ],
+      "goals": [
+        { "metric": "range", "op": ">=", "value": 2000, "description": "Alcance ≥ 2000 km" },
+        { "metric": "tookOff", "op": "=", "value": 1, "description": "Decola na pista de 300 m" },
+        { "metric": "stallSpeed", "op": "<=", "value": 95, "description": "Velocidade de estol ≤ 95 km/h" }
+      ],
+      "solutionInputs": { "fuel": "220", "aspectRatio": "11", "wingArea": "18", "flaps": "10", "speed": "180", "altitude": "3000" },
+      "questions": [
+        {
+          "prompt": "Breguet com ηp = **0,8**, c = **0,30 kg/kWh**, L/D = **12** e W0/W1 = **1,2**. Qual o alcance, em km?",
+          "kind": "number", "answer": "2141", "unit": "km", "tolerance": 3,
+          "explanation": "c = 0,30/3,6·10⁶ = 8,33·10⁻⁸ kg/J; ηp/(g·c) = 0,8/(9,81 × 8,33·10⁻⁸) ≈ 978 600 m; × 12 × ln(1,2) = 978 600 × 12 × 0,1823 ≈ 2 141 000 m ≈ 2141 km."
+        },
+        {
+          "prompt": "Para máximo alcance de um avião a hélice, ele deve cruzar…",
+          "kind": "choice",
+          "options": [
+            "na velocidade máxima",
+            "perto da velocidade de L/D máximo",
+            "na velocidade de estol",
+            "tanto faz, o alcance só depende do combustível"
+          ],
+          "answer": "1",
+          "explanation": "Na equação de Breguet para hélice o alcance é proporcional ao L/D; ele é máximo onde o arrasto induzido iguala o parasita."
+        },
+        {
+          "prompt": "Dobrar o combustível de um avião (mesmo avião, mesmo L/D) dobra o alcance?",
+          "kind": "choice",
+          "options": [
+            "Sim, exatamente",
+            "Não: o alcance cresce com ln(W0/W1), e o combustível extra também precisa ser carregado",
+            "Não: o alcance cai",
+            "Sim, e ainda melhora a decolagem"
+          ],
+          "answer": "1",
+          "explanation": "O logaritmo cresce cada vez mais devagar; além disso o avião mais pesado estola mais rápido e precisa de mais pista."
+        }
+      ]
+    }
+  ]
+}

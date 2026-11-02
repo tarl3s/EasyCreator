@@ -1,0 +1,464 @@
+{
+  "id": "drones",
+  "title": "Drones: projeto e controle",
+  "area": "projects",
+  "description": "Monte e dimensione um multirrotor: motores, hélices, bateria e tempo de voo; depois sintonize o controle PID de altura e de atitude, planeje uma missão por GPS e conheça as regras da ANAC e do DECEA.",
+  "lessons": [
+    {
+      "id": "drone-01-partes",
+      "title": "As partes de um drone",
+      "level": 1,
+      "kind": "quiz",
+      "safety": "Hélices de drone cortam: retire as hélices sempre que for mexer na eletrônica ou configurar o drone na bancada. Baterias LiPo podem pegar fogo se furadas, amassadas ou carregadas de forma errada.",
+      "theory": "# Anatomia de um multirrotor\n\nUm drone multirrotor (quadricóptero, hexacóptero…) não tem superfícies de controle: ele se controla **só variando a rotação de cada motor**.\n\n- **Frame (chassi)**: os braços e a placa central, geralmente de fibra de carbono. O tamanho é a distância entre motores opostos (ex.: 250 mm).\n- **Motores brushless**: sem escovas, muito eficientes. A constante **KV** diz quantas rpm por volt o motor gira sem carga: um motor de 2300 KV a 11,1 V gira ~25 500 rpm.\n- **ESC** (controlador eletrônico de velocidade): um por motor; transforma o comando do controlador de voo em corrente trifásica para o motor.\n- **Hélices**: metade gira no sentido horário (CW) e metade no anti-horário (CCW), para cancelar o torque. A notação 5x4.3 significa 5 polegadas de diâmetro e 4,3 de passo.\n- **Bateria LiPo**: células de 3,7 V nominais (4,2 V cheia). \"3S\" = 3 células em série = 11,1 V. A capacidade é dada em mAh.\n- **Controlador de voo (FC)**: um microcontrolador com **IMU** (giroscópio + acelerômetro) que roda o controle PID centenas a milhares de vezes por segundo.\n- **Rádio receptor**, **GPS**, **câmera** e **telemetria**, conforme a aplicação.\n\n## Como ele se move\n\n- **Subir/descer**: todos os motores aceleram ou desaceleram juntos.\n- **Inclinar (rolagem/arfagem)**: motores de um lado giram mais que os do outro.\n- **Girar (guinada)**: aceleram os motores que giram num sentido e desaceleram os do outro — o torque de reação gira o drone.",
+      "questions": [
+        {
+          "prompt": "Um motor de **2300 KV** é ligado numa bateria de **11,1 V**. Quantas rpm ele gira sem carga?",
+          "kind": "number", "answer": "25530", "unit": "rpm", "tolerance": 2,
+          "explanation": "rpm = KV × V = 2300 × 11,1 = 25 530 rpm (com hélice, gira menos)."
+        },
+        {
+          "prompt": "Por que metade das hélices gira no sentido horário e metade no anti-horário?",
+          "kind": "choice",
+          "options": [
+            "Para fazer menos barulho",
+            "Para que os torques de reação dos motores se cancelem e o drone não gire sozinho",
+            "Porque os motores só giram para um lado",
+            "Para economizar bateria"
+          ],
+          "answer": "1",
+          "explanation": "Cada motor gira o drone ao contrário dele; com metade em cada sentido, os torques se anulam. Desequilibrando de propósito, o drone faz a guinada."
+        },
+        {
+          "prompt": "Qual peça transforma o comando do controlador de voo em corrente para o motor brushless?",
+          "kind": "choice",
+          "options": ["IMU", "ESC", "GPS", "Receptor de rádio"],
+          "answer": "1",
+          "explanation": "O ESC (Electronic Speed Controller) chaveia a corrente trifásica que faz o motor brushless girar."
+        },
+        {
+          "prompt": "Uma bateria **4S** tem tensão nominal de quantos volts?",
+          "kind": "number", "answer": "14.8", "unit": "V", "tolerance": 1,
+          "explanation": "4 células × 3,7 V = 14,8 V (16,8 V cheia)."
+        },
+        {
+          "prompt": "Como um quadricóptero faz a **guinada** (girar no próprio eixo)?",
+          "kind": "choice",
+          "options": [
+            "Usando um leme",
+            "Acelerando os motores que giram num sentido e desacelerando os do outro",
+            "Inclinando a câmera",
+            "Desligando um motor"
+          ],
+          "answer": "1",
+          "explanation": "O empuxo total fica igual (não sobe nem desce), mas o torque de reação fica desequilibrado e o drone gira."
+        }
+      ]
+    },
+    {
+      "id": "drone-02-empuxo-peso",
+      "title": "Empuxo e peso",
+      "level": 1,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "hover", "payload": "150", "show": "frameMass,motorThrust,motors,propSize" },
+      "safety": "Teste motores e hélices sempre preso a uma bancada, longe do rosto e das mãos, e com a bateria desconectada enquanto monta.",
+      "theory": "# A conta mais importante do drone\n\nPara sair do chão, o empuxo total dos motores precisa ser maior que o peso. A razão entre os dois é o **empuxo/peso (T/W)**:\n\n```\nT/W = (nº de motores × empuxo máximo por motor) / massa total\n```\n\nNa prática, fabricantes informam o empuxo em **gramas** (gf). Exemplo: 4 motores de 800 g num drone de 1600 g → T/W = 2.\n\n## Quanto é suficiente?\n\n- **T/W < 1**: não decola.\n- **T/W ≈ 1,5**: decola, mas sem margem para vento ou manobras — perigoso.\n- **T/W ≈ 2**: o mínimo recomendado para drones de filmagem e carga.\n- **T/W 5–10**: drones de corrida e acrobacia.\n\n## Acelerador de pairar\n\nSe o empuxo for proporcional ao acelerador (aproximação usada aqui), o drone paira com:\n\n```\nacelerador de pairar ≈ 1 / (T/W)\n```\n\nT/W = 2 → paira com **50%** do acelerador, deixando 50% para subir, frear e corrigir.\n\nNeste drone foi instalada uma câmera de **150 g**. A massa da bateria também conta (o simulador calcula: LiPo ≈ 150 Wh/kg).",
+      "task": "Com a câmera de 150 g instalada, deixe o drone com **T/W ≥ 2** e pairando com **no máximo 50% do acelerador**.",
+      "hints": [
+        "Motores mais fortes aumentam o empuxo; um frame mais leve reduz o peso.",
+        "Motores de 450 g de empuxo cada resolvem."
+      ],
+      "goals": [
+        { "metric": "thrustToWeight", "op": ">=", "value": 2, "description": "Empuxo/peso ≥ 2" },
+        { "metric": "hoverThrottle", "op": "<=", "value": 50, "description": "Paira com no máximo 50% do acelerador" }
+      ],
+      "solutionInputs": { "motorThrust": "450" },
+      "questions": [
+        {
+          "prompt": "Um drone de **1600 g** tem **4 motores de 800 g** de empuxo máximo. Qual o T/W?",
+          "kind": "number", "answer": "2", "tolerance": 2,
+          "explanation": "T/W = 4 × 800 / 1600 = 2."
+        },
+        {
+          "prompt": "Com T/W = 2, com quantos % do acelerador ele paira (empuxo proporcional ao acelerador)?",
+          "kind": "number", "answer": "50", "unit": "%", "tolerance": 2,
+          "explanation": "1 / 2 = 0,5 → 50%."
+        },
+        {
+          "prompt": "Por que não basta ter T/W um pouco acima de 1?",
+          "kind": "choice",
+          "options": [
+            "Porque o drone fica muito rápido",
+            "Porque não sobra empuxo para subir, frear, corrigir rajadas de vento e compensar a bateria descarregando",
+            "Porque a câmera não funciona",
+            "Porque o GPS precisa de empuxo"
+          ],
+          "answer": "1",
+          "explanation": "O controlador precisa de margem: para inclinar, um lado acelera; para frear uma descida, todos aceleram. Sem margem, o drone perde o controle."
+        }
+      ]
+    },
+    {
+      "id": "drone-03-bateria",
+      "title": "Bateria e tempo de voo",
+      "level": 2,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "hover", "show": "cells,capacity,motorThrust,frameMass" },
+      "safety": "**Baterias LiPo** podem pegar fogo violentamente. Carregue sempre com supervisão, num carregador balanceador, dentro de uma bolsa antichamas e longe de materiais inflamáveis. Nunca descarregue abaixo de ~3,3 V por célula, nunca use baterias estufadas ou furadas, e guarde-as com ~3,8 V por célula.",
+      "theory": "# Energia na bateria\n\nA energia de uma bateria é tensão × carga:\n\n```\nEnergia (Wh) = Tensão (V) × Capacidade (Ah)\n```\n\nUma 4S de 2200 mAh: 14,8 V × 2,2 Ah = **32,6 Wh**.\n\n## Quanto tempo voa?\n\n```\ntempo (h) = capacidade utilizável (Ah) / corrente (A)\n```\n\nSó se usa ~**80%** da capacidade (descarregar até o fim estraga a LiPo). A corrente de pairar vem da potência: `I = P / V`.\n\nNo simulador, a potência de pairar sai da teoria da quantidade de movimento por hélice (`P = T^1,5/√(2ρA)`), com figura de mérito 0,55 e eficiência de motor+ESC de 75%.\n\n## O dilema da bateria\n\nBateria maior = mais energia, mas também **mais peso**, que exige **mais potência**. A partir de certo ponto, aumentar a bateria quase não aumenta o tempo de voo (veja o gráfico tempo × capacidade). Por isso drones de longa duração usam baterias com mais Wh/kg (Li-ion) ou motores e hélices maiores e mais eficientes.\n\n- Mais **células** (tensão maior) para a mesma capacidade = mais energia, com corrente menor (menos perdas nos fios).",
+      "task": "Faça este drone voar pelo menos **10 minutos**, mantendo **T/W ≥ 2**.",
+      "hints": [
+        "Mais células e mais mAh aumentam a energia — e o peso. Talvez precise de motores mais fortes para manter T/W.",
+        "4S com 2600 mAh e motores de 600 g voam 11 minutos."
+      ],
+      "goals": [
+        { "metric": "flightTime", "op": ">=", "value": 10, "description": "Tempo de voo ≥ 10 min" },
+        { "metric": "thrustToWeight", "op": ">=", "value": 2, "description": "Empuxo/peso ≥ 2" }
+      ],
+      "solutionInputs": { "cells": "4", "capacity": "2600", "motorThrust": "600" },
+      "questions": [
+        {
+          "prompt": "Quanta energia tem uma bateria **4S de 2200 mAh**?",
+          "kind": "number", "answer": "32.56", "unit": "Wh", "tolerance": 2,
+          "explanation": "4 × 3,7 V = 14,8 V; 14,8 × 2,2 Ah = 32,56 Wh."
+        },
+        {
+          "prompt": "Usando 80% de uma bateria de **2200 mAh**, quantos minutos o drone voa puxando **15 A**?",
+          "kind": "number", "answer": "7.04", "unit": "min", "tolerance": 2,
+          "explanation": "0,8 × 2,2 Ah / 15 A = 0,1173 h = 7,04 min."
+        },
+        {
+          "prompt": "Por que dobrar a capacidade da bateria **não** dobra o tempo de voo?",
+          "kind": "choice",
+          "options": [
+            "Porque a bateria maior tem menos energia",
+            "Porque a bateria maior pesa mais, e o drone precisa de mais potência para sustentar esse peso",
+            "Porque os motores não aceitam mais corrente",
+            "Dobra, sim"
+          ],
+          "answer": "1",
+          "explanation": "A potência de pairar cresce com o peso elevado a 1,5; parte da energia extra é gasta só para carregar a própria bateria."
+        }
+      ]
+    },
+    {
+      "id": "drone-04-helice",
+      "title": "Escolhendo a hélice",
+      "level": 2,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "hover", "plot": "prop", "show": "propSize,motorThrust,capacity,cells" },
+      "safety": "Hélices maiores guardam muita energia: uma hélice de 10\" a 8000 rpm tem a ponta a mais de 100 km/h. Nunca segure um drone ligado pela mão e use protetores de hélice perto de pessoas.",
+      "theory": "# Hélice grande, motor lento\n\nPara o mesmo empuxo, uma hélice **maior** empurra **mais ar mais devagar**, e isso custa menos energia (a mesma ideia do rotor de helicóptero):\n\n```\nP_ideal = T^1,5 / √(2 · ρ · A)        A = π · D² / 4\n```\n\nComo A ∝ D², a potência ideal cai com **1/D**: dobrar o diâmetro corta a potência pela metade.\n\nA eficiência costuma ser dada em **gramas de empuxo por watt (g/W)**: drones de corrida ficam em 3–5 g/W; drones de longa duração com hélices grandes, 8–12 g/W.\n\n## Então por que não usar sempre hélices enormes?\n\n- O frame precisa ser maior (as hélices não podem se tocar).\n- Hélices grandes têm mais **inércia**: o motor demora mais para mudar a rotação, e o drone responde mais devagar (pior para corrida e acrobacia).\n- Exigem motores de **KV baixo** com mais torque.\n\n## Notação\n\n`10x4.5`: 10 polegadas de diâmetro, 4,5 polegadas de **passo** (quanto a hélice \"avança\" numa volta, como um parafuso). Passo maior = mais velocidade, mais corrente.\n\nO gráfico mostra o tempo de voo para cada tamanho de hélice, mantendo o resto do drone.",
+      "task": "Monte um drone que voe **pelo menos 15 minutos** com eficiência de **pelo menos 8 g/W**.",
+      "hints": [
+        "Aumente a hélice e veja o tempo de voo subir no gráfico. Hélices grandes pedem motores de mais empuxo.",
+        "Hélice de 9\", motores de 800 g e bateria 4S de 2200 mAh."
+      ],
+      "goals": [
+        { "metric": "flightTime", "op": ">=", "value": 15, "description": "Tempo de voo ≥ 15 min" },
+        { "metric": "gramsPerWatt", "op": ">=", "value": 8, "description": "Eficiência ≥ 8 g/W ao pairar" }
+      ],
+      "solutionInputs": { "propSize": "9", "motorThrust": "800", "capacity": "2200", "cells": "4" },
+      "questions": [
+        {
+          "prompt": "Mantendo o empuxo, se o diâmetro da hélice **dobra**, a potência ideal fica multiplicada por quanto?",
+          "kind": "number", "answer": "0.5", "tolerance": 2,
+          "explanation": "A área fica 4× maior; P ∝ 1/√A = 1/√4 = 0,5. A potência cai pela metade."
+        },
+        {
+          "prompt": "O que significa a hélice **5x4.3**?",
+          "kind": "choice",
+          "options": [
+            "5 pás e 4,3 cm",
+            "5 polegadas de diâmetro e 4,3 polegadas de passo",
+            "5 gramas e 4,3 watts",
+            "5 mil rpm e 4,3 A"
+          ],
+          "answer": "1",
+          "explanation": "Primeiro número = diâmetro, segundo = passo, ambos em polegadas."
+        },
+        {
+          "prompt": "Por que drones de corrida usam hélices **pequenas**?",
+          "kind": "choice",
+          "options": [
+            "Porque são mais eficientes",
+            "Porque têm pouca inércia e mudam de rotação muito rápido, dando respostas ágeis",
+            "Porque fazem menos barulho",
+            "Por causa da lei"
+          ],
+          "answer": "1",
+          "explanation": "A agilidade vem da resposta rápida dos motores; a eficiência fica em segundo plano."
+        }
+      ]
+    },
+    {
+      "id": "drone-05-imu-sensores",
+      "title": "IMU e sensores",
+      "level": 3,
+      "kind": "quiz",
+      "theory": "# Como o drone sabe onde está?\n\nO controlador de voo precisa saber, centenas de vezes por segundo, a **inclinação**, a **altura** e a **direção** do drone.\n\n## A IMU (unidade de medição inercial)\n\n- **Giroscópio**: mede a **velocidade angular** (°/s) em 3 eixos. Integrando no tempo dá o ângulo, mas pequenos erros se acumulam: o ângulo **deriva**.\n- **Acelerômetro**: mede a aceleração, incluindo a **gravidade**. Parado, ele aponta \"para baixo\" e dá o ângulo de inclinação — mas a **vibração** dos motores e as acelerações do voo o deixam ruidoso.\n- **Magnetômetro** (bússola): dá a direção (guinada) pelo campo magnético da Terra; sofre interferência dos cabos de alta corrente.\n- **Barômetro**: mede a pressão do ar → altitude (resolução de ~10 cm, mas varia com o vento e o tempo).\n- **GPS**: posição e velocidade absolutas (veremos depois).\n\n## Fusão de sensores: o filtro complementar\n\nO giroscópio é bom no curto prazo; o acelerômetro, no longo prazo. O **filtro complementar** junta os dois:\n\n```\nângulo = 0,98 · (ângulo + giro · dt) + 0,02 · ângulo_do_acelerômetro\n```\n\nControladores modernos usam o **filtro de Kalman** (ou suas variantes, como o EKF do ArduPilot), que pondera cada sensor pela sua incerteza.",
+      "questions": [
+        {
+          "prompt": "O que o **giroscópio** mede?",
+          "kind": "choice",
+          "options": ["A aceleração linear", "A velocidade angular (rotação)", "A altitude", "O campo magnético"],
+          "answer": "1",
+          "explanation": "O giroscópio MEMS mede quão rápido o drone gira em cada eixo (°/s ou rad/s)."
+        },
+        {
+          "prompt": "Por que não usar só o acelerômetro para saber a inclinação?",
+          "kind": "choice",
+          "options": [
+            "Porque ele não mede a gravidade",
+            "Porque vibrações e acelerações do voo se misturam à gravidade e deixam a medida ruidosa",
+            "Porque ele é muito caro",
+            "Porque só funciona com GPS"
+          ],
+          "answer": "1",
+          "explanation": "O acelerômetro mede a soma da gravidade com as acelerações do movimento; no curto prazo ele é ruidoso."
+        },
+        {
+          "prompt": "Filtro complementar: ângulo anterior **10°**, giro **20 °/s**, dt = **0,01 s**, acelerômetro indica **12°**. Qual o novo ângulo?",
+          "kind": "number", "answer": "10.236", "unit": "°", "tolerance": 1,
+          "explanation": "0,98 × (10 + 20 × 0,01) + 0,02 × 12 = 0,98 × 10,2 + 0,24 = 9,996 + 0,24 = 10,236°."
+        },
+        {
+          "prompt": "Um giroscópio tem erro (deriva) de **0,5 °/s**. Sem correção, quanto o ângulo calculado erra depois de **60 s**?",
+          "kind": "number", "answer": "30", "unit": "°", "tolerance": 2,
+          "explanation": "0,5 °/s × 60 s = 30° — por isso é preciso corrigir com o acelerômetro."
+        },
+        {
+          "prompt": "Qual sensor o drone usa para manter a **altura** quando não há GPS?",
+          "kind": "choice",
+          "options": ["Magnetômetro", "Barômetro", "Giroscópio", "Câmera térmica"],
+          "answer": "1",
+          "explanation": "O barômetro mede a pressão atmosférica, que cai cerca de 12 Pa a cada metro subido perto do solo."
+        }
+      ]
+    },
+    {
+      "id": "drone-06-pid-altura",
+      "title": "Controle PID: segurando a altura",
+      "level": 3,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "altitude", "show": "kp,ki,kd,target" },
+      "theory": "# Controle em malha fechada\n\nO controlador mede o **erro** `e = alvo − medida` e calcula o comando. O controlador **PID** soma três termos:\n\n```\nsaída = Kp·e + Ki·∫e·dt + Kd·de/dt\n```\n\n- **P (proporcional)**: corrige proporcionalmente ao erro. Sozinho, deixa um **erro permanente** quando há uma carga constante (aqui, a gravidade): para pairar a 50% de acelerador com Kp = 10 %/m, sobra um erro de 50/10 = **5 m**. Kp alto demais faz o drone **oscilar**.\n- **I (integral)**: soma o erro ao longo do tempo e vai aumentando o comando até o erro sumir — **elimina o erro permanente**. Muito I causa sobressinal e oscilação lenta.\n- **D (derivativo)**: reage à **velocidade** com que o erro muda — é um **freio** que amortece a chegada ao alvo. Aqui ele é aplicado à velocidade de subida (\"derivada na medida\"), para não dar um tranco quando o alvo muda.\n\n## Como medir a qualidade\n\n- **Sobressinal**: quanto passou do alvo (% do alvo).\n- **Tempo de acomodação**: quando entra e fica na faixa de ±5% do alvo.\n- **Erro em regime**: o que sobra no final.\n\n## Receita prática de sintonia\n\n1. Comece com I = D = 0 e aumente **P** até responder rápido (vai sobrar erro e oscilar).\n2. Aumente **D** até as oscilações sumirem.\n3. Aumente **I** devagar até o erro final zerar.\n\nO simulador inclui a resposta dos motores (atraso de ~30 ms) e o integrador \"congela\" quando o acelerador satura (anti-windup).",
+      "task": "Sintonize o PID para levar o drone a **10 m** com **sobressinal ≤ 10%**, **acomodação em até 6 s** e **sem erro no final**.",
+      "hints": [
+        "Só com P ele não chega no alvo: o erro final é (acelerador de pairar)/Kp. Use I para zerar o erro e D para amortecer.",
+        "Kp = 12, Ki = 4 e Kd = 10 funcionam bem."
+      ],
+      "goals": [
+        { "metric": "reachedAltitude", "op": "=", "value": 1, "description": "Chega e fica na altura alvo (±5%)" },
+        { "metric": "overshoot", "op": "<=", "value": 10, "description": "Sobressinal ≤ 10%" },
+        { "metric": "settlingTime", "op": "<=", "value": 6, "description": "Acomoda em até 6 s" }
+      ],
+      "solutionInputs": { "kp": "12", "ki": "4", "kd": "10" },
+      "questions": [
+        {
+          "prompt": "Só com controle **P**, o drone paira com **50%** de acelerador e Kp = **10 %/m**. Qual o erro de altura que sobra?",
+          "kind": "number", "answer": "5", "unit": "m", "tolerance": 2,
+          "explanation": "Para dar 50% de acelerador, Kp·e = 50 → e = 50/10 = 5 m abaixo do alvo."
+        },
+        {
+          "prompt": "Qual termo do PID elimina o erro permanente?",
+          "kind": "choice",
+          "options": ["P", "I", "D", "Nenhum"],
+          "answer": "1",
+          "explanation": "O integral acumula o erro e continua crescendo até que ele seja zero."
+        },
+        {
+          "prompt": "O drone passa do alvo e oscila. Qual termo aumentar primeiro?",
+          "kind": "choice",
+          "options": ["P", "I", "D", "Tirar a bateria"],
+          "answer": "2",
+          "explanation": "O derivativo age contra a velocidade de aproximação, amortecendo a oscilação."
+        }
+      ]
+    },
+    {
+      "id": "drone-07-atitude",
+      "title": "Atitude × altitude: o PID de rolagem",
+      "level": 4,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "attitude", "show": "kp,ki,kd,angle" },
+      "theory": "# O laço interno\n\nPara ir para a frente, o drone **inclina** (atitude) e parte do empuxo vira força horizontal. Por isso o controle é feito em **cascata**:\n\n```\nposição → (PID externo) → ângulo desejado → (PID de atitude) → diferença de empuxo → (motores)\n```\n\n- O laço de **atitude** (interno) precisa ser muito mais **rápido** que o de posição/altitude (externo): ele roda a 1–8 kHz nos controladores modernos.\n- Muitas controladoras usam ainda um laço de **velocidade angular** (rate) dentro do de ângulo.\n\n## A física da rolagem\n\nPara rolar, os motores de um lado aceleram e os do outro desaceleram. O torque é a diferença de empuxo × braço, e a aceleração angular é torque / momento de inércia. Drones pequenos são extremamente ágeis (milhares de °/s²).\n\n## Por que o D é indispensável aqui\n\nNão existe quase nenhum amortecimento natural na rolagem, e os motores demoram alguns milissegundos para mudar de rotação. Só com **P** o drone **oscila** cada vez mais. O **D** freia a rotação; o **I** compensa perturbações constantes — aqui, um vento lateral / CG deslocado que pede 5% do torque máximo o tempo todo.\n\nOs ganhos estão em % de diferença de empuxo por grau de erro (Kp), por grau·segundo (Ki) e por °/s (Kd).",
+      "task": "Sintonize o PID de rolagem para inclinar **20°** com **sobressinal ≤ 10%**, **acomodação em até 0,5 s** e erro final dentro de ±5%.",
+      "hints": [
+        "Primeiro adicione D até a oscilação sumir; depois I para vencer o vento constante.",
+        "Kp = 1,5, Ki = 2 e Kd = 0,2."
+      ],
+      "goals": [
+        { "metric": "reachedAngle", "op": "=", "value": 1, "description": "Chega e fica no ângulo alvo (±5%)" },
+        { "metric": "overshoot", "op": "<=", "value": 10, "description": "Sobressinal ≤ 10%" },
+        { "metric": "settlingTime", "op": "<=", "value": 0.5, "description": "Acomoda em até 0,5 s" }
+      ],
+      "solutionInputs": { "kp": "1.5", "ki": "2", "kd": "0.2" },
+      "questions": [
+        {
+          "prompt": "Num controle em cascata (posição → atitude → motores), qual laço deve ser o mais rápido?",
+          "kind": "choice",
+          "options": ["O de posição (externo)", "O de atitude (interno)", "Tanto faz", "O do GPS"],
+          "answer": "1",
+          "explanation": "O laço interno precisa responder bem mais rápido que o externo para que o externo \"enxergue\" o interno como quase instantâneo."
+        },
+        {
+          "prompt": "Um laço de controle roda a **1 kHz**. Qual o intervalo entre dois cálculos, em milissegundos?",
+          "kind": "number", "answer": "1", "unit": "ms", "tolerance": 1,
+          "explanation": "1 / 1000 Hz = 0,001 s = 1 ms."
+        },
+        {
+          "prompt": "Por que só com P o drone oscila na rolagem?",
+          "kind": "choice",
+          "options": [
+            "Porque o P é fraco demais",
+            "Porque quase não há amortecimento natural e o atraso dos motores faz a correção chegar atrasada; falta o termo D",
+            "Porque a bateria está fraca",
+            "Porque o acelerômetro está desligado"
+          ],
+          "answer": "1",
+          "explanation": "Sem um termo que reaja à velocidade angular, o drone passa do alvo, corrige tarde de novo e a oscilação cresce."
+        }
+      ]
+    },
+    {
+      "id": "drone-08-gps-navegacao",
+      "title": "GPS e navegação: ida e volta",
+      "level": 4,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": { "mode": "mission", "route": "3", "show": "speed,capacity,cells,propSize" },
+      "safety": "Planeje sempre uma reserva de bateria (aqui, 20%) e um ponto de retorno seguro. Perda de sinal de GPS ou de rádio acontece: configure o modo de retorno automático (RTH) e uma altura de retorno acima de árvores e prédios.",
+      "theory": "# Como o GPS funciona\n\nOs satélites GNSS (GPS americano, GLONASS, Galileo, BeiDou) transmitem a hora exata. O receptor mede **quanto tempo o sinal levou** de cada satélite e calcula a distância. Com **4 satélites** ele resolve 4 incógnitas: x, y, z e o erro do seu próprio relógio.\n\n- Precisão típica: **2–5 m** na horizontal (pior na vertical).\n- **RTK**: uma base fixa envia correções e a precisão chega a **centímetros** (mapeamento, agricultura de precisão).\n\n## Missões por waypoints\n\nO piloto automático (ArduPilot, PX4) segue uma lista de **waypoints** (latitude, longitude, altitude) e, no fim, faz o **RTH** (return to home).\n\n## Energia em voo à frente\n\nVoando à frente, o drone inclina e o rotor encontra ar \"novo\" (sustentação de translação): a potência induzida **cai**. Mas o arrasto do corpo cresce com v². Existe uma **velocidade de melhor alcance** (mínimo de Wh por km) — veja no gráfico.\n\n```\nEnergia da missão = Σ potência × tempo   (subida, ida, volta, descida)\n```\n\nA regra de segurança aqui: usar no máximo **80%** da bateria (20% de reserva) e ter **T/W ≥ 1,5** para enfrentar vento.",
+      "task": "Planeje uma inspeção num ponto a **3 km** da base (ida e volta): a missão precisa ser **cumprida com 20% de reserva** e usar **no máximo 75% da bateria**.",
+      "hints": [
+        "Muito devagar, o drone passa tempo demais no ar; veja a velocidade de menor Wh/km no gráfico.",
+        "12 m/s com uma bateria de 2200 mAh resolve."
+      ],
+      "goals": [
+        { "metric": "missionOk", "op": "=", "value": 1, "description": "Missão cumprida com 20% de reserva" },
+        { "metric": "energyUsed", "op": "<=", "value": 75, "description": "Usa no máximo 75% da bateria" }
+      ],
+      "solutionInputs": { "speed": "12", "capacity": "2200" },
+      "questions": [
+        {
+          "prompt": "Quantos satélites, no mínimo, um receptor GPS precisa para calcular uma posição em 3D?",
+          "kind": "choice",
+          "options": ["1", "2", "3", "4"],
+          "answer": "3",
+          "explanation": "São 4 incógnitas: x, y, z e o erro do relógio do receptor."
+        },
+        {
+          "prompt": "Voando a **12 m/s** durante **5 min**, que distância o drone percorre, em km?",
+          "kind": "number", "answer": "3.6", "unit": "km", "tolerance": 2,
+          "explanation": "12 m/s × 300 s = 3600 m = 3,6 km."
+        },
+        {
+          "prompt": "Para mapear uma lavoura com precisão de centímetros, qual tecnologia usar?",
+          "kind": "choice",
+          "options": ["GPS comum", "GPS com RTK", "Bússola", "Barômetro"],
+          "answer": "1",
+          "explanation": "O RTK usa correções de uma estação base e chega a 1–2 cm."
+        }
+      ]
+    },
+    {
+      "id": "drone-09-regras",
+      "title": "Regras e segurança: ANAC, DECEA e ANATEL",
+      "level": 3,
+      "kind": "quiz",
+      "safety": "As regras mudam: antes de voar, confira as versões atuais do RBAC-E nº 94 (ANAC), da ICA 100-40 (DECEA) e as orientações da ANATEL. Voar sem autorização pode gerar multa e até processo criminal se colocar pessoas em risco.",
+      "theory": "# Quem regula os drones no Brasil\n\n- **ANAC** (Agência Nacional de Aviação Civil): regras da aeronave e do piloto — **RBAC-E nº 94**.\n- **DECEA** (Departamento de Controle do Espaço Aéreo, da Aeronáutica): uso do **espaço aéreo** — ICA 100-40 e o sistema **SARPAS**, onde se pede autorização de voo.\n- **ANATEL**: homologação dos **rádios** do drone e do controle.\n\n## Pontos principais (resumo para estudo)\n\n- Drones com mais de **250 g** devem ser **cadastrados** na ANAC (sistema **SISANT**); os de até 250 g têm regras mais simples.\n- A altura de referência para operações comuns é de até **120 m (400 pés)** acima do solo.\n- Não voar a menos de **30 m** (na horizontal) de pessoas que não concordaram com a operação (salvo exceções previstas, como drones até 250 g).\n- Manter o drone em **linha de visada visual (VLOS)**, a não ser em operações especialmente autorizadas.\n- Ficar longe de **aeroportos, helipontos** e áreas restritas; pedir acesso ao espaço aéreo pelo **SARPAS** quando exigido.\n- Uso **não recreativo** acima de 250 g exige **seguro** de responsabilidade civil (RETA).\n- Respeitar a **privacidade**: filmar pessoas e propriedades alheias tem implicações legais.\n\n## Segurança na prática\n\n- Checklist antes de cada voo: hélices, bateria, GPS com satélites suficientes, ponto de retorno gravado, vento.\n- Nunca voe sobre multidões nem perto de linhas de energia.",
+      "questions": [
+        {
+          "prompt": "Qual órgão é responsável pelo **espaço aéreo** e pelo sistema SARPAS?",
+          "kind": "choice",
+          "options": ["ANAC", "DECEA", "ANATEL", "Polícia Federal"],
+          "answer": "1",
+          "explanation": "O DECEA, ligado ao Comando da Aeronáutica, controla o espaço aéreo brasileiro."
+        },
+        {
+          "prompt": "A partir de quantos gramas um drone precisa ser cadastrado na ANAC (SISANT)?",
+          "kind": "number", "answer": "250", "unit": "g", "tolerance": 1,
+          "explanation": "Drones com peso máximo de decolagem acima de 250 g precisam de cadastro."
+        },
+        {
+          "prompt": "Qual a altura de referência máxima para operações comuns de drone, em metros acima do solo?",
+          "kind": "number", "answer": "120", "unit": "m", "tolerance": 1,
+          "explanation": "120 m (400 pés) acima do nível do solo é a referência usada pelo DECEA para operações comuns."
+        },
+        {
+          "prompt": "Qual a distância horizontal mínima de pessoas que **não** concordaram com o voo?",
+          "kind": "number", "answer": "30", "unit": "m", "tolerance": 1,
+          "explanation": "O RBAC-E nº 94 exige 30 m de distância horizontal de pessoas não anuentes (com exceções previstas)."
+        },
+        {
+          "prompt": "O que significa voar em **VLOS**?",
+          "kind": "choice",
+          "options": [
+            "Voar à noite",
+            "Manter o drone sempre visível a olho nu pelo piloto",
+            "Voar acima de 400 pés",
+            "Voar só com GPS"
+          ],
+          "answer": "1",
+          "explanation": "VLOS = Visual Line Of Sight, linha de visada visual, sem binóculos nem só pela câmera."
+        }
+      ]
+    },
+    {
+      "id": "drone-10-projeto-entrega",
+      "title": "Projeto: drone de entrega",
+      "level": 5,
+      "kind": "lab",
+      "lab": "drone",
+      "labParams": {
+        "mode": "mission", "deliver": "1", "frameMass": "1500", "motorThrust": "1200", "propSize": "10", "cells": "4",
+        "capacity": "4000", "payload": "1000", "route": "4", "speed": "8",
+        "show": "motors,motorThrust,propSize,cells,capacity,speed"
+      },
+      "safety": "Entregas com drone sobre áreas povoadas exigem autorização especial da ANAC e do DECEA, análise de risco e equipamentos redundantes. Este é um exercício de dimensionamento, não um plano de voo real.",
+      "theory": "# Dimensionamento de missão\n\nEngenheiros de drones resolvem um problema circular: a bateria precisa ter energia para a missão, mas a bateria pesa, o que aumenta a potência, o que exige mais bateria…\n\n## O roteiro\n\n1. **Requisitos**: carga útil (1 kg), distância (4 km até o ponto), reserva (20%), margem de empuxo (T/W ≥ 2 com a carga).\n2. **Estimativa de massa**: frame + motores + eletrônica + bateria + carga.\n3. **Propulsão**: escolher número de motores, hélices e motores que deem T/W ≥ 2 **com a carga**, numa faixa eficiente (g/W).\n4. **Energia**: somar pairar na decolagem, ida (com carga), volta (sem a carga — mais leve!) e pouso:\n\n```\nE = P_pairar·t1 + P_ida·(d/v) + P_volta·(d/v) + P_pouso·t2\nBateria necessária = E / 0,8          (20% de reserva)\n```\n\n5. **Velocidade de cruzeiro**: perto da de menor Wh/km.\n6. **Iterar** até tudo fechar — e conferir as restrições práticas (tamanho, custo, redundância: um hexa ou octo continua voando se perder um motor).\n\n## Fração de massa\n\nEm drones bem projetados, a bateria é **30–40%** da massa total. Acima disso, o ganho de autonomia é pequeno.",
+      "task": "Projete o drone para entregar **1 kg a 4 km** e voltar: missão cumprida com reserva, **T/W ≥ 2 com a carga** e usando **no máximo 60% da bateria**.",
+      "hints": [
+        "Com a carga, os motores atuais não dão T/W 2: mais motores ou motores mais fortes. A bateria também precisa crescer.",
+        "Hexacóptero (6 motores) de 1400 g, hélices de 12\", 6S e 8000 mAh."
+      ],
+      "goals": [
+        { "metric": "missionOk", "op": "=", "value": 1, "description": "Entrega feita e volta com 20% de reserva" },
+        { "metric": "thrustToWeight", "op": ">=", "value": 2, "description": "T/W ≥ 2 com a carga" },
+        { "metric": "energyUsed", "op": "<=", "value": 60, "description": "Usa no máximo 60% da bateria" }
+      ],
+      "solutionInputs": { "motors": "6", "motorThrust": "1400", "propSize": "12", "cells": "6", "capacity": "8000" },
+      "questions": [
+        {
+          "prompt": "Uma missão exige **800 W** durante **10 min**. Quantos Wh de energia?",
+          "kind": "number", "answer": "133.3", "unit": "Wh", "tolerance": 2,
+          "explanation": "E = 800 W × (10/60) h = 133,3 Wh."
+        },
+        {
+          "prompt": "Para manter **20% de reserva**, qual a energia mínima da bateria para essa missão?",
+          "kind": "number", "answer": "166.7", "unit": "Wh", "tolerance": 2,
+          "explanation": "Só 80% pode ser usado: 133,3 / 0,8 = 166,7 Wh."
+        },
+        {
+          "prompt": "Por que a volta de uma entrega gasta menos energia que a ida?",
+          "kind": "choice",
+          "options": [
+            "Porque o vento sempre ajuda na volta",
+            "Porque o drone volta sem a carga: mais leve, precisa de menos empuxo e menos potência",
+            "Porque a bateria fica mais leve conforme descarrega",
+            "Não gasta menos"
+          ],
+          "answer": "1",
+          "explanation": "A potência cresce com o peso (P ∝ W^1,5 no pairar); sem o pacote, o drone gasta bem menos. (Baterias de lítio não ficam mais leves ao descarregar.)"
+        }
+      ]
+    }
+  ]
+}
