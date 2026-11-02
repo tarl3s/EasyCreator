@@ -52,10 +52,10 @@ public sealed class LabParam
     }
 }
 
-/// <summary>Number formatting shared by the project labs (Brazilian style: decimal comma).</summary>
+/// <summary>Number formatting shared by the project labs, in the current language (point in English, comma in pt/es).</summary>
 public static class Fmt
 {
-    static readonly CultureInfo Br = CultureInfo.GetCultureInfo("pt-BR");
+    static CultureInfo Br => CultureInfo.GetCultureInfo(L.Lang switch { "en" => "en-US", "es" => "es-ES", _ => "pt-BR" });
 
     public static string Num(double v, double step = 0.01)
     {
