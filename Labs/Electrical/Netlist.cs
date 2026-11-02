@@ -58,7 +58,7 @@ public sealed class Elem
     // Solver bookkeeping.
     internal int Na = -1, Nb = -1, Br = -1;
     internal bool DOn;
-    internal double Vprev, Iprev, Geq, Jeq;
+    internal double Vprev, Iprev, Vprev2, Iprev2, Geq, Jeq;   // the last two points (BDF2) and the companion model
 
     /// <summary>Results (DC / end of transient): voltage A−B and current A→B (sources: current delivered out of +).</summary>
     public double Vd, Id;
@@ -100,7 +100,7 @@ public sealed class Netlist
             var line = raw.Trim();
             if (line.Length == 0 || line.StartsWith('*') || line.StartsWith("//")) continue;
             var tok = Regex.Split(line, @"\s+");
-            if (tok.Length < 3) { net.Errors.Add($"Linha incompleta: \"{line}\""); continue; }
+            if (tok.Length < 3) { net.Errors.Add(L.F("Linha incompleta: \"{0}\"", line)); continue; }
             var e = new Elem { Name = tok[0], A = tok[1], B = tok[2] };
             switch (char.ToUpperInvariant(tok[0][0]))
             {
@@ -114,7 +114,7 @@ public sealed class Netlist
                 case 'M': e.Kind = ElemKind.M; break;
                 case 'A': e.Kind = ElemKind.A; break;
                 case 'W': e.Kind = ElemKind.W; break;
-                default: net.Errors.Add($"Componente desconhecido: \"{tok[0]}\""); continue;
+                default: net.Errors.Add(L.F("Componente desconhecido: \"{0}\"", tok[0])); continue;
             }
             var nums = new List<double>();
             foreach (var t in tok.Skip(3))
@@ -147,15 +147,15 @@ public sealed class Netlist
                     case "dc": e.Wave = "dc"; continue;
                 }
                 if (SI.TryParse(t, out var n)) nums.Add(n);
-                else net.Errors.Add($"{e.Name}: valor \"{t}\" não entendido");
+                else net.Errors.Add(L.F("{0}: valor \"{1}\" não entendido", e.Name, t));
             }
             if (e.Kind is ElemKind.R or ElemKind.C or ElemKind.L or ElemKind.V or ElemKind.I)
             {
-                if (nums.Count == 0) { net.Errors.Add($"{e.Name}: falta o valor"); continue; }
+                if (nums.Count == 0) { net.Errors.Add(L.F("{0}: falta o valor", e.Name)); continue; }
                 e.Value = nums[0];
                 if (e.Wave != "dc" && nums.Count > 1) e.Freq = nums[1];
             }
-            if (e.Kind != ElemKind.W && net.Find(e.Name) != null) { net.Errors.Add($"Nome repetido: {e.Name}"); continue; }
+            if (e.Kind != ElemKind.W && net.Find(e.Name) != null) { net.Errors.Add(L.F("Nome repetido: {0}", e.Name)); continue; }
             net.Elems.Add(e);
         }
         net.BuildNodes();
@@ -200,6 +200,8 @@ public sealed class Netlist
 public static class SI
 {
     static readonly CultureInfo Br = CultureInfo.GetCultureInfo("pt-BR");
+    /// <summary>Decimal comma in Portuguese and Spanish, decimal point in English.</summary>
+    static CultureInfo Culture => L.Lang == "en" ? CultureInfo.InvariantCulture : Br;
 
     static readonly Regex Num = new(@"^([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)\s*(meg|[TGMkKmuµnpf])?\s*(Ω|ohms?|VA|var|Hz|V|A|F|H|W|s)?$",
         RegexOptions.Compiled);
@@ -220,7 +222,7 @@ public static class SI
 
     public static double Parse(string s, double fallback = 0) => TryParse(s, out var v) ? v : fallback;
 
-    /// <summary>"4,70 kΩ" with <paramref name="sig"/> significant digits, decimal comma.</summary>
+    /// <summary>"4,70 kΩ" (English: "4.70 kΩ") with <paramref name="sig"/> significant digits, decimal comma.</summary>
     public static string Format(double v, string unit, int sig = 3)
     {
         if (double.IsNaN(v) || double.IsInfinity(v)) return "—";
@@ -232,12 +234,12 @@ public static class SI
         int Digits(double x) => Math.Max(0, sig - 1 - (int)Math.Floor(Math.Log10(Math.Abs(x))));
         m = Math.Round(m, Digits(m));
         if (Math.Abs(m) >= 1000 && exp < 4) { exp++; m /= 1000; } // 999.7 → 1,00 k
-        return m.ToString("F" + Digits(m), Br) + " " + pre[exp + 5] + unit;
+        return m.ToString("F" + Digits(m), Culture) + " " + pre[exp + 5] + unit;
     }
 
-    /// <summary>Plain number with decimal comma ("0,83").</summary>
+    /// <summary>Plain number with the language's decimal separator ("0,83" / "0.83").</summary>
     public static string Plain(double v, int decimals = 2) =>
-        double.IsNaN(v) ? "—" : v.ToString("F" + decimals, Br);
+        double.IsNaN(v) ? "—" : v.ToString("F" + decimals, Culture);
 
     /// <summary>E24 series (the resistor values sold in shops).</summary>
     public static readonly double[] E24 = { 1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1 };

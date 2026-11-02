@@ -17,7 +17,7 @@ public sealed class ScopeView : FrameworkElement
     public string XUnit { get; set; } = "s";
     public double? Marker { get; set; }
     public double Reveal { get; set; } = 1;
-    public string Empty { get; set; } = "Clique em ▶ para simular.";
+    public string Empty { get; set; } = L.T("Clique em ▶ para simular.");
 
     public static readonly Brush[] Colors = { Ui.Make("#18B98A"), Ui.Make("#FFC857"), Ui.Make("#5AA9FF") };
     static readonly Pen GridPen = Frozen(new Pen(Ui.Make("#2A2A33"), 1)), AxisPen = Frozen(new Pen(Ui.Make("#3A3A45"), 1)),
@@ -131,7 +131,7 @@ public sealed class ScopeView : FrameworkElement
         }
         if (Marker is double mk)
         {
-            var ft = Text("f atual: " + SI.Format(mk, XUnit), 11, Ui.Bad);
+            var ft = Text(L.F("f atual: {0}", SI.Format(mk, XUnit)), 11, Ui.Bad);
             dc.DrawText(ft, new Point(plot.Right - ft.Width - 2, 2));
         }
     }

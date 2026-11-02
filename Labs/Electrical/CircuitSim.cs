@@ -3,7 +3,8 @@ using Complex = System.Numerics.Complex;
 namespace EasyCreator.Electrical;
 
 /// <summary>Modified Nodal Analysis of a <see cref="Netlist"/>: DC operating point (diodes by iterating their on/off
-/// state), transient (backward Euler first step, trapezoidal after; capacitors and inductors as companion models) and
+/// state), transient (BDF2 / Gear with backward-Euler steps at discontinuities; capacitors and inductors as companion
+/// models) and
 /// AC steady state with complex phasors. Never throws: a failure sets <see cref="Error"/> (in Portuguese).</summary>
 public sealed class CircuitSim
 {
@@ -34,11 +35,15 @@ public sealed class CircuitSim
     }
 
     /// <summary>Runs from t = 0 (capacitors discharged, inductors without current) to <paramref name="tstop"/>.
-    /// <paramref name="record"/> is called at t = 0 and after every step (read <see cref="NodeV"/> and the elements).</summary>
+    /// <paramref name="record"/> is called at t = 0 and after every step (read <see cref="NodeV"/> and the elements).
+    /// Integration: BDF2 (Gear, 2nd order). It is L-stable, so a step much longer than a time constant settles instead of
+    /// ringing (the trapezoidal rule rings there: a stiff RC driven by a 0–5 V square wave swung from −0.3 V to 5.3 V).
+    /// Backward Euler takes the first two steps and the two steps after any discontinuity (a square-wave edge, a diode
+    /// switching), where the history of the previous points no longer describes a smooth curve.</summary>
     public bool RunTransient(double tstop, int steps, Action<double> record)
     {
-        if (!(tstop > 0) || steps < 1) { Error = "Tempo de simulação inválido."; return false; }
-        foreach (var e in _n.Elems) { e.Vprev = e.Iprev = 0; e.DOn = false; }
+        if (!(tstop > 0) || steps < 1) { Error = L.T("Tempo de simulação inválido."); return false; }
+        foreach (var e in _n.Elems) { e.Vprev = e.Iprev = e.Vprev2 = e.Iprev2 = 0; e.DOn = false; }
         double dt = tstop / steps;
         if (!SolveNonlinear(Mode.Init, 0, false, 0))
         {
@@ -48,36 +53,48 @@ public sealed class CircuitSim
             foreach (var e in _n.Elems) e.DOn = false;
         }
         record(0);
+        int euler = 2;  // backward-Euler steps still to take
         for (int k = 1; k <= steps; k++)
         {
             double t = k * dt;
-            bool trap = k > 1;
+            if (SquareEdge(t - dt, t)) euler = 2;
+            bool bdf2 = euler == 0;
             var before = SaveDiodes();
-            if (!SolveNonlinear(Mode.Tran, dt, trap, t)) return false;
-            if (trap && DiodesChanged(before))
+            if (!SolveNonlinear(Mode.Tran, dt, bdf2, t)) return false;
+            if (bdf2 && DiodesChanged(before))
             {
-                // A diode switched during the step: the trapezoidal rule would ring, so redo it with backward Euler.
+                // A diode switched during the step: redo it (and the next one) with backward Euler.
                 RestoreDiodes(before);
                 if (!SolveNonlinear(Mode.Tran, dt, false, t)) return false;
+                euler = 1;
             }
+            else if (euler > 0) euler--;
             foreach (var e in _n.Elems)
-                if (e.Kind is ElemKind.C or ElemKind.L) { e.Vprev = e.Vd; e.Iprev = e.Id; }
+                if (e.Kind is ElemKind.C or ElemKind.L) { e.Vprev2 = e.Vprev; e.Iprev2 = e.Iprev; e.Vprev = e.Vd; e.Iprev = e.Id; }
             record(t);
         }
         return true;
+    }
+
+    /// <summary>True when a square-wave source changes level between <paramref name="t0"/> and <paramref name="t1"/>.</summary>
+    bool SquareEdge(double t0, double t1)
+    {
+        foreach (var e in _n.Elems)
+            if (e.Wave == "sq" && e.IsSource && SourceValue(e, t0) != SourceValue(e, t1)) return true;
+        return false;
     }
 
     bool[] SaveDiodes() => _n.Elems.Select(e => e.DOn).ToArray();
     bool DiodesChanged(bool[] s) { for (int i = 0; i < s.Length; i++) if (_n.Elems[i].Kind == ElemKind.D && _n.Elems[i].DOn != s[i]) return true; return false; }
     void RestoreDiodes(bool[] s) { for (int i = 0; i < s.Length; i++) _n.Elems[i].DOn = s[i]; }
 
-    bool SolveNonlinear(Mode mode, double dt, bool trap, double t)
+    bool SolveNonlinear(Mode mode, double dt, bool bdf2, double t)
     {
         DiodesConverged = true;
         var diodes = _n.Elems.Where(e => e.Kind == ElemKind.D).ToList();
         for (int it = 0; it < 100; it++)
         {
-            if (!SolveReal(mode, dt, trap, t, out var x)) return false;
+            if (!SolveReal(mode, dt, bdf2, t, out var x)) return false;
             Results(mode, x, t);
             Elem? worst = null; double worstAmt = 0;
             var wrong = new List<Elem>();
@@ -106,7 +123,7 @@ public sealed class CircuitSim
 
     static double Gr(Elem e) => 1 / Math.Max(Math.Abs(e.Value), 1e-3);
 
-    bool SolveReal(Mode mode, double dt, bool trap, double t, out double[] x)
+    bool SolveReal(Mode mode, double dt, bool bdf2, double t, out double[] x)
     {
         int nN = _n.NodeCount, nb = 0;
         foreach (var e in _n.Elems)
@@ -154,8 +171,10 @@ public sealed class CircuitSim
                     if (mode == Mode.Init) { if (e.Br >= 0) Branch(e, e.Vprev); }
                     else if (mode == Mode.Tran && e.Value > 0)
                     {
-                        e.Geq = (trap ? 2 : 1) * e.Value / dt;
-                        e.Jeq = trap ? e.Geq * e.Vprev + e.Iprev : e.Geq * e.Vprev;
+                        // i = C·dv/dt. Backward Euler: i = C/dt·(v − v₁). BDF2: i = C/dt·(1.5v − 2v₁ + 0.5v₂).
+                        double cdt = e.Value / dt;
+                        e.Geq = bdf2 ? 1.5 * cdt : cdt;
+                        e.Jeq = bdf2 ? cdt * (2 * e.Vprev - 0.5 * e.Vprev2) : cdt * e.Vprev;
                         G(e, e.Geq); J(e.Na, e.Nb, e.Jeq);
                     }
                     else e.Geq = e.Jeq = 0;
@@ -166,8 +185,9 @@ public sealed class CircuitSim
                     else
                     {
                         double l = Math.Max(e.Value, 1e-12);
-                        e.Geq = trap ? dt / (2 * l) : dt / l;
-                        e.Jeq = trap ? e.Iprev + e.Geq * e.Vprev : e.Iprev;
+                        // v = L·di/dt. Backward Euler: i = i₁ + dt/L·v. BDF2: i = (4i₁ − i₂)/3 + 2dt/(3L)·v.
+                        e.Geq = bdf2 ? 2 * dt / (3 * l) : dt / l;
+                        e.Jeq = bdf2 ? (4 * e.Iprev - e.Iprev2) / 3 : e.Iprev;
                         G(e, e.Geq); J(e.Nb, e.Na, e.Jeq);
                     }
                     break;
@@ -204,8 +224,8 @@ public sealed class CircuitSim
     {
         var vs = _n.Elems.Count(e => e.Kind == ElemKind.V);
         return vs > 1
-            ? "O circuito não tem solução: há fontes de tensão em paralelo ou um laço só de fontes/fios (curto-circuito)."
-            : "O circuito não tem solução: verifique se há um curto-circuito direto na fonte ou um laço só de fios e fontes.";
+            ? L.T("O circuito não tem solução: há fontes de tensão em paralelo ou um laço só de fontes/fios (curto-circuito).")
+            : L.T("O circuito não tem solução: verifique se há um curto-circuito direto na fonte ou um laço só de fios e fontes.");
     }
 
     // ───────────────────────── AC (phasors) ─────────────────────────
