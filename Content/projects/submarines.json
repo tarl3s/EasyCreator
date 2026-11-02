@@ -1,0 +1,559 @@
+{
+  "id": "submarines",
+  "title": "Submarinos e veículos subaquáticos",
+  "area": "projects",
+  "description": "Densidade e Arquimedes, flutuabilidade neutra, tanques de lastro, pressão, cascos, propulsão, estabilidade, sensores e controle de profundidade com PID — até o orçamento completo de um ROV.",
+  "lessons": [
+    {
+      "id": "sub-01-arquimedes",
+      "title": "Densidade e o princípio de Arquimedes",
+      "level": 1,
+      "kind": "lab",
+      "lab": "submarine",
+      "theory": "# Por que um navio de aço flutua?\n\nUm parafuso de aço afunda; um navio de aço de 100 000 toneladas flutua. A diferença é a **densidade média**:\n\n```\ndensidade = massa / volume      (kg/m³)\n```\n\n- água doce: **1 000 kg/m³** (1 litro = 1 kg)\n- água do mar: **~1 025 kg/m³**\n- aço: ~7 850 kg/m³; madeira: 500–800 kg/m³\n\nO navio é aço **mais muito ar** dentro: a massa total dividida pelo volume total dá menos que a da água.\n\n## O princípio de Arquimedes\n\nTodo corpo mergulhado num líquido recebe uma força para cima, o **empuxo**, igual ao **peso do líquido que ele desloca**:\n\n```\nempuxo = ρ_água × g × V_deslocado\n```\n\nUm casco de 20 L totalmente submerso em água doce desloca 20 kg de água: empuxo = 1 000 × 9,81 × 0,020 = **196,2 N**.\n\n## Afunda, flutua ou fica parado?\n\nCompare o empuxo com o **peso** (m × g):\n\n- **empuxo > peso** → o saldo é para cima: o corpo **sobe** e flutua com uma parte para fora da água (deslocando só o necessário);\n- **empuxo < peso** → **afunda**;\n- **empuxo = peso** → **flutuabilidade neutra**: fica onde for colocado.\n\nOu, do jeito mais rápido: se a **densidade média** for menor que a da água, flutua.\n\n## O modelo do simulador\n\nO casco é um cilindro deitado (comprimento = 6 diâmetros). O simulador soma peso, empuxo (que diminui à medida que o casco sai da água), arrasto da água e a \"massa adicional\" de água que o casco precisa empurrar para se mover.",
+      "task": "Este casco de 20 L tem 21 kg e **afunda**. Mude o **volume** ou a **massa** do casco para que ele **flutue** (saldo de empuxo positivo e terminando na superfície).",
+      "hints": [
+        "Calcule a densidade média: 21 kg / 20 L = 1,05 kg/L. Maior que a água doce (1 kg/L)…",
+        "Um casco maior desloca mais água; um mais leve pesa menos. Qualquer um dos dois resolve."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "21", "ballastVolume": "0", "floor": "10", "duration": "60", "controls": "hullVolume,hullMass" },
+      "goals": [
+        { "metric": "netBuoyancy", "op": ">", "value": 0, "description": "Saldo de empuxo positivo (empuxo maior que o peso)" },
+        { "metric": "finalDepth", "op": "<=", "value": 0.2, "description": "Termina flutuando na superfície" }
+      ],
+      "solutionInputs": { "hullVolume": "24" },
+      "questions": [
+        {
+          "prompt": "Qual o empuxo sobre um casco de **20 L** totalmente submerso em **água doce**? (g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "196.2",
+          "unit": "N",
+          "tolerance": 1,
+          "explanation": "20 L = 0,020 m³. Empuxo = 1 000 × 9,81 × 0,020 = 196,2 N."
+        },
+        {
+          "prompt": "Qual a densidade média de um ROV de **21 kg** com **20 L** de volume?",
+          "kind": "number",
+          "answer": "1050",
+          "unit": "kg/m³",
+          "tolerance": 1,
+          "explanation": "21 kg / 0,020 m³ = 1 050 kg/m³ — mais denso que a água doce, por isso afunda."
+        },
+        {
+          "prompt": "Por que um navio de aço flutua, se o aço é ~8 vezes mais denso que a água?",
+          "kind": "choice",
+          "options": [
+            "Porque a tinta do casco é impermeável",
+            "Porque, contando o ar lá dentro, a densidade média do navio é menor que a da água",
+            "Porque o motor o empurra para cima",
+            "Porque a água salgada é mais densa que o aço"
+          ],
+          "answer": "1",
+          "explanation": "O casco desloca um volume enorme de água; a massa total (aço + ar + carga) dividida por esse volume dá menos que 1 025 kg/m³."
+        }
+      ]
+    },
+    {
+      "id": "sub-02-flutuabilidade-neutra",
+      "title": "Flutuabilidade neutra: nem sobe, nem desce",
+      "level": 1,
+      "kind": "lab",
+      "lab": "submarine",
+      "safety": "Para testar um modelo de submarino ou ROV de verdade, use uma **piscina ou tanque raso**, nunca rios ou o mar sozinho, e sempre com um adulto por perto. Baterias e eletrônica ficam **lacradas**; nada ligado na tomada perto da água.",
+      "theory": "# O estado ideal de um submarino\n\nUm submarino que **sobe** sozinho precisa gastar energia para ficar embaixo; um que **desce** sozinho gasta energia para não afundar. O ideal é a **flutuabilidade neutra**: empuxo = peso, e o veículo fica parado na profundidade em que está, como um peixe.\n\n## Ajuste fino com lastro fixo\n\nNa prática se projeta o casco **um pouco leve** e depois se acrescentam pesinhos de chumbo (**lastro fixo** ou **trim**) até o saldo ficar perto de zero. Chumbo é bom para isso: muito denso (11 340 kg/m³), dá muita massa em pouco espaço.\n\n```\nmassa que falta = ρ_água × V − massa atual\n```\n\nUm ROV de 10 L e 9,6 kg em água doce precisa de 10 − 9,6 = **0,4 kg** de lastro.\n\n## Doce × salgada\n\nA água do mar é ~2,5% mais densa: o mesmo casco recebe **mais empuxo** no mar. Um submarino neutro num rio **sobe** quando entra no mar, e precisa de mais lastro. (Os navios também: há marcas no casco — a \"linha de Plimsoll\" — para cada tipo de água.)\n\n## No simulador\n\nO veículo começa a **5 m** de profundidade. Se estiver neutro, fica lá. O chumbo de ajuste fica dentro do casco (soma massa, não volume).",
+      "task": "Este ROV vai trabalhar **no mar**. Com 19,5 kg em 20 L ele sobe para a superfície. Escolha a **água** certa e acrescente **chumbo** até ele ficar **neutro** (saldo entre −0,3 e +0,3 N), parado perto de 5 m.",
+      "hints": [
+        "No mar, 20 L de água pesam 20 × 1,025 = 20,5 kg.",
+        "Quanto falta de 19,5 kg até 20,5 kg? Converta para gramas."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "19.5", "ballastVolume": "0", "start": "5", "floor": "15", "duration": "60", "controls": "water,trim" },
+      "goals": [
+        { "metric": "netBuoyancy", "op": "between", "value": -0.3, "max": 0.3, "description": "Flutuabilidade neutra (saldo entre −0,3 e +0,3 N)" },
+        { "metric": "finalDepth", "op": "between", "value": 4, "max": 6, "description": "Fica entre 4 e 6 m de profundidade" }
+      ],
+      "solutionInputs": { "water": "salt", "trim": "1000" },
+      "questions": [
+        {
+          "prompt": "Um ROV de **10 L** com **9,6 kg** vai mergulhar em **água doce**. Quantos gramas de chumbo deixam ele neutro (desprezando o volume do chumbo)?",
+          "kind": "number",
+          "answer": "400",
+          "unit": "g",
+          "tolerance": 1,
+          "explanation": "Ele desloca 10 kg de água doce; faltam 10 − 9,6 = 0,4 kg = 400 g."
+        },
+        {
+          "prompt": "Um submarino neutro num rio passa para o mar. O que acontece?",
+          "kind": "choice",
+          "options": [
+            "Afunda, porque a água salgada é mais pesada",
+            "Sobe, porque a água do mar é mais densa e dá mais empuxo",
+            "Nada muda",
+            "Fica instável e vira"
+          ],
+          "answer": "1",
+          "explanation": "Mesmo volume deslocado, água mais densa: o empuxo aumenta ~2,5% e o saldo fica positivo."
+        },
+        {
+          "prompt": "Por que é desejável a flutuabilidade neutra num veículo subaquático?",
+          "kind": "choice",
+          "options": [
+            "Porque ele fica mais rápido",
+            "Porque não precisa gastar energia só para manter a profundidade",
+            "Porque a pressão diminui",
+            "Porque o sonar funciona melhor"
+          ],
+          "answer": "1",
+          "explanation": "Com empuxo = peso, os propulsores só trabalham para mover o veículo, e as baterias duram mais."
+        }
+      ]
+    },
+    {
+      "id": "sub-03-lastro",
+      "title": "Tanques de lastro: mergulhar e voltar",
+      "level": 2,
+      "kind": "lab",
+      "lab": "submarine",
+      "theory": "# Mudar de peso sem mudar de tamanho\n\nUm submarino precisa **descer** e depois **subir**. Como o volume do casco não muda, ele muda a **massa**: enche **tanques de lastro** com água do mar para afundar e os esvazia para subir.\n\n- **Inundar** (abrir as válvulas de cima e de baixo): a água entra, o submarino fica mais pesado → **desce**.\n- **Soprar** (mandar ar comprimido para dentro do tanque): o ar empurra a água para fora pelo fundo, o submarino fica mais leve → **sobe**.\n\nO volume dos tanques fica **dentro do envelope do casco**, então não muda o empuxo, só o peso.\n\n## Quanto inundar?\n\n```\nsaldo = ρ × g × V_casco − (m_casco + ρ × V_tanque × enchimento) × g\n```\n\nPara ficar neutro, a água do tanque precisa completar exatamente o que falta. Um casco de 20 L e 19 kg em água doce precisa de 1 kg de água: num tanque de 3 L, isso é **1/3 cheio (33%)**.\n\n## Submarinos de verdade\n\nOs submarinos grandes têm **tanques principais** (só totalmente cheios ou vazios, para submergir e emergir) e **tanques de compensação e trim**, menores, bombeados aos poucos para o ajuste fino. Em emergência, os tanques principais são soprados de uma vez: o submarino sobe muito rápido (\"emergência de emergência\").\n\n## No simulador\n\nO tanque começa com o enchimento escolhido; no instante \"esvaziar lastro aos\" o ar comprimido expulsa a água em ~4 s. O fundo fica a 20 m.",
+      "task": "Faça o submarino **descer até pelo menos 15 m** e depois **voltar sozinho à superfície** antes de os 120 s acabarem. Escolha quanto **inundar o lastro** e **quando soprá-lo**.",
+      "hints": [
+        "Com 20% de lastro ele ainda flutua. Para afundar rápido, inunde bem mais.",
+        "Ele leva algum tempo para descer e outro tanto para subir. Sopre o lastro mais ou menos no meio do tempo."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "19", "ballastVolume": "3", "fill": "20", "floor": "20", "duration": "120", "controls": "fill,blowAt" },
+      "goals": [
+        { "metric": "maxDepth", "op": ">=", "value": 15, "description": "Chega a pelo menos 15 m de profundidade" },
+        { "metric": "finalDepth", "op": "<=", "value": 0.2, "description": "Volta à superfície no fim" }
+      ],
+      "solutionInputs": { "fill": "100", "blowAt": "40" },
+      "questions": [
+        {
+          "prompt": "Casco de **20 L**, massa **19 kg**, tanque de lastro de **3 L**, em água doce. Qual porcentagem do tanque deve estar cheia para o submarino ficar **neutro**?",
+          "kind": "number",
+          "answer": "33.3",
+          "unit": "%",
+          "tolerance": 2,
+          "explanation": "Faltam 20 − 19 = 1 kg = 1 L de água. 1 L / 3 L = 33,3%."
+        },
+        {
+          "prompt": "Para subir, o submarino…",
+          "kind": "choice",
+          "options": [
+            "abre os tanques para entrar mais água",
+            "sopra ar comprimido nos tanques, expulsando a água",
+            "aumenta o tamanho do casco",
+            "esquenta a água dos tanques"
+          ],
+          "answer": "1",
+          "explanation": "O ar comprimido empurra a água para fora: menos massa com o mesmo volume = saldo positivo."
+        },
+        {
+          "prompt": "Por que inundar o tanque de lastro **não** muda o empuxo?",
+          "kind": "choice",
+          "options": [
+            "Porque o tanque já está dentro do volume do casco: o volume deslocado é o mesmo",
+            "Porque a água do tanque não pesa",
+            "Porque o empuxo só depende da profundidade",
+            "Muda sim, o empuxo dobra"
+          ],
+          "answer": "0",
+          "explanation": "O empuxo depende do volume externo deslocado. A água só troca o ar dentro do tanque: aumenta o peso, não o volume."
+        }
+      ]
+    },
+    {
+      "id": "sub-04-pressao",
+      "title": "Pressão e profundidade",
+      "level": 2,
+      "kind": "lab",
+      "lab": "submarine",
+      "safety": "Cascos sob pressão guardam muita energia. Teste cascos e recipientes com **água** (teste hidrostático), nunca com ar comprimido: a água quase não se comprime, então se algo ceder não há explosão. Nunca mergulhe uma câmera ou equipamento além da profundidade indicada pelo fabricante.",
+      "theory": "# Cada 10 m, mais 1 bar\n\nA pressão debaixo d'água é o peso da coluna de água em cima de cada metro quadrado, **mais** a pressão da atmosfera:\n\n```\nP = P0 + ρ × g × h\n```\n\n- P0 = 101 325 Pa ≈ 1 bar (o ar em cima da água)\n- ρ × g × h: a pressão da água (\"manométrica\")\n\nNa água doce, ρ × g = 9 810 Pa por metro: a cada **~10 m** a pressão aumenta **~1 bar**. A 30 m no mar a pressão absoluta já é **~4 bar** — quatro vezes a da superfície.\n\n## O casco aguenta a diferença\n\nDentro do casco o ar está a ~1 atm. O casco precisa resistir à **diferença** entre fora e dentro: a pressão manométrica. Se ela passa do limite do casco, ele **colapsa** (implode) — de uma vez, em milissegundos.\n\n```\nprofundidade de colapso = resistência / (ρ × g)\n```\n\nUm casco de 5 bar em água doce aguenta até 5 × 10^5 / 9 810 ≈ **51 m**.\n\n## Fator de segurança\n\nEngenheiros nunca projetam no limite: usam um **fator de segurança** (FS):\n\n```\nFS = resistência do casco / pressão máxima de trabalho\n```\n\nFS muito baixo é perigoso (material com defeito, fadiga, erro de cálculo); FS muito alto deixa o casco pesado e caro. Para equipamentos submarinos é comum algo entre 1,25 e 2 (submarinos tripulados usam mais).\n\n## No simulador\n\nO lastro está cheio: o veículo afunda até o fundo, a 40 m, no mar. A linha vermelha tracejada mostra onde o casco colapsa.",
+      "task": "Este casco aguenta só 3 bar e **implode** antes de chegar ao fundo, a 40 m no mar. Escolha a **resistência do casco** para chegar ao fundo inteiro, com **fator de segurança entre 1,25 e 2** (seguro, mas sem exagerar no peso e no custo).",
+      "hints": [
+        "Calcule a pressão manométrica no fundo: 1 025 × 9,81 × 40 ≈ 4 bar.",
+        "FS = resistência / pressão no fundo. Para FS entre 1,25 e 2, a resistência fica entre ~5 e ~8 bar."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "19", "ballastVolume": "3", "fill": "100", "water": "salt", "floor": "40", "duration": "150", "hullRating": "3", "controls": "hullRating,water" },
+      "goals": [
+        { "metric": "crushed", "op": "<", "value": 0.5, "description": "O casco não implode" },
+        { "metric": "maxDepth", "op": ">=", "value": 39, "description": "Chega ao fundo (39 m ou mais)" },
+        { "metric": "safetyFactor", "op": "between", "value": 1.25, "max": 2, "description": "Fator de segurança entre 1,25 e 2" }
+      ],
+      "solutionInputs": { "hullRating": "6" },
+      "questions": [
+        {
+          "prompt": "Qual a pressão **absoluta** a **30 m** de profundidade no mar? (ρ = 1 025 kg/m³, g = 9,81 m/s², P0 = 101 325 Pa) Responda em bar.",
+          "kind": "number",
+          "answer": "4.03",
+          "unit": "bar",
+          "tolerance": 2,
+          "explanation": "P = 101 325 + 1 025 × 9,81 × 30 = 101 325 + 301 658 ≈ 402 983 Pa ≈ 4,03 bar."
+        },
+        {
+          "prompt": "Um casco que resiste a **5 bar** de diferença de pressão pode descer até que profundidade em **água doce**?",
+          "kind": "number",
+          "answer": "51",
+          "unit": "m",
+          "tolerance": 2,
+          "explanation": "h = 500 000 / (1 000 × 9,81) ≈ 51 m."
+        },
+        {
+          "prompt": "O que o casco de um submarino precisa aguentar?",
+          "kind": "choice",
+          "options": [
+            "Só a pressão absoluta da água",
+            "A diferença entre a pressão da água fora e a do ar dentro",
+            "Só o peso da água em cima do submarino",
+            "Nada, a água empurra igualmente para todos os lados"
+          ],
+          "answer": "1",
+          "explanation": "Dentro há ~1 atm; fora, P0 + ρgh. O casco segura a diferença, ρgh (a pressão manométrica)."
+        }
+      ]
+    },
+    {
+      "id": "sub-05-casco-materiais",
+      "title": "Projeto do casco e materiais",
+      "level": 3,
+      "kind": "quiz",
+      "theory": "# A forma que aguenta pressão\n\nPressão empurra **igual em todas as direções**. A forma que melhor resiste a isso é a **esfera**: toda a parede trabalha comprimida por igual. Por isso batiscafos e submersíveis de grande profundidade têm a cabine **esférica**. O **cilindro** com tampas arredondadas é o melhor compromisso para um veículo comprido (cabe motor, bateria, tripulação).\n\n## Tensão na parede\n\nPara um cilindro de parede fina (raio r, espessura t) sob pressão P, a tensão na parede (tensão \"de aro\") é:\n\n```\nσ = P × r / t\n```\n\nCom P = 3 MPa (~300 m), r = 0,1 m e t = 5 mm: σ = 3 × 0,1 / 0,005 = **60 MPa** — fácil para alumínio (resiste a ~250 MPa), mas com cuidado com o próximo item.\n\n## Flambagem: o perigo dos cascos finos\n\nSob pressão **externa**, um casco fino não falha porque o material \"estoura\": ele **flamba** — perde a forma redonda e amassa de repente, muito antes da tensão de ruptura. A solução é usar **anéis de reforço** (cavernas) por dentro ou paredes mais grossas. Qualquer ovalização (casco amassado) piora muito a resistência.\n\n## Materiais\n\n- **Acrílico (PMMA)**: transparente, ótimo para domos de câmera e ROVs rasos; frágil a impactos e arranhões.\n- **Alumínio (6061-T6)**: leve, fácil de usinar; precisa de proteção contra corrosão no mar (anodização, ânodos de sacrifício).\n- **Aço de alta resistência (HY-80/HY-100)**: submarinos militares; pesado, mas tenaz e soldável.\n- **Titânio**: altíssima resistência por peso e não corrói; caro. Usado em veículos de grande profundidade.\n- **Compósitos de fibra de carbono**: leves, mas difíceis de inspecionar; danos internos e fadiga sob ciclos de pressão já causaram falhas catastróficas.\n- **Espuma sintática**: microesferas de vidro ocas em resina; dá **flutuação** em grandes profundidades sem esmagar (espuma comum é esmagada).\n\n## Vedação\n\nCascos abrem e fecham com **anéis o-ring** em canaletas; os cabos passam por **conectores estanques** (penetradores). A maior parte dos vazamentos em projetos amadores vem de vedação malfeita, não de casco fraco.",
+      "questions": [
+        {
+          "prompt": "Por que os submersíveis de grande profundidade têm cabine **esférica**?",
+          "kind": "choice",
+          "options": [
+            "Porque é mais bonito",
+            "Porque a esfera distribui a pressão igualmente em toda a parede, resistindo melhor com menos material",
+            "Porque a esfera é mais hidrodinâmica",
+            "Porque cabe mais gente"
+          ],
+          "answer": "1",
+          "explanation": "Numa esfera toda a parede fica comprimida por igual; não há pontos fracos de forma."
+        },
+        {
+          "prompt": "Calcule a tensão na parede de um cilindro com **P = 3 MPa**, raio **0,1 m** e espessura **5 mm** (σ = P × r / t). Responda em MPa.",
+          "kind": "number",
+          "answer": "60",
+          "unit": "MPa",
+          "tolerance": 1,
+          "explanation": "σ = 3 × 0,1 / 0,005 = 60 MPa."
+        },
+        {
+          "prompt": "Um casco cilíndrico fino sob pressão **externa** costuma falhar por…",
+          "kind": "choice",
+          "options": [
+            "ferrugem instantânea",
+            "flambagem: perde a forma redonda e amassa de repente, antes da tensão de ruptura",
+            "derretimento",
+            "excesso de flutuação"
+          ],
+          "answer": "1",
+          "explanation": "Sob compressão, estruturas finas são instáveis. Anéis de reforço e paredes mais grossas evitam a flambagem."
+        },
+        {
+          "prompt": "Para dar flutuação a um ROV que trabalha a **3 000 m**, usa-se…",
+          "kind": "choice",
+          "options": [
+            "isopor comum",
+            "garrafas PET cheias de ar",
+            "espuma sintática (microesferas ocas de vidro em resina)",
+            "chumbo"
+          ],
+          "answer": "2",
+          "explanation": "Espumas comuns e garrafas são esmagadas pela pressão; a espuma sintática resiste e continua leve."
+        },
+        {
+          "prompt": "Por que cascos e tanques são testados com **água** (teste hidrostático) e não com ar?",
+          "kind": "choice",
+          "options": [
+            "Porque a água é mais barata",
+            "Porque a água quase não se comprime: guarda pouca energia e, se algo ceder, não há explosão",
+            "Porque o ar não faz pressão",
+            "Porque a água lubrifica os o-rings"
+          ],
+          "answer": "1",
+          "explanation": "Gás comprimido armazena muita energia e libera tudo de uma vez numa falha; água praticamente não."
+        }
+      ]
+    },
+    {
+      "id": "sub-06-propulsao-arrasto",
+      "title": "Propulsão e arrasto",
+      "level": 3,
+      "kind": "lab",
+      "lab": "submarine",
+      "safety": "Hélices e propulsores têm pás afiadas que giram rápido: use **grades de proteção** (\"kort nozzle\" ou tela) e nunca ligue os motores com alguém segurando o veículo perto das hélices. Desligue a energia antes de mexer.",
+      "theory": "# Empurrar água custa caro\n\nA água é ~800 vezes mais densa que o ar, então o arrasto debaixo d'água é enorme. A fórmula é a mesma do ar:\n\n```\nF_arrasto = ½ × ρ × v² × Cd × A\n```\n\nNa **velocidade de cruzeiro** o propulsor empurra exatamente o arrasto:\n\n```\nv = √( 2 × F / (ρ × Cd × A) )\n```\n\n## Formato: Cd\n\n- **Torpedo** (nariz arredondado e cauda afinando): Cd ≈ 0,1 — a água escorrega e se fecha atrás.\n- **Cilindro de pontas retas**: Cd ≈ 0,85 — a frente bate na água e atrás forma um redemoinho.\n- **Caixa aberta** (ROV de estrutura): Cd ≈ 1,05 — prático para carregar câmeras, braços e luzes, mas lento.\n\n## A potência sobe ao cubo\n\nPotência útil = força × velocidade. Como a força cresce com v², a potência cresce com **v³**: dobrar a velocidade custa **8 vezes** mais potência. Por isso submarinos andam devagar (e ROVs mais ainda).\n\n```\nP_útil = F × v\nP_bateria ≈ P_útil / η     (η ≈ 0,4 juntando motor e hélice)\n```\n\n## No simulador\n\nO propulsor de avanço empurra com a força escolhida; a área frontal é a do círculo do casco (cilindro de 20 L tem 16 cm de diâmetro). A potência mostrada é a que sai da bateria, com 40% de eficiência.",
+      "task": "Este ROV em forma de caixa anda a menos de 1 m/s. Escolha o **formato** e a **força do propulsor** para cruzar a **pelo menos 1,5 m/s** gastando **no máximo 40 W** da bateria.",
+      "hints": [
+        "Com a caixa, para chegar a 1,5 m/s precisaria de ~24 N e ~90 W. Mude o formato.",
+        "Com o torpedo, poucos newtons já bastam."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "20", "ballastVolume": "0", "start": "3", "duration": "30", "shape": "box", "forwardThrust": "10", "controls": "shape,forwardThrust" },
+      "goals": [
+        { "metric": "cruiseSpeed", "op": ">=", "value": 1.5, "description": "Velocidade de cruzeiro de pelo menos 1,5 m/s" },
+        { "metric": "propPower", "op": "<=", "value": 40, "description": "Potência da bateria de no máximo 40 W" }
+      ],
+      "solutionInputs": { "shape": "torpedo", "forwardThrust": "3" },
+      "questions": [
+        {
+          "prompt": "Um ROV cruza a **2 m/s** com **20 N** de arrasto. Qual a potência útil do propulsor?",
+          "kind": "number",
+          "answer": "40",
+          "unit": "W",
+          "tolerance": 1,
+          "explanation": "P = F × v = 20 × 2 = 40 W (da bateria sairia mais, por causa da eficiência)."
+        },
+        {
+          "prompt": "Se o submarino dobra a velocidade, a potência necessária…",
+          "kind": "choice",
+          "options": ["dobra", "quadruplica", "fica 8 vezes maior", "não muda"],
+          "answer": "2",
+          "explanation": "F cresce com v² e P = F × v, então P cresce com v³: 2³ = 8."
+        },
+        {
+          "prompt": "Por que o formato de torpedo tem arrasto tão menor que uma caixa?",
+          "kind": "choice",
+          "options": [
+            "Porque é mais leve",
+            "Porque a água escorrega pela frente arredondada e se fecha atrás da cauda afinada, sem grandes redemoinhos",
+            "Porque tem menos volume",
+            "Porque flutua melhor"
+          ],
+          "answer": "1",
+          "explanation": "Quase todo o arrasto de formas rombudas vem da esteira de baixa pressão atrás delas; a cauda afinada evita a esteira."
+        }
+      ]
+    },
+    {
+      "id": "sub-07-estabilidade",
+      "title": "Estabilidade: centro de gravidade × centro de empuxo",
+      "level": 3,
+      "kind": "lab",
+      "lab": "submarine",
+      "theory": "# Dois pontos de novo\n\nComo nos foguetes, a estabilidade de um submarino depende de dois pontos:\n\n- **Centro de gravidade (CG)**: onde o peso age.\n- **Centro de empuxo (CB, de buoyancy, \"flutuação\" em inglês)**: o centro do volume deslocado, onde o empuxo age.\n\nSubmerso, o CB fica parado (é o centro geométrico do casco). Se o veículo inclina e o **CG está abaixo do CB**, peso e empuxo formam um **binário que o endireita**, como um **joão-bobo**. Se o CG estiver **acima**, o binário o faz **virar de cabeça para baixo**.\n\n## A distância BG\n\n```\nmomento de endireitamento = peso × BG × sen(ângulo)\n```\n\nBG é a distância vertical entre o CB e o CG. Mais BG = volta mais rápido e balança menos. Em ROVs pequenos, BG de 1 a 5 cm é comum.\n\n## Como abaixar o CG\n\n- Coloque o que é **pesado embaixo**: baterias, chumbo na **quilha**.\n- Coloque o que é **leve (flutuadores, espuma) em cima**.\n- Trocar chumbo do centro para a quilha **não muda o saldo de empuxo**, só a estabilidade.\n\n## E os navios?\n\nNa superfície é diferente: quando o navio aderna, o volume submerso muda de forma e o CB **se desloca para o lado**. O ponto que importa é o **metacentro (M)**: o navio é estável se o CG estiver abaixo de M — mesmo que esteja acima do CB. Submerso, essa \"ajuda\" desaparece: só vale CG abaixo de CB.\n\n## No simulador\n\nO centro de massa do casco (estrutura, eletrônica) fica 0,5 cm **acima** do centro. O chumbo \"no centro\" fica na altura do CB; o \"na quilha\" fica no fundo do casco. No desenho: ponto azul = CB, laranja = CG (deslocamento exagerado 3×).",
+      "task": "Este ROV está neutro, mas **vira de lado**: o CG está acima do CB. Redistribua o **chumbo** para deixar o CG **pelo menos 1 cm abaixo** do CB, mantendo a **flutuabilidade neutra**.",
+      "hints": [
+        "O chumbo no centro não ajuda a estabilidade. Passe-o para a quilha.",
+        "Se o total de chumbo não mudar, o saldo de empuxo continua zero."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "16", "ballastVolume": "0", "trim": "4000", "hullCg": "0.5", "start": "3", "duration": "30", "controls": "trim,keel" },
+      "goals": [
+        { "metric": "bg", "op": ">=", "value": 1, "description": "CG pelo menos 1 cm abaixo do centro de empuxo" },
+        { "metric": "netBuoyancy", "op": "between", "value": -0.3, "max": 0.3, "description": "Continua neutro (saldo entre −0,3 e +0,3 N)" }
+      ],
+      "solutionInputs": { "trim": "0", "keel": "4000" },
+      "questions": [
+        {
+          "prompt": "Um ROV de **200 N** de peso tem **BG = 2 cm**. Qual o momento de endireitamento quando ele inclina **30°**? (sen 30° = 0,5)",
+          "kind": "number",
+          "answer": "2",
+          "unit": "N·m",
+          "tolerance": 2,
+          "explanation": "200 × 0,02 × 0,5 = 2 N·m."
+        },
+        {
+          "prompt": "Para um veículo **submerso** ser estável, o CG deve ficar…",
+          "kind": "choice",
+          "options": [
+            "acima do centro de empuxo",
+            "abaixo do centro de empuxo",
+            "exatamente no centro de empuxo",
+            "na frente do centro de empuxo"
+          ],
+          "answer": "1",
+          "explanation": "Com o CG embaixo, peso e empuxo formam um binário que endireita o veículo (efeito joão-bobo)."
+        },
+        {
+          "prompt": "Por que um navio na superfície pode ser estável mesmo com o CG **acima** do CB?",
+          "kind": "choice",
+          "options": [
+            "Porque a água do mar é mais densa",
+            "Porque, ao adernar, a parte submersa muda de forma e o CB se desloca para o lado (o que vale é o metacentro)",
+            "Porque o vento o segura",
+            "Não pode; todo navio tem CG abaixo do CB"
+          ],
+          "answer": "1",
+          "explanation": "O deslocamento lateral do CB cria um binário de endireitamento enquanto o CG estiver abaixo do metacentro M."
+        }
+      ]
+    },
+    {
+      "id": "sub-08-sensores-navegacao",
+      "title": "Sensores e navegação: sonar, pressão e IMU",
+      "level": 4,
+      "kind": "quiz",
+      "safety": "Sonares potentes podem incomodar e ferir animais marinhos. Em projetos reais, siga as regras ambientais da região e prefira sensores de baixa potência.",
+      "theory": "# Navegar no escuro\n\nDebaixo d'água **não há GPS**: ondas de rádio (e luz) são absorvidas em poucos metros. Um veículo subaquático junta vários sensores para saber onde está.\n\n## Sensor de pressão: a profundidade\n\nComo P = P0 + ρ × g × h, basta medir a pressão para saber a profundidade:\n\n```\nh = (P − P0) / (ρ × g)\n```\n\nÉ o sensor mais preciso e barato do veículo (alguns medem centímetros). É ele que alimenta o controle de profundidade.\n\n## Sonar: ver com som\n\nO som viaja bem na água, a **~1 500 m/s** (4,4× mais rápido que no ar). Um **sonar** emite um pulso e mede o tempo até o eco voltar:\n\n```\ndistância = velocidade do som × tempo / 2\n```\n\n(dividido por 2 porque o som vai **e volta**). Ecobatímetros medem a distância até o fundo; sonares de varredura lateral desenham imagens do fundo; sonares de imagem mostram obstáculos à frente.\n\n## IMU: acelerômetros e giroscópios\n\nA **IMU** (unidade de medida inercial) mede acelerações e rotações. Integrando a aceleração uma vez temos velocidade; integrando de novo, posição — é a **navegação estimada** (dead reckoning). O problema: qualquer pequeno erro da aceleração é integrado **duas vezes**, e o erro de posição cresce com o **quadrado do tempo**. Sozinha, uma IMU barata se perde em minutos.\n\n## Juntando tudo\n\n- **DVL** (Doppler Velocity Log): mede a velocidade em relação ao fundo pelo efeito Doppler do som — muito melhor que integrar acelerações.\n- **Bússola/magnetômetro**: rumo (atrapalhado por motores e metais).\n- **Balizas acústicas (USBL/LBL)**: um navio na superfície (que tem GPS) mede a posição do veículo pelo som.\n- **Filtro de Kalman**: algoritmo que funde todos os sensores, confiando mais em quem está mais preciso a cada momento.",
+      "questions": [
+        {
+          "prompt": "Um ecobatímetro ouve o eco do fundo **0,04 s** depois de emitir o pulso. Com o som a **1 500 m/s**, qual a distância até o fundo?",
+          "kind": "number",
+          "answer": "30",
+          "unit": "m",
+          "tolerance": 1,
+          "explanation": "1 500 × 0,04 / 2 = 30 m (o som vai e volta)."
+        },
+        {
+          "prompt": "O sensor de pressão de um ROV em **água doce** marca **2,5 bar absolutos**. Qual a profundidade? (P0 = 101 325 Pa, g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "15.16",
+          "unit": "m",
+          "tolerance": 2,
+          "explanation": "h = (250 000 − 101 325) / (1 000 × 9,81) ≈ 15,16 m."
+        },
+        {
+          "prompt": "Por que o GPS não funciona debaixo d'água?",
+          "kind": "choice",
+          "options": [
+            "Porque os satélites não passam sobre o mar",
+            "Porque a água absorve as ondas de rádio em poucos centímetros a metros",
+            "Porque a pressão quebra a antena",
+            "Funciona, só é mais lento"
+          ],
+          "answer": "1",
+          "explanation": "A água (especialmente a salgada, condutora) absorve as ondas de rádio. Por isso se usa som para comunicar e posicionar."
+        },
+        {
+          "prompt": "Navegando só com a IMU (integrando a aceleração duas vezes), o erro de posição…",
+          "kind": "choice",
+          "options": [
+            "fica constante",
+            "diminui com o tempo",
+            "cresce com o quadrado do tempo",
+            "só aparece na superfície"
+          ],
+          "answer": "2",
+          "explanation": "Um erro constante de aceleração vira um erro de posição ½·a·t²: cresce com t². Por isso se combina a IMU com DVL, balizas e Kalman."
+        },
+        {
+          "prompt": "Por que submarinos usam **som** (sonar) em vez de luz ou radar para \"ver\"?",
+          "kind": "choice",
+          "options": [
+            "Porque o som viaja longe na água, enquanto luz e rádio são absorvidos rápido",
+            "Porque o som é mais rápido que a luz na água",
+            "Porque é mais barato",
+            "Porque o radar assusta os peixes"
+          ],
+          "answer": "0",
+          "explanation": "A luz alcança dezenas de metros na água limpa; o som, quilômetros."
+        }
+      ]
+    },
+    {
+      "id": "sub-09-controle-pid",
+      "title": "Controle de profundidade com PID",
+      "level": 4,
+      "kind": "lab",
+      "lab": "submarine",
+      "theory": "# Manter a profundidade sozinho\n\nNenhum veículo fica perfeitamente neutro: a água muda de densidade, a carga muda, as baterias esquentam. Um **controlador** lê o sensor de pressão (a profundidade) e comanda o **propulsor vertical** para manter a **profundidade-alvo**.\n\n## O erro\n\n```\nerro = profundidade-alvo − profundidade medida\n```\n\nErro positivo: está raso demais, precisa empurrar para baixo.\n\n## P, I e D\n\nO controlador **PID** soma três termos:\n\n```\nforça = Kp × erro + Ki × (soma do erro no tempo) − Kd × velocidade vertical\n```\n\n- **P (proporcional)**: empurra mais quanto maior o erro. Sozinho, deixa um **erro permanente** quando há uma força constante (o veículo um pouco leve, por exemplo): o equilíbrio fica onde Kp × erro = saldo de empuxo.\n- **I (integral)**: vai acumulando o erro; enquanto ele existir, a força cresce, até **zerar o erro permanente**. Integral demais causa oscilação.\n- **D (derivativo)**: reage à **velocidade**: freia o veículo quando ele se aproxima do alvo rápido demais, evitando **passar do ponto** (sobressinal).\n\n## Medindo a qualidade\n\n- **Sobressinal**: quanto passou do alvo, em % do alvo.\n- **Tempo de acomodação**: a partir de quando fica dentro de ±2% do alvo para sempre.\n- **Erro em regime**: a diferença que sobra no fim.\n\n## Como sintonizar (receita prática)\n\n1. Comece só com **P** e aumente até responder rápido (vai oscilar ou sobrar erro).\n2. Acrescente **D** até as oscilações sumirem.\n3. Acrescente um pouco de **I** para zerar o erro final; se oscilar, diminua.\n\n## No simulador\n\nO ROV está **2 N mais leve** que neutro (tende a subir). O propulsor vertical faz no máximo 20 N; a integral para de acumular enquanto o propulsor está no limite (anti-windup). Alvo: 10 m.",
+      "task": "Com só um pouco de P, o ROV fica parado a ~9 m (erro permanente). Ajuste **Kp**, **Ki** e **Kd** para chegar a **10 m ± 0,2 m**, com **sobressinal ≤ 10%** e **acomodando em até 60 s**.",
+      "hints": [
+        "Aumente o Kp para responder mais rápido, e o Kd para não passar do alvo.",
+        "Sem Ki o erro permanente nunca some: o saldo de 2 N precisa ser compensado pela integral.",
+        "Experimente algo como Kp 20, Ki 1, Kd 80 e ajuste a partir daí."
+      ],
+      "labParams": { "hullVolume": "20", "hullMass": "19.8", "ballastVolume": "0", "controller": "pid", "thrust": "20", "target": "10", "kp": "2", "floor": "40", "duration": "120", "controls": "kp,ki,kd" },
+      "goals": [
+        { "metric": "finalDepth", "op": "between", "value": 9.8, "max": 10.2, "description": "Termina a 10 m ± 0,2 m" },
+        { "metric": "overshoot", "op": "<=", "value": 10, "description": "Sobressinal de no máximo 10%" },
+        { "metric": "settlingTime", "op": "<=", "value": 60, "description": "Acomoda em até 60 s" }
+      ],
+      "solutionInputs": { "kp": "20", "ki": "1", "kd": "80" },
+      "questions": [
+        {
+          "prompt": "Um ROV está **2 N** mais leve que neutro e usa só controle **P** com **Kp = 4 N/m**. Quantos metros acima do alvo ele fica parado?",
+          "kind": "number",
+          "answer": "0.5",
+          "unit": "m",
+          "tolerance": 2,
+          "explanation": "No equilíbrio Kp × erro = 2 N → erro = 2 / 4 = 0,5 m."
+        },
+        {
+          "prompt": "Qual termo do PID elimina o erro permanente?",
+          "kind": "choice",
+          "options": ["P (proporcional)", "I (integral)", "D (derivativo)", "Nenhum"],
+          "answer": "1",
+          "explanation": "A integral cresce enquanto houver erro, até a força compensar o desequilíbrio."
+        },
+        {
+          "prompt": "O ROV passa do alvo e fica balançando. Qual ajuste costuma ajudar primeiro?",
+          "kind": "choice",
+          "options": [
+            "Aumentar o Kd (mais \"freio\" proporcional à velocidade)",
+            "Aumentar muito o Ki",
+            "Tirar o sensor de pressão",
+            "Aumentar o Kp"
+          ],
+          "answer": "0",
+          "explanation": "O termo D reage à velocidade e amortece a aproximação; mais Ki ou Kp normalmente pioram a oscilação."
+        }
+      ]
+    },
+    {
+      "id": "sub-10-projeto-rov",
+      "title": "Projeto completo: o orçamento de um ROV de inspeção",
+      "level": 5,
+      "kind": "lab",
+      "lab": "submarine",
+      "safety": "- **Água e eletricidade**: use **baixa tensão** (12–48 V CC) no veículo e no cabo; tudo o que for ligado na tomada fica longe da água e protegido por **disjuntor diferencial residual (DR)**.\n- Baterias de lítio dentro de casco precisam de **proteção (BMS)** e de válvula de alívio: uma bateria que esquenta num casco fechado pode gerar gás e pressão.\n- Nunca mergulhe junto com um ROV em teste, nem opere perto de mergulhadores sem coordenação.",
+      "theory": "# O que é um ROV\n\nUm **ROV** (Remotely Operated Vehicle, \"veículo operado remotamente\") é um veículo submarino **pilotado da superfície** por um **cabo umbilical** (o tether), que leva energia e dados (vídeo, comandos). São usados para inspecionar plataformas de petróleo, cascos de navios, barragens, cabos submarinos e para pesquisa.\n\n## O orçamento de projeto\n\nComo nos foguetes, engenharia é fechar várias contas ao mesmo tempo:\n\n- **Volume × massa** (flutuabilidade): o volume do casco precisa compensar estrutura, eletrônica e carga (câmera, luzes, braço). Ajuste fino com chumbo.\n- **Estabilidade**: chumbo na quilha, flutuadores em cima: BG positivo.\n- **Profundidade**: casco com fator de segurança ≥ 1,5 na profundidade de trabalho.\n- **Controle**: PID de profundidade rápido e sem sobressinal grande (o piloto precisa de uma imagem estável).\n- **Potência**: os propulsores precisam vencer o arrasto, e a energia tem limite.\n\n## O cabo também é arrasto\n\nNum ROV real, o **cabo** costuma ter **mais arrasto que o próprio veículo** em correnteza: centenas de metros de cabo de 1 cm de diâmetro têm muita área. Por isso se usam cabos finos, de flutuação neutra, e às vezes uma \"garagem\" (TMS) que desce perto do ROV.\n\n## Energia\n\n```\nautonomia (h) = energia da bateria (Wh) / potência média (W)\n```\n\nUm ROV alimentado pelo cabo não tem esse limite, mas o cabo precisa levar a potência sem esquentar (por isso se usa tensão mais alta no cabo e conversores no veículo).\n\n## A missão\n\nInspecionar um píer a **40 m**, no mar. O ROV tem 18 kg de estrutura e eletrônica + 2,5 kg de câmera e luzes; a eletrônica fica um pouco acima do centro do casco. Defina:\n\n- **volume** do casco e **chumbo** (centro e quilha) para ficar neutro e estável;\n- **resistência do casco** com fator de segurança ≥ 1,5;\n- **propulsor vertical e ganhos do PID** para chegar aos 40 m rápido e sem passar muito;\n- **formato e propulsor de avanço** para ir e voltar do píer a ≥ 0,8 m/s gastando ≤ 40 W.",
+      "task": "Feche o orçamento do ROV de inspeção cumprindo **todas** as metas. Trabalhe em ordem: primeiro flutuabilidade e estabilidade, depois casco, depois controle, por fim a propulsão.",
+      "hints": [
+        "No mar, cada litro de casco desloca 1,025 kg. Para levar chumbo na quilha (estabilidade), o casco precisa de volume extra: com ~24 L cabem ~4 kg de chumbo.",
+        "A 40 m no mar a pressão manométrica é ~4 bar. FS ≥ 1,5 → casco de pelo menos ~6 bar.",
+        "Mais força no propulsor vertical (30 N) deixa o PID mais rápido; use Kd alto para não passar do alvo."
+      ],
+      "labParams": {
+        "hullVolume": "20", "hullMass": "18", "payload": "2.5", "ballastVolume": "0", "water": "salt", "controller": "pid", "thrust": "15",
+        "target": "40", "kp": "5", "floor": "60", "duration": "180", "hullRating": "3", "shape": "box", "forwardThrust": "10", "hullCg": "0.3",
+        "thrust.min": "0",
+        "controls": "hullVolume,trim,keel,hullRating,thrust,kp,ki,kd,shape,forwardThrust"
+      },
+      "goals": [
+        { "metric": "netBuoyancy", "op": "between", "value": -1, "max": 1, "description": "Quase neutro (saldo entre −1 e +1 N)" },
+        { "metric": "bg", "op": ">=", "value": 1, "description": "CG pelo menos 1 cm abaixo do centro de empuxo" },
+        { "metric": "crushed", "op": "<", "value": 0.5, "description": "O casco não implode" },
+        { "metric": "safetyFactor", "op": ">=", "value": 1.5, "description": "Fator de segurança do casco ≥ 1,5" },
+        { "metric": "settlingTime", "op": "<=", "value": 100, "description": "Acomoda a 40 m em até 100 s" },
+        { "metric": "overshoot", "op": "<=", "value": 10, "description": "Sobressinal de no máximo 10%" },
+        { "metric": "cruiseSpeed", "op": ">=", "value": 0.8, "description": "Cruzeiro de pelo menos 0,8 m/s" },
+        { "metric": "propPower", "op": "<=", "value": 40, "description": "Propulsão gastando no máximo 40 W" }
+      ],
+      "solutionInputs": {
+        "hullVolume": "24", "keel": "4000", "trim": "100", "hullRating": "7", "thrust": "30", "kp": "15", "ki": "0.5", "kd": "60",
+        "shape": "torpedo", "forwardThrust": "2"
+      },
+      "questions": [
+        {
+          "prompt": "Uma bateria de **200 Wh** alimenta um ROV que consome em média **80 W**. Qual a autonomia?",
+          "kind": "number",
+          "answer": "2.5",
+          "unit": "h",
+          "tolerance": 1,
+          "explanation": "200 Wh / 80 W = 2,5 h."
+        },
+        {
+          "prompt": "Em correnteza, o que costuma ter **mais arrasto** num ROV de inspeção profunda?",
+          "kind": "choice",
+          "options": [
+            "A câmera",
+            "O cabo umbilical (centenas de metros de área exposta à correnteza)",
+            "Os flutuadores",
+            "O chumbo da quilha"
+          ],
+          "answer": "1",
+          "explanation": "Mesmo fino, um cabo longo tem área enorme; por isso se usam cabos finos, de flutuação neutra, e garagens (TMS)."
+        },
+        {
+          "prompt": "O ROV vai trabalhar a **40 m no mar** (pressão manométrica ≈ 4,02 bar). Qual a resistência **mínima** do casco para fator de segurança 1,5?",
+          "kind": "number",
+          "answer": "6.03",
+          "unit": "bar",
+          "tolerance": 2,
+          "explanation": "1 025 × 9,81 × 40 = 402 210 Pa ≈ 4,02 bar; × 1,5 ≈ 6,03 bar."
+        }
+      ]
+    }
+  ]
+}

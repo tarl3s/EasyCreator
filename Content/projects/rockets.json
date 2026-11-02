@@ -1,0 +1,566 @@
+{
+  "id": "rockets",
+  "title": "Foguetes: do foguete de garrafa PET à órbita",
+  "area": "projects",
+  "description": "Ação e reação, empuxo e impulso, classes de motores, estabilidade, arrasto, paraquedas, estágios, a equação de Tsiolkovsky e órbitas — projetando e lançando foguetes num simulador de voo.",
+  "lessons": [
+    {
+      "id": "rkt-01-garrafa-pet",
+      "title": "Ação e reação: o foguete de garrafa PET",
+      "level": 1,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Use **só garrafas PET de refrigerante com gás** (são feitas para aguentar pressão). **Nunca** use vidro, metal ou garrafas de água mineral sem gás.\n- **Não passe de 5 a 6 bar** e descarte garrafas riscadas, amassadas, velhas ou que já ficaram ao sol.\n- Use uma **base de lançamento com gatilho à distância** (cordinha de vários metros). Ninguém se debruça sobre a garrafa pressurizada.\n- **Óculos de proteção** para quem bombeia e lança; todo mundo a **pelo menos 10 m** e fora da linha de voo.\n- Lance em **campo aberto**, longe de pessoas, animais, carros, árvores e fios elétricos, e nunca na direção de alguém.",
+      "theory": "# Todo foguete funciona do mesmo jeito\n\nUm foguete **empurra massa para trás** e, em troca, é empurrado para a frente. É a **terceira lei de Newton**: \"a toda ação corresponde uma reação de mesma intensidade e sentido contrário\".\n\nNo foguete de garrafa PET a \"massa empurrada\" é a **água**. O ar comprimido dentro da garrafa empurra a água pelo bico (o gargalo) para baixo; a água empurra a garrafa para cima. Não é a água \"batendo no chão\" que faz o foguete subir — no espaço, sem chão nenhum, um foguete funciona do mesmo jeito.\n\n## Quantidade de movimento\n\nA força de reação (o **empuxo**) depende de **quanta massa** sai por segundo e de **com que velocidade** ela sai:\n\n```\nempuxo = (massa expelida por segundo) × (velocidade de saída)\nF = ṁ × v\n```\n\nExpelir 0,5 kg de água a 20 m/s em 0,1 s dá: F = (0,5 / 0,1) × 20 = 100 N — o peso de um objeto de 10 kg!\n\n## Por que água e não só ar?\n\nAr é leve: mesmo saindo rápido, carrega pouca **quantidade de movimento**. A água é ~800 vezes mais densa, então leva muito mais \"empurrão\" com ela. Mas água demais também atrapalha: ela pesa, e sobra pouco ar para empurrá-la (o ar perde pressão à medida que se expande). Existe uma **quantidade ideal de água**, perto de **1/3 do volume da garrafa**.\n\n## Pressão\n\n**Pressão** é força por área: 1 bar = 100 000 Pa = 100 000 N/m², mais ou menos a pressão da atmosfera ao nível do mar. Uma bomba de bicicleta marca a pressão **manométrica** (acima da atmosfera). Num bico de 22 mm, cada bar de pressão empurra a água com cerca de 76 N — por isso o foguete arranca com acelerações de dezenas de g.\n\n## O modelo do simulador\n\n- Garrafa de 2 L, bico de 22 mm, garrafa vazia + aletas + nariz = 150 g, mais 40 g de massinha no nariz (para o foguete voar reto — veremos por quê na lição de estabilidade).\n- O ar se expande sem trocar calor (expansão adiabática: P × V^1,4 = constante).\n- A velocidade da água no bico vem de Bernoulli: v = √(2 × ΔP / ρ). Empuxo = 2 × área do bico × ΔP.\n- O pulso final de ar (depois que a água acaba) é ignorado; o voo é vertical, sem vento, com arrasto do ar.",
+      "task": "Seu foguete de garrafa sobe só uns 6 metros. Ajuste a **pressão** (no máximo 6 bar — a garrafa tem limite!) e a **quantidade de água** para passar dos **35 metros** de apogeu. Teste quantidades diferentes de água com a mesma pressão: existe um ponto ideal.",
+      "hints": [
+        "Mais pressão = mais empuxo, mas a garrafa tem limite. Comece testando 4 a 5 bar.",
+        "Com pouca água o empuxo acaba rápido; com água demais o foguete fica pesado e o ar perde a força. Tente algo entre 0,5 e 0,7 L."
+      ],
+      "labParams": {
+        "motor": "water", "diameter": "100", "length": "450", "dryMass": "0.15", "noseWeight": "40", "finSpan": "110", "chute": "0",
+        "nose": "ogive", "pressure": "2", "water": "0.15", "controls": "pressure,water"
+      },
+      "goals": [
+        { "metric": "apogee", "op": ">=", "value": 35, "description": "Apogeu de pelo menos 35 m" }
+      ],
+      "solutionInputs": { "pressure": "5", "water": "0.6" },
+      "questions": [
+        {
+          "prompt": "Por que o foguete de garrafa sobe?",
+          "kind": "choice",
+          "options": [
+            "Porque a água bate no chão e o empurra",
+            "Porque a garrafa empurra a água para baixo e a água empurra a garrafa para cima",
+            "Porque o ar quente dentro da garrafa é mais leve que o ar de fora",
+            "Porque a pressão do ar puxa a garrafa para cima"
+          ],
+          "answer": "1",
+          "explanation": "Ação e reação (3ª lei de Newton): a força que empurra a água para baixo tem um par igual empurrando a garrafa para cima. Funciona até no vácuo."
+        },
+        {
+          "prompt": "Um foguete expele **0,6 kg** de água a **25 m/s** em **0,08 s**. Qual é o empuxo médio?",
+          "kind": "number",
+          "answer": "187.5",
+          "unit": "N",
+          "tolerance": 2,
+          "explanation": "Vazão = 0,6 / 0,08 = 7,5 kg/s. Empuxo = 7,5 × 25 = 187,5 N."
+        },
+        {
+          "prompt": "Por que colocar água em vez de só ar comprimido?",
+          "kind": "choice",
+          "options": [
+            "A água é mais densa: expele muito mais massa e gera muito mais empuxo",
+            "A água deixa a garrafa mais leve",
+            "A água esfria o ar e aumenta a pressão",
+            "Só por segurança; o empuxo é o mesmo"
+          ],
+          "answer": "0",
+          "explanation": "O empuxo é massa por segundo × velocidade. A água tem ~800× a densidade do ar, então leva muito mais quantidade de movimento."
+        }
+      ]
+    },
+    {
+      "id": "rkt-02-empuxo-impulso",
+      "title": "Empuxo, impulso e o motor de foguete",
+      "level": 1,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Use **apenas motores comerciais certificados** e **nunca** fabrique, abra, modifique ou \"recarregue\" motores ou propelente em casa — é assim que acontecem as queimaduras e explosões graves.\n- Siga um **código de segurança de foguetemodelismo** (como o da NAR/Tripoli ou de um clube local) e as **leis da sua região**; motores maiores costumam exigir certificação e autorização.\n- Ignição **elétrica**, com **chave de segurança** removível e contagem regressiva em voz alta. Distância mínima de **5 m** para motores pequenos (A–D) e mais para os maiores.\n- Campo aberto, sem vento forte, longe de construções, fios e mato seco. Nunca tente pegar foguete preso em árvore ou fio.",
+      "theory": "# O motor de um foguetemodelo\n\nUm motor de foguetemodelo é um tubo de papelão com **propelente sólido** (pólvora negra ou compósito), um **bocal** de cerâmica, uma **carga de atraso** e uma **carga de ejeção** que abre o paraquedas. Ele vem pronto e certificado: você só encaixa e liga a ignição elétrica.\n\n## Empuxo\n\n**Empuxo** é a força que o motor faz, em **newtons (N)**. Ele muda durante a queima: os motores de pólvora negra dão um **pico** logo na ignição (para tirar o foguete da base) e depois mantêm um **patamar** menor. Esse gráfico é a **curva de empuxo**.\n\n## Impulso total\n\nO que realmente diz \"quanto o motor empurra\" é o **impulso total**:\n\n```\nimpulso (N·s) = empuxo médio (N) × tempo de queima (s)\n```\n\nÉ a **área sob a curva de empuxo**. Um motor de 5 N durante 2 s e outro de 10 N durante 1 s têm o mesmo impulso: 10 N·s.\n\nPelo teorema do impulso, impulso = variação da quantidade de movimento (m × Δv). Mais impulso, mais velocidade — e mais altura.\n\n## O código impresso no motor\n\nUm motor **C6-5** quer dizer:\n\n- **C** — a classe de impulso total (de 5 a 10 N·s);\n- **6** — empuxo médio de 6 N;\n- **5** — 5 segundos de atraso entre o fim da queima e a ejeção do paraquedas.\n\n## O modelo do simulador\n\nOs motores do catálogo usam valores aproximados de fabricantes (impulso, tempo de queima, pico, massa de propelente). A curva é um pico seguido de patamar, ajustada para dar exatamente o impulso de catálogo. O propelente é consumido na proporção do impulso já entregue.",
+      "task": "Seu clube só autoriza voos que fiquem **entre 300 e 450 m** de altura (o teto do campo). Com o B6 o foguete sobe pouco. Escolha um motor que leve o mesmo foguete para dentro dessa faixa.",
+      "hints": [
+        "Cada letra tem até o dobro do impulso da anterior. Suba uma letra e veja o apogeu.",
+        "Motores grandes demais passam do teto do campo — e isso é proibido."
+      ],
+      "labParams": {
+        "motor": "B6", "dryMass": "0.05", "finSpan": "40", "chute": "30", "delay": "5", "controls": "motor"
+      },
+      "goals": [
+        { "metric": "apogee", "op": "between", "value": 300, "max": 450, "description": "Apogeu entre 300 e 450 m" }
+      ],
+      "solutionInputs": { "motor": "C6" },
+      "questions": [
+        {
+          "prompt": "Um motor faz empuxo médio de **4,5 N** durante **1,1 s**. Qual é o impulso total?",
+          "kind": "number",
+          "answer": "4.95",
+          "unit": "N·s",
+          "tolerance": 2,
+          "explanation": "Impulso = 4,5 N × 1,1 s = 4,95 N·s (um motor classe B)."
+        },
+        {
+          "prompt": "No código **D12-5**, o que significa o **5**?",
+          "kind": "choice",
+          "options": [
+            "5 N de empuxo médio",
+            "5 segundos de queima",
+            "5 segundos de atraso entre o fim da queima e a ejeção do paraquedas",
+            "Classe 5 de impulso"
+          ],
+          "answer": "2",
+          "explanation": "Letra = classe de impulso, primeiro número = empuxo médio (N), último número = atraso até a ejeção (s)."
+        },
+        {
+          "prompt": "Dois motores: um faz 5 N por 2 s; o outro faz 10 N por 1 s. O que dá para afirmar?",
+          "kind": "choice",
+          "options": [
+            "O de 10 N leva o foguete duas vezes mais alto",
+            "Os dois têm o mesmo impulso total (10 N·s)",
+            "O de 2 s tem o dobro do impulso",
+            "Não dá para comparar"
+          ],
+          "answer": "1",
+          "explanation": "Impulso = empuxo × tempo: 5 × 2 = 10 × 1 = 10 N·s. O apogeu ainda pode variar um pouco (arrasto, peso), mas o \"empurrão total\" é o mesmo."
+        }
+      ]
+    },
+    {
+      "id": "rkt-03-classes-empuxo-peso",
+      "title": "Classes de motores e a relação empuxo/peso",
+      "level": 2,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Respeite a **massa máxima de decolagem** indicada pelo fabricante de cada motor.\n- Um foguete pesado demais para o motor sai **devagar e torto** da base e pode voar na direção do público. Na dúvida, use um motor maior **certificado** ou deixe o foguete mais leve — nunca \"turbine\" um motor.\n- Use uma **haste ou trilho de lançamento** longo o bastante para o foguete ganhar velocidade antes de soltar.",
+      "theory": "# Cada letra dobra\n\nAs classes de impulso total seguem uma escala em que **cada letra tem até o dobro da anterior**:\n\n- **A**: até 2,5 N·s\n- **B**: até 5 N·s\n- **C**: até 10 N·s\n- **D**: até 20 N·s\n- **E**: até 40 N·s\n- **F**: até 80 N·s\n- **G**: até 160 N·s\n\nAté a classe G (inclusive) costuma ser \"foguetemodelismo\"; de H em diante é **foguetemodelismo de alta potência**, que exige certificação.\n\n## Empuxo/peso: sair da base com força\n\nA **relação empuxo/peso** (T/W) compara o empuxo médio com o peso do foguete pronto (com motor):\n\n```\nT/W = empuxo médio / (massa × 9,81)\n```\n\n- T/W < 1: o foguete **nem sai do chão**.\n- T/W entre 1 e 5: sai devagar; na saída da haste ainda está lento e o vento o entorta.\n- **T/W ≥ 5** é a regra prática para um voo reto e seguro.\n\nPor isso cada motor tem uma **massa máxima de decolagem**: massa máxima = empuxo médio / (5 × 9,81).\n\n## Massa: o inimigo silencioso\n\nUm foguete mais leve acelera mais com o mesmo empuxo (a = F/m). Mas leve demais também não é ideal: com pouca inércia, o arrasto o freia logo após a queima. Para foguetes pequenos, porém, quase sempre **tirar peso ajuda**.",
+      "task": "Seu foguete tem **150 g** sem motor e o C6 mal o tira do chão. Escolha o motor e, se precisar, diminua a massa para ter **empuxo/peso ≥ 5** e um apogeu **entre 300 e 600 m**.",
+      "hints": [
+        "Veja o empuxo/peso no texto abaixo do gráfico: ele muda na hora em que você troca o motor ou a massa.",
+        "Um D12 tem empuxo médio de ~10 N. Com ele, quanto o foguete pode pesar para ter T/W ≥ 5?"
+      ],
+      "labParams": {
+        "motor": "C6", "dryMass": "0.15", "diameter": "33", "length": "600", "finSpan": "55", "chute": "45", "delay": "6",
+        "controls": "motor,dryMass"
+      },
+      "goals": [
+        { "metric": "thrustToWeight", "op": ">=", "value": 5, "description": "Empuxo/peso de pelo menos 5" },
+        { "metric": "apogee", "op": "between", "value": 300, "max": 600, "description": "Apogeu entre 300 e 600 m" }
+      ],
+      "solutionInputs": { "motor": "D12", "dryMass": "0.12" },
+      "questions": [
+        {
+          "prompt": "Qual é o **impulso total máximo** de um motor classe **E**?",
+          "kind": "number",
+          "answer": "40",
+          "unit": "N·s",
+          "tolerance": 1,
+          "explanation": "A = 2,5; B = 5; C = 10; D = 20; E = 40 N·s. Cada letra dobra."
+        },
+        {
+          "prompt": "Um motor tem empuxo médio de **10 N**. Pela regra T/W ≥ 5, qual a **massa máxima de decolagem** do foguete (com motor)?",
+          "kind": "number",
+          "answer": "203.9",
+          "unit": "g",
+          "tolerance": 2,
+          "explanation": "Peso máximo = 10 / 5 = 2 N. Massa = 2 / 9,81 = 0,2039 kg ≈ 204 g."
+        },
+        {
+          "prompt": "O que acontece com um foguete de T/W = 1,5?",
+          "kind": "choice",
+          "options": [
+            "Sobe rápido e reto",
+            "Nem sai da base",
+            "Sai devagar; na saída da haste está lento e o vento pode desviá-lo",
+            "Explode"
+          ],
+          "answer": "2",
+          "explanation": "Com T/W baixo a aceleração é pequena (a = (T − P)/m), o foguete sai da haste lento e as aletas ainda não conseguem mantê-lo reto."
+        }
+      ]
+    },
+    {
+      "id": "rkt-04-estabilidade",
+      "title": "Estabilidade: o CG na frente do CP",
+      "level": 2,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- **Nunca lance um foguete instável.** Ele rodopia e pode voar em qualquer direção, inclusive para o público.\n- Antes de voar, faça o **teste do barbante**: amarre o foguete (com motor) no ponto de equilíbrio (CG) e gire-o em círculos. Se ele voar com o nariz para a frente, está estável.",
+      "theory": "# Dois centros que decidem tudo\n\n- **Centro de gravidade (CG)**: o ponto onde o foguete se equilibra no dedo. É onde o peso \"age\".\n- **Centro de pressão (CP)**: o ponto onde as forças do ar \"agem\" quando o foguete inclina um pouco.\n\nSe o foguete inclina em voo, o ar bate de lado nele. Se o **CP estiver atrás do CG**, essa força empurra a **cauda** de volta para a linha do voo: o foguete se endireita sozinho, como uma flecha ou um cata-vento. Se o CP estiver **na frente** do CG, a força aumenta a inclinação: o foguete **rodopia**.\n\n## A margem de estabilidade\n\n```\nmargem (calibres) = (posição do CP − posição do CG) / diâmetro\n```\n\n(posições medidas a partir da ponta do nariz)\n\n- **menor que 0**: instável — perigoso;\n- **0 a 1**: pouco estável, balança;\n- **1 a 2**: o ideal para a maioria dos foguetes;\n- **acima de 3**: estável demais — vira para o vento (\"cata-vento\") e voa torto em dias de vento.\n\n## Como mexer no CP e no CG\n\n- **Aletas maiores** levam o CP para **trás** (mais área atrás).\n- **Peso no nariz** (massinha) leva o CG para **a frente**.\n- **Foguete mais comprido** afasta as aletas do nariz: o CP vai para trás.\n- Um motor pesado na cauda leva o CG para trás: foguete que é estável com um motor pequeno pode ficar instável com um grande.\n\n## O método de Barrowman (simplificado)\n\nO simulador calcula o CP pelo **método de Barrowman** (1966), usado até hoje por programas como o OpenRocket: soma a \"força\" do nariz (sempre 2, num ponto que depende do formato) e a das aletas (que cresce com o quadrado da envergadura dividida pelo diâmetro), e acha o ponto médio ponderado. O tubo do corpo não conta em ângulos pequenos. O CG considera o corpo (centro no meio), o motor (na cauda) e o peso no nariz.\n\nNo voo simulado, um foguete com margem negativa rodopia: perde quase todo o empuxo útil e o arrasto triplica.",
+      "task": "Este foguete tem aletas minúsculas e **rodopia**. Deixe a **margem de estabilidade entre 1 e 2,5 calibres** e faça-o subir pelo menos **150 m** com o motor B6. Observe o CG (azul) e o CP (vermelho) no desenho do foguete.",
+      "hints": [
+        "Aumente a envergadura das aletas e veja o CP (ponto vermelho) andar para trás.",
+        "Peso no nariz também ajuda, mas deixa o foguete mais pesado (menos altura)."
+      ],
+      "labParams": {
+        "motor": "B6", "dryMass": "0.04", "finSpan": "12", "chute": "30", "delay": "4", "controls": "finSpan,fins,noseWeight,length"
+      },
+      "goals": [
+        { "metric": "stabilityMargin", "op": "between", "value": 1, "max": 2.5, "description": "Margem de estabilidade entre 1 e 2,5 calibres" },
+        { "metric": "apogee", "op": ">=", "value": 150, "description": "Apogeu de pelo menos 150 m" }
+      ],
+      "solutionInputs": { "finSpan": "24" },
+      "questions": [
+        {
+          "prompt": "Para um foguete ser estável, onde deve ficar o CG?",
+          "kind": "choice",
+          "options": [
+            "Atrás do CP (mais perto da cauda)",
+            "Na frente do CP (mais perto do nariz)",
+            "Exatamente no CP",
+            "Tanto faz, o que importa é o motor"
+          ],
+          "answer": "1",
+          "explanation": "Com o CG na frente do CP, qualquer inclinação gera uma força do ar que empurra a cauda de volta: o foguete se endireita."
+        },
+        {
+          "prompt": "Um foguete de **25 mm** de diâmetro tem CP a **320 mm** e CG a **270 mm** da ponta. Qual a margem de estabilidade, em calibres?",
+          "kind": "number",
+          "answer": "2",
+          "unit": "calibres",
+          "tolerance": 2,
+          "explanation": "(320 − 270) / 25 = 50 / 25 = 2 calibres."
+        },
+        {
+          "prompt": "O que acontece ao colocar massinha dentro do nariz?",
+          "kind": "choice",
+          "options": [
+            "O CP vai para a frente e a estabilidade cai",
+            "O CG vai para a frente e a estabilidade aumenta",
+            "O CG vai para trás e a estabilidade aumenta",
+            "Nada muda na estabilidade"
+          ],
+          "answer": "1",
+          "explanation": "Peso na frente puxa o CG para o nariz, aumentando a distância até o CP. Em troca, o foguete fica mais pesado."
+        }
+      ]
+    },
+    {
+      "id": "rkt-05-arrasto",
+      "title": "Aerodinâmica: arrasto e o formato do nariz",
+      "level": 3,
+      "kind": "lab",
+      "lab": "rocket",
+      "theory": "# A força do ar\n\nO ar freia tudo que passa por ele. Essa força é o **arrasto**:\n\n```\nF_arrasto = ½ × ρ × v² × Cd × A\n```\n\n- **ρ** (rô): densidade do ar — 1,225 kg/m³ ao nível do mar, cai pela metade a uns 6 km de altura;\n- **v**: velocidade — entra **ao quadrado**: o dobro da velocidade dá **4×** o arrasto;\n- **A**: área frontal (π × d² / 4) — dobrar o diâmetro dá **4×** a área;\n- **Cd**: coeficiente de arrasto — o \"quão aerodinâmico\" é o formato.\n\n## De onde vem o Cd de um foguete\n\n- **Nariz**: uma ogiva ou um cone deixam o ar escorregar; um nariz reto (chato) bate de frente no ar.\n- **Base**: atrás do foguete se forma uma esteira de baixa pressão que \"suga\" para trás.\n- **Atrito**: o ar raspa em toda a superfície do corpo e das aletas. Quanto maior a área molhada, mais atrito.\n\nFoguetemodelos típicos têm Cd entre **0,4 e 0,75**.\n\n## Mais fino é melhor?\n\nPara o mesmo motor, um foguete **fino** tem muito menos área frontal. Mas atenção: deixá-lo fino também muda a **estabilidade** (o diâmetro entra no cálculo do CP e da margem). Projetar é equilibrar.\n\n## O modelo do simulador\n\nCd = nariz (ogiva 0,10; cone 0,15; arredondado 0,25; reto 0,55) + base 0,12 + atrito do corpo e das aletas. A densidade do ar cai com a altitude (ρ = 1,225 × e^(−h/8500)). Perto da velocidade do som (340 m/s) o arrasto cresce até o dobro.",
+      "task": "Com um C6, este foguete gordo de nariz reto sobe só ~160 m. Mude o **nariz**, o **diâmetro** e as **aletas** para passar de **330 m**, mantendo a margem de estabilidade **≥ 1 calibre**.",
+      "hints": [
+        "Um nariz em ogiva tem Cd bem menor que o reto.",
+        "O diâmetro entra ao quadrado na área frontal. Um tubo de 25 mm tem menos da metade da área de um de 41 mm.",
+        "Afinando o foguete, confira a margem: talvez as aletas precisem mudar."
+      ],
+      "labParams": {
+        "motor": "C6", "dryMass": "0.05", "nose": "flat", "diameter": "41", "length": "450", "finSpan": "40", "chute": "30", "delay": "5",
+        "controls": "nose,diameter,finSpan"
+      },
+      "goals": [
+        { "metric": "apogee", "op": ">=", "value": 330, "description": "Apogeu de pelo menos 330 m" },
+        { "metric": "stabilityMargin", "op": ">=", "value": 1, "description": "Margem de estabilidade de pelo menos 1 calibre" }
+      ],
+      "solutionInputs": { "nose": "ogive", "diameter": "25", "finSpan": "30" },
+      "questions": [
+        {
+          "prompt": "Calcule o arrasto de um foguete a **50 m/s**, com **Cd = 0,5** e área frontal **0,0005 m²**, ao nível do mar (ρ = 1,225 kg/m³).",
+          "kind": "number",
+          "answer": "0.383",
+          "unit": "N",
+          "tolerance": 3,
+          "explanation": "½ × 1,225 × 50² × 0,5 × 0,0005 = 0,5 × 1,225 × 2500 × 0,5 × 0,0005 ≈ 0,383 N."
+        },
+        {
+          "prompt": "Se a velocidade do foguete dobra, o arrasto…",
+          "kind": "choice",
+          "options": ["também dobra", "fica 4 vezes maior", "fica 8 vezes maior", "não muda"],
+          "answer": "1",
+          "explanation": "O arrasto depende de v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "Por que um foguete freia menos lá no alto (a 10 km de altitude)?",
+          "kind": "choice",
+          "options": [
+            "Porque a gravidade some",
+            "Porque o ar é menos denso: ρ menor, arrasto menor",
+            "Porque faz mais frio e o Cd cai",
+            "Porque a área frontal diminui"
+          ],
+          "answer": "1",
+          "explanation": "A densidade do ar cai mais ou menos à metade a cada 6 km; a 10 km ela é só ~1/3 da do nível do mar."
+        }
+      ]
+    },
+    {
+      "id": "rkt-06-recuperacao",
+      "title": "Recuperação: paraquedas e atraso de ejeção",
+      "level": 3,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Use **algodão/papel antichama** (wadding) entre o motor e o paraquedas: a carga de ejeção é quente e derrete o náilon.\n- Se o paraquedas não abrir, o foguete cai como uma flecha: **fique atento e grite \"cuidado!\"** — por isso todos ficam afastados e olhando o voo.\n- Nunca tente recuperar um foguete em **fios elétricos**, telhados altos ou árvores altas.",
+      "theory": "# Subir é metade do voo\n\nUm foguete precisa voltar inteiro (e sem machucar ninguém). Por isso tem um **sistema de recuperação**, quase sempre um **paraquedas**.\n\n## O momento certo de abrir\n\nO ideal é abrir o paraquedas **no apogeu**, quando a velocidade é quase zero.\n\n- **Cedo demais**: o foguete ainda sobe rápido; o paraquedas abre com um tranco enorme, pode rasgar ou soltar.\n- **Tarde demais**: o foguete já está caindo rápido; mesmo tranco — ou ele bate no chão antes.\n\nNos motores de foguetemodelo, o **atraso** é o último número do código (C6-**5**): os segundos entre o **fim da queima** e a **ejeção**. O certo é:\n\n```\natraso ideal ≈ (tempo até o apogeu) − (tempo de queima)\n```\n\n## Velocidade de pouso\n\nDescendo de paraquedas, o foguete logo atinge a **velocidade terminal**: o arrasto do paraquedas fica igual ao peso.\n\n```\nm × g = ½ × ρ × v² × Cd × A   →   v = √( 2 × m × g / (ρ × Cd × A) )\n```\n\nCom um paraquedas redondo (Cd ≈ 0,8), queremos pousar a **3,5 a 5 m/s** — como pular de uma altura de 60 cm a 1,3 m. Mais rápido quebra aletas; mais devagar o vento leva o foguete longe.\n\n## O modelo do simulador\n\nO paraquedas abre no instante \"fim da queima + atraso\" e infla em 0,4 s. Cd do paraquedas = 0,8 sobre a área do círculo.",
+      "task": "O paraquedas deste foguete abre a mais de 70 m/s (rasgaria!) e é pequeno demais. Escolha o **diâmetro do paraquedas** e o **atraso de ejeção** para que ele abra a **no máximo 15 m/s** e o foguete pouse a **no máximo 5 m/s**.",
+      "hints": [
+        "Rode uma vez e veja no texto o tempo do apogeu e o tempo de queima. O atraso ideal é a diferença.",
+        "A velocidade de pouso cai com a raiz da área do paraquedas: dobrar o diâmetro quadruplica a área e reduz a velocidade à metade."
+      ],
+      "labParams": {
+        "motor": "C6", "dryMass": "0.06", "finSpan": "35", "chute": "15", "delay": "1", "controls": "chute,delay"
+      },
+      "goals": [
+        { "metric": "deploySpeed", "op": "<=", "value": 15, "description": "Paraquedas abre a no máximo 15 m/s" },
+        { "metric": "landingSpeed", "op": "<=", "value": 5, "description": "Pouso a no máximo 5 m/s" }
+      ],
+      "solutionInputs": { "chute": "45", "delay": "5.5" },
+      "questions": [
+        {
+          "prompt": "Um foguete de **0,1 kg** desce com um paraquedas de **Cd = 0,8** e área **0,1257 m²** (40 cm de diâmetro). Qual a velocidade terminal ao nível do mar (ρ = 1,225 kg/m³, g = 9,81 m/s²)?",
+          "kind": "number",
+          "answer": "3.99",
+          "unit": "m/s",
+          "tolerance": 3,
+          "explanation": "v = √(2 × 0,1 × 9,81 / (1,225 × 0,8 × 0,1257)) = √(1,962 / 0,1232) ≈ 3,99 m/s."
+        },
+        {
+          "prompt": "O foguete atinge o apogeu **7,5 s** após a ignição e o motor queima por **1,9 s**. Qual o melhor atraso de ejeção?",
+          "kind": "number",
+          "answer": "5.6",
+          "unit": "s",
+          "tolerance": 4,
+          "explanation": "7,5 − 1,9 = 5,6 s. Na prática escolhemos o motor com atraso mais próximo (C6-5 ou C6-7)."
+        },
+        {
+          "prompt": "Por que **não** abrir o paraquedas logo no fim da queima?",
+          "kind": "choice",
+          "options": [
+            "Porque o motor ainda está quente",
+            "Porque o foguete ainda está rápido: o tranco pode rasgar o paraquedas",
+            "Porque o paraquedas faria o foguete subir mais",
+            "Não há problema nenhum"
+          ],
+          "answer": "1",
+          "explanation": "No fim da queima o foguete está perto da velocidade máxima; a força de abertura cresce com v²."
+        }
+      ]
+    },
+    {
+      "id": "rkt-07-estagios",
+      "title": "Foguetes de estágios",
+      "level": 4,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Foguetes de vários estágios são para quem já domina os de um: o estágio de baixo cai **sem paraquedas** (precisa ser leve, com aletas grandes, para cair \"planando\" devagar) e o de cima sobe muito mais.\n- Use somente motores próprios para estágio inferior (atraso **zero**, como o B6-0) e confira a área livre — ela precisa ser maior.",
+      "theory": "# Por que jogar parte do foguete fora?\n\nQuando o motor de um foguete acaba, o tubo vazio, as aletas e o motor gasto continuam lá — **massa morta** que o resto do voo precisa carregar. A ideia do **estágio** é: quando um motor acaba, **soltamos a parte que ficou inútil** e acendemos o próximo motor num foguete mais leve.\n\n## Como funciona num foguetemodelo\n\n- O **estágio de baixo** (booster) usa um motor de **atraso zero** (ex.: B6-**0**).\n- Quando ele termina, a carga de ejeção dele — em vez de abrir um paraquedas — **acende o motor de cima** e empurra o booster para longe.\n- O **estágio de cima** (sustentador) continua com seu motor normal (ex.: C6-7), já em movimento e mais leve.\n\n## Por que vai mais alto que somando os motores?\n\nO motor de cima começa a queimar **já em alta velocidade**, a uma altura maior e **sem carregar o booster**. Cada newton-segundo do segundo motor rende mais.\n\nEm foguetes de verdade (lançadores espaciais) os estágios são ainda mais importantes: um único estágio que chegasse à órbita precisaria ser quase só tanque — veremos por quê com a equação de Tsiolkovsky.\n\n## O modelo do simulador\n\nO segundo motor acende no instante em que o primeiro acaba. O booster solto (estrutura + motor gasto) deixa de contar. A estabilidade mostrada é a do estágio de cima (o booster tem aletas próprias).",
+      "task": "O regulamento da competição permite **no máximo 15 N·s de impulso total**, e o objetivo é passar de **480 m**. Um único C6 não chega lá. Monte um foguete de **2 estágios** que vença.",
+      "hints": [
+        "Mude para 2 estágios e combine motores: o total de impulso é a soma dos dois.",
+        "B6 (5 N·s) + C6 (10 N·s) = 15 N·s, dentro do regulamento."
+      ],
+      "labParams": {
+        "motor": "C6", "motor2": "C6", "dryMass": "0.04", "boosterMass": "0.015", "finSpan": "35", "chute": "30", "delay": "5",
+        "controls": "stages,motor,motor2"
+      },
+      "goals": [
+        { "metric": "apogee", "op": ">=", "value": 480, "description": "Apogeu de pelo menos 480 m" },
+        { "metric": "totalImpulse", "op": "<=", "value": 15, "description": "Impulso total de no máximo 15 N·s" }
+      ],
+      "solutionInputs": { "stages": "2", "motor": "B6", "motor2": "C6" },
+      "questions": [
+        {
+          "prompt": "Um booster com **B6-0** (5 N·s) e um sustentador com **C6-7** (10 N·s). Qual o impulso total do foguete?",
+          "kind": "number",
+          "answer": "15",
+          "unit": "N·s",
+          "tolerance": 1,
+          "explanation": "Os impulsos se somam: 5 + 10 = 15 N·s."
+        },
+        {
+          "prompt": "Qual a principal vantagem de um foguete de estágios?",
+          "kind": "choice",
+          "options": [
+            "Os motores ficam mais potentes quando empilhados",
+            "Larga-se a massa que já não serve (motor gasto, tubo, aletas), e o resto acelera mais",
+            "O foguete fica mais estável",
+            "O arrasto some"
+          ],
+          "answer": "1",
+          "explanation": "Menos massa morta = mais aceleração com o mesmo empuxo, e o 2º motor já começa rápido e alto."
+        },
+        {
+          "prompt": "Por que o motor do estágio de baixo precisa ter atraso **zero**?",
+          "kind": "choice",
+          "options": [
+            "Para acender o motor de cima logo que acaba, sem perder velocidade",
+            "Para abrir o paraquedas do booster",
+            "Para economizar propelente",
+            "Porque é mais barato"
+          ],
+          "answer": "0",
+          "explanation": "Qualquer espera faria o foguete perder velocidade (gravidade e arrasto) antes do 2º motor acender."
+        }
+      ]
+    },
+    {
+      "id": "rkt-08-tsiolkovsky",
+      "title": "A equação de Tsiolkovsky e o delta-v",
+      "level": 4,
+      "kind": "lab",
+      "lab": "rocket",
+      "theory": "# A equação do foguete\n\nEm 1903, o professor russo **Konstantin Tsiolkovsky** escreveu a equação que manda em toda a astronáutica:\n\n```\nΔv = ve × ln( m0 / mf )\n```\n\n- **Δv** (delta-v): quanto o foguete consegue mudar de velocidade, se não houvesse gravidade nem ar;\n- **ve**: velocidade de saída dos gases (ve = Isp × g0, com g0 = 9,81 m/s²);\n- **m0**: massa inicial (cheio); **mf**: massa final (sem propelente);\n- **ln**: logaritmo natural (a tecla \"ln\" da calculadora).\n\n## Isp: a \"eficiência\" do motor\n\nO **impulso específico** (Isp, em segundos) diz quanto impulso cada quilo de propelente dá: Isp = impulso / (massa de propelente × g0).\n\n- pólvora negra (foguetemodelo): ~80 s\n- propelente sólido compósito: 200–270 s\n- querosene + oxigênio líquido: 300–350 s\n- hidrogênio + oxigênio líquido: ~450 s\n\n## A tirania do logaritmo\n\nComo o Δv cresce com o **logaritmo** da razão de massas, dobrar o propelente **não** dobra o Δv. Para ganhar sempre os mesmos 2 900 m/s com Isp 300 s, a razão de massas precisa **multiplicar** por e (2,72) a cada vez. É por isso que foguetes são quase só tanque — e que se usam estágios.\n\n## Delta-v real × ideal\n\nO voo real perde Δv para a **gravidade** (cada segundo subindo na vertical custa 9,81 m/s) e para o **arrasto**. Motores que queimam muito devagar perdem mais para a gravidade; os que queimam rápido demais sofrem acelerações enormes.\n\n## O modelo do simulador\n\nNo motor \"personalizado\", empuxo = Isp × g0 × vazão de massa, constante até o propelente acabar. O simulador mostra o Δv ideal (Tsiolkovsky) e voa o foguete de verdade, com gravidade que diminui com a altitude e atmosfera que rareia: compare os dois!",
+      "task": "Este foguete de sondagem (60 kg sem propelente) só tem Δv ideal de ~1,9 km/s e sobe 17 km. Ajuste **Isp**, **massa de propelente**, **vazão** e **massa seca** para ter **Δv ideal ≥ 3 000 m/s** e passar de **80 km** de apogeu.",
+      "hints": [
+        "Um propelente compósito melhor (Isp 250 s) já ajuda bastante: Δv é proporcional ao Isp.",
+        "Mais propelente aumenta m0/mf — mas lembre do logaritmo. Mais vazão encurta a queima e reduz as perdas por gravidade."
+      ],
+      "labParams": {
+        "motor": "custom", "isp": "200", "massFlow": "4", "propMass": "100", "dryMass": "60", "diameter": "300", "length": "6000",
+        "finSpan": "300", "chute": "0", "delay": "10", "nose": "ogive",
+        "dryMass.min": "20", "dryMass.max": "300", "dryMass.step": "1", "propMass.min": "10", "propMass.max": "500", "propMass.step": "1",
+        "massFlow.min": "0.5", "massFlow.max": "20", "massFlow.step": "0.1", "diameter.max": "600", "length.max": "10000", "finSpan.max": "600",
+        "controls": "isp,propMass,massFlow,dryMass"
+      },
+      "goals": [
+        { "metric": "deltaV", "op": ">=", "value": 3000, "description": "Δv ideal de pelo menos 3 000 m/s" },
+        { "metric": "apogee", "op": ">=", "value": 80000, "description": "Apogeu de pelo menos 80 km" }
+      ],
+      "solutionInputs": { "isp": "250", "propMass": "200", "massFlow": "5" },
+      "questions": [
+        {
+          "prompt": "Um foguete com **Isp = 300 s** tem massa inicial de **100 t** e final de **25 t**. Qual o Δv ideal? (g0 = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "4080",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "ve = 300 × 9,81 = 2 943 m/s; ln(100/25) = ln 4 = 1,386; Δv = 2 943 × 1,386 ≈ 4 080 m/s."
+        },
+        {
+          "prompt": "Um motor C6 entrega **10 N·s** queimando **12,3 g** de pólvora. Qual o Isp aproximado?",
+          "kind": "number",
+          "answer": "82.9",
+          "unit": "s",
+          "tolerance": 3,
+          "explanation": "Isp = 10 / (0,0123 × 9,81) ≈ 82,9 s — típico da pólvora negra."
+        },
+        {
+          "prompt": "Se você **dobra** a razão de massas m0/mf, o Δv…",
+          "kind": "choice",
+          "options": [
+            "dobra",
+            "aumenta ve × ln 2 (≈ 0,69 × ve), não importa de quanto partiu",
+            "quadruplica",
+            "não muda"
+          ],
+          "answer": "1",
+          "explanation": "ln(2R) = ln R + ln 2: cada dobra soma o mesmo valor fixo ao Δv. Por isso é tão difícil chegar ao espaço."
+        }
+      ]
+    },
+    {
+      "id": "rkt-09-orbita",
+      "title": "Órbita: velocidade orbital e a transferência de Hohmann",
+      "level": 5,
+      "kind": "lab",
+      "lab": "rocket",
+      "theory": "# Estar em órbita é cair sem nunca chegar\n\nImagine um canhão no topo de uma montanha (a ideia é do próprio Newton). Quanto mais rápido a bala sai, mais longe ela cai. Numa certa velocidade, a Terra \"curva\" embaixo da bala tão rápido quanto ela cai: a bala **nunca chega ao chão**. Isso é uma **órbita**.\n\n## Velocidade orbital\n\nNuma órbita circular, a gravidade faz o papel de força centrípeta:\n\n```\nv = √( G × M / r )\n```\n\n- G × M (Terra) = 3,986 × 10^14 m³/s²\n- r = raio da Terra (6 371 km) + altitude\n\nA 400 km (a Estação Espacial) isso dá ~7,7 km/s: uma volta na Terra a cada 92 minutos. **Ir alto é fácil; ir rápido de lado é que é difícil.** Um foguete de sondagem sobe 100 km, mas cai de volta porque não tem velocidade horizontal.\n\n## O orçamento de Δv até a órbita\n\nPara chegar a uma órbita baixa um lançador precisa de **~9,4 km/s** de Δv: ~7,8 km/s de velocidade orbital + ~1,5–2 km/s perdidos para a gravidade, o arrasto e as manobras. Com Isp de 300–450 s, Tsiolkovsky exige razões de massa de 10 a 20 — impossível com um estágio só e estrutura real. Por isso lançadores têm **2 ou 3 estágios**.\n\n## Empuxo/peso na decolagem\n\nAntes de tudo, o foguete precisa **sair do chão**: T/W > 1 (na prática 1,2 a 1,5). Lançadores grandes não usam aletas: viram o motor (**empuxo vetorado**) para se manter apontados.\n\n## Transferência de Hohmann\n\nPara ir de uma órbita circular baixa para uma mais alta (por exemplo, um satélite geoestacionário), o jeito mais econômico é a **transferência de Hohmann** (1925):\n\n- **1ª queima**: acelere **para a frente** na órbita baixa. A órbita vira uma **elipse** cujo ponto mais alto (apogeu) toca a órbita desejada.\n- Meia volta depois, no apogeu, a nave está **mais lenta** que o necessário para a órbita circular lá.\n- **2ª queima**: acelere de novo **para a frente** no apogeu, e a órbita vira circular.\n\nCurioso: a órbita mais alta é **mais lenta**, mesmo você tendo acelerado duas vezes — a energia foi para a altura.\n\n## O modelo do simulador\n\nAqui o simulador voa na **vertical** (não entra em órbita): use-o para o orçamento de massa, Isp e empuxo. Δv é o ideal de Tsiolkovsky somado nos dois estágios; o lançador é guiado por empuxo vetorado.",
+      "task": "Um lançador de 2 estágios leva 1 t ao espaço. Hoje ele **nem sai do chão** (empuxo/peso < 1) e tem Δv de só ~8,9 km/s. Ajuste o **Isp** e a **vazão** do 1º estágio e o **Isp** e o **propelente** do 2º estágio para ter **T/W ≥ 1,2** e **Δv ≥ 9 400 m/s**.",
+      "hints": [
+        "Empuxo = Isp × 9,81 × vazão. Com ~50 t o foguete pesa ~490 kN; para T/W ≥ 1,2 o 1º estágio precisa de uns 600 kN (mais, se você puser mais propelente em cima).",
+        "No estágio de cima o Isp vale ouro: motores de vácuo chegam a 340–450 s. Mais propelente no 2º estágio também ajuda muito."
+      ],
+      "labParams": {
+        "motor": "custom", "motor2": "custom", "stages": "2", "guided": "1",
+        "isp": "250", "massFlow": "150", "propMass": "40000", "isp2": "300", "massFlow2": "40", "propMass2": "4000",
+        "dryMass": "1000", "boosterMass": "4000", "diameter": "2000", "length": "30000", "finSpan": "0", "chute": "0",
+        "dryMass.max": "5000", "dryMass.step": "10", "boosterMass.max": "10000", "boosterMass.step": "10",
+        "propMass.max": "60000", "propMass.step": "100", "propMass2.max": "20000", "propMass2.step": "100",
+        "massFlow.max": "600", "massFlow.step": "5", "massFlow2.max": "100", "massFlow2.step": "1",
+        "diameter.max": "5000", "length.max": "50000", "finSpan.max": "5000",
+        "controls": "isp,massFlow,isp2,propMass2"
+      },
+      "goals": [
+        { "metric": "thrustToWeight", "op": ">=", "value": 1.2, "description": "Empuxo/peso na decolagem de pelo menos 1,2" },
+        { "metric": "deltaV", "op": ">=", "value": 9400, "description": "Δv ideal de pelo menos 9 400 m/s (órbita baixa)" }
+      ],
+      "solutionInputs": { "isp": "290", "massFlow": "300", "isp2": "340", "propMass2": "9000" },
+      "questions": [
+        {
+          "prompt": "Qual a velocidade de uma órbita circular a **400 km** de altitude? Use G·M = 3,986 × 10^14 m³/s² e raio da Terra 6 371 km.",
+          "kind": "number",
+          "answer": "7673",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "r = 6 771 000 m; v = √(3,986e14 / 6,771e6) = √(5,887e7) ≈ 7 673 m/s."
+        },
+        {
+          "prompt": "Numa transferência de Hohmann para uma órbita **mais alta**, as duas queimas são…",
+          "kind": "choice",
+          "options": [
+            "para trás (freando), para a nave \"cair para cima\"",
+            "para a frente nas duas: no ponto baixo da elipse e depois no ponto alto",
+            "para cima (na direção radial), apontando para longe da Terra",
+            "uma para a frente e outra para trás"
+          ],
+          "answer": "1",
+          "explanation": "A 1ª queima (prograde) cria a elipse de transferência; a 2ª, no apogeu, circulariza a órbita."
+        },
+        {
+          "prompt": "Se a órbita baixa pede ~7,8 km/s, por que o lançador precisa de ~9,4 km/s de Δv?",
+          "kind": "choice",
+          "options": [
+            "Porque o combustível evapora",
+            "Por causa das perdas para a gravidade e o arrasto durante a subida",
+            "Porque a Terra gira para o lado errado",
+            "Margem de erro dos engenheiros"
+          ],
+          "answer": "1",
+          "explanation": "Enquanto sobe, o foguete gasta empuxo só para não cair (perda por gravidade) e para vencer o ar (perda por arrasto)."
+        }
+      ]
+    },
+    {
+      "id": "rkt-10-missao-sondagem",
+      "title": "Projeto completo: missão de sondagem ao espaço",
+      "level": 5,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "Foguetes como este são projetos de **universidades, agências e equipes licenciadas**, com áreas de lançamento controladas (como o Centro de Lançamento da Barreira do Inferno ou de Alcântara) e autorização das autoridades aeronáuticas. Aqui é **só simulação**: nunca tente construir motores ou propelentes.",
+      "theory": "# Da folha em branco à missão\n\nEngenharia de verdade é atender **vários requisitos ao mesmo tempo**. Uma equipe universitária precisa levar uma carga científica de 10 kg (o foguete pesa 60 kg sem propelente) além da **linha de Kármán (100 km)**, onde convencionamos que começa o espaço, e trazê-la de volta inteira.\n\n## Os requisitos da missão\n\n- **Apogeu ≥ 100 km**.\n- **Aceleração máxima ≤ 15 g** — a carga e a eletrônica têm limite.\n- **Margem de estabilidade entre 1,5 e 4 calibres** — o foguete sobe pelo ar denso a mais de 1 km/s.\n- **Paraquedas abrindo a ≤ 50 m/s** e **pouso a ≤ 10 m/s**.\n\n## O orçamento de projeto\n\nComece pelo **Δv**. Sem ar e com gravidade constante, chegar a uma altura h exigiria v = √(2 × g × h) ≈ 1,4 km/s para 100 km. Somando as perdas por gravidade durante a queima e por arrasto, precisamos de **~3 km/s ou mais**.\n\nDepois, a **aceleração**: o pico é no fim da queima, quando o foguete está mais leve (a = F/m_final − g). Mais vazão de massa = queima mais curta, menos perda por gravidade — mas mais g's. Equilibrar isso é a arte.\n\nPor fim, **estabilidade** (aletas compatíveis com o CG cheio de propelente) e **recuperação** (paraquedas grande o bastante e um atraso que o abra perto do apogeu).\n\n## Cuidado com o atraso\n\nNum voo de quase 4 minutos até o apogeu, o atraso da ejeção não é de segundos: é a diferença entre o tempo do apogeu e o fim da queima. No simulador, o paraquedas abre nesse instante e o foguete desce com ele aberto (o modelo não calcula o aquecimento nem as cargas da reentrada).\n\n## Ciclo de projeto\n\n1. Estime (Δv, T/W, acelerações).\n2. Simule.\n3. Veja qual requisito falhou e por quê.\n4. Mude **uma coisa por vez** e simule de novo.",
+      "task": "Projete a missão: ajuste **propelente**, **vazão**, **Isp**, **aletas**, **paraquedas** e **atraso** para cumprir **todos** os requisitos. Dica de engenheiro: primeiro chegue aos 100 km com ≤ 15 g; depois acerte a estabilidade; por último a recuperação.",
+      "hints": [
+        "Com Isp 250 s e ~170 kg de propelente o Δv passa de 3,2 km/s. Uma vazão de ~3 kg/s mantém a aceleração abaixo de 15 g.",
+        "Rode, anote o tempo do apogeu e o fim da queima, e use a diferença como atraso.",
+        "Um paraquedas de ~5 m de diâmetro segura 60 kg a menos de 10 m/s."
+      ],
+      "labParams": {
+        "motor": "custom", "isp": "230", "massFlow": "4", "propMass": "150", "dryMass": "60", "diameter": "300", "length": "6000",
+        "finSpan": "150", "chute": "150", "delay": "20",
+        "dryMass.max": "300", "dryMass.step": "1", "propMass.min": "10", "propMass.max": "500", "propMass.step": "1",
+        "massFlow.min": "0.5", "massFlow.max": "20", "massFlow.step": "0.1", "diameter.max": "600", "length.max": "10000",
+        "finSpan.max": "600", "chute.max": "800", "delay.max": "300", "delay.step": "1",
+        "controls": "propMass,massFlow,isp,finSpan,chute,delay"
+      },
+      "goals": [
+        { "metric": "apogee", "op": ">=", "value": 100000, "description": "Apogeu de pelo menos 100 km (linha de Kármán)" },
+        { "metric": "maxAccelG", "op": "<=", "value": 15, "description": "Aceleração máxima de 15 g" },
+        { "metric": "stabilityMargin", "op": "between", "value": 1.5, "max": 4, "description": "Margem de estabilidade entre 1,5 e 4 calibres" },
+        { "metric": "deploySpeed", "op": "<=", "value": 50, "description": "Paraquedas abre a no máximo 50 m/s" },
+        { "metric": "landingSpeed", "op": "<=", "value": 10, "description": "Pouso a no máximo 10 m/s" }
+      ],
+      "solutionInputs": { "propMass": "170", "massFlow": "3", "isp": "250", "finSpan": "300", "chute": "500", "delay": "161" },
+      "questions": [
+        {
+          "prompt": "Um voo chega ao apogeu **218 s** após a ignição e a queima termina em **57 s**. Qual atraso faz o paraquedas abrir no apogeu?",
+          "kind": "number",
+          "answer": "161",
+          "unit": "s",
+          "tolerance": 1,
+          "explanation": "218 − 57 = 161 s."
+        },
+        {
+          "prompt": "Que razão de massas m0/mf um foguete com **Isp 250 s** precisa para **Δv = 3 300 m/s**?",
+          "kind": "number",
+          "answer": "3.84",
+          "tolerance": 3,
+          "explanation": "m0/mf = e^(Δv / (Isp × g0)) = e^(3300 / 2452) = e^1,346 ≈ 3,84."
+        },
+        {
+          "prompt": "Por que a aceleração máxima acontece no **fim** da queima, e não no começo?",
+          "kind": "choice",
+          "options": [
+            "Porque o empuxo aumenta com a altitude",
+            "Porque o foguete está mais leve: com o mesmo empuxo, a = F/m cresce",
+            "Porque o arrasto empurra o foguete para cima",
+            "Porque a gravidade some no espaço"
+          ],
+          "answer": "1",
+          "explanation": "Com empuxo constante, a massa cai à medida que o propelente queima; no fim restam só ~60 kg para o mesmo empuxo."
+        }
+      ]
+    }
+  ]
+}
