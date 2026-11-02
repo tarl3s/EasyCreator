@@ -1,0 +1,373 @@
+{
+  "title": "Aeroplanes and helicopters",
+  "description": "How a wing holds an aeroplane up, why it stalls, how much runway it needs and how far it flies — and how a helicopter rotor hovers, beats torque and lands without an engine. Ends with sizing an aeroplane using the Breguet equation.",
+  "lessons": {
+    "aero-01-sustentacao": {
+      "title": "How the wing generates lift",
+      "theory": "# Pushing the air down\n\nA wing is tilted and curved in a way that **deflects the air downwards**. By **Newton's 3rd law**, if the wing pushes the air down, the air pushes the wing **up**. Seen another way (Bernoulli), the air moves faster over the top of the wing and the **pressure on top is lower** than underneath. The two explanations describe the same phenomenon.\n\n## The lift formula\n\n```\nL = ½ · ρ · v² · S · CL\n```\n\n- `L` = lift (N)\n- `ρ` = air density (1.225 kg/m³ at sea level)\n- `v` = speed relative to the air (m/s)\n- `S` = wing area (m²)\n- `CL` = lift coefficient: depends on the **angle of attack** and the wing profile\n\nNote the **v²**: double the speed gives **four times** the lift.\n\n## Level flight\n\nTo fly level, the lift must be **equal to the weight** (L = W = m·g). If L > W the aeroplane climbs; if L < W, it descends. The pilot adjusts the angle of attack (pulling or pushing the stick) according to the speed.\n\nIn the simulator, the aeroplane (Cessna 172 style: 1100 kg, 16 m² wing) is at 150 km/h. The arrows show lift (green) and weight (red).",
+      "task": "Make the aeroplane fly **level**: lift between **100% and 110% of the weight**, without stalling.",
+      "hints": [
+        "Increase the angle of attack gradually and watch the green arrow.",
+        "At 150 km/h, an angle of attack of 5.5° makes the lift slightly above the weight."
+      ],
+      "goals": [
+        "Lift between 100% and 110% of the weight",
+        "No stall"
+      ],
+      "questions": [
+        {
+          "prompt": "A **10 m²** wing flies at **50 m/s** with CL = **0.5** (ρ = 1.2 kg/m³). What is the lift?",
+          "explanation": "L = ½ × 1.2 × 50² × 10 × 0.5 = 0.5 × 1.2 × 2500 × 10 × 0.5 = 7500 N."
+        },
+        {
+          "prompt": "If the speed **doubles** (same angle), the lift…",
+          "options": [
+            "doubles",
+            "stays the same",
+            "quadruples",
+            "is halved"
+          ],
+          "explanation": "L depends on v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "Which of these statements correctly describes how the wing holds the aeroplane up?",
+          "options": [
+            "The air on top and the air underneath must reach the end of the wing together",
+            "The wing deflects the air downwards, and the air reacts by pushing the wing up; at the same time the pressure on top is lower",
+            "The engine pulls the aeroplane up",
+            "The wing is lighter than air"
+          ],
+          "explanation": "Newton (air deflected downwards) and Bernoulli (pressure difference) are two faces of the same phenomenon. The idea that the air must \"arrive together\" is a myth."
+        }
+      ]
+    },
+    "aero-02-angulo-ataque": {
+      "title": "Profiles and angle of attack",
+      "theory": "# The angle of attack\n\nThe **angle of attack (α)** is the angle between the wing's **chord** (the line from the leading edge to the trailing edge) and the **relative wind** — it is not the same as the angle of the nose to the horizon.\n\n## The lift curve\n\nUp to near the stall, CL grows in a **straight line** with α:\n\n```\nCL = a · (α − α0)\n```\n\n- **Cambered** (curved) profiles give lift even at α = 0: their α0 is negative (here, −2°).\n- A finite wing has a smaller slope than the 2D profile: `a = 2π · AR / (AR + 2)` per radian. For AR = 7.5: 4.96/rad = **0.0866 per degree**.\n- Above the **critical angle** (~15°), the flow **separates** from the upper surface, CL plummets and drag shoots up: this is the **stall**.\n\n## Altitude\n\nAt 2000 m the air has only ~82% of the sea-level density (ρ = 1.007 kg/m³). At the same speed, you need **more CL** — more angle of attack, more area or **flaps**, which increase the camber and the wing's CL.\n\nIn this slow flight (120 km/h) at 2000 m altitude, you need a lot of CL without exceeding the limit.",
+      "task": "At **120 km/h and 2000 m**, make the aeroplane fly **level** (lift between 100% and 110% of the weight) **without stalling**.",
+      "hints": [
+        "Calculate the CL needed: CL = 2·W / (ρ·v²·S).",
+        "About 12.5° of angle of attack gives the right CL; above ~15° the wing stalls."
+      ],
+      "goals": [
+        "Lift between 100% and 110% of the weight",
+        "No stall"
+      ],
+      "questions": [
+        {
+          "prompt": "With CL = 0.0866·(α + 2°) and **maximum CL = 1.5**, at what angle of attack does the wing stall?",
+          "explanation": "1.5 = 0.0866·(α + 2) → α + 2 = 17.3 → α ≈ 15.3°."
+        },
+        {
+          "prompt": "The angle of attack is the angle between…",
+          "options": [
+            "the aeroplane's nose and the horizon",
+            "the wing chord and the relative wind",
+            "the wing and the fuselage",
+            "the aeroplane and the runway"
+          ],
+          "explanation": "The nose can be high and the angle of attack low (climbing) or vice versa; what matters to the wing is the relative wind."
+        },
+        {
+          "prompt": "Flying higher, at the same speed, what must the pilot do to keep level flight?",
+          "options": [
+            "Decrease the angle of attack",
+            "Increase the angle of attack (the air is less dense)",
+            "Nothing changes",
+            "Retract the flaps"
+          ],
+          "explanation": "With lower ρ, L = ½·ρ·v²·S·CL falls; more CL (or more speed) is needed to match the weight."
+        }
+      ]
+    },
+    "aero-03-arrasto-polar": {
+      "title": "Drag and the drag polar",
+      "theory": "# Two kinds of drag\n\nThe total drag of an aeroplane is the sum of:\n\n- **Parasite drag** (`CD0`): air friction on the surface, fuselage shape, landing gear, antennas. It grows with speed.\n- **Induced drag**: the \"price\" of generating lift. At the wing tips the air from below escapes upwards and forms **vortices**. It is greater at **low speed** (high CL).\n\n```\nCD = CD0 + CL² / (π · e · AR)\n```\n\n- `AR` = aspect ratio = span² / area. Gliders: 20–30; fighters: 2–4.\n- `e` = Oswald factor (0.7–0.9): how close the lift distribution is to the ideal (elliptical).\n\n## The polar and maximum L/D\n\nThe CL × CD graph is the **drag polar**. The line from the origin that touches the curve marks the best **L/D** (lift/drag, the aeroplane's \"efficiency\"):\n\n```\n(L/D)max = ½ · √(π · e · AR / CD0)      at the point where induced CD = CD0\n```\n\nWith L/D = 15, the aeroplane **glides 15 m forward for every 1 m it descends**. Gliders reach 50–60!\n\nClick ▶ Run: the angle of attack sweeps from −4° to 16° and you see the point move along the polar.",
+      "task": "Design a wing and a fuselage with a **maximum L/D of at least 15**.",
+      "hints": [
+        "A higher aspect ratio reduces induced drag; a lower CD0 reduces parasite drag.",
+        "AR = 12, e = 0.85 and CD0 = 0.025 give L/D ≈ 18."
+      ],
+      "goals": [
+        "Maximum L/D ≥ 15"
+      ],
+      "questions": [
+        {
+          "prompt": "A wing with AR = **8**, e = **0.8**, flying at CL = **0.5**. What is the **induced** drag coefficient?",
+          "explanation": "CDi = CL²/(π·e·AR) = 0.25 / (π × 0.8 × 8) = 0.25 / 20.11 ≈ 0.00995."
+        },
+        {
+          "prompt": "A glider with **L/D = 15** is at a height of **1000 m**, with no wind. How many km can it glide?",
+          "explanation": "Distance = height × L/D = 1000 × 15 = 15,000 m = 15 km."
+        },
+        {
+          "prompt": "Why do gliders have long, thin wings?",
+          "options": [
+            "To fit in the hangar",
+            "A high aspect ratio reduces induced drag and increases L/D",
+            "To be heavier",
+            "To fly faster than jet aircraft"
+          ],
+          "explanation": "Induced drag is CL²/(π·e·AR): the greater the AR, the smaller it gets."
+        }
+      ]
+    },
+    "aero-04-estol": {
+      "title": "Stall and flaps",
+      "theory": "# The minimum speed\n\nTo fly level, L = W. Since CL has a maximum, there is a **minimum speed**, the **stall speed**:\n\n```\nVstall = √( 2 · W / (ρ · S · CLmax) )\n```\n\nBelow it no angle of attack generates enough lift: the wing exceeds the critical angle, the flow separates, the nose drops and the aeroplane loses altitude.\n\n**Careful**: the stall happens because of **angle of attack**, not speed. In a tight turn or when pulling the stick hard, the aeroplane stalls above the level Vstall.\n\n## How to land slower\n\n- **Bigger wing** (lower wing loading W/S).\n- **Flaps**: surfaces on the trailing edge that increase the camber and CLmax (here: +0.25 at 10°, +0.45 at 20°, +0.60 at 30°). They also increase drag — useful on landing.\n- **Slats** on the leading edge (large aeroplanes) delay separation.\n\nPilots approach for landing at **1.3 × Vstall**, a safety margin. The \"indicated\" Vstall on the airspeed indicator does not change with altitude, so the simulator shows the sea-level value.\n\nClick ▶ Run: the aeroplane decelerates until the stall.",
+      "task": "Make the **stall speed 85 km/h or less** so you can land on a short runway (without changing the aeroplane's weight).",
+      "safety": "Stalling close to the ground is one of the main causes of accidents in general aviation. Pilots train stall recognition and recovery with an instructor and at a safe altitude.",
+      "hints": [
+        "Flaps increase CLmax: Vstall falls with the square root of CLmax.",
+        "Flaps at 30° take CLmax from 1.5 to 2.1."
+      ],
+      "goals": [
+        "Stall speed ≤ 85 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "An aeroplane weighing **10,000 N**, wing of **15 m²**, CLmax = **1.6**, at sea level (ρ = 1.225). What is the stall speed?",
+          "explanation": "Vs = √(2 × 10000 / (1.225 × 15 × 1.6)) = √(20000 / 29.4) = √680.3 ≈ 26.08 m/s (≈ 94 km/h)."
+        },
+        {
+          "prompt": "What causes the stall?",
+          "options": [
+            "The engine stopping",
+            "The speed dropping below a fixed value, always",
+            "The angle of attack exceeding the critical angle, which can happen at any speed",
+            "Flying too high"
+          ],
+          "explanation": "The stall is aerodynamic: the flow separates when α exceeds the critical value. In a turn or an abrupt pull-up this happens even at high speed."
+        },
+        {
+          "prompt": "With Vstall = **80 km/h**, what is the recommended approach speed (1.3 × Vs)?",
+          "explanation": "1.3 × 80 = 104 km/h."
+        }
+      ]
+    },
+    "aero-05-decolagem": {
+      "title": "Take-off and climb",
+      "theory": "# The take-off run\n\nOn the runway, the aeroplane accelerates with:\n\n```\nm · a = Thrust − Drag − μr · (Weight − Lift)\n```\n\n- μr ≈ 0.03: rolling friction of the wheels.\n- It leaves the ground at ~**1.2 × Vstall** (rotation/take-off speed).\n- A quick estimate: `s ≈ V² / (2 · a_average)`.\n\nThe **propeller thrust** is `T = ηp · P / v` (power × propeller efficiency ÷ speed); at standstill it is limited (static thrust).\n\n## Altitude and heat\n\nAt a **high** airport (or on a **hot** day) the air is less dense:\n\n- The engine loses power (~proportional to density).\n- The wing needs **more speed** for the same lift.\n\nResult: the run gets much longer. Pilots use performance tables before every take-off.\n\n## Climb\n\nAfter leaving the ground, the **rate of climb** is the spare power divided by the weight:\n\n```\nRC = (P_available − P_required) / Weight        (m/s)\n```\n\nThe certification standard measures the distance to clear a **15 m** (50 ft) obstacle.\n\nIn this problem the airport is at **2500 m** altitude and the runway is only **350 m** long.",
+      "task": "Take off from the 350 m runway at 2500 m altitude: **leave the ground within the runway**, clear **15 m of height within 350 m** and climb at **at least 5 m/s**.",
+      "hints": [
+        "Flaps reduce the take-off speed; more power gives more thrust and more climb.",
+        "Flaps at 20° and a 160 kW engine solve it."
+      ],
+      "goals": [
+        "Leaves the ground within the runway",
+        "Clears 15 m of height within 350 m",
+        "Rate of climb ≥ 5 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "By the standard atmosphere (ISA), what is the air density at **2500 m**? (T = 288.15 − 0.0065·h; ρ = 1.225·(T/288.15)^4.256)",
+          "explanation": "T = 288.15 − 16.25 = 271.9 K; (271.9/288.15)^4.256 = 0.781; ρ = 1.225 × 0.781 ≈ 0.957 kg/m³ (78% of sea level)."
+        },
+        {
+          "prompt": "On a very hot day, the take-off run…",
+          "options": [
+            "gets shorter, because hot air rises",
+            "gets longer, because hot air is less dense",
+            "does not change",
+            "only changes for jet aircraft"
+          ],
+          "explanation": "Hot air is less dense: the wing needs more speed and the engine produces less."
+        },
+        {
+          "prompt": "An aeroplane leaves the ground at **35 m/s** with an average acceleration of **2.5 m/s²**. What is the approximate take-off run?",
+          "explanation": "s = V²/(2a) = 1225 / 5 = 245 m."
+        }
+      ]
+    },
+    "aero-06-estabilidade": {
+      "title": "Stability and control surfaces",
+      "theory": "# Stable means it returns by itself\n\nAn aeroplane is **statically stable in pitch** when, if the nose is raised by a gust, a moment appears that **lowers the nose back**. What ensures this is the combination of the **centre of gravity (CG)** and the **neutral point (NP)**.\n\n- The **neutral point** is the point where the lift increase of the whole aeroplane (wing + horizontal stabiliser) acts when the angle of attack changes.\n- If the **CG is ahead of the NP**, an increase in α generates a moment that lowers the nose: **stable**.\n- If the **CG is behind the NP**: the moment increases α even more — **unstable** (it only flies with a computer, like modern fighters).\n\n```\nStatic margin = (h_NP − h_CG)  as a % of the mean aerodynamic chord (MAC)\n```\n\nLight aeroplanes use **5 to 20%**. A margin that is too large makes the aeroplane \"heavy\" and hard to raise the nose.\n\n## The horizontal stabiliser\n\nThe wing alone has its aerodynamic centre at ~25% of the chord. The **tail** pulls the neutral point backwards. The greater the **tail volume** `VH = (S_tail · arm) / (S_wing · chord)`, the further back the NP goes (in the simulator: h_NP = 25% + 40.5% × VH).\n\n## Control surfaces\n\n- **Elevator** (on the horizontal stabiliser): pitch — nose up/down.\n- **Ailerons** (on the wing tips, moving in opposite directions): roll.\n- **Rudder** (on the vertical stabiliser): yaw — nose left/right.",
+      "task": "This aeroplane was loaded with the CG too far back and is **unstable**. Move the CG or enlarge the tail until the **static margin is between 5% and 20%**.",
+      "hints": [
+        "The CG must be ahead of the neutral point (a smaller number in % of the chord).",
+        "With VH = 0.45 the NP is at 43%: a CG at 35% gives ~8% margin."
+      ],
+      "goals": [
+        "Static margin between 5% and 20% of the MAC"
+      ],
+      "questions": [
+        {
+          "prompt": "The neutral point is at **45%** of the MAC and the CG at **30%**. What is the static margin (in %)?",
+          "explanation": "SM = 45% − 30% = 15% of the MAC — stable."
+        },
+        {
+          "prompt": "Which surface controls **roll** (banking the wings)?",
+          "options": [
+            "Rudder",
+            "Elevator",
+            "Ailerons",
+            "Flaps"
+          ],
+          "explanation": "The ailerons go up on one side and down on the other, creating different lift on each wing."
+        },
+        {
+          "prompt": "What happens if the CG is **behind** the neutral point?",
+          "options": [
+            "The aeroplane becomes more stable",
+            "Any pitch disturbance grows: the aeroplane is unstable",
+            "The aeroplane cannot take off",
+            "Nothing, the CG does not matter"
+          ],
+          "explanation": "With a negative static margin the pitching moment reinforces the disturbance instead of correcting it."
+        }
+      ]
+    },
+    "aero-07-propulsao": {
+      "title": "Propulsion: propeller or jet?",
+      "theory": "# Thrust = accelerating air backwards\n\nAll aerial propulsion works by **Newton's 3rd law**: the engine throws air (or gas) backwards and the aeroplane is pushed forwards.\n\n```\nThrust = ṁ · (Ve − V0)\n```\n\n- `ṁ` = mass flow of air (kg/s), `Ve` = speed of the exiting jet, `V0` = aeroplane speed.\n\n## Propulsive efficiency\n\nIt is more efficient to accelerate **a lot of air a little** than **a little air a lot**:\n\n```\nη_propulsive = 2 / (1 + Ve/V0)\n```\n\n- **Propeller**: moves an enormous mass of air slowly → very efficient at low speed (up to ~600 km/h). Thrust ≈ ηp · P / v.\n- **Turbojet**: fast, narrow jet → efficient only at very high speed (fighters, Concorde).\n- **Turbofan**: a large fan at the front diverts most of the air **around** the core (bypass ratio 5–12 on airliners) — the middle ground that dominates airline flying.\n- **Turboprop**: a turbine turning a propeller — regional aeroplanes (ATR, Embraer EMB 120).\n\n## Consumption\n\n- Piston/turboprop engines: specific consumption in kg of fuel per kWh (~0.2–0.3).\n- Jets: TSFC in g of fuel per kN of thrust per second (~15–20 in modern turbofans).",
+      "questions": [
+        {
+          "prompt": "A jet engine takes in **100 kg/s** of air and expels it at **400 m/s**; the aeroplane flies at **200 m/s**. What is the thrust?",
+          "explanation": "T = ṁ·(Ve − V0) = 100 × (400 − 200) = 20,000 N."
+        },
+        {
+          "prompt": "What is the propulsive efficiency of that engine (Ve = 400 m/s, V0 = 200 m/s)?",
+          "explanation": "η = 2 / (1 + 400/200) = 2/3 ≈ 0.667."
+        },
+        {
+          "prompt": "A propeller with an efficiency of **0.8** receives **100 kW** and the aeroplane flies at **50 m/s**. What is the thrust?",
+          "explanation": "T = η·P/v = 0.8 × 100,000 / 50 = 1600 N."
+        },
+        {
+          "prompt": "Why do airliners use **high-bypass** turbofans?",
+          "options": [
+            "Because they make more noise",
+            "Because they accelerate a large mass of air with a small change in speed, which is more efficient",
+            "Because they need no fuel",
+            "Because they are lighter than propellers"
+          ],
+          "explanation": "η_propulsive = 2/(1 + Ve/V0): with Ve close to V0 the efficiency rises. Bypass generates thrust with \"slow\" air."
+        },
+        {
+          "prompt": "For an agricultural aeroplane flying at 200 km/h, which propulsion makes the most sense?",
+          "options": [
+            "Turbojet",
+            "Propeller (piston or turboprop)",
+            "Rocket",
+            "Fighter turbofan"
+          ],
+          "explanation": "At low speed the propeller has the best propulsive efficiency and the lowest consumption."
+        }
+      ]
+    },
+    "aero-08-helicoptero-pairar": {
+      "title": "Helicopter: the rotor and hovering",
+      "theory": "# The rotor is a spinning wing\n\nEach blade of the main rotor is a wing. As it spins, it meets the air at a speed that grows from the centre to the tip (`v = Ω · r`). The pilot changes the **collective pitch** (the angle of all the blades at once) to increase or decrease the thrust.\n\n## Momentum theory\n\nTo hover, the rotor must push air down with a force equal to the weight. The speed it gives the air (induced velocity) and the ideal power are:\n\n```\nv_i = √( T / (2 · ρ · A) )          A = π · R²\nP_ideal = T · v_i = T^1.5 / √(2 · ρ · A)\n```\n\n- **Bigger rotor** (larger A) → less power for the same weight. That is why helicopters have huge rotors and cargo drones use large propellers.\n- The **figure of merit** (FM ≈ 0.7) is the ratio P_ideal / P_real (profile, tip and air-rotation losses).\n\n## Rotor limits\n\n- **Blade stall**: each blade has a maximum CL; a rotor's thrust is limited to CT/σ ≈ 0.13 (σ = solidity = blade area / disc area). More blades, wider blades, more rpm or a bigger rotor raise the limit.\n- **Tip Mach**: if the blade tip approaches the speed of sound (Mach 0.9+), shock waves, noise and loss of efficiency appear. Tips stay at ~200–220 m/s (Mach 0.6–0.65).\n\nThe simulator combines blade element theory (the thrust the collective generates) with engine power. Start with a rotor that is too small and find out what to change.",
+      "task": "This 1100 kg helicopter **does not leave the ground**. Adjust the rotor so that it **hovers**, **without blade stall** and with the blade tip below **Mach 0.7**.",
+      "hints": [
+        "A bigger rotor and more rpm increase thrust — but watch the tip Mach.",
+        "A 5 m radius and 420 rpm solve it with the same engine."
+      ],
+      "goals": [
+        "Can hover (thrust ≥ weight)",
+        "No blade stall",
+        "Blade tip below Mach 0.7"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the **ideal** power to hover with a thrust of **10,000 N**, rotor radius **5 m**, ρ = 1.225 kg/m³?",
+          "explanation": "A = π·5² = 78.54 m²; √(2·1.225·78.54) = √192.4 = 13.87; P = 10000^1.5 / 13.87 = 1,000,000 / 13.87 ≈ 72,100 W = 72.1 kW."
+        },
+        {
+          "prompt": "In that same case, what is the induced velocity of the air at the rotor?",
+          "explanation": "v_i = √(T/(2ρA)) = √(10000/192.4) = √52.0 ≈ 7.21 m/s."
+        },
+        {
+          "prompt": "Why does a **bigger** rotor need **less** power to support the same weight?",
+          "options": [
+            "Because it spins slower and therefore uses no energy",
+            "Because it pushes more air at a lower speed; the ideal power is T^1.5/√(2ρA)",
+            "Because it is lighter",
+            "It is not true: the bigger rotor uses more"
+          ],
+          "explanation": "For the same thrust, accelerating a larger mass of air to a lower speed costs less energy — the same idea as the turbofan."
+        }
+      ]
+    },
+    "aero-09-cauda-autorrotacao": {
+      "title": "Torque, tail rotor and autorotation",
+      "theory": "# Action and reaction in the rotor\n\nThe engine applies a **torque** to the main rotor to spin it against the blade drag. By Newton's 3rd law, the rotor applies an equal and **opposite torque to the fuselage**: with nothing to prevent it, the helicopter would spin opposite to the rotor.\n\n```\nTorque Q = P_rotor / Ω            (Ω in rad/s)\nTail thrust = Q / arm              (arm = distance from the tail rotor to the axis)\n```\n\n- More power → more torque → more tail thrust.\n- **More rpm** with the same power → less torque.\n- **Longer arm** → less tail thrust (but a longer fuselage).\n\nThe pilot's pedals change the tail rotor pitch and control **yaw**. The tail rotor uses ~10% of the power.\n\n## Other solutions\n\n- **Coaxial** or **tandem** rotors spinning in opposite directions (Kamov, Chinook): the torques cancel.\n- **Fenestron** (ducted rotor) and **NOTAR** (air jet in the tail).\n\n## Autorotation: landing without an engine\n\nIf the engine stops, the pilot **lowers the collective**. Descending, the air passes **from bottom to top** through the rotor and keeps it spinning, like a windmill. The helicopter descends in a controlled way (~10–17 m/s vertically, less with forward speed). Close to the ground the pilot does the **flare**: pulls the collective and uses the **rotor's kinetic energy** (½·I·Ω²) to slow the descent and land softly. Heavy, large rotors store more energy.",
+      "task": "This helicopter's tail rotor cannot handle the torque and the fuselage spins. Make the **heading stable** with the tail rotor needing **at most 500 N**.",
+      "safety": "Tail rotors spin at thousands of rpm and are almost invisible. On the ground, never approach a helicopter with turning rotors from the rear; approach from the front, in the pilot's sight.",
+      "hints": [
+        "Tail thrust = torque / arm: a longer arm reduces the thrust needed.",
+        "A 5.5 m arm and a 600 N tail solve it."
+      ],
+      "goals": [
+        "The tail balances the torque (stable heading)",
+        "Tail thrust needed ≤ 500 N"
+      ],
+      "questions": [
+        {
+          "prompt": "The rotor receives **150 kW** at **400 rpm** and the tail arm is **5 m**. What tail rotor thrust is needed?",
+          "explanation": "Ω = 400·2π/60 = 41.89 rad/s; Q = 150,000/41.89 = 3581 N·m; T_tail = 3581/5 ≈ 716 N."
+        },
+        {
+          "prompt": "In autorotation, what keeps the rotor spinning without an engine?",
+          "options": [
+            "An emergency battery",
+            "The air passing through the rotor from bottom to top while the helicopter descends",
+            "The tail rotor",
+            "Inertia, for just a few seconds"
+          ],
+          "explanation": "With the collective low, the upward flow produces a force on the blades that pushes them in the direction of rotation, like a windmill."
+        },
+        {
+          "prompt": "Why do helicopters with **two counter-rotating rotors** (coaxial or tandem) not need a tail rotor?",
+          "options": [
+            "Because they are lighter",
+            "Because the reaction torques of the two rotors have opposite directions and cancel",
+            "Because they fly slower",
+            "Because they use electric motors"
+          ],
+          "explanation": "Each rotor pushes the fuselage to one side; spinning in opposite directions, the torques cancel out."
+        }
+      ]
+    },
+    "aero-10-projeto-breguet": {
+      "title": "Project: sizing an aeroplane and the Breguet range",
+      "theory": "# How far does an aeroplane fly?\n\nAs it burns fuel, the aeroplane gets lighter. Integrating this, Louis Breguet arrived at the **range equation** (for a propeller):\n\n```\nRange = (ηp / (g · c)) · (L/D) · ln(W0 / W1)\n```\n\n- `ηp` = propeller efficiency; `c` = specific consumption (kg of fuel per joule; 0.30 kg/kWh = 8.33·10⁻⁸ kg/J).\n- `L/D` = aerodynamic efficiency **at cruise speed** (not necessarily the maximum).\n- `W0/W1` = take-off weight / weight without the fuel.\n\nFor a jet: `Range = (V / (g · c_T)) · (L/D) · ln(W0/W1)` — which is why jets cruise fast and high.\n\n## The design trade-offs\n\n- **More fuel** → greater ln(W0/W1), but the aeroplane gets **heavier**: higher stall and longer take-off.\n- **Bigger wing** → lower stall, but more wetted area (more parasite drag).\n- **Higher aspect ratio** → higher L/D (less induced drag), but a heavier, costlier wing (not modelled here).\n- **Cruise speed and altitude**: L/D depends on the cruise CL = 2W/(ρ·V²·S). Flying higher (thin air) or slower raises CL and brings the aeroplane closer to the maximum L/D.\n\nA conceptual design engineer does exactly this: sweeps the options and finds the point that meets **all** the requirements. Watch the range × speed graph.",
+      "task": "Customer requirements: **2000 km range**, take off from a **300 m** runway (at sea level) and **stall at 95 km/h or less** in the landing configuration.",
+      "hints": [
+        "More fuel increases range but raises the stall: compensate with a bigger wing and flaps.",
+        "One solution: 220 kg of fuel, AR 11, 18 m² wing, flaps at 10°, cruise at 180 km/h and 3000 m."
+      ],
+      "goals": [
+        "Range ≥ 2000 km",
+        "Takes off on the 300 m runway",
+        "Stall speed ≤ 95 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "Breguet with ηp = **0.8**, c = **0.30 kg/kWh**, L/D = **12** and W0/W1 = **1.2**. What is the range, in km?",
+          "explanation": "c = 0.30/3.6·10⁶ = 8.33·10⁻⁸ kg/J; ηp/(g·c) = 0.8/(9.81 × 8.33·10⁻⁸) ≈ 978,600 m; × 12 × ln(1.2) = 978,600 × 12 × 0.1823 ≈ 2,141,000 m ≈ 2141 km."
+        },
+        {
+          "prompt": "For maximum range, a propeller aeroplane should cruise…",
+          "options": [
+            "at maximum speed",
+            "near the maximum L/D speed",
+            "at stall speed",
+            "it makes no difference, range only depends on fuel"
+          ],
+          "explanation": "In the Breguet equation for a propeller the range is proportional to L/D; it is maximum where induced drag equals parasite drag."
+        },
+        {
+          "prompt": "Does doubling an aeroplane's fuel (same aeroplane, same L/D) double its range?",
+          "options": [
+            "Yes, exactly",
+            "No: the range grows with ln(W0/W1), and the extra fuel also has to be carried",
+            "No: the range falls",
+            "Yes, and it even improves the take-off"
+          ],
+          "explanation": "The logarithm grows more and more slowly; besides, the heavier aeroplane stalls faster and needs more runway."
+        }
+      ]
+    }
+  }
+}

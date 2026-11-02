@@ -193,7 +193,7 @@ public abstract class VehicleLab : ILab
     {
         var root = new StackPanel();
         var head = new DockPanel { Margin = new Thickness(0, 0, 0, 8), LastChildFill = true };
-        _run = Ui.Button("▶ Rodar", Ui.Accent);
+        _run = Ui.Button(L.T("▶ Rodar"), Ui.Accent);
         _run.Margin = new Thickness(8, 0, 0, 0);
         _run.Click += (_, _) => Play();
         DockPanel.SetDock(_run, Dock.Right);
@@ -302,7 +302,7 @@ public abstract class VehicleLab : ILab
     {
         if (_summary == null) return;
         try { _summary.Text = Summary(); } catch { _summary.Text = ""; }
-        if (_run != null) _run.Content = _animating ? "↺ Reiniciar" : "▶ Rodar";
+        if (_run != null) _run.Content = _animating ? L.T("↺ Reiniciar") : L.T("▶ Rodar");
     }
 
     // ---- animation ------------------------------------------------------------------------------------------

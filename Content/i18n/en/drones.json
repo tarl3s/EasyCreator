@@ -1,0 +1,397 @@
+{
+  "title": "Drones: design and control",
+  "description": "Build and size a multirotor: motors, propellers, battery and flight time; then tune the PID control of altitude and attitude, plan a GPS mission and learn the ANAC and DECEA rules (Brazil).",
+  "lessons": {
+    "drone-01-partes": {
+      "title": "The parts of a drone",
+      "theory": "# Anatomy of a multirotor\n\nA multirotor drone (quadcopter, hexacopter…) has no control surfaces: it is controlled **only by varying the speed of each motor**.\n\n- **Frame (chassis)**: the arms and the central plate, usually carbon fibre. The size is the distance between opposite motors (e.g. 250 mm).\n- **Brushless motors**: no brushes, very efficient. The **KV** constant says how many rpm per volt the motor spins with no load: a 2300 KV motor at 11.1 V spins ~25,500 rpm.\n- **ESC** (electronic speed controller): one per motor; turns the flight controller's command into three-phase current for the motor.\n- **Propellers**: half spin clockwise (CW) and half counter-clockwise (CCW), to cancel the torque. The notation 5x4.3 means 5 inches in diameter and 4.3 of pitch.\n- **LiPo battery**: cells of 3.7 V nominal (4.2 V full). \"3S\" = 3 cells in series = 11.1 V. Capacity is given in mAh.\n- **Flight controller (FC)**: a microcontroller with an **IMU** (gyroscope + accelerometer) that runs the PID control hundreds to thousands of times per second.\n- **Radio receiver**, **GPS**, **camera** and **telemetry**, depending on the application.\n\n## How it moves\n\n- **Up/down**: all the motors speed up or slow down together.\n- **Tilt (roll/pitch)**: motors on one side spin more than those on the other.\n- **Turn (yaw)**: speed up the motors spinning in one direction and slow down those in the other — the reaction torque turns the drone.",
+      "safety": "Drone propellers cut: always remove the propellers when working on the electronics or configuring the drone on the bench. LiPo batteries can catch fire if punctured, crushed or charged incorrectly.",
+      "questions": [
+        {
+          "prompt": "A **2300 KV** motor is connected to an **11.1 V** battery. How many rpm does it spin with no load?",
+          "explanation": "rpm = KV × V = 2300 × 11.1 = 25,530 rpm (with a propeller, it spins less)."
+        },
+        {
+          "prompt": "Why do half the propellers spin clockwise and half counter-clockwise?",
+          "options": [
+            "To make less noise",
+            "So the motors' reaction torques cancel and the drone does not spin by itself",
+            "Because motors only spin one way",
+            "To save battery"
+          ],
+          "explanation": "Each motor turns the drone the opposite way; with half in each direction, the torques cancel. By unbalancing on purpose, the drone yaws."
+        },
+        {
+          "prompt": "Which part turns the flight controller's command into current for the brushless motor?",
+          "options": [
+            "IMU",
+            "ESC",
+            "GPS",
+            "Radio receiver"
+          ],
+          "explanation": "The ESC (Electronic Speed Controller) switches the three-phase current that makes the brushless motor spin."
+        },
+        {
+          "prompt": "A **4S** battery has a nominal voltage of how many volts?",
+          "explanation": "4 cells × 3.7 V = 14.8 V (16.8 V full)."
+        },
+        {
+          "prompt": "How does a quadcopter **yaw** (turn on its own axis)?",
+          "options": [
+            "Using a rudder",
+            "Speeding up the motors spinning in one direction and slowing down those in the other",
+            "Tilting the camera",
+            "Turning one motor off"
+          ],
+          "explanation": "The total thrust stays the same (it neither rises nor falls), but the reaction torque becomes unbalanced and the drone turns."
+        }
+      ]
+    },
+    "drone-02-empuxo-peso": {
+      "title": "Thrust and weight",
+      "theory": "# The most important calculation of the drone\n\nTo leave the ground, the total thrust of the motors must be greater than the weight. The ratio between the two is the **thrust-to-weight (T/W)**:\n\n```\nT/W = (number of motors × max thrust per motor) / total mass\n```\n\nIn practice, manufacturers give thrust in **grams** (gf). Example: 4 motors of 800 g on a 1600 g drone → T/W = 2.\n\n## How much is enough?\n\n- **T/W < 1**: does not take off.\n- **T/W ≈ 1.5**: takes off, but with no margin for wind or manoeuvres — dangerous.\n- **T/W ≈ 2**: the recommended minimum for filming and cargo drones.\n- **T/W 5–10**: racing and acrobatic drones.\n\n## Hover throttle\n\nIf the thrust is proportional to the throttle (the approximation used here), the drone hovers at:\n\n```\nhover throttle ≈ 1 / (T/W)\n```\n\nT/W = 2 → hovers at **50%** throttle, leaving 50% to climb, brake and correct.\n\nThis drone has a **150 g** camera installed. The battery mass also counts (the simulator calculates it: LiPo ≈ 150 Wh/kg).",
+      "task": "With the 150 g camera installed, make the drone have **T/W ≥ 2** and hover at **50% throttle at most**.",
+      "safety": "Always test motors and propellers fixed to a bench, away from your face and hands, and with the battery disconnected while assembling.",
+      "hints": [
+        "Stronger motors increase thrust; a lighter frame reduces weight.",
+        "Motors with 450 g of thrust each solve it."
+      ],
+      "goals": [
+        "Thrust-to-weight ≥ 2",
+        "Hovers at 50% throttle at most"
+      ],
+      "questions": [
+        {
+          "prompt": "A **1600 g** drone has **4 motors of 800 g** maximum thrust. What is the T/W?",
+          "explanation": "T/W = 4 × 800 / 1600 = 2."
+        },
+        {
+          "prompt": "With T/W = 2, at what % of throttle does it hover (thrust proportional to throttle)?",
+          "explanation": "1 / 2 = 0.5 → 50%."
+        },
+        {
+          "prompt": "Why is it not enough to have a T/W just above 1?",
+          "options": [
+            "Because the drone gets too fast",
+            "Because there is no thrust left to climb, brake, correct wind gusts and compensate for the battery discharging",
+            "Because the camera does not work",
+            "Because the GPS needs thrust"
+          ],
+          "explanation": "The controller needs margin: to tilt, one side speeds up; to brake a descent, all of them speed up. Without margin, the drone loses control."
+        }
+      ]
+    },
+    "drone-03-bateria": {
+      "title": "Battery and flight time",
+      "theory": "# Energy in the battery\n\nA battery's energy is voltage × charge:\n\n```\nEnergy (Wh) = Voltage (V) × Capacity (Ah)\n```\n\nA 4S 2200 mAh: 14.8 V × 2.2 Ah = **32.6 Wh**.\n\n## How long does it fly?\n\n```\ntime (h) = usable capacity (Ah) / current (A)\n```\n\nOnly ~**80%** of the capacity is used (discharging to the end ruins the LiPo). The hover current comes from the power: `I = P / V`.\n\nIn the simulator, the hover power comes from momentum theory per propeller (`P = T^1.5/√(2ρA)`), with a figure of merit of 0.55 and motor+ESC efficiency of 75%.\n\n## The battery dilemma\n\nBigger battery = more energy, but also **more weight**, which requires **more power**. Beyond a certain point, increasing the battery hardly increases the flight time (see the time × capacity graph). That is why long-endurance drones use batteries with more Wh/kg (Li-ion) or bigger, more efficient motors and propellers.\n\n- More **cells** (higher voltage) for the same capacity = more energy, with lower current (less loss in the wires).",
+      "task": "Make this drone fly for at least **10 minutes**, keeping **T/W ≥ 2**.",
+      "safety": "**LiPo batteries** can catch fire violently. Always charge under supervision, with a balance charger, inside a fire-resistant bag and away from flammable materials. Never discharge below ~3.3 V per cell, never use swollen or punctured batteries, and store them at ~3.8 V per cell.",
+      "hints": [
+        "More cells and more mAh increase the energy — and the weight. You may need stronger motors to keep T/W.",
+        "4S with 2600 mAh and 600 g motors fly 11 minutes."
+      ],
+      "goals": [
+        "Flight time ≥ 10 min",
+        "Thrust-to-weight ≥ 2"
+      ],
+      "questions": [
+        {
+          "prompt": "How much energy does a **4S 2200 mAh** battery have?",
+          "explanation": "4 × 3.7 V = 14.8 V; 14.8 × 2.2 Ah = 32.56 Wh."
+        },
+        {
+          "prompt": "Using 80% of a **2200 mAh** battery, how many minutes does the drone fly drawing **15 A**?",
+          "explanation": "0.8 × 2.2 Ah / 15 A = 0.1173 h = 7.04 min."
+        },
+        {
+          "prompt": "Why does doubling the battery capacity **not** double the flight time?",
+          "options": [
+            "Because the bigger battery has less energy",
+            "Because the bigger battery weighs more, and the drone needs more power to support that weight",
+            "Because the motors do not accept more current",
+            "It does double"
+          ],
+          "explanation": "Hover power grows with the weight raised to 1.5; part of the extra energy is spent just carrying the battery itself."
+        }
+      ]
+    },
+    "drone-04-helice": {
+      "title": "Choosing the propeller",
+      "theory": "# Big propeller, slow motor\n\nFor the same thrust, a **bigger** propeller pushes **more air more slowly**, and that costs less energy (the same idea as the helicopter rotor):\n\n```\nP_ideal = T^1.5 / √(2 · ρ · A)        A = π · D² / 4\n```\n\nSince A ∝ D², the ideal power falls with **1/D**: doubling the diameter halves the power.\n\nEfficiency is usually given in **grams of thrust per watt (g/W)**: racing drones sit at 3–5 g/W; long-endurance drones with large propellers, 8–12 g/W.\n\n## So why not always use huge propellers?\n\n- The frame has to be bigger (the propellers cannot touch).\n- Large propellers have more **inertia**: the motor takes longer to change speed, and the drone responds more slowly (worse for racing and acrobatics).\n- They need **low-KV** motors with more torque.\n\n## Notation\n\n`10x4.5`: 10 inches in diameter, 4.5 inches of **pitch** (how far the propeller \"advances\" in one turn, like a screw). Higher pitch = more speed, more current.\n\nThe graph shows the flight time for each propeller size, keeping the rest of the drone.",
+      "task": "Build a drone that flies **at least 15 minutes** with an efficiency of **at least 8 g/W**.",
+      "safety": "Larger propellers store a lot of energy: a 10\" propeller at 8000 rpm has a tip moving at over 100 km/h. Never hold a powered-on drone in your hand and use propeller guards around people.",
+      "hints": [
+        "Increase the propeller and watch the flight time rise on the graph. Large propellers need motors with more thrust.",
+        "9\" propeller, 800 g motors and a 4S 2200 mAh battery."
+      ],
+      "goals": [
+        "Flight time ≥ 15 min",
+        "Efficiency ≥ 8 g/W when hovering"
+      ],
+      "questions": [
+        {
+          "prompt": "Keeping the thrust, if the propeller diameter **doubles**, the ideal power is multiplied by how much?",
+          "explanation": "The area becomes 4× larger; P ∝ 1/√A = 1/√4 = 0.5. The power halves."
+        },
+        {
+          "prompt": "What does the **5x4.3** propeller mean?",
+          "options": [
+            "5 blades and 4.3 cm",
+            "5 inches in diameter and 4.3 inches of pitch",
+            "5 grams and 4.3 watts",
+            "5 thousand rpm and 4.3 A"
+          ],
+          "explanation": "First number = diameter, second = pitch, both in inches."
+        },
+        {
+          "prompt": "Why do racing drones use **small** propellers?",
+          "options": [
+            "Because they are more efficient",
+            "Because they have little inertia and change speed very quickly, giving agile responses",
+            "Because they make less noise",
+            "Because of the law"
+          ],
+          "explanation": "Agility comes from the fast response of the motors; efficiency takes a back seat."
+        }
+      ]
+    },
+    "drone-05-imu-sensores": {
+      "title": "IMU and sensors",
+      "theory": "# How does the drone know where it is?\n\nThe flight controller needs to know, hundreds of times per second, the drone's **tilt**, **height** and **direction**.\n\n## The IMU (inertial measurement unit)\n\n- **Gyroscope**: measures **angular velocity** (°/s) on 3 axes. Integrating over time gives the angle, but small errors accumulate: the angle **drifts**.\n- **Accelerometer**: measures acceleration, including **gravity**. At rest, it points \"down\" and gives the tilt angle — but motor **vibration** and flight accelerations make it noisy.\n- **Magnetometer** (compass): gives the direction (yaw) from the Earth's magnetic field; it suffers interference from high-current cables.\n- **Barometer**: measures air pressure → altitude (resolution of ~10 cm, but it varies with wind and weather).\n- **GPS**: absolute position and speed (we will see it later).\n\n## Sensor fusion: the complementary filter\n\nThe gyroscope is good in the short term; the accelerometer, in the long term. The **complementary filter** combines the two:\n\n```\nangle = 0.98 · (angle + gyro · dt) + 0.02 · accelerometer_angle\n```\n\nModern controllers use the **Kalman filter** (or its variants, like ArduPilot's EKF), which weights each sensor by its uncertainty.",
+      "questions": [
+        {
+          "prompt": "What does the **gyroscope** measure?",
+          "options": [
+            "Linear acceleration",
+            "Angular velocity (rotation)",
+            "Altitude",
+            "The magnetic field"
+          ],
+          "explanation": "The MEMS gyroscope measures how fast the drone rotates on each axis (°/s or rad/s)."
+        },
+        {
+          "prompt": "Why not use only the accelerometer to know the tilt?",
+          "options": [
+            "Because it does not measure gravity",
+            "Because vibrations and flight accelerations mix with gravity and make the measurement noisy",
+            "Because it is too expensive",
+            "Because it only works with GPS"
+          ],
+          "explanation": "The accelerometer measures the sum of gravity and the motion accelerations; in the short term it is noisy."
+        },
+        {
+          "prompt": "Complementary filter: previous angle **10°**, gyro **20 °/s**, dt = **0.01 s**, accelerometer reads **12°**. What is the new angle?",
+          "explanation": "0.98 × (10 + 20 × 0.01) + 0.02 × 12 = 0.98 × 10.2 + 0.24 = 9.996 + 0.24 = 10.236°."
+        },
+        {
+          "prompt": "A gyroscope has an error (drift) of **0.5 °/s**. Without correction, how far off is the calculated angle after **60 s**?",
+          "explanation": "0.5 °/s × 60 s = 30° — that is why it must be corrected with the accelerometer."
+        },
+        {
+          "prompt": "Which sensor does the drone use to hold **height** when there is no GPS?",
+          "options": [
+            "Magnetometer",
+            "Barometer",
+            "Gyroscope",
+            "Thermal camera"
+          ],
+          "explanation": "The barometer measures atmospheric pressure, which falls about 12 Pa for every metre climbed near the ground."
+        }
+      ]
+    },
+    "drone-06-pid-altura": {
+      "title": "PID control: holding the height",
+      "theory": "# Closed-loop control\n\nThe controller measures the **error** `e = target − measured` and calculates the command. The **PID** controller adds three terms:\n\n```\noutput = Kp·e + Ki·∫e·dt + Kd·de/dt\n```\n\n- **P (proportional)**: corrects in proportion to the error. On its own, it leaves a **steady-state error** when there is a constant load (here, gravity): to hover at 50% throttle with Kp = 10 %/m, an error of 50/10 = **5 m** remains. Too high a Kp makes the drone **oscillate**.\n- **I (integral)**: adds up the error over time and keeps raising the command until the error disappears — it **eliminates the steady-state error**. Too much I causes overshoot and slow oscillation.\n- **D (derivative)**: reacts to the **speed** at which the error changes — it is a **brake** that damps the approach to the target. Here it is applied to the climb speed (\"derivative on measurement\"), so there is no jolt when the target changes.\n\n## How to measure quality\n\n- **Overshoot**: how far it went past the target (% of the target).\n- **Settling time**: when it enters and stays within ±5% of the target.\n- **Steady-state error**: what remains at the end.\n\n## Practical tuning recipe\n\n1. Start with I = D = 0 and increase **P** until it responds quickly (an error will remain and it will oscillate).\n2. Increase **D** until the oscillations disappear.\n3. Increase **I** slowly until the final error is zero.\n\nThe simulator includes the motor response (~30 ms delay) and the integrator \"freezes\" when the throttle saturates (anti-windup).",
+      "task": "Tune the PID to take the drone to **10 m** with **overshoot ≤ 10%**, **settling within 6 s** and **no error at the end**.",
+      "hints": [
+        "With P alone it does not reach the target: the final error is (hover throttle)/Kp. Use I to zero the error and D to damp.",
+        "Kp = 12, Ki = 4 and Kd = 10 work well."
+      ],
+      "goals": [
+        "Reaches and stays at the target height (±5%)",
+        "Overshoot ≤ 10%",
+        "Settles within 6 s"
+      ],
+      "questions": [
+        {
+          "prompt": "With **P** control only, the drone hovers at **50%** throttle and Kp = **10 %/m**. What height error remains?",
+          "explanation": "To give 50% throttle, Kp·e = 50 → e = 50/10 = 5 m below the target."
+        },
+        {
+          "prompt": "Which PID term eliminates the steady-state error?",
+          "options": [
+            "P",
+            "I",
+            "D",
+            "None"
+          ],
+          "explanation": "The integral accumulates the error and keeps growing until it is zero."
+        },
+        {
+          "prompt": "The drone overshoots the target and oscillates. Which term should you increase first?",
+          "options": [
+            "P",
+            "I",
+            "D",
+            "Remove the battery"
+          ],
+          "explanation": "The derivative acts against the approach speed, damping the oscillation."
+        }
+      ]
+    },
+    "drone-07-atitude": {
+      "title": "Attitude vs altitude: the roll PID",
+      "theory": "# The inner loop\n\nTo go forward, the drone **tilts** (attitude) and part of the thrust becomes horizontal force. That is why control is done in **cascade**:\n\n```\nposition → (outer PID) → desired angle → (attitude PID) → thrust difference → (motors)\n```\n\n- The **attitude** loop (inner) must be much **faster** than the position/altitude loop (outer): it runs at 1–8 kHz in modern controllers.\n- Many controllers also use an **angular rate** loop inside the angle loop.\n\n## The physics of roll\n\nTo roll, the motors on one side speed up and those on the other slow down. The torque is the thrust difference × arm, and the angular acceleration is torque / moment of inertia. Small drones are extremely agile (thousands of °/s²).\n\n## Why D is indispensable here\n\nThere is almost no natural damping in roll, and the motors take a few milliseconds to change speed. With **P** alone the drone **oscillates** more and more. **D** brakes the rotation; **I** compensates constant disturbances — here, a side wind / shifted CG that asks for 5% of the maximum torque all the time.\n\nThe gains are in % of thrust difference per degree of error (Kp), per degree·second (Ki) and per °/s (Kd).",
+      "task": "Tune the roll PID to tilt **20°** with **overshoot ≤ 10%**, **settling within 0.5 s** and final error within ±5%.",
+      "hints": [
+        "First add D until the oscillation disappears; then I to beat the constant wind.",
+        "Kp = 1.5, Ki = 2 and Kd = 0.2."
+      ],
+      "goals": [
+        "Reaches and stays at the target angle (±5%)",
+        "Overshoot ≤ 10%",
+        "Settles within 0.5 s"
+      ],
+      "questions": [
+        {
+          "prompt": "In a cascade control (position → attitude → motors), which loop must be the fastest?",
+          "options": [
+            "Position (outer)",
+            "Attitude (inner)",
+            "It makes no difference",
+            "The GPS one"
+          ],
+          "explanation": "The inner loop must respond much faster than the outer one so that the outer one \"sees\" the inner one as almost instantaneous."
+        },
+        {
+          "prompt": "A control loop runs at **1 kHz**. What is the interval between two calculations, in milliseconds?",
+          "explanation": "1 / 1000 Hz = 0.001 s = 1 ms."
+        },
+        {
+          "prompt": "Why does the drone oscillate in roll with P alone?",
+          "options": [
+            "Because P is too weak",
+            "Because there is almost no natural damping and the motor delay makes the correction arrive late; the D term is missing",
+            "Because the battery is weak",
+            "Because the accelerometer is off"
+          ],
+          "explanation": "Without a term that reacts to angular velocity, the drone overshoots the target, corrects late again and the oscillation grows."
+        }
+      ]
+    },
+    "drone-08-gps-navegacao": {
+      "title": "GPS and navigation: round trip",
+      "theory": "# How GPS works\n\nGNSS satellites (American GPS, GLONASS, Galileo, BeiDou) transmit the exact time. The receiver measures **how long the signal took** from each satellite and calculates the distance. With **4 satellites** it solves 4 unknowns: x, y, z and its own clock error.\n\n- Typical accuracy: **2–5 m** horizontally (worse vertically).\n- **RTK**: a fixed base sends corrections and the accuracy reaches **centimetres** (mapping, precision agriculture).\n\n## Waypoint missions\n\nThe autopilot (ArduPilot, PX4) follows a list of **waypoints** (latitude, longitude, altitude) and, at the end, does the **RTH** (return to home).\n\n## Energy in forward flight\n\nFlying forward, the drone tilts and the rotor meets \"fresh\" air (translational lift): the induced power **drops**. But the body drag grows with v². There is a **best-range speed** (minimum Wh per km) — see the graph.\n\n```\nMission energy = Σ power × time   (climb, outbound, return, descent)\n```\n\nThe safety rule here: use at most **80%** of the battery (20% reserve) and have **T/W ≥ 1.5** to cope with wind.",
+      "task": "Plan an inspection at a point **3 km** from the base (round trip): the mission must be **completed with a 20% reserve** and use **at most 75% of the battery**.",
+      "safety": "Always plan a battery reserve (here, 20%) and a safe return point. Loss of GPS or radio signal happens: set the automatic return mode (RTH) and a return height above trees and buildings.",
+      "hints": [
+        "Too slow, and the drone spends too much time in the air; see the lowest Wh/km speed on the graph.",
+        "12 m/s with a 2200 mAh battery solves it."
+      ],
+      "goals": [
+        "Mission completed with a 20% reserve",
+        "Uses at most 75% of the battery"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the minimum number of satellites a GPS receiver needs to calculate a 3D position?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "explanation": "There are 4 unknowns: x, y, z and the receiver's clock error."
+        },
+        {
+          "prompt": "Flying at **12 m/s** for **5 min**, what distance does the drone cover, in km?",
+          "explanation": "12 m/s × 300 s = 3600 m = 3.6 km."
+        },
+        {
+          "prompt": "To map a field with centimetre accuracy, which technology should you use?",
+          "options": [
+            "Ordinary GPS",
+            "GPS with RTK",
+            "Compass",
+            "Barometer"
+          ],
+          "explanation": "RTK uses corrections from a base station and reaches 1–2 cm."
+        }
+      ]
+    },
+    "drone-09-regras": {
+      "title": "Rules and safety: ANAC, DECEA and ANATEL (Brazil)",
+      "theory": "# Who regulates drones in Brazil\n\n> This lesson uses the **Brazilian** rules as the example. In your country, check the local aviation authority (for example the FAA in the USA, EASA in Europe) and the radio regulator before flying.\n\n- **ANAC** (National Civil Aviation Agency): rules for the aircraft and the pilot — **RBAC-E no. 94**.\n- **DECEA** (Airspace Control Department, of the Air Force): use of the **airspace** — ICA 100-40 and the **SARPAS** system, where flight authorisation is requested.\n- **ANATEL**: type approval of the drone's and the controller's **radios**.\n\n## Main points (summary for study)\n\n- Drones over **250 g** must be **registered** with ANAC (**SISANT** system); those up to 250 g have simpler rules.\n- The reference height for common operations is up to **120 m (400 ft)** above ground.\n- Do not fly within **30 m** (horizontally) of people who have not agreed to the operation (except for the cases provided, such as drones up to 250 g).\n- Keep the drone in **visual line of sight (VLOS)**, unless in specially authorised operations.\n- Stay away from **airports, heliports** and restricted areas; request airspace access through **SARPAS** when required.\n- **Non-recreational** use above 250 g requires civil liability **insurance** (RETA).\n- Respect **privacy**: filming people and other people's property has legal implications.\n\n## Safety in practice\n\n- Checklist before every flight: propellers, battery, GPS with enough satellites, return point recorded, wind.\n- Never fly over crowds or near power lines.",
+      "safety": "The rules change: before flying, check the current versions of RBAC-E no. 94 (ANAC), ICA 100-40 (DECEA) and ANATEL's guidance — or the equivalent rules of your own country. Flying without authorisation can lead to fines and even criminal prosecution if it puts people at risk.",
+      "questions": [
+        {
+          "prompt": "Which body is responsible for the **airspace** and the SARPAS system?",
+          "options": [
+            "ANAC",
+            "DECEA",
+            "ANATEL",
+            "Federal Police"
+          ],
+          "explanation": "DECEA, part of the Air Force Command, controls Brazilian airspace."
+        },
+        {
+          "prompt": "From how many grams does a drone need to be registered with ANAC (SISANT)?",
+          "explanation": "Drones with a maximum take-off weight above 250 g need registration."
+        },
+        {
+          "prompt": "What is the maximum reference height for common drone operations, in metres above ground?",
+          "explanation": "120 m (400 ft) above ground level is the reference used by DECEA for common operations."
+        },
+        {
+          "prompt": "What is the minimum horizontal distance from people who have **not** agreed to the flight?",
+          "explanation": "RBAC-E no. 94 requires 30 m horizontal distance from non-consenting people (with provided exceptions)."
+        },
+        {
+          "prompt": "What does flying in **VLOS** mean?",
+          "options": [
+            "Flying at night",
+            "Keeping the drone always visible to the naked eye of the pilot",
+            "Flying above 400 feet",
+            "Flying with GPS only"
+          ],
+          "explanation": "VLOS = Visual Line Of Sight, without binoculars or only through the camera."
+        }
+      ]
+    },
+    "drone-10-projeto-entrega": {
+      "title": "Project: delivery drone",
+      "theory": "# Mission sizing\n\nDrone engineers solve a circular problem: the battery must have energy for the mission, but the battery weighs, which increases the power, which requires more battery…\n\n## The roadmap\n\n1. **Requirements**: payload (1 kg), distance (4 km to the point), reserve (20%), thrust margin (T/W ≥ 2 with the payload).\n2. **Mass estimate**: frame + motors + electronics + battery + payload.\n3. **Propulsion**: choose the number of motors, propellers and motors that give T/W ≥ 2 **with the payload**, in an efficient range (g/W).\n4. **Energy**: add up hover at take-off, outbound (with payload), return (without the payload — lighter!) and landing:\n\n```\nE = P_hover·t1 + P_out·(d/v) + P_return·(d/v) + P_landing·t2\nBattery needed = E / 0.8          (20% reserve)\n```\n\n5. **Cruise speed**: near the one with the lowest Wh/km.\n6. **Iterate** until everything closes — and check the practical constraints (size, cost, redundancy: a hexa or octo keeps flying if it loses a motor).\n\n## Mass fraction\n\nIn well-designed drones, the battery is **30–40%** of the total mass. Above that, the gain in endurance is small.",
+      "task": "Design the drone to deliver **1 kg over 4 km** and return: mission completed with reserve, **T/W ≥ 2 with the payload** and using **at most 60% of the battery**.",
+      "safety": "Drone deliveries over populated areas require special authorisation from ANAC and DECEA (or your country's equivalent), risk analysis and redundant equipment. This is a sizing exercise, not a real flight plan.",
+      "hints": [
+        "With the payload, the current motors do not give T/W 2: more motors or stronger motors. The battery also needs to grow.",
+        "Hexacopter (6 motors) of 1400 g, 12\" propellers, 6S and 8000 mAh."
+      ],
+      "goals": [
+        "Delivery made and returns with a 20% reserve",
+        "T/W ≥ 2 with the payload",
+        "Uses at most 60% of the battery"
+      ],
+      "questions": [
+        {
+          "prompt": "A mission requires **800 W** for **10 min**. How many Wh of energy?",
+          "explanation": "E = 800 W × (10/60) h = 133.3 Wh."
+        },
+        {
+          "prompt": "To keep a **20% reserve**, what is the minimum battery energy for that mission?",
+          "explanation": "Only 80% can be used: 133.3 / 0.8 = 166.7 Wh."
+        },
+        {
+          "prompt": "Why does the return trip of a delivery use less energy than the outbound?",
+          "options": [
+            "Because the wind always helps on the way back",
+            "Because the drone returns without the payload: lighter, it needs less thrust and less power",
+            "Because the battery gets lighter as it discharges",
+            "It does not use less"
+          ],
+          "explanation": "Power grows with weight (P ∝ W^1.5 when hovering); without the package, the drone uses much less. (Lithium batteries do not get lighter as they discharge.)"
+        }
+      ]
+    }
+  }
+}
