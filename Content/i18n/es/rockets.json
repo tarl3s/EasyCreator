@@ -1,0 +1,395 @@
+{
+  "title": "Cohetes: del cohete de botella PET a la órbita",
+  "description": "Acción y reacción, empuje e impulso, clases de motores, estabilidad, arrastre, paracaídas, etapas, la ecuación de Tsiolkovsky y órbitas — diseñando y lanzando cohetes en un simulador de vuelo.",
+  "lessons": {
+    "rkt-01-garrafa-pet": {
+      "title": "Acción y reacción: el cohete de botella PET",
+      "theory": "# Todo cohete funciona igual\n\nUn cohete **empuja masa hacia atrás** y, a cambio, es empujado hacia adelante. Es la **tercera ley de Newton**: \"a toda acción corresponde una reacción de igual intensidad y sentido contrario\".\n\nEn el cohete de botella PET la \"masa empujada\" es el **agua**. El aire comprimido dentro de la botella empuja el agua por la boquilla (el cuello) hacia abajo; el agua empuja la botella hacia arriba. No es el agua \"golpeando el suelo\" lo que hace subir al cohete — en el espacio, sin suelo alguno, un cohete funciona igual.\n\n## Cantidad de movimiento\n\nLa fuerza de reacción (el **empuje**) depende de **cuánta masa** sale por segundo y de **con qué velocidad** sale:\n\n```\nempuje = (masa expulsada por segundo) × (velocidad de salida)\nF = ṁ × v\n```\n\nExpulsar 0,5 kg de agua a 20 m/s en 0,1 s da: F = (0,5 / 0,1) × 20 = 100 N — ¡el peso de un objeto de 10 kg!\n\n## ¿Por qué agua y no solo aire?\n\nEl aire es ligero: aunque salga rápido, lleva poca **cantidad de movimiento**. El agua es ~800 veces más densa, así que lleva mucho más \"empujón\". Pero demasiada agua también estorba: pesa, y queda poco aire para empujarla (el aire pierde presión a medida que se expande). Existe una **cantidad ideal de agua**, cerca de **1/3 del volumen de la botella**.\n\n## Presión\n\nLa **presión** es fuerza por área: 1 bar = 100 000 Pa = 100 000 N/m², más o menos la presión de la atmósfera al nivel del mar. Una bomba de bicicleta marca la presión **manométrica** (por encima de la atmósfera). En una boquilla de 22 mm, cada bar de presión empuja el agua con unos 76 N — por eso el cohete arranca con aceleraciones de decenas de g.\n\n## El modelo del simulador\n\n- Botella de 2 L, boquilla de 22 mm, botella vacía + aletas + nariz = 150 g, más 40 g de plastilina en la nariz (para que el cohete vuele recto — veremos por qué en la lección de estabilidad).\n- El aire se expande sin intercambiar calor (expansión adiabática: P × V^1,4 = constante).\n- La velocidad del agua en la boquilla viene de Bernoulli: v = √(2 × ΔP / ρ). Empuje = 2 × área de la boquilla × ΔP.\n- El pulso final de aire (cuando se acaba el agua) se ignora; el vuelo es vertical, sin viento, con arrastre del aire.",
+      "task": "Tu cohete de botella sube solo unos 6 metros. Ajusta la **presión** (como máximo 6 bar — ¡la botella tiene un límite!) y la **cantidad de agua** para superar los **35 metros** de apogeo. Prueba cantidades distintas de agua con la misma presión: existe un punto ideal.",
+      "safety": "- Usa **solo botellas PET de refresco con gas** (están hechas para aguantar presión). **Nunca** uses vidrio, metal ni botellas de agua mineral sin gas.\n- **No pases de 5 a 6 bar** y desecha las botellas rayadas, abolladas, viejas o que hayan estado al sol.\n- Usa una **base de lanzamiento con disparador a distancia** (una cuerda de varios metros). Nadie se inclina sobre la botella presurizada.\n- **Gafas de protección** para quien bombea y lanza; todos a **al menos 10 m** y fuera de la línea de vuelo.\n- Lanza en un **campo abierto**, lejos de personas, animales, coches, árboles y cables eléctricos, y nunca hacia alguien.",
+      "hints": [
+        "Más presión = más empuje, pero la botella tiene un límite. Empieza probando de 4 a 5 bar.",
+        "Con poca agua el empuje se acaba pronto; con demasiada agua el cohete se vuelve pesado y el aire pierde fuerza. Prueba algo entre 0,5 y 0,7 L."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Por qué sube el cohete de botella?",
+          "options": [
+            "Porque el agua golpea el suelo y lo empuja",
+            "Porque la botella empuja el agua hacia abajo y el agua empuja la botella hacia arriba",
+            "Porque el aire caliente dentro de la botella es más ligero que el aire de fuera",
+            "Porque la presión del aire tira de la botella hacia arriba"
+          ],
+          "explanation": "Acción y reacción (3.ª ley de Newton): la fuerza que empuja el agua hacia abajo tiene un par igual empujando la botella hacia arriba. Funciona incluso en el vacío."
+        },
+        {
+          "prompt": "Un cohete expulsa **0,6 kg** de agua a **25 m/s** en **0,08 s**. ¿Cuál es el empuje medio?",
+          "explanation": "Caudal = 0,6 / 0,08 = 7,5 kg/s. Empuje = 7,5 × 25 = 187,5 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Por qué poner agua en vez de solo aire comprimido?",
+          "options": [
+            "El agua es más densa: expulsa mucha más masa y genera mucho más empuje",
+            "El agua hace la botella más ligera",
+            "El agua enfría el aire y aumenta la presión",
+            "Solo por seguridad; el empuje es el mismo"
+          ],
+          "explanation": "El empuje es masa por segundo × velocidad. El agua tiene ~800× la densidad del aire, así que lleva mucha más cantidad de movimiento."
+        }
+      ],
+      "goals": [
+        "Apogeo de al menos 35 m"
+      ]
+    },
+    "rkt-02-empuxo-impulso": {
+      "title": "Empuje, impulso y el motor de cohete",
+      "theory": "# El motor de un cohete de aeromodelismo\n\nUn motor de cohete de modelismo es un tubo de cartón con **propelente sólido** (pólvora negra o compuesto), una **tobera** de cerámica, una **carga de retardo** y una **carga de eyección** que abre el paracaídas. Viene listo y certificado: solo lo encajas y conectas el encendedor eléctrico.\n\n## Empuje\n\nEl **empuje** es la fuerza que hace el motor, en **newtons (N)**. Cambia durante la combustión: los motores de pólvora negra dan un **pico** justo en el encendido (para sacar el cohete de la base) y luego mantienen una **meseta** menor. Ese gráfico es la **curva de empuje**.\n\n## Impulso total\n\nLo que de verdad dice \"cuánto empuja el motor\" es el **impulso total**:\n\n```\nimpulso (N·s) = empuje medio (N) × tiempo de combustión (s)\n```\n\nEs el **área bajo la curva de empuje**. Un motor de 5 N durante 2 s y otro de 10 N durante 1 s tienen el mismo impulso: 10 N·s.\n\nSegún el teorema del impulso, impulso = variación de la cantidad de movimiento (m × Δv). Más impulso, más velocidad — y más altura.\n\n## El código impreso en el motor\n\nUn motor **C6-5** significa:\n\n- **C** — la clase de impulso total (de 5 a 10 N·s);\n- **6** — empuje medio de 6 N;\n- **5** — 5 segundos de retardo entre el fin de la combustión y la eyección del paracaídas.\n\n## El modelo del simulador\n\nLos motores del catálogo usan valores aproximados de fabricantes (impulso, tiempo de combustión, pico, masa de propelente). La curva es un pico seguido de una meseta, ajustada para dar exactamente el impulso del catálogo. El propelente se consume en proporción al impulso ya entregado.",
+      "task": "Tu club solo autoriza vuelos que se queden **entre 300 y 450 m** de altura (el techo del campo). Con el B6 el cohete sube poco. Elige un motor que lleve el mismo cohete a ese rango.",
+      "safety": "- Usa **solo motores comerciales certificados** y **nunca** fabriques, abras, modifiques ni \"recargues\" motores o propelente en casa — así ocurren las quemaduras y explosiones graves.\n- Sigue un **código de seguridad de cohetería de modelismo** (como el de la NAR/Tripoli o el de un club local) y las **leyes de tu región**; los motores mayores suelen exigir certificación y autorización.\n- Encendido **eléctrico**, con **llave de seguridad** extraíble y cuenta atrás en voz alta. Distancia mínima de **5 m** para motores pequeños (A–D) y más para los mayores.\n- Campo abierto, sin viento fuerte, lejos de construcciones, cables y maleza seca. Nunca intentes recuperar un cohete atascado en un árbol o un cable.",
+      "hints": [
+        "Cada letra tiene hasta el doble de impulso que la anterior. Sube una letra y mira el apogeo.",
+        "Los motores demasiado grandes pasan del techo del campo — y eso está prohibido."
+      ],
+      "questions": [
+        {
+          "prompt": "Un motor hace un empuje medio de **4,5 N** durante **1,1 s**. ¿Cuál es el impulso total?",
+          "explanation": "Impulso = 4,5 N × 1,1 s = 4,95 N·s (un motor clase B).",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "En el código **D12-5**, ¿qué significa el **5**?",
+          "options": [
+            "5 N de empuje medio",
+            "5 segundos de combustión",
+            "5 segundos de retardo entre el fin de la combustión y la eyección del paracaídas",
+            "Clase 5 de impulso"
+          ],
+          "explanation": "Letra = clase de impulso, primer número = empuje medio (N), último número = retardo hasta la eyección (s)."
+        },
+        {
+          "prompt": "Dos motores: uno hace 5 N durante 2 s; el otro hace 10 N durante 1 s. ¿Qué se puede afirmar?",
+          "options": [
+            "El de 10 N lleva el cohete el doble de alto",
+            "Los dos tienen el mismo impulso total (10 N·s)",
+            "El de 2 s tiene el doble de impulso",
+            "No se pueden comparar"
+          ],
+          "explanation": "Impulso = empuje × tiempo: 5 × 2 = 10 × 1 = 10 N·s. El apogeo aún puede variar un poco (arrastre, peso), pero el \"empujón total\" es el mismo."
+        }
+      ],
+      "goals": [
+        "Apogeo entre 300 y 450 m"
+      ]
+    },
+    "rkt-03-classes-empuxo-peso": {
+      "title": "Clases de motores y la relación empuje/peso",
+      "theory": "# Cada letra se duplica\n\nLas clases de impulso total siguen una escala en la que **cada letra tiene hasta el doble de la anterior**:\n\n- **A**: hasta 2,5 N·s\n- **B**: hasta 5 N·s\n- **C**: hasta 10 N·s\n- **D**: hasta 20 N·s\n- **E**: hasta 40 N·s\n- **F**: hasta 80 N·s\n- **G**: hasta 160 N·s\n\nHasta la clase G (inclusive) suele ser \"cohetería de modelismo\"; de la H en adelante es **cohetería de alta potencia**, que exige certificación.\n\n## Empuje/peso: salir de la base con fuerza\n\nLa **relación empuje/peso** (T/W) compara el empuje medio con el peso del cohete listo (con motor):\n\n```\nT/W = empuje medio / (masa × 9,81)\n```\n\n- T/W < 1: el cohete **ni siquiera despega**.\n- T/W entre 1 y 5: sale despacio; al salir de la varilla aún va lento y el viento lo tuerce.\n- **T/W ≥ 5** es la regla práctica para un vuelo recto y seguro.\n\nPor eso cada motor tiene una **masa máxima de despegue**: masa máxima = empuje medio / (5 × 9,81).\n\n## Masa: el enemigo silencioso\n\nUn cohete más ligero acelera más con el mismo empuje (a = F/m). Pero demasiado ligero tampoco es ideal: con poca inercia, el arrastre lo frena enseguida tras la combustión. Para cohetes pequeños, sin embargo, casi siempre **quitar peso ayuda**.",
+      "task": "Tu cohete tiene **150 g** sin motor y el C6 apenas lo despega del suelo. Elige el motor y, si hace falta, reduce la masa para tener **empuje/peso ≥ 5** y un apogeo **entre 300 y 600 m**.",
+      "safety": "- Respeta la **masa máxima de despegue** indicada por el fabricante de cada motor.\n- Un cohete demasiado pesado para el motor sale **despacio y torcido** de la base y puede volar hacia el público. En caso de duda, usa un motor mayor **certificado** o aligera el cohete — nunca \"potencies\" un motor.\n- Usa una **varilla o riel de lanzamiento** lo bastante largo para que el cohete gane velocidad antes de soltarse.",
+      "hints": [
+        "Mira el empuje/peso en el texto bajo el gráfico: cambia en el momento en que cambias el motor o la masa.",
+        "Un D12 tiene un empuje medio de ~10 N. Con él, ¿cuánto puede pesar el cohete para tener T/W ≥ 5?"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es el **impulso total máximo** de un motor clase **E**?",
+          "explanation": "A = 2,5; B = 5; C = 10; D = 20; E = 40 N·s. Cada letra se duplica.",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "Un motor tiene un empuje medio de **10 N**. Según la regla T/W ≥ 5, ¿cuál es la **masa máxima de despegue** del cohete (con motor)?",
+          "explanation": "Peso máximo = 10 / 5 = 2 N. Masa = 2 / 9,81 = 0,2039 kg ≈ 204 g.",
+          "unit": "g"
+        },
+        {
+          "prompt": "¿Qué ocurre con un cohete de T/W = 1,5?",
+          "options": [
+            "Sube rápido y recto",
+            "Ni siquiera sale de la base",
+            "Sale despacio; al salir de la varilla va lento y el viento puede desviarlo",
+            "Explota"
+          ],
+          "explanation": "Con T/W bajo la aceleración es pequeña (a = (T − P)/m), el cohete sale de la varilla lento y las aletas aún no logran mantenerlo recto."
+        }
+      ],
+      "goals": [
+        "Empuje/peso de al menos 5",
+        "Apogeo entre 300 y 600 m"
+      ]
+    },
+    "rkt-04-estabilidade": {
+      "title": "Estabilidad: el CG delante del CP",
+      "theory": "# Dos centros que lo deciden todo\n\n- **Centro de gravedad (CG)**: el punto donde el cohete se equilibra sobre el dedo. Es donde el peso \"actúa\".\n- **Centro de presión (CP)**: el punto donde las fuerzas del aire \"actúan\" cuando el cohete se inclina un poco.\n\nSi el cohete se inclina en vuelo, el aire le golpea de lado. Si el **CP está detrás del CG**, esa fuerza empuja la **cola** de vuelta a la línea de vuelo: el cohete se endereza solo, como una flecha o una veleta. Si el CP está **delante** del CG, la fuerza aumenta la inclinación: el cohete **da vueltas**.\n\n## El margen de estabilidad\n\n```\nmargen (calibres) = (posición del CP − posición del CG) / diámetro\n```\n\n(posiciones medidas desde la punta de la nariz)\n\n- **menor que 0**: inestable — peligroso;\n- **0 a 1**: poco estable, se bambolea;\n- **1 a 2**: el ideal para la mayoría de los cohetes;\n- **más de 3**: demasiado estable — se orienta al viento (\"veleta\") y vuela torcido los días de viento.\n\n## Cómo mover el CP y el CG\n\n- **Aletas mayores** llevan el CP **hacia atrás** (más área atrás).\n- **Peso en la nariz** (plastilina) lleva el CG **hacia adelante**.\n- **Un cohete más largo** aleja las aletas de la nariz: el CP va hacia atrás.\n- Un motor pesado en la cola lleva el CG hacia atrás: un cohete estable con un motor pequeño puede volverse inestable con uno grande.\n\n## El método de Barrowman (simplificado)\n\nEl simulador calcula el CP con el **método de Barrowman** (1966), usado hasta hoy por programas como OpenRocket: suma la \"fuerza\" de la nariz (siempre 2, en un punto que depende de la forma) y la de las aletas (que crece con el cuadrado de la envergadura dividida por el diámetro), y halla el punto medio ponderado. El tubo del cuerpo no cuenta en ángulos pequeños. El CG considera el cuerpo (centro en el medio), el motor (en la cola) y el peso en la nariz.\n\nEn el vuelo simulado, un cohete con margen negativo da vueltas: pierde casi todo el empuje útil y el arrastre se triplica.",
+      "task": "Este cohete tiene aletas minúsculas y **da vueltas**. Deja el **margen de estabilidad entre 1 y 2,5 calibres** y haz que suba al menos **150 m** con el motor B6. Observa el CG (azul) y el CP (rojo) en el dibujo del cohete.",
+      "safety": "- **Nunca lances un cohete inestable.** Da vueltas y puede volar en cualquier dirección, incluso hacia el público.\n- Antes de volar, haz la **prueba de la cuerda**: ata el cohete (con motor) en el punto de equilibrio (CG) y hazlo girar en círculos. Si vuela con la nariz hacia adelante, es estable.",
+      "hints": [
+        "Aumenta la envergadura de las aletas y mira cómo el CP (punto rojo) se mueve hacia atrás.",
+        "El peso en la nariz también ayuda, pero hace el cohete más pesado (menos altura)."
+      ],
+      "questions": [
+        {
+          "prompt": "Para que un cohete sea estable, ¿dónde debe estar el CG?",
+          "options": [
+            "Detrás del CP (más cerca de la cola)",
+            "Delante del CP (más cerca de la nariz)",
+            "Exactamente en el CP",
+            "Da igual, lo que importa es el motor"
+          ],
+          "explanation": "Con el CG delante del CP, cualquier inclinación genera una fuerza del aire que empuja la cola de vuelta: el cohete se endereza."
+        },
+        {
+          "prompt": "Un cohete de **25 mm** de diámetro tiene el CP a **320 mm** y el CG a **270 mm** de la punta. ¿Cuál es el margen de estabilidad, en calibres?",
+          "explanation": "(320 − 270) / 25 = 50 / 25 = 2 calibres.",
+          "unit": "calibres"
+        },
+        {
+          "prompt": "¿Qué ocurre al poner plastilina dentro de la nariz?",
+          "options": [
+            "El CP va hacia adelante y la estabilidad baja",
+            "El CG va hacia adelante y la estabilidad aumenta",
+            "El CG va hacia atrás y la estabilidad aumenta",
+            "No cambia nada en la estabilidad"
+          ],
+          "explanation": "El peso delante tira del CG hacia la nariz, aumentando la distancia al CP. A cambio, el cohete queda más pesado."
+        }
+      ],
+      "goals": [
+        "Margen de estabilidad entre 1 y 2,5 calibres",
+        "Apogeo de al menos 150 m"
+      ]
+    },
+    "rkt-05-arrasto": {
+      "title": "Aerodinámica: arrastre y la forma de la nariz",
+      "theory": "# La fuerza del aire\n\nEl aire frena todo lo que pasa por él. Esa fuerza es el **arrastre**:\n\n```\nF_arrastre = ½ × ρ × v² × Cd × A\n```\n\n- **ρ** (ro): densidad del aire — 1,225 kg/m³ al nivel del mar, se reduce a la mitad a unos 6 km de altura;\n- **v**: velocidad — entra **al cuadrado**: el doble de velocidad da **4×** el arrastre;\n- **A**: área frontal (π × d² / 4) — duplicar el diámetro da **4×** el área;\n- **Cd**: coeficiente de arrastre — \"qué tan aerodinámica\" es la forma.\n\n## De dónde viene el Cd de un cohete\n\n- **Nariz**: una ojiva o un cono dejan que el aire resbale; una nariz recta (plana) golpea el aire de frente.\n- **Base**: detrás del cohete se forma una estela de baja presión que \"succiona\" hacia atrás.\n- **Fricción**: el aire roza toda la superficie del cuerpo y de las aletas. Cuanto mayor el área mojada, más fricción.\n\nLos cohetes de modelismo típicos tienen un Cd entre **0,4 y 0,75**.\n\n## ¿Más fino es mejor?\n\nPara el mismo motor, un cohete **fino** tiene mucha menos área frontal. Pero cuidado: afinarlo también cambia la **estabilidad** (el diámetro entra en el cálculo del CP y del margen). Diseñar es equilibrar.\n\n## El modelo del simulador\n\nCd = nariz (ojiva 0,10; cono 0,15; redondeada 0,25; recta 0,55) + base 0,12 + fricción del cuerpo y de las aletas. La densidad del aire cae con la altitud (ρ = 1,225 × e^(−h/8500)). Cerca de la velocidad del sonido (340 m/s) el arrastre crece hasta el doble.",
+      "task": "Con un C6, este cohete gordo de nariz recta sube solo ~160 m. Cambia la **nariz**, el **diámetro** y las **aletas** para pasar de **330 m**, manteniendo el margen de estabilidad **≥ 1 calibre**.",
+      "hints": [
+        "Una nariz en ojiva tiene un Cd mucho menor que la recta.",
+        "El diámetro entra al cuadrado en el área frontal. Un tubo de 25 mm tiene menos de la mitad del área de uno de 41 mm.",
+        "Al afinar el cohete, revisa el margen: quizá las aletas tengan que cambiar."
+      ],
+      "questions": [
+        {
+          "prompt": "Calcula el arrastre de un cohete a **50 m/s**, con **Cd = 0,5** y un área frontal de **0,0005 m²**, al nivel del mar (ρ = 1,225 kg/m³).",
+          "explanation": "½ × 1,225 × 50² × 0,5 × 0,0005 = 0,5 × 1,225 × 2500 × 0,5 × 0,0005 ≈ 0,383 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Si la velocidad del cohete se duplica, el arrastre…",
+          "options": [
+            "también se duplica",
+            "se hace 4 veces mayor",
+            "se hace 8 veces mayor",
+            "no cambia"
+          ],
+          "explanation": "El arrastre depende de v²: (2v)² = 4v²."
+        },
+        {
+          "prompt": "¿Por qué un cohete frena menos allá arriba (a 10 km de altitud)?",
+          "options": [
+            "Porque la gravedad desaparece",
+            "Porque el aire es menos denso: ρ menor, arrastre menor",
+            "Porque hace más frío y el Cd baja",
+            "Porque el área frontal disminuye"
+          ],
+          "explanation": "La densidad del aire cae más o menos a la mitad cada 6 km; a 10 km es solo ~1/3 de la del nivel del mar."
+        }
+      ],
+      "goals": [
+        "Apogeo de al menos 330 m",
+        "Margen de estabilidad de al menos 1 calibre"
+      ]
+    },
+    "rkt-06-recuperacao": {
+      "title": "Recuperación: paracaídas y retardo de eyección",
+      "theory": "# Subir es la mitad del vuelo\n\nUn cohete tiene que volver entero (y sin lastimar a nadie). Por eso tiene un **sistema de recuperación**, casi siempre un **paracaídas**.\n\n## El momento justo para abrir\n\nLo ideal es abrir el paracaídas **en el apogeo**, cuando la velocidad es casi cero.\n\n- **Demasiado pronto**: el cohete aún sube rápido; el paracaídas se abre con un tirón enorme, puede rasgarse o soltarse.\n- **Demasiado tarde**: el cohete ya cae rápido; el mismo tirón — o choca con el suelo antes.\n\nEn los motores de cohete de modelismo, el **retardo** es el último número del código (C6-**5**): los segundos entre el **fin de la combustión** y la **eyección**. Lo correcto es:\n\n```\nretardo ideal ≈ (tiempo hasta el apogeo) − (tiempo de combustión)\n```\n\n## Velocidad de aterrizaje\n\nBajando en paracaídas, el cohete pronto alcanza la **velocidad terminal**: el arrastre del paracaídas se iguala al peso.\n\n```\nm × g = ½ × ρ × v² × Cd × A   →   v = √( 2 × m × g / (ρ × Cd × A) )\n```\n\nCon un paracaídas redondo (Cd ≈ 0,8), queremos aterrizar a **3,5 a 5 m/s** — como saltar desde una altura de 60 cm a 1,3 m. Más rápido rompe las aletas; más lento y el viento lleva el cohete lejos.\n\n## El modelo del simulador\n\nEl paracaídas se abre en el instante \"fin de la combustión + retardo\" y se infla en 0,4 s. Cd del paracaídas = 0,8 sobre el área del círculo.",
+      "task": "El paracaídas de este cohete se abre a más de 70 m/s (¡se rasgaría!) y es demasiado pequeño. Elige el **diámetro del paracaídas** y el **retardo de eyección** para que se abra a **15 m/s como máximo** y el cohete aterrice a **5 m/s como máximo**.",
+      "safety": "- Usa **algodón/papel ignífugo** (wadding) entre el motor y el paracaídas: la carga de eyección está caliente y derrite el nailon.\n- Si el paracaídas no se abre, el cohete cae como una flecha: **mantente atento y grita \"¡cuidado!\"** — por eso todos están alejados y mirando el vuelo.\n- Nunca intentes recuperar un cohete de **cables eléctricos**, tejados altos o árboles altos.",
+      "hints": [
+        "Ejecuta una vez y mira en el texto el tiempo del apogeo y el tiempo de combustión. El retardo ideal es la diferencia.",
+        "La velocidad de aterrizaje cae con la raíz del área del paracaídas: duplicar el diámetro cuadruplica el área y reduce la velocidad a la mitad."
+      ],
+      "questions": [
+        {
+          "prompt": "Un cohete de **0,1 kg** desciende con un paracaídas de **Cd = 0,8** y área **0,1257 m²** (40 cm de diámetro). ¿Cuál es la velocidad terminal al nivel del mar (ρ = 1,225 kg/m³, g = 9,81 m/s²)?",
+          "explanation": "v = √(2 × 0,1 × 9,81 / (1,225 × 0,8 × 0,1257)) = √(1,962 / 0,1232) ≈ 3,99 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "El cohete alcanza el apogeo **7,5 s** tras el encendido y el motor arde durante **1,9 s**. ¿Cuál es el mejor retardo de eyección?",
+          "explanation": "7,5 − 1,9 = 5,6 s. En la práctica elegimos el motor con el retardo más cercano (C6-5 o C6-7).",
+          "unit": "s"
+        },
+        {
+          "prompt": "¿Por qué **no** abrir el paracaídas justo al final de la combustión?",
+          "options": [
+            "Porque el motor todavía está caliente",
+            "Porque el cohete aún va rápido: el tirón puede rasgar el paracaídas",
+            "Porque el paracaídas haría subir más al cohete",
+            "No hay ningún problema"
+          ],
+          "explanation": "Al final de la combustión el cohete está cerca de su velocidad máxima; la fuerza de apertura crece con v²."
+        }
+      ],
+      "goals": [
+        "El paracaídas se abre a 15 m/s como máximo",
+        "Aterrizaje a 5 m/s como máximo"
+      ]
+    },
+    "rkt-07-estagios": {
+      "title": "Cohetes de etapas",
+      "theory": "# ¿Por qué tirar parte del cohete?\n\nCuando el motor de un cohete se acaba, el tubo vacío, las aletas y el motor gastado siguen ahí — **masa muerta** que el resto del vuelo tiene que cargar. La idea de la **etapa** es: cuando un motor se acaba, **soltamos la parte que quedó inútil** y encendemos el siguiente motor en un cohete más ligero.\n\n## Cómo funciona en un cohete de modelismo\n\n- La **etapa de abajo** (booster) usa un motor de **retardo cero** (p. ej.: B6-**0**).\n- Cuando termina, su carga de eyección — en lugar de abrir un paracaídas — **enciende el motor de arriba** y empuja el booster lejos.\n- La **etapa de arriba** (sustentador) continúa con su motor normal (p. ej.: C6-7), ya en movimiento y más ligera.\n\n## ¿Por qué llega más alto que sumando los motores?\n\nEl motor de arriba empieza a arder **ya a alta velocidad**, a mayor altura y **sin cargar el booster**. Cada newton-segundo del segundo motor rinde más.\n\nEn cohetes de verdad (lanzadores espaciales) las etapas son aún más importantes: una única etapa que llegara a la órbita tendría que ser casi solo tanque — veremos por qué con la ecuación de Tsiolkovsky.\n\n## El modelo del simulador\n\nEl segundo motor se enciende en el instante en que el primero acaba. El booster soltado (estructura + motor gastado) deja de contar. La estabilidad mostrada es la de la etapa de arriba (el booster tiene sus propias aletas).",
+      "task": "El reglamento de la competición permite **como máximo 15 N·s de impulso total**, y el objetivo es pasar de **480 m**. Un solo C6 no llega. Monta un cohete de **2 etapas** que gane.",
+      "safety": "- Los cohetes de varias etapas son para quien ya domina los de una: la etapa de abajo cae **sin paracaídas** (tiene que ser ligera, con aletas grandes, para caer \"planeando\" despacio) y la de arriba sube mucho más.\n- Usa solo motores propios para la etapa inferior (retardo **cero**, como el B6-0) y revisa el área libre — tiene que ser mayor.",
+      "hints": [
+        "Cambia a 2 etapas y combina motores: el impulso total es la suma de los dos.",
+        "B6 (5 N·s) + C6 (10 N·s) = 15 N·s, dentro del reglamento."
+      ],
+      "questions": [
+        {
+          "prompt": "Un booster con **B6-0** (5 N·s) y un sustentador con **C6-7** (10 N·s). ¿Cuál es el impulso total del cohete?",
+          "explanation": "Los impulsos se suman: 5 + 10 = 15 N·s.",
+          "unit": "N·s"
+        },
+        {
+          "prompt": "¿Cuál es la principal ventaja de un cohete de etapas?",
+          "options": [
+            "Los motores se vuelven más potentes al apilarse",
+            "Se suelta la masa que ya no sirve (motor gastado, tubo, aletas), y el resto acelera más",
+            "El cohete es más estable",
+            "El arrastre desaparece"
+          ],
+          "explanation": "Menos masa muerta = más aceleración con el mismo empuje, y el 2.º motor ya empieza rápido y alto."
+        },
+        {
+          "prompt": "¿Por qué el motor de la etapa de abajo debe tener retardo **cero**?",
+          "options": [
+            "Para encender el motor de arriba en cuanto acaba, sin perder velocidad",
+            "Para abrir el paracaídas del booster",
+            "Para ahorrar propelente",
+            "Porque es más barato"
+          ],
+          "explanation": "Cualquier espera haría que el cohete perdiera velocidad (gravedad y arrastre) antes de que se encienda el 2.º motor."
+        }
+      ],
+      "goals": [
+        "Apogeo de al menos 480 m",
+        "Impulso total de como máximo 15 N·s"
+      ]
+    },
+    "rkt-08-tsiolkovsky": {
+      "title": "La ecuación de Tsiolkovsky y el delta-v",
+      "theory": "# La ecuación del cohete\n\nEn 1903, el profesor ruso **Konstantin Tsiolkovsky** escribió la ecuación que manda en toda la astronáutica:\n\n```\nΔv = ve × ln( m0 / mf )\n```\n\n- **Δv** (delta-v): cuánto puede cambiar de velocidad el cohete, si no hubiera gravedad ni aire;\n- **ve**: velocidad de salida de los gases (ve = Isp × g0, con g0 = 9,81 m/s²);\n- **m0**: masa inicial (lleno); **mf**: masa final (sin propelente);\n- **ln**: logaritmo natural (la tecla \"ln\" de la calculadora).\n\n## Isp: la \"eficiencia\" del motor\n\nEl **impulso específico** (Isp, en segundos) dice cuánto impulso da cada kilo de propelente: Isp = impulso / (masa de propelente × g0).\n\n- pólvora negra (cohete de modelismo): ~80 s\n- propelente sólido compuesto: 200–270 s\n- queroseno + oxígeno líquido: 300–350 s\n- hidrógeno + oxígeno líquido: ~450 s\n\n## La tiranía del logaritmo\n\nComo el Δv crece con el **logaritmo** de la razón de masas, duplicar el propelente **no** duplica el Δv. Para ganar siempre los mismos 2 900 m/s con Isp 300 s, la razón de masas tiene que **multiplicarse** por e (2,72) cada vez. Por eso los cohetes son casi solo tanque — y por eso se usan etapas.\n\n## Delta-v real × ideal\n\nEl vuelo real pierde Δv por la **gravedad** (cada segundo subiendo en vertical cuesta 9,81 m/s) y por el **arrastre**. Los motores que arden muy despacio pierden más por la gravedad; los que arden demasiado rápido sufren aceleraciones enormes.\n\n## El modelo del simulador\n\nEn el motor \"personalizado\", empuje = Isp × g0 × caudal de masa, constante hasta que se acaba el propelente. El simulador muestra el Δv ideal (Tsiolkovsky) y hace volar el cohete de verdad, con una gravedad que disminuye con la altitud y una atmósfera que se enrarece: ¡compara los dos!",
+      "task": "Este cohete sonda (60 kg sin propelente) solo tiene un Δv ideal de ~1,9 km/s y sube 17 km. Ajusta **Isp**, **masa de propelente**, **caudal** y **masa seca** para tener **Δv ideal ≥ 3 000 m/s** y pasar de **80 km** de apogeo.",
+      "hints": [
+        "Un propelente compuesto mejor (Isp 250 s) ya ayuda bastante: Δv es proporcional al Isp.",
+        "Más propelente aumenta m0/mf — pero recuerda el logaritmo. Más caudal acorta la combustión y reduce las pérdidas por gravedad."
+      ],
+      "questions": [
+        {
+          "prompt": "Un cohete con **Isp = 300 s** tiene una masa inicial de **100 t** y final de **25 t**. ¿Cuál es el Δv ideal? (g0 = 9,81 m/s²)",
+          "explanation": "ve = 300 × 9,81 = 2 943 m/s; ln(100/25) = ln 4 = 1,386; Δv = 2 943 × 1,386 ≈ 4 080 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Un motor C6 entrega **10 N·s** quemando **12,3 g** de pólvora. ¿Cuál es el Isp aproximado?",
+          "explanation": "Isp = 10 / (0,0123 × 9,81) ≈ 82,9 s — típico de la pólvora negra.",
+          "unit": "s"
+        },
+        {
+          "prompt": "Si **duplicas** la razón de masas m0/mf, el Δv…",
+          "options": [
+            "se duplica",
+            "aumenta ve × ln 2 (≈ 0,69 × ve), no importa de cuánto partiera",
+            "se cuadruplica",
+            "no cambia"
+          ],
+          "explanation": "ln(2R) = ln R + ln 2: cada duplicación suma el mismo valor fijo al Δv. Por eso es tan difícil llegar al espacio."
+        }
+      ],
+      "goals": [
+        "Δv ideal de al menos 3 000 m/s",
+        "Apogeo de al menos 80 km"
+      ]
+    },
+    "rkt-09-orbita": {
+      "title": "Órbita: velocidad orbital y la transferencia de Hohmann",
+      "theory": "# Estar en órbita es caer sin llegar nunca\n\nImagina un cañón en lo alto de una montaña (la idea es del propio Newton). Cuanto más rápido sale la bala, más lejos cae. A cierta velocidad, la Tierra \"se curva\" bajo la bala tan rápido como ella cae: la bala **nunca llega al suelo**. Eso es una **órbita**.\n\n## Velocidad orbital\n\nEn una órbita circular, la gravedad hace de fuerza centrípeta:\n\n```\nv = √( G × M / r )\n```\n\n- G × M (Tierra) = 3,986 × 10^14 m³/s²\n- r = radio de la Tierra (6 371 km) + altitud\n\nA 400 km (la Estación Espacial) eso da ~7,7 km/s: una vuelta a la Tierra cada 92 minutos. **Subir alto es fácil; ir rápido de lado es lo difícil.** Un cohete sonda sube 100 km, pero vuelve a caer porque no tiene velocidad horizontal.\n\n## El presupuesto de Δv hasta la órbita\n\nPara llegar a una órbita baja un lanzador necesita **~9,4 km/s** de Δv: ~7,8 km/s de velocidad orbital + ~1,5–2 km/s perdidos por la gravedad, el arrastre y las maniobras. Con un Isp de 300–450 s, Tsiolkovsky exige razones de masa de 10 a 20 — imposible con una sola etapa y una estructura real. Por eso los lanzadores tienen **2 o 3 etapas**.\n\n## Empuje/peso en el despegue\n\nAntes que nada, el cohete tiene que **salir del suelo**: T/W > 1 (en la práctica 1,2 a 1,5). Los lanzadores grandes no usan aletas: giran el motor (**empuje vectorial**) para mantenerse apuntados.\n\n## Transferencia de Hohmann\n\nPara ir de una órbita circular baja a una más alta (por ejemplo, un satélite geoestacionario), la forma más económica es la **transferencia de Hohmann** (1925):\n\n- **1.ª quema**: acelera **hacia adelante** en la órbita baja. La órbita se vuelve una **elipse** cuyo punto más alto (apogeo) toca la órbita deseada.\n- Media vuelta después, en el apogeo, la nave va **más lenta** de lo necesario para la órbita circular allí.\n- **2.ª quema**: acelera otra vez **hacia adelante** en el apogeo, y la órbita se vuelve circular.\n\nCurioso: la órbita más alta es **más lenta**, aunque hayas acelerado dos veces — la energía se fue a la altura.\n\n## El modelo del simulador\n\nAquí el simulador vuela en **vertical** (no entra en órbita): úsalo para el presupuesto de masa, Isp y empuje. El Δv es el ideal de Tsiolkovsky sumado en las dos etapas; el lanzador se guía por empuje vectorial.",
+      "task": "Un lanzador de 2 etapas lleva 1 t al espacio. Hoy **ni siquiera sale del suelo** (empuje/peso < 1) y tiene un Δv de solo ~8,9 km/s. Ajusta el **Isp** y el **caudal** de la 1.ª etapa y el **Isp** y el **propelente** de la 2.ª etapa para tener **T/W ≥ 1,2** y **Δv ≥ 9 400 m/s**.",
+      "hints": [
+        "Empuje = Isp × 9,81 × caudal. Con ~50 t el cohete pesa ~490 kN; para T/W ≥ 1,2 la 1.ª etapa necesita unos 600 kN (más, si pones más propelente arriba).",
+        "En la etapa de arriba el Isp vale oro: los motores de vacío llegan a 340–450 s. Más propelente en la 2.ª etapa también ayuda mucho."
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la velocidad de una órbita circular a **400 km** de altitud? Usa G·M = 3,986 × 10^14 m³/s² y radio de la Tierra 6 371 km.",
+          "explanation": "r = 6 771 000 m; v = √(3,986e14 / 6,771e6) = √(5,887e7) ≈ 7 673 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "En una transferencia de Hohmann a una órbita **más alta**, las dos quemas son…",
+          "options": [
+            "hacia atrás (frenando), para que la nave \"caiga hacia arriba\"",
+            "hacia adelante las dos: en el punto bajo de la elipse y luego en el punto alto",
+            "hacia arriba (en dirección radial), apuntando lejos de la Tierra",
+            "una hacia adelante y otra hacia atrás"
+          ],
+          "explanation": "La 1.ª quema (prograda) crea la elipse de transferencia; la 2.ª, en el apogeo, circulariza la órbita."
+        },
+        {
+          "prompt": "Si la órbita baja pide ~7,8 km/s, ¿por qué el lanzador necesita ~9,4 km/s de Δv?",
+          "options": [
+            "Porque el combustible se evapora",
+            "Por las pérdidas por gravedad y arrastre durante la subida",
+            "Porque la Tierra gira en el sentido equivocado",
+            "Margen de error de los ingenieros"
+          ],
+          "explanation": "Mientras sube, el cohete gasta empuje solo para no caer (pérdida por gravedad) y para vencer el aire (pérdida por arrastre)."
+        }
+      ],
+      "goals": [
+        "Empuje/peso en el despegue de al menos 1,2",
+        "Δv ideal de al menos 9 400 m/s (órbita baja)"
+      ]
+    },
+    "rkt-10-missao-sondagem": {
+      "title": "Proyecto completo: misión de sondeo al espacio",
+      "theory": "# De la hoja en blanco a la misión\n\nLa ingeniería de verdad es cumplir **varios requisitos a la vez**. Un equipo universitario debe llevar una carga científica de 10 kg (el cohete pesa 60 kg sin propelente) más allá de la **línea de Kármán (100 km)**, donde convencionalmente empieza el espacio, y traerla de vuelta entera.\n\n## Los requisitos de la misión\n\n- **Apogeo ≥ 100 km**.\n- **Aceleración máxima ≤ 15 g** — la carga y la electrónica tienen un límite.\n- **Margen de estabilidad entre 1,5 y 4 calibres** — el cohete sube por aire denso a más de 1 km/s.\n- **Paracaídas abriendo a ≤ 50 m/s** y **aterrizaje a ≤ 10 m/s**.\n\n## El presupuesto de diseño\n\nEmpieza por el **Δv**. Sin aire y con gravedad constante, llegar a una altura h exigiría v = √(2 × g × h) ≈ 1,4 km/s para 100 km. Sumando las pérdidas por gravedad durante la combustión y por arrastre, necesitamos **~3 km/s o más**.\n\nDespués, la **aceleración**: el pico es al final de la combustión, cuando el cohete está más ligero (a = F/m_final − g). Más caudal de masa = combustión más corta, menos pérdida por gravedad — pero más g. Equilibrar esto es el arte.\n\nPor último, **estabilidad** (aletas compatibles con el CG lleno de propelente) y **recuperación** (un paracaídas lo bastante grande y un retardo que lo abra cerca del apogeo).\n\n## Cuidado con el retardo\n\nEn un vuelo de casi 4 minutos hasta el apogeo, el retardo de eyección no es de segundos: es la diferencia entre el tiempo del apogeo y el fin de la combustión. En el simulador, el paracaídas se abre en ese instante y el cohete desciende con él abierto (el modelo no calcula el calentamiento ni las cargas de la reentrada).\n\n## Ciclo de diseño\n\n1. Estima (Δv, T/W, aceleraciones).\n2. Simula.\n3. Mira qué requisito falló y por qué.\n4. Cambia **una cosa a la vez** y simula de nuevo.",
+      "task": "Diseña la misión: ajusta **propelente**, **caudal**, **Isp**, **aletas**, **paracaídas** y **retardo** para cumplir **todos** los requisitos. Consejo de ingeniero: primero llega a los 100 km con ≤ 15 g; luego acierta la estabilidad; por último la recuperación.",
+      "safety": "Cohetes como este son proyectos de **universidades, agencias y equipos con licencia**, con áreas de lanzamiento controladas (como el Centro de Lanzamiento de Barreira do Inferno o de Alcântara) y autorización de las autoridades aeronáuticas. Aquí es **solo simulación**: nunca intentes construir motores o propelentes.",
+      "hints": [
+        "Con Isp 250 s y ~170 kg de propelente el Δv pasa de 3,2 km/s. Un caudal de ~3 kg/s mantiene la aceleración por debajo de 15 g.",
+        "Ejecuta, anota el tiempo del apogeo y el fin de la combustión, y usa la diferencia como retardo.",
+        "Un paracaídas de ~5 m de diámetro sostiene 60 kg a menos de 10 m/s."
+      ],
+      "questions": [
+        {
+          "prompt": "Un vuelo llega al apogeo **218 s** tras el encendido y la combustión termina a los **57 s**. ¿Qué retardo hace que el paracaídas se abra en el apogeo?",
+          "explanation": "218 − 57 = 161 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "¿Qué razón de masas m0/mf necesita un cohete con **Isp 250 s** para **Δv = 3 300 m/s**?",
+          "explanation": "m0/mf = e^(Δv / (Isp × g0)) = e^(3300 / 2452) = e^1,346 ≈ 3,84."
+        },
+        {
+          "prompt": "¿Por qué la aceleración máxima ocurre al **final** de la combustión y no al principio?",
+          "options": [
+            "Porque el empuje aumenta con la altitud",
+            "Porque el cohete está más ligero: con el mismo empuje, a = F/m crece",
+            "Porque el arrastre empuja el cohete hacia arriba",
+            "Porque la gravedad desaparece en el espacio"
+          ],
+          "explanation": "Con empuje constante, la masa baja a medida que el propelente arde; al final quedan solo ~60 kg para el mismo empuje."
+        }
+      ],
+      "goals": [
+        "Apogeo de al menos 100 km (línea de Kármán)",
+        "Aceleración máxima de 15 g",
+        "Margen de estabilidad entre 1,5 y 4 calibres",
+        "El paracaídas se abre a 50 m/s como máximo",
+        "Aterrizaje a 10 m/s como máximo"
+      ]
+    }
+  }
+}

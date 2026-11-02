@@ -156,14 +156,14 @@ public abstract class ProjectLab : ILab
     protected LabParam AddNum(string id, string label, string unit, double min, double max, double step, double def,
         Func<double, string>? fmt = null, string tip = "")
     {
-        var p = new LabParam { Id = id, Label = label, Unit = unit, Min = min, Max = max, Step = step, Value = def, Format = fmt, Tip = tip };
+        var p = new LabParam { Id = id, Label = L.T(label), Unit = unit, Min = min, Max = max, Step = step, Value = def, Format = fmt, Tip = L.T(tip) };
         Params.Add(p);
         return p;
     }
 
     protected LabParam AddChoice(string id, string label, (string, string)[] choices, string def, string tip = "")
     {
-        var p = new LabParam { Id = id, Label = label, Choices = choices, Choice = def, Tip = tip };
+        var p = new LabParam { Id = id, Label = L.T(label), Choices = choices.Select(c => (c.Item1, L.T(c.Item2))).ToArray(), Choice = def, Tip = L.T(tip) };
         Params.Add(p);
         return p;
     }
@@ -239,7 +239,7 @@ public abstract class ProjectLab : ILab
 
     /// <summary>Real seconds the animation of a run lasts (long flights are sped up).</summary>
     protected virtual double PlaySeconds(double simSeconds) => Math.Clamp(simSeconds, 2, 9);
-    protected virtual string RunLabel => "▶ Lançar";
+    protected virtual string RunLabel => L.T("▶ Lançar");
 
     void Play()
     {
@@ -254,8 +254,8 @@ public abstract class ProjectLab : ILab
         _timer.Tick += (_, _) =>
         {
             PlayTime = _clock.Elapsed.TotalSeconds * speed;
-            _status.Text = speed > 1.05 ? $"tempo: {Fmt.F(Math.Min(PlayTime, RunDuration), 1)} s  (×{Fmt.F(speed, speed < 10 ? 1 : 0)})"
-                                        : $"tempo: {Fmt.F(Math.Min(PlayTime, RunDuration), 1)} s";
+            _status.Text = speed > 1.05 ? L.F("tempo: {0} s  (×{1})", Fmt.F(Math.Min(PlayTime, RunDuration), 1), Fmt.F(speed, speed < 10 ? 1 : 0))
+                                        : L.F("tempo: {0} s", Fmt.F(Math.Min(PlayTime, RunDuration), 1));
             if (PlayTime >= RunDuration)
             {
                 StopAnimation();
@@ -266,7 +266,7 @@ public abstract class ProjectLab : ILab
             Redraw();
         };
         _timer.Start();
-        if (_runBtn != null) _runBtn.Content = "■ Parar";
+        if (_runBtn != null) _runBtn.Content = L.T("■ Parar");
         Redraw();
     }
 
@@ -400,7 +400,7 @@ public abstract class ProjectLab : ILab
         double Y(double y) => yDown ? area.Top + (y - yMin) / (yMax - yMin) * area.Height : area.Bottom - (y - yMin) / (yMax - yMin) * area.Height;
         Text(dc, v, yFmt(yDown ? yMin : yMax), area.Left + 3, area.Top + 2, 10.5, Ui.TextDim);
         Text(dc, v, yFmt(yDown ? yMax : yMin), area.Left + 3, area.Bottom - 15, 10.5, Ui.TextDim);
-        Text(dc, v, yLabel, area.Right - 3, area.Top + 2, 10.5, Ui.TextDim, align: TextAlignment.Right);
+        Text(dc, v, L.T(yLabel), area.Right - 3, area.Top + 2, 10.5, Ui.TextDim, align: TextAlignment.Right);
         Text(dc, v, Fmt.F(tMax, tMax < 10 ? 1 : 0) + " s", area.Right - 3, area.Bottom + 1, 10.5, Ui.TextDim, align: TextAlignment.Right);
         if (pts.Count < 2) return;
         var geo = new StreamGeometry();
