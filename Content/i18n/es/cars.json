@@ -346,6 +346,361 @@
           "explanation": "La ganancia del alerón aparece en las curvas; el costo (arrastre) aparece en toda recta. Con rectas largas, el costo domina (en el mismo modelo, con rectas de 250 m, el mejor ClA baja a cerca de 1)."
         }
       ]
+    },
+    "car-11-velocidade-maxima": {
+      "title": "Velocidad máxima: potencia contra el aire y la marcha correcta",
+      "theory": "# Qué limita la velocidad máxima\n\nA velocidad máxima la fuerza del motor en las ruedas es igual a la suma de las resistencias. A alta velocidad manda el **arrastre aerodinámico**, y la potencia para vencerlo crece con el **cubo** de la velocidad:\n\n```\nP_aire = ½ × ρ × Cd × A × v³\n```\n\nA 200 km/h (55,6 m/s), un coche con Cd = 0,30 y A = 2,2 m² gasta ~**68 kW** solo contra el aire. Por eso **duplicar la potencia** aumenta la velocidad máxima solo un **26%** (∛2 ≈ 1,26).\n\n## Dos maneras de no llegar\n\n1. **Poca potencia o mucho arrastre**: el motor no tiene fuerza para empujar más rápido. Remedio: menos Cd × A (forma, área frontal) o más potencia.\n2. **Marcha demasiado corta**: el motor llega al **límite de revoluciones** (corte) antes de que se acabe la potencia. La velocidad en el límite es:\n\n```\nv = rpm_máx × 2π/60 × r_rueda / (relación de la marcha × diferencial)\n```\n\nCon 6670 rpm, última marcha 0,85, diferencial 5,0 y rueda de 0,30 m: v ≈ 49,3 m/s = **177 km/h**, aunque el motor tuviera potencia para más.\n\n## El punto ideal\n\nLa velocidad máxima es la mejor posible cuando la última marcha lleva el motor cerca de las **rpm de potencia máxima** justo a la velocidad en que la potencia iguala las resistencias. Una marcha demasiado larga también pierde: el motor queda \"ahogado\", por debajo de las rpm de potencia máxima.\n\n## En este laboratorio\n\nCoche de 1300 kg y **100 kW** (potencia máxima a 5800 rpm, corte a 6670 rpm). No puedes tocar el motor: solo la **aerodinámica** y las **relaciones**.",
+      "task": "El coche no pasa de 178 km/h. Sin tocar el motor, haz que llegue a **220 km/h** ajustando el **diferencial**, la **última marcha**, el **Cd** y el **área frontal**.",
+      "hints": [
+        "Con diferencial 5,0 el motor llega al corte. Alarga la transmisión (diferencial cerca de 3,6) y mira el nuevo límite.",
+        "Solo con la marcha se llega a ~208 km/h. El resto viene del aire: un Cd de 0,28 y un área de 2,0 m² marcan la diferencia."
+      ],
+      "goals": [
+        "Velocidad máxima de al menos 220 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuánta potencia se gasta solo contra el aire a **200 km/h**, con Cd = **0,30**, A = **2,2 m²** y ρ = 1,2 kg/m³?",
+          "explanation": "v = 55,56 m/s. P = ½ × 1,2 × 0,30 × 2,2 × 55,56³ ≈ 67 900 W ≈ 67,9 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "El motor corta a **6670 rpm**. Con última marcha **0,85**, diferencial **5,0** y rueda de radio **0,30 m**, ¿cuál es la velocidad en el corte?",
+          "explanation": "ω_motor = 6670 × 2π/60 = 698,5 rad/s. ω_rueda = 698,5 / (0,85 × 5) = 164,4 rad/s. v = 164,4 × 0,30 = 49,3 m/s ≈ 177,5 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "Si solo importara el aire, duplicar la potencia aumentaría la velocidad máxima en…",
+          "options": [
+            "100%",
+            "Cerca de un 26% (raíz cúbica de 2)",
+            "Cerca de un 41% (raíz cuadrada de 2)",
+            "Nada"
+          ],
+          "explanation": "P ∝ v³ → v ∝ ∛P. ∛2 ≈ 1,26."
+        }
+      ]
+    },
+    "car-12-escalonamento": {
+      "title": "Escalonamiento de marchas: velocidad por rpm y caídas de giro",
+      "theory": "# Cada marcha es una \"franja\" de velocidades\n\nCon la rueda de radio r, la relación de la marcha i y el diferencial d, la velocidad a un régimen n (rpm) es:\n\n```\nv = n × 2π/60 × r / (i × d)\n```\n\nUna medida práctica es la **velocidad cada 1000 rpm**: con última marcha 0,80, diferencial 3,6 y rueda de 0,30 m, son ~**39,3 km/h por cada 1000 rpm** — a 6000 rpm, ~236 km/h.\n\n## Progresión geométrica\n\nLas marchas suelen seguir una **progresión geométrica**: cada una es la anterior multiplicada por el mismo factor q:\n\n```\nq = (i_última / i_1ª)^(1 / (N − 1))\n```\n\nCon 1ª = 3,5, última = 0,8 y 6 marchas: q = (0,8/3,5)^(1/5) ≈ **0,744**.\n\n## La caída de giro al cambiar\n\nAl cambiar, la velocidad del coche es la misma, así que el régimen baja en la misma razón que las relaciones:\n\n```\nn_después = n_antes × (i_siguiente / i_actual) = n_antes × q\n```\n\nCambiando a 6000 rpm con q = 0,744, el motor baja a ~**4466 rpm**. Lo ideal es que esa caída mantenga el motor en la franja de **potencia alta**. Más marchas → q más cerca de 1 → caídas menores → mejor aceleración (por eso las cajas de 8 a 10 marchas y la CVT, que varía la relación de forma continua).\n\n## Escalonamiento real\n\nEn la práctica, las marchas altas están **más cerca** entre sí que las bajas (escalonamiento \"progresivo\"): a alta velocidad el arrastre exige mantener el motor siempre cerca de la potencia máxima.",
+      "questions": [
+        {
+          "prompt": "A **6000 rpm**, con última marcha **0,8**, diferencial **3,6** y rueda de **0,30 m**, ¿cuál es la velocidad?",
+          "explanation": "ω = 6000 × 2π/60 = 628,3 rad/s. v = 628,3 × 0,30 / (0,8 × 3,6) = 65,4 m/s ≈ 235,6 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "En esa misma marcha, ¿cuántos km/h anda el coche cada **1000 rpm**?",
+          "explanation": "235,6 / 6 ≈ 39,3 km/h por cada 1000 rpm.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "Una caja de **6 marchas** va de **3,5** (1ª) a **0,8** (6ª) en progresión geométrica. ¿Cuál es el factor q entre marchas vecinas?",
+          "explanation": "q = (0,8 / 3,5)^(1/5) = 0,2286^0,2 ≈ 0,744.",
+          "unit": ""
+        },
+        {
+          "prompt": "Cambiando de marcha a **6000 rpm** en esta caja, ¿a cuántas rpm baja el motor?",
+          "explanation": "6000 × 0,744 ≈ 4466 rpm (la velocidad del coche no cambia al cambiar).",
+          "unit": "rpm"
+        },
+        {
+          "prompt": "¿Por qué las cajas con **más marchas** aceleran mejor?",
+          "options": [
+            "Porque el motor se vuelve más potente",
+            "Porque el coche se vuelve más ligero",
+            "Porque las caídas de giro son menores y el motor pasa más tiempo cerca de la potencia máxima",
+            "Porque la primera marcha se hace más larga"
+          ],
+          "explanation": "Con q más cerca de 1, cada cambio baja menos el régimen: la potencia media en las ruedas aumenta."
+        }
+      ]
+    },
+    "car-13-balanco-freio": {
+      "title": "Reparto de frenada: la frenada perfecta sin ABS",
+      "theory": "# El peso se va hacia delante\n\nAl frenar con desaceleración a, parte del peso pasa de las ruedas traseras a las delanteras (**transferencia de carga**):\n\n```\nN_delante = m g × (fracción delante) + m a × h / L\n```\n\n(h: altura del CG; L: batalla). Un coche de 1300 kg con 60% del peso delante, CG a 0,55 m y batalla de 2,6 m, frenando a 0,8 g, queda con ~**9810 N** delante — el **77%** del peso.\n\n## Cada eje tiene su límite\n\nCada eje solo puede frenar hasta μ × N. Si un eje recibe más fuerza de freno que eso, la rueda se **bloquea**:\n\n- **Delante bloqueado**: el coche no gira (sigue recto).\n- **Detrás bloqueado**: el coche tiende a **trompear** — mucho más peligroso. Por eso el freno siempre va más hacia delante.\n\n## Reparto ideal\n\nLa frenada más corta posible ocurre cuando **los dos ejes llegan al límite a la vez**: la fracción de fuerza de freno delante debe ser igual a la fracción de carga delante **durante la frenada**:\n\n```\nreparto ideal = N_delante / (m g)\n```\n\nComo la transferencia depende de la desaceleración, el reparto ideal cambia con la adherencia; los coches usan **válvulas compensadoras** y hoy el **reparto electrónico** (EBD) junto con el ABS.\n\n## Sin ABS\n\nSin ABS, demasiada fuerza de freno bloquea las ruedas (un neumático bloqueado tiene solo ~75% de la fricción). El secreto es frenar **lo máximo posible sin bloquear**, con el reparto correcto.\n\n## En este laboratorio\n\nCoche de 1300 kg, 60% del peso delante, μ = 0,9, frenando desde 100 km/h **sin ABS**.",
+      "task": "Sin ABS, detén el coche desde 100 km/h en **hasta 47 m** de frenada **sin bloquear ningún eje**. Ajusta la **fuerza de freno** y el **reparto** (freno delantero).",
+      "safety": "- Pruebas de freno de verdad solo en **pista cerrada**, con piloto instruido y coche revisado. En la calle, guarda distancia y frena pronto.\n- Bloquear las ruedas traseras a alta velocidad puede hacer que el coche **trompee**.",
+      "hints": [
+        "Con 60% del freno delante, el eje trasero se bloquea pronto: en frenada fuerte, la parte delantera lleva ~77% del peso.",
+        "Pon el reparto cerca del 78% y la fuerza entre 10 y 11 kN."
+      ],
+      "goals": [
+        "Frenada en hasta 47 m",
+        "Las ruedas delanteras no se bloquean",
+        "Las ruedas traseras no se bloquean"
+      ],
+      "questions": [
+        {
+          "prompt": "Coche de **1300 kg**, **60%** del peso delante, CG a **0,55 m**, batalla de **2,6 m**, frenando a **0,8 g**. ¿Cuánta carga queda en el eje delantero? (g = 9,81 m/s²)",
+          "explanation": "Estática: 1300 × 9,81 × 0,6 = 7652 N. Transferencia: 1300 × 0,8 × 9,81 × 0,55 / 2,6 = 2158 N. Total ≈ 9810 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "¿Cuál es el reparto de frenada ideal (porcentaje delante) para esa frenada de 0,8 g?",
+          "explanation": "9810 / (1300 × 9,81) = 0,769 → ~77% delante.",
+          "unit": "%"
+        },
+        {
+          "prompt": "¿Por qué es más peligroso bloquear las ruedas **traseras** que las delanteras?",
+          "options": [
+            "Porque la distancia de frenada se duplica",
+            "Porque la parte trasera se desliza y el coche tiende a trompear",
+            "Porque los frenos traseros se calientan más",
+            "Porque el motor se apaga"
+          ],
+          "explanation": "Con la parte delantera bloqueada el coche sigue recto (solo no gira); con la trasera bloqueada, cualquier desvío se convierte en un trompo."
+        }
+      ]
+    },
+    "car-14-energia-freios": {
+      "title": "Adónde va la energía de la frenada: calor, fading y regeneración",
+      "theory": "# Frenar es convertir movimiento en calor\n\nUn coche de 1500 kg a 100 km/h tiene energía cinética:\n\n```\nE = ½ × m × v² = ½ × 1500 × 27,8² ≈ 579 kJ\n```\n\nEn una frenada hasta parar, casi todo eso se convierte en **calor en discos y pastillas**, en pocos segundos.\n\n## Potencia de frenada\n\nAl inicio de una frenada fuerte, la potencia es **m × a × v**: a 0,8 g y 100 km/h, son ~**327 kW** — ¡más del doble de la potencia del motor de un coche común!\n\n## Cuánto se calienta el disco\n\nSi el 70% de la energía va a los **dos discos delanteros** de 8 kg de acero (calor específico 460 J/(kg·K)):\n\n```\nΔT = E_delante / (m_discos × c) = 0,7 × 579 000 / (16 × 460) ≈ 55 °C\n```\n\nUna sola frenada es poco; varias seguidas (bajada de puerto, circuito) suman calor más rápido de lo que el aire puede quitar.\n\n## Fading\n\nPor encima de cierta temperatura la fricción de la pastilla **cae** (fading) y el líquido de frenos puede **hervir** (burbujas → pedal \"esponjoso\"). Remedios: discos ventilados y más grandes, pastillas de alta temperatura, conductos de aire, líquido con punto de ebullición alto — y, en bajada, **freno motor** (marcha reducida).\n\n## Frenada regenerativa\n\nLos coches eléctricos e híbridos usan el motor como **generador**: parte de la energía vuelve a la batería (60–70% en una frenada suave). El 60% de 579 kJ son ~**0,096 kWh** — poco por frenada, pero en la ciudad son cientos al día. En frenadas fuertes los frenos de fricción siguen siendo necesarios.",
+      "questions": [
+        {
+          "prompt": "¿Cuál es la energía cinética de un coche de **1500 kg** a **100 km/h**? Responde en kJ.",
+          "explanation": "v = 27,78 m/s. E = ½ × 1500 × 27,78² ≈ 578 700 J ≈ 579 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "¿Cuál es la potencia de frenada al **inicio** de una parada a **0,8 g** de este coche (1500 kg, 100 km/h)? (g = 9,81 m/s²)",
+          "explanation": "P = m × a × v = 1500 × 7,848 × 27,78 ≈ 327 000 W = 327 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "El 70% de esa energía va a **dos discos de 8 kg** de acero (c = 460 J/(kg·K)). ¿Cuánto se calientan en una parada?",
+          "explanation": "ΔT = 0,7 × 578 700 / (16 × 460) ≈ 55 °C.",
+          "unit": "°C"
+        },
+        {
+          "prompt": "Un eléctrico recupera el **60%** de esa energía al frenar. ¿Cuántos kWh vuelven a la batería? (1 kWh = 3,6 MJ)",
+          "explanation": "0,6 × 578 700 / 3 600 000 ≈ 0,096 kWh.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "En una bajada larga de puerto, ¿qué ayuda más a evitar el **fading**?",
+          "options": [
+            "Bajar en punto muerto para ahorrar",
+            "Frenar suave todo el tiempo",
+            "Usar una marcha reducida (freno motor) y frenar fuerte solo cuando haga falta",
+            "Inflar los neumáticos con más presión"
+          ],
+          "explanation": "El freno motor quita energía sin calentar los discos; frenar fuerte y corto les da tiempo de enfriarse entre frenadas."
+        }
+      ]
+    },
+    "car-15-downforce": {
+      "title": "Carga aerodinámica: adherencia que viene del aire (y su precio)",
+      "theory": "# Empujar el coche contra el suelo\n\nUn alerón invertido (o un fondo bien diseñado) crea **carga aerodinámica**, una fuerza hacia abajo que crece con el cuadrado de la velocidad:\n\n```\nF_carga = ½ × ρ × ClA × v²\n```\n\n(ClA: coeficiente de sustentación × área, en m²). A 30 m/s, ClA = 3 m² da ½ × 1,2 × 3 × 900 = **1620 N** — ¡el peso de 165 kg, sin masa alguna!\n\n## Más adherencia en la curva\n\nEl neumático sostiene μ × (peso + carga). En la curva, la fuerza centrípeta m v²/r tiene que caber ahí:\n\n```\nm v² / r = μ × (m g + ½ ρ ClA v²)\nv = √(μ m g / (m/r − μ ½ ρ ClA))\n```\n\nSin alerón, un coche de 700 kg con μ = 1,3 en una curva de 50 m pasa como máximo a √(μ g r) ≈ 25,3 m/s (91 km/h). Con ClA = 3,2 m², ~27,9 m/s (100 km/h).\n\n## El precio: arrastre\n\nTodo alerón que genera carga también genera **arrastre** (aquí, ~1/3 del ClA se convierte en área de arrastre). En la recta, eso **roba velocidad máxima**. En circuitos lentos conviene más alerón; en los de rectas largas, menos (lección 19).\n\n## ¿Por qué no vuelca?\n\nUn coche vuelca antes de derrapar cuando μ > vía / (2 × altura del CG). Los coches de carreras bajos y anchos (vía de 1,5 m, CG a 0,35 m: límite de 2,1 g) derrapan mucho antes de volcar.\n\n## En este laboratorio\n\nCoche de 700 kg, μ = 1,3, curva de 50 m de radio a **100 km/h**, motor de 80 kW.",
+      "task": "Haz que el coche tome la curva a 100 km/h (**curva OK**) sin riesgo de vuelco, pero sin exagerar el alerón: la **velocidad máxima** en la recta tiene que seguir **por encima de 140 km/h**.",
+      "hints": [
+        "Sin alerón el límite es ~91 km/h. Sube el ClA poco a poco y mira cuándo pasa la curva.",
+        "La curva pasa a partir de ClA ≈ 3,2; por encima de ~3,6 la velocidad máxima baja de 140 km/h."
+      ],
+      "goals": [
+        "Toma la curva a 100 km/h",
+        "Sin riesgo de vuelco",
+        "Velocidad máxima de al menos 140 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la carga aerodinámica de un alerón con ClA = **3 m²** a **30 m/s** (ρ = 1,2 kg/m³)?",
+          "explanation": "F = ½ × 1,2 × 3 × 30² = 1620 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Sin alerón, ¿cuál es la velocidad máxima en una curva de **50 m** con μ = **1,3**? (g = 9,81 m/s²)",
+          "explanation": "v = √(1,3 × 9,81 × 50) = √637,7 ≈ 25,3 m/s (~91 km/h).",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Con ClA = **3,2 m²**, m = **700 kg**, μ = 1,3, r = 50 m y ρ = 1,2 kg/m³, ¿cuál es la velocidad máxima en la curva? (v = √(μmg / (m/r − μ·½·ρ·ClA)))",
+          "explanation": "Numerador: 1,3 × 700 × 9,81 = 8927. Denominador: 14 − 1,3 × 0,6 × 3,2 = 11,50. v = √776 ≈ 27,9 m/s (~100 km/h).",
+          "unit": "m/s"
+        }
+      ]
+    },
+    "car-16-suspensao-avancada": {
+      "title": "Suspensión a fondo: amortiguamiento, relación de palanca y frecuencias",
+      "theory": "# El coche como masa–muelle–amortiguador\n\nCada esquina del coche es una masa (m) sobre un muelle (k) y un amortiguador (c). En la lección 8 vimos la frecuencia natural f = √(k/m) / 2π. Ahora, los otros dos números que usa todo ingeniero de suspensiones.\n\n## Factor de amortiguamiento ζ\n\n```\nζ = c / (2 × √(k × m))\n```\n\n- ζ < 1: **subamortiguado** — rebota unas veces antes de parar.\n- ζ = 1: **crítico** — vuelve lo más rápido sin pasarse.\n- ζ > 1: **sobreamortiguado** — duro, vuelve despacio.\n\nLos turismos usan ζ ≈ 0,2–0,4 (confort); los de carreras, 0,5–0,8 (control).\n\n## Relación de palanca (motion ratio)\n\nEl muelle rara vez está justo encima de la rueda: se mueve **menos** que la rueda. Si el muelle se mueve MR veces el desplazamiento de la rueda, la rigidez **sentida en la rueda** es:\n\n```\nk_rueda = k_muelle × MR²\n```\n\nCon MR = 0,7, un muelle de 40 000 N/m se convierte en 19 600 N/m en la rueda — el **cuadrado** de la relación, porque cambian tanto la fuerza como el desplazamiento.\n\n## Frecuencias típicas\n\n- Coches de lujo: ~1,0–1,2 Hz (suaves).\n- Deportivos: 1,5–2,0 Hz.\n- Fórmulas con mucha carga aerodinámica: 3–5 Hz (durísimos, para que el fondo no toque el suelo).\n\nLa parte trasera suele ser ~10% más rígida que la delantera, para que el coche no \"cabecee\" en los badenes.\n\n## Balanceo\n\nEn la curva, la transferencia lateral de carga es m × a_y × h / vía. Las **barras estabilizadoras** reparten esa transferencia entre delante y detrás: más rigidez delante → más subviraje; más detrás → más sobreviraje.",
+      "questions": [
+        {
+          "prompt": "Una esquina del coche tiene m = **300 kg**, k = **30 000 N/m** y amortiguador c = **3000 N·s/m**. ¿Cuál es el factor de amortiguamiento ζ?",
+          "explanation": "c_crítico = 2√(30 000 × 300) = 2 × 3000 = 6000. ζ = 3000 / 6000 = 0,5.",
+          "unit": ""
+        },
+        {
+          "prompt": "Un muelle de **40 000 N/m** está montado con relación de palanca **0,7**. ¿Qué rigidez se siente en la rueda?",
+          "explanation": "k_rueda = 40 000 × 0,7² = 40 000 × 0,49 = 19 600 N/m.",
+          "unit": "N/m"
+        },
+        {
+          "prompt": "Con esa rigidez en la rueda (19 600 N/m) y **250 kg** en la esquina, ¿cuál es la frecuencia natural?",
+          "explanation": "f = √(19 600 / 250) / 2π = √78,4 / 6,283 ≈ 1,41 Hz — un reglaje de deportivo.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "Con ζ mucho **menor** que el recomendado (amortiguador débil/gastado), el coche…",
+          "options": [
+            "Se vuelve duro e incómodo",
+            "Rebota varias veces después de cada badén y pierde adherencia",
+            "Queda más bajo",
+            "Frena mejor"
+          ],
+          "explanation": "Poco amortiguamiento deja que la oscilación siga; el neumático alterna entre carga alta y baja y el coche \"flota\"."
+        },
+        {
+          "prompt": "Endurecer la barra estabilizadora **delantera** tiende a dejar el coche…",
+          "options": [
+            "Más subvirador (la parte delantera pierde adherencia antes)",
+            "Más sobrevirador",
+            "Más cómodo en línea recta",
+            "Más rápido en la recta"
+          ],
+          "explanation": "Más rigidez delante lleva más transferencia de carga al eje delantero; el neumático delantero exterior se satura primero."
+        }
+      ]
+    },
+    "car-17-ev-estrada": {
+      "title": "Eléctrico en carretera: batería, peso y aerodinámica",
+      "theory": "# Por qué la autonomía en carretera es el problema del eléctrico\n\nEn la ciudad, el eléctrico recupera energía al frenar y casi no gasta parado. En **carretera**, a 110 km/h, casi toda la energía se va al **aire** y a la **rodadura**:\n\n```\nF = ½ ρ Cd A v² + Crr × m × g\nP_rueda = F × v\nconsumo (kWh/100 km) = P_rueda / η / v × 100 km\n```\n\nUn coche de 2100 kg con Cd = 0,23, A = 2,2 m² y Crr = 0,012 a 110 km/h: F ≈ 283 + 247 = **531 N**, P ≈ **16,2 kW**, y con η = 88% ≈ **16,8 kWh/100 km** (más los auxiliares).\n\n## El círculo vicioso de la batería\n\nMás batería = más autonomía, pero la batería **pesa** (~160 Wh/kg en el paquete: 80 kWh ≈ **500 kg**). Más peso = más rodadura, más energía para acelerar, frenos y suspensión mayores, peor aceleración. La autonomía crece **menos** que la batería.\n\n## Dónde está la ganancia barata\n\n- **Cd × A**: a 110 km/h el aire es más de la mitad de la fuerza. Carenados, ruedas cerradas, retrovisores con cámara y fondo plano llevan a los eléctricos modernos a Cd ≈ 0,20–0,23.\n- **Neumáticos de baja resistencia** (Crr menor).\n- **Eficiencia** del conjunto inversor–motor–reductora (85–92%).\n\n## Velocidad\n\nComo la fuerza del aire crece con v², ir a 130 en vez de 110 km/h aumenta el consumo en ~25–30%. Para los eléctricos la velocidad de crucero pesa más que para los coches de combustión, porque la batería guarda poca energía comparada con un depósito.\n\n## En este laboratorio\n\nMasa sin batería de 1600 kg, motor de 150 kW con 350 N·m, tracción trasera, eficiencia batería→rueda del 88%, crucero a **110 km/h**.",
+      "task": "Diseña el eléctrico para la carretera: **autonomía ≥ 450 km** a 110 km/h, **consumo ≤ 18 kWh/100 km**, **0–100 km/h en hasta 8,7 s** y **masa total ≤ 2150 kg**. Elige la **batería**, el **Cd** y el **área frontal**.",
+      "hints": [
+        "Solo aumentar la batería no sirve: con 100 kWh el coche pasa de 2200 kg y aún gasta 21 kWh/100 km.",
+        "Empieza por la aerodinámica (Cd 0,23, área 2,2 m²) y después ajusta la batería cerca de 80 kWh."
+      ],
+      "goals": [
+        "Autonomía de al menos 450 km a 110 km/h",
+        "Consumo de hasta 18 kWh/100 km",
+        "0–100 km/h en hasta 8,7 s",
+        "Masa total de hasta 2150 kg"
+      ],
+      "questions": [
+        {
+          "prompt": "Coche de **2100 kg**, Cd = **0,23**, A = **2,2 m²**, Crr = **0,012**, a **110 km/h** (ρ = 1,2 kg/m³, g = 9,81 m/s²). ¿Cuál es la potencia en las ruedas?",
+          "explanation": "v = 30,56 m/s. Aire: ½ × 1,2 × 0,23 × 2,2 × 30,56² ≈ 283,5 N. Rodadura: 0,012 × 2100 × 9,81 ≈ 247,2 N. P = 530,7 × 30,56 ≈ 16,2 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "Con una eficiencia batería→rueda del **88%**, ¿cuánto gasta este coche cada 100 km (sin contar los auxiliares)?",
+          "explanation": "100 km a 110 km/h llevan 0,909 h. Energía = 16,21 / 0,88 × 0,909 ≈ 16,75 kWh.",
+          "unit": "kWh/100 km"
+        },
+        {
+          "prompt": "¿Cuánto pesa un paquete de **80 kWh** a **160 Wh/kg**?",
+          "explanation": "80 000 Wh / 160 Wh/kg = 500 kg.",
+          "unit": "kg"
+        }
+      ]
+    },
+    "car-18-motor-termico": {
+      "title": "Motor de combustión: eficiencia térmica, BSFC y emisiones",
+      "theory": "# Cuánto del combustible se convierte en movimiento\n\nUn motor de gasolina convierte calor en trabajo siguiendo (de forma idealizada) el **ciclo Otto**. Su eficiencia teórica depende solo de la **relación de compresión** r:\n\n```\nη_Otto = 1 − r^(1 − γ)      (γ ≈ 1,4 para el aire)\n```\n\nCon r = 10: η = 1 − 10^(−0,4) ≈ **60%**. Los motores reales quedan en **25–40%**: fricción, pérdidas de calor por las paredes, bombeo (la mariposa cerrada) y una combustión que no es instantánea. La relación de compresión está limitada por la **detonación** (picado); los motores diésel comprimen más (15–20) y son más eficientes.\n\n## BSFC: el número del banco de pruebas\n\nEn la práctica se mide el **consumo específico** (BSFC): gramos de combustible por kWh entregado en el eje. La eficiencia sale directamente:\n\n```\nη = 3,6 × 10⁶ / (BSFC [kg/kWh] × PCI [J/kg])\n```\n\nCon BSFC = 250 g/kWh y gasolina con poder calorífico de 43 MJ/kg: η ≈ **33,5%**. Los mejores motores de turismo llegan a ~200 g/kWh (~41%).\n\n## Del motor a la carretera\n\nSi un coche necesita **15 kW** en las ruedas a 100 km/h (15 kWh cada 100 km) y el conjunto motor + transmisión tiene un 30% de eficiencia, con gasolina de 8,9 kWh/L:\n\n```\nconsumo = 15 / (0,30 × 8,9) ≈ 5,6 L/100 km\n```\n\n## CO₂\n\nQuemar 1 L de gasolina libera ~**2,3 kg de CO₂** (el carbono del combustible se convierte en CO₂). Un coche que gasta 6 L/100 km emite ~138 g de CO₂ por km — y la única forma de reducirlo es **gastar menos combustible** (o cambiar de energía).",
+      "questions": [
+        {
+          "prompt": "¿Cuál es la eficiencia teórica del ciclo Otto con relación de compresión **10** (γ = 1,4)?",
+          "explanation": "η = 1 − 10^(−0,4) = 1 − 0,398 ≈ 0,602 → ~60%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "Un motor tiene un BSFC de **250 g/kWh** quemando gasolina de **43 MJ/kg**. ¿Cuál es su eficiencia real?",
+          "explanation": "η = 3,6 × 10⁶ / (0,25 × 43 × 10⁶) = 3,6 / 10,75 ≈ 0,335 → 33,5%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "Un coche necesita **15 kW** en las ruedas a 100 km/h. Con una eficiencia total del **30%** y gasolina de **8,9 kWh/L**, ¿cuánto consume?",
+          "explanation": "En 100 km (1 h) las ruedas piden 15 kWh. Combustible = 15 / 0,30 = 50 kWh = 50 / 8,9 ≈ 5,6 L.",
+          "unit": "L/100 km"
+        },
+        {
+          "prompt": "Cada litro de gasolina quemado libera **2,3 kg** de CO₂. ¿Cuánto CO₂ por km emite un coche que gasta **6 L/100 km**?",
+          "explanation": "6 × 2,3 = 13,8 kg cada 100 km = 138 g/km.",
+          "unit": "g/km"
+        },
+        {
+          "prompt": "¿Qué impide simplemente aumentar mucho la relación de compresión de un motor de gasolina?",
+          "options": [
+            "El motor se vuelve más pesado",
+            "La eficiencia teórica cae",
+            "La mezcla detona sola antes de tiempo (picado)",
+            "El combustible no se evapora"
+          ],
+          "explanation": "Comprimir calienta la mezcla; por encima de cierto punto explota sola, violentamente, y daña el motor. El diésel lo evita inyectando el combustible solo al final de la compresión."
+        }
+      ]
+    },
+    "car-19-acerto-asa": {
+      "title": "Reglaje de alerón: circuito rápido, poco alerón",
+      "theory": "# Cada circuito pide su reglaje\n\nEn la lección 10 el Fórmula SAE rodaba en un circuito **lento** (curvas cerradas, rectas cortas), y más carga aerodinámica siempre ayudaba. En un circuito **rápido** — rectas largas y curvas de radio grande — la cuenta cambia:\n\n- En las **curvas**, la carga aumenta la velocidad, y una curva rápida tiene mucha velocidad que ganar.\n- En las **rectas**, el arrastre del alerón limita la velocidad máxima. Cuando la velocidad máxima baja **de la velocidad posible en la curva**, el alerón extra no sirve de nada: el coche ya entra en la curva al límite del motor.\n\n## Tiempo de vuelta\n\n```\ntiempo ≈ Σ (longitud de cada tramo / velocidad media en el tramo)\n```\n\nUna recta de 400 m a 130 km/h de media lleva ~11 s; media vuelta de radio 60 m mide π × 60 ≈ 188 m.\n\n## El reglaje óptimo\n\nExiste un nivel de alerón en el que la velocidad en curva **casi alcanza** la velocidad máxima de la recta. Con menos alerón, se pierde en las curvas; con más, en las rectas (y en las propias curvas, que pasan a estar limitadas por la velocidad máxima). Los equipos llevan **varios alerones** y eligen uno para cada circuito — Monza (rectas) usa alerones finísimos; Mónaco (curvas lentas), los más grandes.\n\n## En este laboratorio\n\nEl mismo coche de la lección 10 (300 kg, 60 kW), ahora en un óvalo con rectas de **400 m** y curvas de **60 m** de radio. Vino con el alerón de circuito lento (ClA = 4).",
+      "task": "Con el alerón de circuito lento el coche da la vuelta en ~36 s. Ajusta el **alerón (ClA)** y las **relaciones** para dar la vuelta en **hasta 33,2 s**.",
+      "hints": [
+        "Compara la velocidad en curva con la velocidad máxima: con ClA = 4 son iguales — sobra alerón.",
+        "Prueba ClA de 1 en 1. El mejor tiempo está cerca de 2."
+      ],
+      "goals": [
+        "Vuelta en hasta 33,2 s"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuánto tarda el coche en una recta de **400 m** a una media de **130 km/h**?",
+          "explanation": "130 km/h = 36,1 m/s. t = 400 / 36,1 ≈ 11,1 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "¿Cuánto mide una curva de **media vuelta** (180°) con radio de **60 m**?",
+          "explanation": "Media circunferencia: π × 60 ≈ 188,5 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Con ClA = 4 en este circuito, ¿por qué el alerón extra ya no ayuda en las curvas?",
+          "options": [
+            "Porque los neumáticos se calientan demasiado",
+            "Porque el arrastre bajó la velocidad máxima por debajo de lo que aguantaría la curva",
+            "Porque la carga no funciona en curvas grandes",
+            "Porque el coche se vuelve demasiado pesado"
+          ],
+          "explanation": "Si el motor solo lleva el coche a 118 km/h, da igual que la curva aguante más: la velocidad en curva queda limitada por la máxima."
+        }
+      ]
+    },
+    "car-20-projeto-esportivo": {
+      "title": "Proyecto final: un deportivo rápido, seguro y económico",
+      "theory": "# Un coche es un conjunto de compromisos\n\nLos ingenieros de automóviles nunca optimizan una sola cosa. Este proyecto reúne las lecciones de la ruta en un coche de 1300 kg:\n\n- **Aceleración** (lecciones 1–4): potencia, marchas y **tracción**. Con mucha potencia, la tracción delantera patina — el peso se va hacia atrás al acelerar. La tracción integral usa la adherencia de las cuatro ruedas.\n- **Velocidad máxima** (lección 11): potencia contra Cd × A, y una última marcha que deje al motor llegar.\n- **Consumo** (lecciones 7 y 18): a 100 km/h depende del **arrastre y la rodadura**, no de la potencia del motor — un motor potente no gasta más si el coche es aerodinámico (en este modelo, con eficiencia fija).\n- **Frenada** (lecciones 5 y 13): fuerza de freno suficiente y **ABS** para usar toda la adherencia sin bloquear.\n\n## Energía y frenada\n\nA 100 km/h, un coche de 1300 kg tiene ½ × 1300 × 27,8² ≈ **502 kJ** que disipar. La menor distancia posible con μ = 0,9 es:\n\n```\nd = v² / (2 μ g) = 27,8² / (2 × 0,9 × 9,81) ≈ 43,7 m\n```\n\n## Cómo abordarlo\n\n1. Elige la tracción y la potencia para el 0–100.\n2. Ajusta la aerodinámica (la velocidad máxima **y** el consumo mejoran juntos).\n3. Ajusta las relaciones para que el motor alcance la velocidad máxima.\n4. Frenos: fuerza y ABS.\n\nDespués pruébalo y mira qué metas faltan — la ingeniería es iteración.",
+      "task": "Diseña el deportivo: **0–100 km/h en hasta 6,5 s** sin patinar (**hasta 0,5 s** de patinaje), **velocidad máxima ≥ 230 km/h**, **consumo ≤ 5,2 L/100 km** a 100 km/h y **frenada desde 100 km/h en hasta 46 m**.",
+      "hints": [
+        "Con tracción delantera el coche patina y no baja de ~8 s, aunque tenga más potencia. Prueba tracción integral con ~150 kW.",
+        "Cd 0,28 y área de 2,0 m² resuelven consumo y velocidad máxima; diferencial cerca de 3,6. Freno de 12 kN con ABS activado."
+      ],
+      "goals": [
+        "0–100 km/h en hasta 6,5 s",
+        "Hasta 0,5 s de patinaje",
+        "Velocidad máxima de al menos 230 km/h",
+        "Consumo de hasta 5,2 L/100 km a 100 km/h",
+        "Frenada desde 100 km/h en hasta 46 m"
+      ],
+      "questions": [
+        {
+          "prompt": "¿Cuál es la energía cinética de un coche de **1300 kg** a **100 km/h**? Responde en kJ.",
+          "explanation": "½ × 1300 × 27,78² ≈ 501 500 J ≈ 502 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "¿Cuál es la menor distancia de frenada posible desde **100 km/h** con μ = **0,9**? (g = 9,81 m/s²)",
+          "explanation": "d = 27,78² / (2 × 0,9 × 9,81) ≈ 43,7 m. Con ABS (95% del límite) el coche se acerca a eso.",
+          "unit": "m"
+        },
+        {
+          "prompt": "¿Por qué solo aumentar la potencia de un coche de **tracción delantera** no mejora el 0–100?",
+          "options": [
+            "Porque la caja de cambios no aguanta",
+            "Porque el arrastre aumenta",
+            "Porque al acelerar el peso se va hacia atrás y las ruedas delanteras patinan: el límite es la adherencia",
+            "Porque el motor se vuelve más pesado"
+          ],
+          "explanation": "La fuerza máxima en las ruedas es μ × carga en el eje motriz; al acelerar la carga se va de delante. La tracción integral usa las cuatro ruedas."
+        }
+      ]
     }
   }
 }

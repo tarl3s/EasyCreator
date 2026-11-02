@@ -346,6 +346,361 @@
           "explanation": "The wing's gain shows up in the corners; the cost (drag) shows up on every straight. With long straights, the cost dominates (in the same model, with 250 m straights, the best ClA drops to about 1)."
         }
       ]
+    },
+    "car-11-velocidade-maxima": {
+      "title": "Top speed: power against the air and the right gear",
+      "theory": "# What limits top speed\n\nAt top speed the engine's force at the wheels equals the sum of the resistances. At high speed **aerodynamic drag** is in charge, and the power to overcome it grows with the **cube** of the speed:\n\n```\nP_air = ½ × ρ × Cd × A × v³\n```\n\nAt 200 km/h (55.6 m/s), a car with Cd = 0.30 and A = 2.2 m² spends ~**68 kW** against the air alone. That's why **doubling the power** raises top speed by only about **26%** (∛2 ≈ 1.26).\n\n## Two ways not to get there\n\n1. **Too little power or too much drag**: the engine lacks the force to push faster. Fix: less Cd × A (shape, frontal area) or more power.\n2. **Gearing too short**: the engine hits the **rev limit** (rev limiter) before the power runs out. The speed at the limit is:\n\n```\nv = max_rpm × 2π/60 × wheel_radius / (gear ratio × final drive)\n```\n\nWith 6670 rpm, top gear 0.85, final drive 5.0 and a 0.30 m wheel: v ≈ 49.3 m/s = **177 km/h**, even if the engine had power for more.\n\n## The sweet spot\n\nTop speed is best when the top gear brings the engine close to its **peak-power rpm** exactly at the speed where power equals the resistances. Gearing too long also loses: the engine \"bogs down\", below peak-power rpm.\n\n## In this lab\n\nA 1300 kg car with **100 kW** (peak power at 5800 rpm, limiter at 6670 rpm). You can't touch the engine: only the **aerodynamics** and the **ratios**.",
+      "task": "The car won't go past 178 km/h. Without touching the engine, make it reach **220 km/h** by adjusting the **final drive**, the **top gear**, the **Cd** and the **frontal area**.",
+      "hints": [
+        "With a 5.0 final drive the engine hits the limiter. Lengthen the gearing (final drive near 3.6) and see the new limit.",
+        "Gearing alone gets you to ~208 km/h. The rest comes from the air: a Cd of 0.28 and an area of 2.0 m² make the difference."
+      ],
+      "goals": [
+        "Top speed of at least 220 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "How much power goes into the air alone at **200 km/h**, with Cd = **0.30**, A = **2.2 m²** and ρ = 1.2 kg/m³?",
+          "explanation": "v = 55.56 m/s. P = ½ × 1.2 × 0.30 × 2.2 × 55.56³ ≈ 67 900 W ≈ 67.9 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "The engine cuts out at **6670 rpm**. With top gear **0.85**, final drive **5.0** and a **0.30 m** wheel radius, what is the speed at the limiter?",
+          "explanation": "ω_engine = 6670 × 2π/60 = 698.5 rad/s. ω_wheel = 698.5 / (0.85 × 5) = 164.4 rad/s. v = 164.4 × 0.30 = 49.3 m/s ≈ 177.5 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "If only the air mattered, doubling the power would raise top speed by…",
+          "options": [
+            "100%",
+            "About 26% (cube root of 2)",
+            "About 41% (square root of 2)",
+            "Nothing"
+          ],
+          "explanation": "P ∝ v³ → v ∝ ∛P. ∛2 ≈ 1.26."
+        }
+      ]
+    },
+    "car-12-escalonamento": {
+      "title": "Gear spacing: speed per rpm and rev drops",
+      "theory": "# Each gear is a \"band\" of speeds\n\nWith wheel radius r, gear ratio i and final drive d, the speed at an engine speed n (rpm) is:\n\n```\nv = n × 2π/60 × r / (i × d)\n```\n\nA practical measure is the **speed per 1000 rpm**: with top gear 0.80, final drive 3.6 and a 0.30 m wheel, that's ~**39.3 km/h per 1000 rpm** — at 6000 rpm, ~236 km/h.\n\n## Geometric progression\n\nGears usually follow a **geometric progression**: each one is the previous one times the same factor q:\n\n```\nq = (i_top / i_1st)^(1 / (N − 1))\n```\n\nWith 1st = 3.5, top = 0.8 and 6 gears: q = (0.8/3.5)^(1/5) ≈ **0.744**.\n\n## The rev drop on a shift\n\nDuring a shift the car's speed stays the same, so the engine speed drops by the same ratio as the gears:\n\n```\nn_after = n_before × (i_next / i_current) = n_before × q\n```\n\nShifting at 6000 rpm with q = 0.744, the engine drops to ~**4466 rpm**. Ideally this drop keeps the engine in its **high-power** band. More gears → q closer to 1 → smaller drops → better acceleration (hence 8- to 10-speed gearboxes and the CVT, which varies the ratio continuously).\n\n## Real spacing\n\nIn practice the high gears are **closer together** than the low ones (\"progressive\" spacing): at high speed drag demands keeping the engine always near peak power.",
+      "questions": [
+        {
+          "prompt": "At **6000 rpm**, with top gear **0.8**, final drive **3.6** and a **0.30 m** wheel, what is the speed?",
+          "explanation": "ω = 6000 × 2π/60 = 628.3 rad/s. v = 628.3 × 0.30 / (0.8 × 3.6) = 65.4 m/s ≈ 235.6 km/h.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "In that same gear, how many km/h does the car go per **1000 rpm**?",
+          "explanation": "235.6 / 6 ≈ 39.3 km/h per 1000 rpm.",
+          "unit": "km/h"
+        },
+        {
+          "prompt": "A **6-speed** gearbox goes from **3.5** (1st) to **0.8** (6th) in geometric progression. What is the factor q between neighbouring gears?",
+          "explanation": "q = (0.8 / 3.5)^(1/5) = 0.2286^0.2 ≈ 0.744.",
+          "unit": ""
+        },
+        {
+          "prompt": "Shifting at **6000 rpm** in this gearbox, what rpm does the engine drop to?",
+          "explanation": "6000 × 0.744 ≈ 4466 rpm (the car's speed doesn't change during the shift).",
+          "unit": "rpm"
+        },
+        {
+          "prompt": "Why do gearboxes with **more gears** accelerate better?",
+          "options": [
+            "Because the engine becomes more powerful",
+            "Because the car becomes lighter",
+            "Because the rev drops are smaller and the engine stays longer near peak power",
+            "Because first gear becomes longer"
+          ],
+          "explanation": "With q closer to 1, each shift drops the revs less: the average power at the wheels goes up."
+        }
+      ]
+    },
+    "car-13-balanco-freio": {
+      "title": "Brake balance: the perfect stop without ABS",
+      "theory": "# The weight moves forward\n\nWhen braking with deceleration a, part of the weight moves from the rear wheels to the front ones (**load transfer**):\n\n```\nN_front = m g × (front fraction) + m a × h / L\n```\n\n(h: CG height; L: wheelbase). A 1300 kg car with 60% of the weight on the front, CG at 0.55 m and a 2.6 m wheelbase, braking at 0.8 g, has ~**9810 N** on the front — **77%** of the weight.\n\n## Each axle has its limit\n\nEach axle can only brake up to μ × N. If an axle gets more brake force than that, the wheel **locks**:\n\n- **Front locked**: the car won't steer (goes straight).\n- **Rear locked**: the car tends to **spin** — much more dangerous. That's why brake force always goes more to the front.\n\n## Ideal balance\n\nThe shortest possible stop happens when **both axles reach their limit together**: the fraction of brake force on the front should equal the fraction of load on the front **during braking**:\n\n```\nideal balance = N_front / (m g)\n```\n\nSince the transfer depends on the deceleration, the ideal balance changes with grip; cars use **proportioning valves** and today **electronic brake-force distribution** (EBD) together with ABS.\n\n## Without ABS\n\nWithout ABS, too much brake force locks the wheels (a locked tyre has only ~75% of the friction). The trick is to brake **as hard as possible without locking**, with the right balance.\n\n## In this lab\n\nA 1300 kg car, 60% of the weight on the front, μ = 0.9, braking from 100 km/h **without ABS**.",
+      "task": "Without ABS, stop the car from 100 km/h within **47 m** of braking **without locking either axle**. Adjust the **brake force** and the **balance** (front brake share).",
+      "safety": "- Real brake testing only on a **closed track**, with a trained driver and an inspected car. On the street, keep your distance and brake early.\n- Locking the rear wheels at high speed can make the car **spin**.",
+      "hints": [
+        "With 60% of the brake on the front, the rear axle locks early: in hard braking, the front carries ~77% of the weight.",
+        "Set the balance near 78% and the force between 10 and 11 kN."
+      ],
+      "goals": [
+        "Braking within 47 m",
+        "Front wheels don't lock",
+        "Rear wheels don't lock"
+      ],
+      "questions": [
+        {
+          "prompt": "A **1300 kg** car, **60%** of the weight on the front, CG at **0.55 m**, **2.6 m** wheelbase, braking at **0.8 g**. How much load is on the front axle? (g = 9.81 m/s²)",
+          "explanation": "Static: 1300 × 9.81 × 0.6 = 7652 N. Transfer: 1300 × 0.8 × 9.81 × 0.55 / 2.6 = 2158 N. Total ≈ 9810 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "What is the ideal brake balance (percentage on the front) for that 0.8 g stop?",
+          "explanation": "9810 / (1300 × 9.81) = 0.769 → ~77% on the front.",
+          "unit": "%"
+        },
+        {
+          "prompt": "Why is it more dangerous to lock the **rear** wheels than the front ones?",
+          "options": [
+            "Because the braking distance doubles",
+            "Because the rear slides out and the car tends to spin",
+            "Because the rear brakes get hotter",
+            "Because the engine stalls"
+          ],
+          "explanation": "With the front locked the car goes straight (it just can't steer); with the rear locked, any small deviation becomes a spin."
+        }
+      ]
+    },
+    "car-14-energia-freios": {
+      "title": "Where braking energy goes: heat, fade and regeneration",
+      "theory": "# Braking turns motion into heat\n\nA 1500 kg car at 100 km/h has kinetic energy:\n\n```\nE = ½ × m × v² = ½ × 1500 × 27.8² ≈ 579 kJ\n```\n\nIn a stop, almost all of it becomes **heat in the discs and pads**, within a few seconds.\n\n## Braking power\n\nAt the start of hard braking, the power is **m × a × v**: at 0.8 g and 100 km/h, that's ~**327 kW** — more than twice the engine power of an ordinary car!\n\n## How hot the disc gets\n\nIf 70% of the energy goes to the **two front discs** of 8 kg of steel (specific heat 460 J/(kg·K)):\n\n```\nΔT = E_front / (m_discs × c) = 0.7 × 579 000 / (16 × 460) ≈ 55 °C\n```\n\nA single stop is little; several in a row (mountain descent, track) add heat faster than the air can remove it.\n\n## Fade\n\nAbove a certain temperature the pad friction **drops** (fade) and the brake fluid may **boil** (bubbles → \"spongy\" pedal). Remedies: bigger, ventilated discs, high-temperature pads, air ducts, high-boiling-point fluid — and, going downhill, **engine braking** (lower gear).\n\n## Regenerative braking\n\nElectric and hybrid cars use the motor as a **generator**: part of the energy goes back to the battery (60–70% in gentle braking). 60% of 579 kJ is ~**0.096 kWh** — little per stop, but in the city there are hundreds a day. In hard stops the friction brakes are still needed.",
+      "questions": [
+        {
+          "prompt": "What is the kinetic energy of a **1500 kg** car at **100 km/h**? Answer in kJ.",
+          "explanation": "v = 27.78 m/s. E = ½ × 1500 × 27.78² ≈ 578 700 J ≈ 579 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "What is the braking power at the **start** of a **0.8 g** stop of this car (1500 kg, 100 km/h)? (g = 9.81 m/s²)",
+          "explanation": "P = m × a × v = 1500 × 7.848 × 27.78 ≈ 327 000 W = 327 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "70% of that energy goes to **two 8 kg** steel discs (c = 460 J/(kg·K)). How much do they heat up in one stop?",
+          "explanation": "ΔT = 0.7 × 578 700 / (16 × 460) ≈ 55 °C.",
+          "unit": "°C"
+        },
+        {
+          "prompt": "An EV recovers **60%** of that energy when braking. How many kWh go back to the battery? (1 kWh = 3.6 MJ)",
+          "explanation": "0.6 × 578 700 / 3 600 000 ≈ 0.096 kWh.",
+          "unit": "kWh"
+        },
+        {
+          "prompt": "On a long mountain descent, what helps most to avoid **brake fade**?",
+          "options": [
+            "Coasting in neutral to save fuel",
+            "Braking lightly all the time",
+            "Using a lower gear (engine braking) and braking hard only when needed",
+            "Inflating the tyres to a higher pressure"
+          ],
+          "explanation": "Engine braking removes energy without heating the discs; braking hard and briefly gives them time to cool between stops."
+        }
+      ]
+    },
+    "car-15-downforce": {
+      "title": "Downforce: grip from the air (and its price)",
+      "theory": "# Pushing the car onto the ground\n\nAn inverted wing (or a well-shaped floor) creates **downforce**, a downward force that grows with the square of the speed:\n\n```\nF_down = ½ × ρ × ClA × v²\n```\n\n(ClA: lift coefficient × area, in m²). At 30 m/s, ClA = 3 m² gives ½ × 1.2 × 3 × 900 = **1620 N** — the weight of 165 kg, with no mass at all!\n\n## More grip in the corner\n\nThe tyre holds μ × (weight + downforce). In the corner, the centripetal force m v²/r must fit within that:\n\n```\nm v² / r = μ × (m g + ½ ρ ClA v²)\nv = √(μ m g / (m/r − μ ½ ρ ClA))\n```\n\nWithout a wing, a 700 kg car with μ = 1.3 on a 50 m corner can do at most √(μ g r) ≈ 25.3 m/s (91 km/h). With ClA = 3.2 m², ~27.9 m/s (100 km/h).\n\n## The price: drag\n\nEvery wing that makes downforce also makes **drag** (here, ~1/3 of ClA becomes drag area). On the straight, it **steals top speed**. Twisty tracks are worth more wing; tracks with long straights, less (lesson 19).\n\n## Why doesn't it roll over?\n\nA car rolls over before sliding when μ > track / (2 × CG height). Low, wide race cars (1.5 m track, CG at 0.35 m: limit 2.1 g) slide long before they roll.\n\n## In this lab\n\nA 700 kg car, μ = 1.3, 50 m radius corner at **100 km/h**, 80 kW engine.",
+      "task": "Make the car take the corner at 100 km/h (**corner OK**) with no rollover risk, but don't overdo the wing: **top speed** on the straight must stay **above 140 km/h**.",
+      "hints": [
+        "Without a wing the limit is ~91 km/h. Raise ClA little by little and see when the corner works.",
+        "The corner works from ClA ≈ 3.2; above ~3.6 the top speed drops below 140 km/h."
+      ],
+      "goals": [
+        "Takes the corner at 100 km/h",
+        "No rollover risk",
+        "Top speed of at least 140 km/h"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the downforce of a wing with ClA = **3 m²** at **30 m/s** (ρ = 1.2 kg/m³)?",
+          "explanation": "F = ½ × 1.2 × 3 × 30² = 1620 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "Without a wing, what is the top speed on a **50 m** corner with μ = **1.3**? (g = 9.81 m/s²)",
+          "explanation": "v = √(1.3 × 9.81 × 50) = √637.7 ≈ 25.3 m/s (~91 km/h).",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "With ClA = **3.2 m²**, m = **700 kg**, μ = 1.3, r = 50 m and ρ = 1.2 kg/m³, what is the top corner speed? (v = √(μmg / (m/r − μ·½·ρ·ClA)))",
+          "explanation": "Numerator: 1.3 × 700 × 9.81 = 8927. Denominator: 14 − 1.3 × 0.6 × 3.2 = 11.50. v = √776 ≈ 27.9 m/s (~100 km/h).",
+          "unit": "m/s"
+        }
+      ]
+    },
+    "car-16-suspensao-avancada": {
+      "title": "Suspension in depth: damping, motion ratio and frequencies",
+      "theory": "# The car as mass–spring–damper\n\nEach corner of the car is a mass (m) on a spring (k) and a damper (c). In lesson 8 we saw the natural frequency f = √(k/m) / 2π. Now, the other two numbers every suspension engineer uses.\n\n## Damping ratio ζ\n\n```\nζ = c / (2 × √(k × m))\n```\n\n- ζ < 1: **underdamped** — bounces a few times before stopping.\n- ζ = 1: **critical** — returns fastest without overshooting.\n- ζ > 1: **overdamped** — harsh, returns slowly.\n\nPassenger cars use ζ ≈ 0.2–0.4 (comfort); race cars, 0.5–0.8 (control).\n\n## Motion ratio\n\nThe spring is rarely right above the wheel: it moves **less** than the wheel. If the spring moves MR times the wheel travel, the stiffness **felt at the wheel** is:\n\n```\nk_wheel = k_spring × MR²\n```\n\nWith MR = 0.7, a 40 000 N/m spring becomes 19 600 N/m at the wheel — the **square** of the ratio, because both force and displacement change.\n\n## Typical frequencies\n\n- Luxury cars: ~1.0–1.2 Hz (soft).\n- Sports cars: 1.5–2.0 Hz.\n- Formula cars with lots of downforce: 3–5 Hz (very stiff, so the floor doesn't hit the ground).\n\nThe rear is usually ~10% stiffer than the front, so the car doesn't \"pitch\" over bumps.\n\n## Roll\n\nIn a corner, the lateral load transfer is m × a_y × h / track. **Anti-roll bars** split that transfer between front and rear: more stiffness at the front → more understeer; more at the rear → more oversteer.",
+      "questions": [
+        {
+          "prompt": "A corner of the car has m = **300 kg**, k = **30 000 N/m** and damper c = **3000 N·s/m**. What is the damping ratio ζ?",
+          "explanation": "c_critical = 2√(30 000 × 300) = 2 × 3000 = 6000. ζ = 3000 / 6000 = 0.5.",
+          "unit": ""
+        },
+        {
+          "prompt": "A **40 000 N/m** spring is mounted with a motion ratio of **0.7**. What stiffness is felt at the wheel?",
+          "explanation": "k_wheel = 40 000 × 0.7² = 40 000 × 0.49 = 19 600 N/m.",
+          "unit": "N/m"
+        },
+        {
+          "prompt": "With that wheel rate (19 600 N/m) and **250 kg** on the corner, what is the natural frequency?",
+          "explanation": "f = √(19 600 / 250) / 2π = √78.4 / 6.283 ≈ 1.41 Hz — a sports-car setting.",
+          "unit": "Hz"
+        },
+        {
+          "prompt": "With ζ much **lower** than recommended (weak/worn damper), the car…",
+          "options": [
+            "Becomes harsh and uncomfortable",
+            "Bounces several times after each bump and loses grip",
+            "Sits lower",
+            "Brakes better"
+          ],
+          "explanation": "Too little damping lets the oscillation go on; the tyre alternates between high and low load and the car \"floats\"."
+        },
+        {
+          "prompt": "Stiffening the **front** anti-roll bar tends to make the car…",
+          "options": [
+            "More understeery (the front loses grip first)",
+            "More oversteery",
+            "More comfortable in a straight line",
+            "Faster on the straight"
+          ],
+          "explanation": "More stiffness at the front puts more of the load transfer on the front axle; the outer front tyre saturates first."
+        }
+      ]
+    },
+    "car-17-ev-estrada": {
+      "title": "EV on the highway: battery, weight and aerodynamics",
+      "theory": "# Why highway range is the EV's problem\n\nIn the city, an EV recovers energy when braking and barely uses any standing still. On the **highway**, at 110 km/h, almost all the energy goes into the **air** and **rolling**:\n\n```\nF = ½ ρ Cd A v² + Crr × m × g\nP_wheel = F × v\nconsumption (kWh/100 km) = P_wheel / η / v × 100 km\n```\n\nA 2100 kg car with Cd = 0.23, A = 2.2 m² and Crr = 0.012 at 110 km/h: F ≈ 283 + 247 = **531 N**, P ≈ **16.2 kW**, and with η = 88% ≈ **16.8 kWh/100 km** (plus auxiliaries).\n\n## The battery's vicious circle\n\nMore battery = more range, but the battery **weighs** (~160 Wh/kg at pack level: 80 kWh ≈ **500 kg**). More weight = more rolling resistance, more energy to accelerate, bigger brakes and suspension, worse acceleration. Range grows **less** than the battery.\n\n## Where the cheap gain is\n\n- **Cd × A**: at 110 km/h the air is more than half the force. Fairings, covered wheels, camera mirrors and a flat floor bring modern EVs to Cd ≈ 0.20–0.23.\n- **Low-rolling-resistance tyres** (lower Crr).\n- **Efficiency** of the inverter–motor–reduction gear chain (85–92%).\n\n## Speed\n\nSince air force grows with v², driving at 130 instead of 110 km/h raises consumption by ~25–30%. For EVs cruising speed matters more than for combustion cars, because the battery stores little energy compared with a fuel tank.\n\n## In this lab\n\nMass without battery 1600 kg, 150 kW motor with 350 N·m, rear-wheel drive, battery-to-wheel efficiency 88%, cruise at **110 km/h**.",
+      "task": "Design the EV for the highway: **range ≥ 450 km** at 110 km/h, **consumption ≤ 18 kWh/100 km**, **0–100 km/h within 8.7 s** and **total mass ≤ 2150 kg**. Choose the **battery**, the **Cd** and the **frontal area**.",
+      "hints": [
+        "Just growing the battery won't do: with 100 kWh the car goes over 2200 kg and still uses 21 kWh/100 km.",
+        "Start with the aerodynamics (Cd 0.23, area 2.2 m²) and then set the battery near 80 kWh."
+      ],
+      "goals": [
+        "Range of at least 450 km at 110 km/h",
+        "Consumption up to 18 kWh/100 km",
+        "0–100 km/h within 8.7 s",
+        "Total mass up to 2150 kg"
+      ],
+      "questions": [
+        {
+          "prompt": "A **2100 kg** car, Cd = **0.23**, A = **2.2 m²**, Crr = **0.012**, at **110 km/h** (ρ = 1.2 kg/m³, g = 9.81 m/s²). What is the power at the wheels?",
+          "explanation": "v = 30.56 m/s. Air: ½ × 1.2 × 0.23 × 2.2 × 30.56² ≈ 283.5 N. Rolling: 0.012 × 2100 × 9.81 ≈ 247.2 N. P = 530.7 × 30.56 ≈ 16.2 kW.",
+          "unit": "kW"
+        },
+        {
+          "prompt": "With **88%** battery-to-wheel efficiency, how much does this car use per 100 km (not counting auxiliaries)?",
+          "explanation": "100 km at 110 km/h take 0.909 h. Energy = 16.21 / 0.88 × 0.909 ≈ 16.75 kWh.",
+          "unit": "kWh/100 km"
+        },
+        {
+          "prompt": "How much does an **80 kWh** pack at **160 Wh/kg** weigh?",
+          "explanation": "80 000 Wh / 160 Wh/kg = 500 kg.",
+          "unit": "kg"
+        }
+      ]
+    },
+    "car-18-motor-termico": {
+      "title": "Combustion engine: thermal efficiency, BSFC and emissions",
+      "theory": "# How much of the fuel becomes motion\n\nA petrol engine turns heat into work following (in idealised form) the **Otto cycle**. Its theoretical efficiency depends only on the **compression ratio** r:\n\n```\nη_Otto = 1 − r^(1 − γ)      (γ ≈ 1.4 for air)\n```\n\nWith r = 10: η = 1 − 10^(−0.4) ≈ **60%**. Real engines reach **25–40%**: friction, heat lost through the walls, pumping (a closed throttle) and combustion that isn't instantaneous. The compression ratio is limited by **knock** (detonation); diesel engines compress more (15–20) and are more efficient.\n\n## BSFC: the dyno number\n\nIn practice one measures the **specific fuel consumption** (BSFC): grams of fuel per kWh delivered at the shaft. The efficiency follows directly:\n\n```\nη = 3.6 × 10⁶ / (BSFC [kg/kWh] × LHV [J/kg])\n```\n\nWith BSFC = 250 g/kWh and petrol with a heating value of 43 MJ/kg: η ≈ **33.5%**. The best passenger-car engines reach ~200 g/kWh (~41%).\n\n## From engine to road\n\nIf a car needs **15 kW** at the wheels at 100 km/h (15 kWh every 100 km) and the engine + transmission is 30% efficient, with petrol at 8.9 kWh/L:\n\n```\nconsumption = 15 / (0.30 × 8.9) ≈ 5.6 L/100 km\n```\n\n## CO₂\n\nBurning 1 L of petrol releases ~**2.3 kg of CO₂** (the fuel's carbon becomes CO₂). A car using 6 L/100 km emits ~138 g of CO₂ per km — and the only way to reduce that is to **burn less fuel** (or switch energy source).",
+      "questions": [
+        {
+          "prompt": "What is the theoretical Otto-cycle efficiency with a compression ratio of **10** (γ = 1.4)?",
+          "explanation": "η = 1 − 10^(−0.4) = 1 − 0.398 ≈ 0.602 → ~60%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "An engine has a BSFC of **250 g/kWh** burning petrol at **43 MJ/kg**. What is its real efficiency?",
+          "explanation": "η = 3.6 × 10⁶ / (0.25 × 43 × 10⁶) = 3.6 / 10.75 ≈ 0.335 → 33.5%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "A car needs **15 kW** at the wheels at 100 km/h. With a total efficiency of **30%** and petrol at **8.9 kWh/L**, how much does it use?",
+          "explanation": "Over 100 km (1 h) the wheels need 15 kWh. Fuel = 15 / 0.30 = 50 kWh = 50 / 8.9 ≈ 5.6 L.",
+          "unit": "L/100 km"
+        },
+        {
+          "prompt": "Each litre of petrol burned releases **2.3 kg** of CO₂. How much CO₂ per km does a car using **6 L/100 km** emit?",
+          "explanation": "6 × 2.3 = 13.8 kg per 100 km = 138 g/km.",
+          "unit": "g/km"
+        },
+        {
+          "prompt": "What prevents simply raising a petrol engine's compression ratio a lot?",
+          "options": [
+            "The engine becomes heavier",
+            "The theoretical efficiency drops",
+            "The mixture self-ignites too early (knock)",
+            "The fuel doesn't evaporate"
+          ],
+          "explanation": "Compression heats the mixture; above a certain point it explodes on its own, violently, and damages the engine. Diesel avoids this by injecting the fuel only at the end of compression."
+        }
+      ]
+    },
+    "car-19-acerto-asa": {
+      "title": "Wing setup: fast track, less wing",
+      "theory": "# Each track needs its own setup\n\nIn lesson 10 the Formula SAE car ran on a **twisty** track (tight corners, short straights), and more downforce always helped. On a **fast** track — long straights and large-radius corners — the maths changes:\n\n- In the **corners**, downforce raises the speed, and a fast corner has a lot of speed to gain.\n- On the **straights**, the wing's drag limits top speed. When top speed drops **below the speed possible in the corner**, the extra wing is useless: the car already enters the corner at the engine's limit.\n\n## Lap time\n\n```\ntime ≈ Σ (length of each section / average speed in that section)\n```\n\nA 400 m straight at an average of 130 km/h takes ~11 s; a half-lap of radius 60 m is π × 60 ≈ 188 m long.\n\n## The optimal setup\n\nThere is a wing level at which the corner speed **almost reaches** the straight's top speed. With less wing, you lose in the corners; with more, you lose on the straights (and in the corners themselves, which become limited by top speed). Race teams bring **several wings** and pick one per track — Monza (straights) uses very thin wings; Monaco (slow corners), the biggest.\n\n## In this lab\n\nThe same car as in lesson 10 (300 kg, 60 kW), now on an oval with **400 m** straights and **60 m** radius corners. It arrived with the twisty-track wing (ClA = 4).",
+      "task": "With the twisty-track wing the car laps in ~36 s. Adjust the **wing (ClA)** and the **ratios** to lap in **33.2 s or less**.",
+      "hints": [
+        "Compare the corner speed with the top speed: with ClA = 4 they are equal — there's too much wing.",
+        "Try ClA in steps of 1. The best time is near 2."
+      ],
+      "goals": [
+        "Lap in 33.2 s or less"
+      ],
+      "questions": [
+        {
+          "prompt": "How long does the car take on a **400 m** straight at an average of **130 km/h**?",
+          "explanation": "130 km/h = 36.1 m/s. t = 400 / 36.1 ≈ 11.1 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "How long is a **half-turn** (180°) corner with a **60 m** radius?",
+          "explanation": "Half a circle: π × 60 ≈ 188.5 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "With ClA = 4 on this track, why doesn't the extra wing help in the corners anymore?",
+          "options": [
+            "Because the tyres overheat",
+            "Because drag pulled top speed below what the corner could take",
+            "Because downforce doesn't work in big corners",
+            "Because the car becomes too heavy"
+          ],
+          "explanation": "If the engine only gets the car to 118 km/h, it doesn't matter that the corner could take more: the corner speed is capped by top speed."
+        }
+      ]
+    },
+    "car-20-projeto-esportivo": {
+      "title": "Final project: a fast, safe and economical sports car",
+      "theory": "# A car is a set of compromises\n\nCar engineers never optimise one thing alone. This project brings the track's lessons together in a 1300 kg car:\n\n- **Acceleration** (lessons 1–4): power, gears and **traction**. With lots of power, front-wheel drive spins its tyres — weight shifts to the rear when accelerating. All-wheel drive uses the grip of all four wheels.\n- **Top speed** (lesson 11): power against Cd × A, and a top gear that lets the engine get there.\n- **Consumption** (lessons 7 and 18): at 100 km/h it depends on **drag and rolling resistance**, not on engine power — a powerful engine doesn't use more if the car is aerodynamic (in this model, with fixed efficiency).\n- **Braking** (lessons 5 and 13): enough brake force and **ABS** to use all the grip without locking.\n\n## Energy and braking\n\nAt 100 km/h, a 1300 kg car has ½ × 1300 × 27.8² ≈ **502 kJ** to dissipate. The shortest possible distance with μ = 0.9 is:\n\n```\nd = v² / (2 μ g) = 27.8² / (2 × 0.9 × 9.81) ≈ 43.7 m\n```\n\n## How to approach it\n\n1. Choose the drive and the power for the 0–100.\n2. Tune the aerodynamics (top speed **and** consumption improve together).\n3. Set the ratios so the engine reaches top speed.\n4. Brakes: force and ABS.\n\nThen run it and see which goals are still missing — engineering is iteration.",
+      "task": "Design the sports car: **0–100 km/h within 6.5 s** without wheelspin (**up to 0.5 s** of spin), **top speed ≥ 230 km/h**, **consumption ≤ 5.2 L/100 km** at 100 km/h and **braking from 100 km/h within 46 m**.",
+      "hints": [
+        "With front-wheel drive the car spins and can't get below ~8 s, even with more power. Try all-wheel drive with ~150 kW.",
+        "Cd 0.28 and an area of 2.0 m² take care of consumption and top speed; final drive near 3.6. A 12 kN brake with ABS on."
+      ],
+      "goals": [
+        "0–100 km/h within 6.5 s",
+        "Up to 0.5 s of wheelspin",
+        "Top speed of at least 230 km/h",
+        "Consumption up to 5.2 L/100 km at 100 km/h",
+        "Braking from 100 km/h within 46 m"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the kinetic energy of a **1300 kg** car at **100 km/h**? Answer in kJ.",
+          "explanation": "½ × 1300 × 27.78² ≈ 501 500 J ≈ 502 kJ.",
+          "unit": "kJ"
+        },
+        {
+          "prompt": "What is the shortest possible braking distance from **100 km/h** with μ = **0.9**? (g = 9.81 m/s²)",
+          "explanation": "d = 27.78² / (2 × 0.9 × 9.81) ≈ 43.7 m. With ABS (95% of the limit) the car gets close to it.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Why doesn't simply adding power to a **front-wheel-drive** car improve its 0–100?",
+          "options": [
+            "Because the gearbox can't take it",
+            "Because drag increases",
+            "Because when accelerating the weight shifts back and the front wheels spin: grip is the limit",
+            "Because the engine gets heavier"
+          ],
+          "explanation": "The maximum force at the wheels is μ × load on the driven axle; under acceleration load leaves the front. AWD uses all four wheels."
+        }
+      ]
     }
   }
 }

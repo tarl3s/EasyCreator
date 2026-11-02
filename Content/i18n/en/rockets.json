@@ -390,6 +390,383 @@
         "Parachute opens at 50 m/s at most",
         "Landing at 10 m/s at most"
       ]
+    },
+    "rkt-11-agua-otima": {
+      "title": "Water rocket: a bigger bottle and the sweet spot",
+      "theory": "# The energy is in the air, the mass is in the water\n\nIn a water rocket, the **compressed air stores the energy** and the **water is the mass thrown backwards**. Both compete for the same space inside the bottle:\n\n- **Too little water**: plenty of air, but the water runs out in hundredths of a second and the rocket gets little \"push\".\n- **Too much water**: the air expands only a little before the pressure drops, and the rocket still carries heavy water that has barely left.\n\nThe sweet spot is near **1/3 of the volume** — and it changes with the bottle size, the pressure and the nozzle.\n\n## Thrust and exit velocity\n\nWith gauge pressure ΔP at a nozzle of area A:\n\n```\nwater velocity  v = √(2 × ΔP / ρ)\nthrust          F = 2 × A × ΔP\n```\n\nWith 5 bar on a 22 mm nozzle: v ≈ 31.6 m/s and F ≈ 380 N — over 100 g of acceleration on a light rocket!\n\n## Why the bigger bottle goes higher\n\nThe energy stored in the air grows with **pressure × volume**. A 3 L bottle at the same pressure stores 50% more energy, and the air loses pressure more slowly while it pushes the water. The peak acceleration, however, comes at the **end** of the burn, when the bottle is light — so you must also look after the **payload** (an egg, a camera) in the nose.\n\n## In this lab\n\nThe bottle is now **3 L** (same 22 mm nozzle). The empty mass, the nose and the fins are the same as in lesson 1.",
+      "task": "With the **3 L** bottle, go above **60 m** of apogee without the peak acceleration exceeding **100 g** (the camera in the nose can't take more than that). Adjust the **pressure** and the **water**.",
+      "safety": "- **3 L** bottles store more energy: the same rules apply even more strictly — only fizzy-drink PET, **6 bar at most**, remote trigger and **safety glasses**.\n- Never pressurise a spliced bottle (two bottles joined) without a hydrostatic test with water first.\n- Everyone **at least 10 m** away, out of the flight line.",
+      "hints": [
+        "Start at 5 bar and test the water in steps of 0.2 L. Write down the apogee and the peak acceleration of each try.",
+        "A third of 3 L is 1 L. More water makes the rocket heavier at the end of the burn — and the peak acceleration drops."
+      ],
+      "goals": [
+        "Apogee of at least 60 m",
+        "Peak acceleration up to 100 g"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the initial thrust of a water rocket with a **22 mm** nozzle at **5 bar** (F = 2 × A × ΔP)?",
+          "explanation": "A = π × 0.011² = 3.80 × 10⁻⁴ m². F = 2 × 3.80 × 10⁻⁴ × 500 000 ≈ 380 N.",
+          "unit": "N"
+        },
+        {
+          "prompt": "At **5 bar** gauge pressure, how fast does the water leave the nozzle? (v = √(2 × ΔP / ρ), ρ = 1000 kg/m³)",
+          "explanation": "v = √(2 × 500 000 / 1000) = √1000 ≈ 31.6 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Why does the peak acceleration **drop** when you add more water (at the same pressure)?",
+          "options": [
+            "Because the water lowers the starting pressure",
+            "Because, while the thrust is still strong, there is still a lot of heavy water on board",
+            "Because the water makes the nozzle bigger",
+            "Because gravity is stronger with more water"
+          ],
+          "explanation": "a = F / m. With more water, the air has expanded more and the pressure has already dropped by the time the bottle is light; the peak of F/m is lower."
+        }
+      ]
+    },
+    "rkt-12-estavel-demais": {
+      "title": "Overstable: weathercocking and the price of fins",
+      "theory": "# More stability is not always better\n\nIn the stability lesson we saw that the **CG must be ahead of the CP**, with a margin of **1 to 2 calibers**. Why not just fit huge fins and lots of nose weight \"to be safe\"?\n\n## Weathercocking\n\nWhen the rocket leaves the rod in a crosswind, the air arrives slightly from the side. The fins turn the nose **into the wind**, like a weather vane. The **bigger the margin**, the stronger this correction: a rocket with a 4-caliber margin can turn 20° or 30° into the wind, fly low and land far away.\n\n## The cost of fins and ballast\n\n- **Big fins** add wetted area and skin-friction drag (Cd goes up).\n- **Nose weight** is extra mass the motor has to lift.\n\nBoth **steal altitude**. A good design has **enough** margin, not the most.\n\n## Calibers\n\n```\nmargin (calibers) = (CP − CG) / diameter\n```\n\nA 30 mm rocket with the CP at 380 mm and the CG at 290 mm from the tip has a margin of 90 / 30 = **3 calibers** — overstable for most flights.\n\n## In this lab\n\nThe rocket (25 mm, 400 mm, C6 motor) came from another club with huge fins and 20 g of clay in the nose. Bring the margin back into the good range and win back the altitude.",
+      "task": "Bring the stability margin **between 1 and 2 calibers** and make the rocket pass **400 m** of apogee, changing the **fin span** and the **nose weight**.",
+      "safety": "- An **overstable** rocket turns into the wind (\"weathercocking\") and can fly low and far: **don't launch in winds above ~30 km/h** and tilt the launch rod at most a few degrees **downwind**.\n- Keep the landing area clear of people and cars.",
+      "hints": [
+        "Remove the nose weight first: it only costs altitude if the rocket is already stable.",
+        "Then shrink the fins little by little and watch the margin: below ~22 mm it drops under 1 caliber."
+      ],
+      "goals": [
+        "Stability margin between 1 and 2 calibers",
+        "Apogee of at least 400 m"
+      ],
+      "questions": [
+        {
+          "prompt": "A **30 mm** rocket has the CP at **380 mm** and the CG at **290 mm** from the tip. What is the stability margin?",
+          "explanation": "(380 − 290) / 30 = 3 calibers: overstable, it will weathercock in a crosswind.",
+          "unit": "calibers"
+        },
+        {
+          "prompt": "In a crosswind, an overstable rocket…",
+          "options": [
+            "Flies straight, ignoring the wind",
+            "Turns downwind",
+            "Turns its nose into the wind and flies tilted",
+            "Starts tumbling end over end and falls"
+          ],
+          "explanation": "The fins line the rocket up with the relative wind, which comes slightly from the side: the nose points into the wind. The bigger the margin, the bigger the turn."
+        },
+        {
+          "prompt": "A **41 mm** diameter rocket should have a **1.5-caliber** margin. How many millimetres ahead of the CP should the CG be?",
+          "explanation": "1.5 × 41 = 61.5 mm.",
+          "unit": "mm"
+        }
+      ]
+    },
+    "rkt-13-bocal": {
+      "title": "The nozzle: turning pressure into speed",
+      "theory": "# What the nozzle is for\n\nIn the combustion chamber the gases are **hot and at high pressure**, but almost still. The nozzle turns that pressure into **exit velocity**: the faster the gas leaves, the more thrust per kilogram of propellant (the Isp).\n\n## Converging–diverging (de Laval)\n\nA rocket nozzle **narrows** down to the **throat** and then **widens** again:\n\n- In the converging part the gas speeds up to the **speed of sound** exactly at the throat (**choked** flow — the mass flow depends only on the chamber pressure and the throat area).\n- In the diverging part, a **supersonic** gas does the opposite of what intuition says: as the tube **widens** it **accelerates** even more, while pressure and temperature drop.\n\nThe **expansion ratio** is ε = A_exit / A_throat.\n\n## The full thrust\n\n```\nF = ṁ × ve + (pe − pa) × Ae\n```\n\n- ṁ: mass flow; ve: exit velocity;\n- pe: pressure at the nozzle exit; pa: ambient pressure; Ae: exit area.\n\nThe second term is the **pressure thrust**. At sea level (pa ≈ 1 bar), a nozzle that releases the gas at 0.5 bar loses thrust (**over-expanded**); in vacuum (pa = 0) the same nozzle gains thrust. That is why an engine has a lower **sea-level Isp** than its **vacuum Isp**, and upper-stage engines use huge nozzles.\n\n## Ideal design\n\nThe ideal nozzle has pe = pa. Since the air pressure drops during the climb, no fixed nozzle is ideal all the time: first-stage nozzles are a compromise; second-stage ones are optimised for vacuum. A nozzle that is too over-expanded on the ground can suffer **flow separation** and vibrate.",
+      "questions": [
+        {
+          "prompt": "In the **diverging** part of the nozzle (after the throat), the supersonic gas…",
+          "options": [
+            "Slows down, because the tube gets wider",
+            "Speeds up, while pressure and temperature drop",
+            "Keeps its speed and only cools down",
+            "Becomes subsonic again"
+          ],
+          "explanation": "In supersonic flow, increasing the area makes the gas accelerate (the opposite of subsonic flow). That is why the nozzle widens after the throat."
+        },
+        {
+          "prompt": "An engine has ṁ = **100 kg/s**, ve = **2500 m/s**, exit pressure **0.5 bar** and exit area **0.5 m²**. What is the thrust at sea level (pa = 101 325 Pa)?",
+          "explanation": "F = 100 × 2500 + (50 000 − 101 325) × 0.5 = 250 000 − 25 662 ≈ 224 300 N. The nozzle is over-expanded at sea level.",
+          "unit": "N"
+        },
+        {
+          "prompt": "And the same engine in **vacuum** (pa = 0)?",
+          "explanation": "F = 250 000 + 50 000 × 0.5 = 275 000 N. With no air outside, the pressure thrust now helps.",
+          "unit": "N"
+        },
+        {
+          "prompt": "What is this engine's **vacuum Isp**? (Isp = F / (ṁ × g0), g0 = 9.80665 m/s²)",
+          "explanation": "Isp = 275 000 / (100 × 9.80665) ≈ 280 s. At sea level it would be only ≈ 229 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "The throat is **0.2 m** in diameter and the exit **0.8 m**. What is the expansion ratio ε = A_exit / A_throat?",
+          "explanation": "Area grows with the square of the diameter: (0.8 / 0.2)² = 4² = 16.",
+          "unit": ""
+        }
+      ]
+    },
+    "rkt-14-propelentes": {
+      "title": "Propellants: solid, liquid and hybrid",
+      "theory": "# What burns in a rocket\n\nA rocket carries **fuel and oxidiser** (it doesn't use the oxygen in the air). There are three families:\n\n- **Solid**: fuel and oxidiser mixed in one block (the \"grain\"). Simple, stores for years, lots of thrust — but it **can't be shut down or throttled** once lit. E.g. model rocket motors, strap-on boosters. Typical Isp 250–270 s.\n- **Liquid**: two tanks and pumps (or pressurisation). It can be **throttled, shut down and restarted**. E.g. kerosene + liquid oxygen (RP-1/LOX, Isp ~300–340 s), methane/LOX (~330–360 s), hydrogen/LOX (~450 s).\n- **Hybrid**: solid fuel (rubber, paraffin) and liquid or gaseous oxidiser. Safer than solid and simpler than liquid; intermediate Isp.\n\n## Mixture ratio O/F\n\nIt is the ratio between the mass of **oxidiser** and of **fuel** that flows in each second. RP-1/LOX uses O/F ≈ 2.56: out of every 3.56 kg, 2.56 kg is oxygen.\n\n## Why hydrogen has such a high Isp\n\nThe exit velocity grows with the chamber **temperature** and falls with the **molar mass** of the gas:\n\n```\nve ∝ √(T / M)\n```\n\nLight gases (water vapour + hydrogen, M ≈ 10–12 g/mol) leave much faster. If M is halved at the same temperature, ve grows √2 ≈ 1.41 times.\n\n## The price: density\n\nLiquid hydrogen has only **71 kg/m³** (RP-1: ~810 kg/m³). Huge tanks = heavy structure and lots of drag. That is why hydrogen shines in **upper stages**, while the first stage prefers **dense** propellants (kerosene, methane, solids) — high thrust from a small tank.\n\n## Safety\n\nReal propellants are **toxic, cryogenic or explosive**: work for licensed professionals in proper facilities only. At home, only certified commercial motors.",
+      "questions": [
+        {
+          "prompt": "What is the main drawback of a **solid** propellant motor?",
+          "options": [
+            "It needs complicated pumps",
+            "It can't be stored for long",
+            "Once lit, it can't be throttled or shut down",
+            "It gives little thrust"
+          ],
+          "explanation": "The grain burns to the end. That's why solids are great as boosters, but precise orbit insertion is usually left to liquid engines."
+        },
+        {
+          "prompt": "An RP-1/LOX engine burns **100 kg/s** of propellant at O/F = **2.56**. How many kg/s are oxygen?",
+          "explanation": "Oxidiser = 100 × 2.56 / (1 + 2.56) = 100 × 2.56 / 3.56 ≈ 71.9 kg/s; the rest (28.1 kg/s) is kerosene.",
+          "unit": "kg/s"
+        },
+        {
+          "prompt": "If the molar mass of the exhaust gases is **halved** and the chamber temperature doesn't change, the exit velocity is multiplied by how much? (ve ∝ √(T/M))",
+          "explanation": "√(1 / 0.5) = √2 ≈ 1.414.",
+          "unit": ""
+        },
+        {
+          "prompt": "What tank volume do **10 tonnes** of liquid hydrogen (ρ = **71 kg/m³**) take up?",
+          "explanation": "V = 10 000 / 71 ≈ 140.8 m³. The same mass of RP-1 would fit in ~12.3 m³.",
+          "unit": "m³"
+        },
+        {
+          "prompt": "Why is hydrogen, which has the highest Isp, usually used in **upper stages**?",
+          "options": [
+            "Because it doesn't work at sea level",
+            "Because it has low density: huge tanks are heavy and draggy in the air; higher up, the high Isp pays off",
+            "Because it is cheaper",
+            "Because it produces more thrust per nozzle"
+          ],
+          "explanation": "On the first stage what matters is high thrust and compact tanks (dense propellants); in vacuum, every second of Isp is worth a lot of Δv."
+        }
+      ]
+    },
+    "rkt-15-estagios-otimos": {
+      "title": "Optimal staging and the structural fraction",
+      "theory": "# Why split the rocket\n\nBy the Tsiolkovsky equation, Δv = ve × ln(m0 / mf). The problem is the **structure**: tanks, engines and skin all weigh something. In a single-stage rocket, that mass rides along to the end, and the mass ratio is limited.\n\nBy **dropping** the empty tank, the upper stage starts \"from scratch\" with a new mass ratio — and the Δv values **add up**:\n\n```\ntotal Δv = Σ ve,i × ln(m0,i / mf,i)\n```\n\n## Structural fraction\n\nThe **structural coefficient** ε = m_structure / (m_structure + m_propellant) tells how much of the stage is \"dead weight\". Real rockets have ε ≈ 0.05–0.10. With ε = 0.1 and no payload, the best possible mass ratio of one stage is 1/ε = 10 — and with Isp 300 s that gives at most ~6.8 km/s, less than the ~9.4 km/s needed for orbit. **A single stage can't reach orbit with margin**; two or three can.\n\n## The optimal split\n\nFor **identical** stages (same Isp and same ε), the optimal split gives **the same Δv to each stage**. Two stages with mass ratio 3 and Isp 300 s give 2 × 300 × 9.81 × ln 3 ≈ **6.46 km/s**.\n\n## Payload fraction\n\nThe payload is usually only **1 to 4%** of the liftoff mass. Each extra stage improves the Δv but adds engines, separations and failure points — the gains shrink after 3 or 4 stages.\n\n## Required mass ratio\n\nInverting Tsiolkovsky:\n\n```\nm0 / mf = e^(Δv / ve)\n```\n\nWith Isp 350 s (ve ≈ 3432 m/s), for Δv = 4.5 km/s: m0/mf = e^1.311 ≈ 3.71.",
+      "questions": [
+        {
+          "prompt": "Two stages, each with **Isp = 300 s** and mass ratio **3**. What is the total ideal Δv? (g0 = 9.80665 m/s²)",
+          "explanation": "Each stage: 300 × 9.80665 × ln 3 ≈ 3232 m/s. Total ≈ 6464 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "What mass ratio m0/mf does a stage with **Isp = 350 s** need to give **Δv = 4500 m/s**?",
+          "explanation": "ve = 350 × 9.80665 ≈ 3432 m/s. m0/mf = e^(4500/3432) = e^1.311 ≈ 3.71.",
+          "unit": ""
+        },
+        {
+          "prompt": "A stage has structural coefficient **ε = 0.1** and no payload. What is the largest possible mass ratio m0/mf?",
+          "explanation": "m0 = structure + propellant; mf = structure. m0/mf = 1/ε = 10.",
+          "unit": ""
+        },
+        {
+          "prompt": "For **identical** stages (same Isp and same structural fraction), which split gives the largest total Δv?",
+          "options": [
+            "The same Δv for each stage",
+            "Almost all the propellant in the first stage",
+            "Almost all the propellant in the last stage",
+            "It makes no difference"
+          ],
+          "explanation": "It is the classic result of the Lagrange-multiplier optimisation: identical stages should split the Δv equally."
+        },
+        {
+          "prompt": "Why do launchers rarely have more than 3 or 4 stages?",
+          "options": [
+            "Because the law forbids it",
+            "Because the Δv gain shrinks and each stage adds cost, mass and failure risk",
+            "Because extra stages reduce the Δv",
+            "Because the rocket would become unstable"
+          ],
+          "explanation": "The extra Δv from each new stage keeps getting smaller, while separations, ignitions and interfaces are costly failure points."
+        }
+      ]
+    },
+    "rkt-16-perdas-gravidade": {
+      "title": "Gravity and drag losses: the ideal mass flow",
+      "theory": "# The ideal Δv and the Δv that is left\n\nTsiolkovsky gives the **ideal** Δv: no gravity and no air. In a real flight, part of it is spent just **holding the rocket up against gravity** and **pushing the air aside**:\n\n```\nuseful Δv ≈ ideal Δv − gravity loss − drag loss\ngravity loss ≈ g × burn time   (vertical climb)\n```\n\n## Burning slowly: gravity loss\n\nIf the engine has a low mass flow, the thrust-to-weight ratio is close to 1 and the burn takes long. Each second of vertical burn \"spends\" ~9.8 m/s just to avoid falling. A 100 s burn loses ~**981 m/s**!\n\n## Burning fast: drag (and acceleration) loss\n\nWith a very high mass flow, the rocket gets very fast while still **in the dense air** down low. Drag ½·ρ·v²·Cd·A grows with the square of the speed, and the acceleration may exceed what the payload and structure can take.\n\n## The middle ground\n\nThere is an **optimal** mass flow (or thrust-to-weight), typically T/W of 1.5 to 2.5 for sounding rockets. Orbital launchers lift off at T/W ≈ 1.2–1.5 and **throttle down** near the point of maximum dynamic pressure (\"Max Q\").\n\n## In this lab\n\nA guided sounding rocket (Isp 230 s, 150 kg of propellant, 50 kg dry mass, 300 mm diameter). The ideal Δv is the same in every try — only **how fast** the propellant burns changes.",
+      "task": "At 8 kg/s of mass flow the rocket barely passes 36 km and pulls 24 g. Adjust the **mass flow** to pass **130 km** of apogee with a peak acceleration of up to **8 g**.",
+      "hints": [
+        "Lower the mass flow: less drag and fewer g. But watch what happens below 1.5 kg/s.",
+        "Watch the thrust-to-weight: the best apogee comes with T/W near 2."
+      ],
+      "goals": [
+        "Apogee of at least 130 km",
+        "Peak acceleration up to 8 g"
+      ],
+      "questions": [
+        {
+          "prompt": "A rocket climbs vertically burning for **100 s**. What is the approximate gravity loss? (g = 9.81 m/s²)",
+          "explanation": "Loss ≈ g × t = 9.81 × 100 = 981 m/s of Δv spent just to avoid falling.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "At 10 km altitude (ρ = **0.38 kg/m³**), the rocket flies at **1000 m/s** with Cd = **0.5** and frontal area **0.07 m²**. What is the drag?",
+          "explanation": "D = ½ × 0.38 × 1000² × 0.5 × 0.07 = 6650 N — more than the weight of 600 kg!",
+          "unit": "N"
+        },
+        {
+          "prompt": "With the same amount of propellant, why does a T/W of **1.15** give a poor apogee?",
+          "options": [
+            "Because the ideal Δv becomes smaller",
+            "Because the drag is much higher",
+            "Because almost all the thrust is spent holding up the weight during a long burn",
+            "Because the engine overheats"
+          ],
+          "explanation": "The ideal Δv doesn't change (same Isp and masses). With T/W near 1, the net acceleration is small and the gravity loss (g × burn time) is huge."
+        }
+      ]
+    },
+    "rkt-17-reentrada": {
+      "title": "Re-entry: coming back from space in one piece",
+      "theory": "# All the energy has to go\n\nA spacecraft in low orbit flies at ~7.8 km/s. Each kilogram has ½·v² ≈ **30 MJ** of kinetic energy — more than the chemical energy of 7 kg of TNT. To land, almost all of it has to become **heat in the air** in front of the craft.\n\n## Ballistic coefficient\n\n```\nβ = m / (Cd × A)\n```\n\nβ tells how \"piercing\" the object is. **Low β** (light and wide) brakes **high up**, where the air is thin — less, more spread-out heating. **High β** (heavy and slim) dives deep before braking — huge peaks of heat and g. The terminal speed near the ground is:\n\n```\nv = √(2 × β × g / ρ)\n```\n\n## Blunt bodies\n\nIt seems odd, but capsules are **blunt**, not pointed: the flat front creates a **detached shock wave** that stays away from the surface, and much of the heat goes into the air instead of into the craft (H. Julian Allen's idea, 1951).\n\n## Heat shields\n\n- **Ablative** (phenolic resins, PICA): the material chars and flakes off, carrying the heat away. Single use.\n- **Reusable** (the Space Shuttle's ceramic tiles, carbon-carbon on the nose and edges): radiate the heat back out.\n\n## The entry corridor\n\nEntering **too steep** produces lethal g and heat; **too shallow**, the craft \"skips\" off the atmosphere back into space. Crewed capsules keep the deceleration at ~4–8 g by using a little lift (the CG is offset from the axis).\n\n## Finally: parachutes\n\nBelow ~10 km, already subsonic, the capsule opens the **drogue** chute and then the **mains**.",
+      "questions": [
+        {
+          "prompt": "How much kinetic energy does **1 kg** have at **7800 m/s**? Answer in MJ.",
+          "explanation": "E = ½ × 1 × 7800² = 30 420 000 J ≈ 30.4 MJ.",
+          "unit": "MJ"
+        },
+        {
+          "prompt": "A **1000 kg** capsule, **2 m** in diameter, Cd = **1.2**. What is the ballistic coefficient β = m / (Cd × A)?",
+          "explanation": "A = π × 1² = 3.1416 m². β = 1000 / (1.2 × 3.1416) ≈ 265 kg/m².",
+          "unit": "kg/m²"
+        },
+        {
+          "prompt": "Without parachutes, what would this capsule's terminal speed be near the ground? (v = √(2βg/ρ), g = 9.81, ρ = 1.225 kg/m³)",
+          "explanation": "v = √(2 × 265.3 × 9.81 / 1.225) ≈ 65 m/s (~235 km/h): that is why parachutes are essential.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "Why do re-entry capsules have a **blunt** front instead of a pointed one?",
+          "options": [
+            "To fit more people",
+            "The shock wave stays detached and away from the surface, and much of the heat stays in the air",
+            "Because pointed tips heat up less",
+            "To reduce drag"
+          ],
+          "explanation": "A pointed body concentrates the heat at the tip; the blunt one pushes the shock away and increases drag, braking higher up."
+        },
+        {
+          "prompt": "What happens if the craft enters the atmosphere at too **shallow** an angle?",
+          "options": [
+            "It heats up much more and breaks apart",
+            "It lands farther away, but without trouble",
+            "It can \"skip\" off the atmosphere back into space",
+            "The parachutes open too early"
+          ],
+          "explanation": "Outside the entry corridor: too steep = lethal g and heat; too shallow = the craft doesn't lose enough speed and leaves the atmosphere."
+        }
+      ]
+    },
+    "rkt-18-mecanica-orbital": {
+      "title": "Orbital mechanics: Kepler, escape and geostationary orbit",
+      "theory": "# The laws that govern orbits\n\nAn orbit is a **free fall that never hits the ground**: the craft is always falling, but moves sideways fast enough for the Earth to \"curve away\" beneath it.\n\n## Kepler's laws\n\n1. Orbits are **ellipses** with the Earth at one focus.\n2. The craft sweeps **equal areas in equal times**: it moves faster at **perigee** (lowest point) and slower at **apogee**.\n3. The period depends only on the **semi-major axis** a:\n\n```\nT = 2π × √(a³ / GM)\n```\n\nWith the Earth's GM = 3.986 × 10¹⁴ m³/s² and radius R = 6371 km, an orbit at 400 km (a = 6771 km) has T ≈ **92 minutes** — the ISS goes around ~15.5 times a day.\n\n## Vis-viva\n\nThe speed at any point of the orbit, at distance r from the centre:\n\n```\nv = √(GM × (2/r − 1/a))\n```\n\nFor a circular orbit (r = a): v = √(GM/r). To escape (a → ∞): **v_escape = √(2GM/r)** — from the Earth's surface, ~**11.2 km/s**.\n\n## Geostationary orbit\n\nWith a period equal to **one sidereal day** (86 164 s), above the equator, the satellite seems fixed in the sky. By the 3rd law: a = ∛(GM × T² / 4π²) ≈ **42 164 km** from the centre (~35 786 km altitude).\n\n## Hohmann transfer (review)\n\nTo go from low orbit to geostationary, the first burn raises the apogee to 42 164 km. The speed at the perigee of the transfer ellipse comes from vis-viva with a = (r1 + r2)/2.",
+      "questions": [
+        {
+          "prompt": "What is the period of a circular orbit at **400 km** altitude? (GM = 3.986 × 10¹⁴ m³/s², R = 6371 km). Answer in minutes.",
+          "explanation": "a = 6 771 000 m. T = 2π√(a³/GM) ≈ 5545 s ≈ 92.4 min.",
+          "unit": "min"
+        },
+        {
+          "prompt": "What is the escape velocity at the Earth's surface? (v = √(2GM/R))",
+          "explanation": "v = √(2 × 3.986 × 10¹⁴ / 6 371 000) ≈ 11 186 m/s ≈ 11.2 km/s (ignoring the air).",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "What is the radius of the geostationary orbit (distance from the Earth's centre)? Use T = **86 164 s**.",
+          "explanation": "a = ∛(GM × T² / 4π²) = ∛(3.986 × 10¹⁴ × 86 164² / 39.48) ≈ 42 164 km.",
+          "unit": "km"
+        },
+        {
+          "prompt": "To leave the **400 km** circular orbit (r1 = 6771 km) for an ellipse with its apogee at geostationary (r2 = 42 164 km), what is the Δv of the first burn? Use vis-viva.",
+          "explanation": "a = (6771 + 42 164)/2 = 24 467.5 km. v_perigee = √(GM(2/r1 − 1/a)) ≈ 10 072 m/s; v_circular = √(GM/r1) ≈ 7673 m/s. Δv ≈ 2399 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "In an elliptical orbit, where does the craft move fastest?",
+          "options": [
+            "At perigee (the point closest to the Earth)",
+            "At apogee (the farthest point)",
+            "The speed is the same along the whole orbit",
+            "It depends on the craft's mass"
+          ],
+          "explanation": "Kepler's 2nd law (equal areas in equal times), or vis-viva: smaller r → larger v. The craft's mass doesn't matter."
+        }
+      ]
+    },
+    "rkt-19-competicao": {
+      "title": "Competition: exact apogee and flight time",
+      "theory": "# Hit the target, not the highest altitude\n\nIn student model rocketry competitions (like the American Rocketry Challenge and its versions in other countries), the challenge is **not** to go as high as possible: it is to reach an **exact altitude** and come back to the ground in an **exact time**, with a fragile payload (an egg) intact. Missing high or low costs points.\n\n## The design levers\n\n- **Motor**: sets the range of possible altitudes (the impulse class).\n- **Mass**: the fine tuning of the apogee. Ballast (clay) near the CG changes the altitude without ruining stability.\n- **Ejection delay**: should open the parachute **near apogee**, when the speed is lowest (too early tears the chute; too late, the rocket is already falling).\n- **Parachute**: sets the **descent speed** and therefore the flight time:\n\n```\nflight time ≈ time to apogee + apogee / descent speed\ndescent speed = √(2 m g / (ρ Cd A))\n```\n\nA bigger parachute comes down more slowly (longer flight time, softer landing), but the wind carries the rocket farther.\n\n## Engineering method\n\nIn practice, teams make **test flights**, note the altimeter's apogee and correct the mass: each extra gram takes off a few metres. Here you do the same in the simulator.\n\n## In this lab\n\nA 41 mm × 650 mm rocket, ogive nose, 45 mm fins. The dry mass includes the egg and the altimeter.",
+      "task": "Contest rules: apogee **between 240 and 260 m**, flight time **between 41 and 46 s**, parachute opening **below 10 m/s** and landing **at up to 7.5 m/s** (the egg must not break). Choose the **motor**, the **dry mass**, the **parachute** and the **delay**.",
+      "safety": "- Model rocketry competitions follow the organiser's **safety code**: certified motors, rocket inspection before flight, a range safety officer in charge.\n- If the payload is a **raw egg**, it goes inside padded protection — and the rocket must come back under a parachute, never in free fall.\n- Nobody approaches a motor that **misfired** for 60 s.",
+      "hints": [
+        "With the D12, only a very light rocket (under 150 g) reaches 240 m. Try the E9 and adjust the mass 5 g at a time.",
+        "Choose the delay so the parachute opens near apogee (apogee time − burn time). Then size the parachute to hit the flight time."
+      ],
+      "goals": [
+        "Apogee between 240 and 260 m",
+        "Flight time between 41 and 46 s",
+        "Parachute opens at up to 10 m/s",
+        "Landing at up to 7.5 m/s"
+      ],
+      "questions": [
+        {
+          "prompt": "A rocket comes down from **250 m** at a constant **6 m/s** under its parachute. How long does the descent take?",
+          "explanation": "t = 250 / 6 ≈ 41.7 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "The rocket reaches its **240 m** apogee at **8 s** and comes down at **7 m/s**. What is the approximate flight time?",
+          "explanation": "8 + 240 / 7 = 8 + 34.3 ≈ 42.3 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "The rocket overshot the target by 20 m. What is the simplest fix, without touching the motor or the parachute?",
+          "options": [
+            "Increase the ejection delay",
+            "Add a few grams of ballast near the CG",
+            "Remove the fins",
+            "Launch with the rod tilted more"
+          ],
+          "explanation": "Extra mass lowers the apogee predictably. Near the CG, it barely changes the stability margin."
+        }
+      ]
+    },
+    "rkt-20-lancador-orbital": {
+      "title": "Final project: a small orbital launcher",
+      "theory": "# Putting it all together\n\nAn orbital launcher is a compromise between every lesson of this track:\n\n- **Δv**: ~9.4 km/s for low orbit (7.8 km/s of orbital speed + gravity, drag and steering losses). It comes from Tsiolkovsky, stage by stage.\n- **Liftoff thrust-to-weight**: at least ~1.3. Below that, gravity loss eats the Δv (and with T/W < 1 the rocket doesn't even leave the pad).\n- **Peak acceleration**: at the end of the burn the rocket is light and the acceleration soars. Payloads and crews limit it to ~4–6 g; real engines **throttle down** at the end.\n- **Liftoff mass**: it costs money. Each kilogram of payload in orbit takes tens of kilograms on the pad.\n\n## Splitting between stages\n\nThe first stage needs **a lot of thrust** (high mass flow) to lift the weight of everything. The second stage is light: it can have a **lower mass flow** (fewer g at the end) and a **higher Isp** (vacuum nozzle). Putting more propellant in the second stage gives more Δv per kilogram — until the first stage can no longer lift the stack.\n\n## In this lab\n\n- Payload + second-stage structure: **1500 kg** (dry mass).\n- First-stage structure: **4000 kg** (dropped at separation).\n- Isp: **280 s** (first stage, sea level) and **330 s** (second, vacuum nozzle).\n- Flight guided by thrust vectoring; the simulator flies vertically, so look at the **ideal Δv**, the **T/W** and the **acceleration** — the apogee is not the goal here.",
+      "task": "Design both stages: **ideal Δv of at least 9400 m/s**, **thrust-to-weight of at least 1.3** at liftoff, peak acceleration of **up to 6 g** and liftoff mass of **up to 56 t**. You control the propellant and the mass flow of each stage.",
+      "hints": [
+        "First move propellant from the 1st to the 2nd stage (keeping the total mass) and watch the Δv rise.",
+        "Then raise the 1st-stage mass flow until T/W passes 1.3, and lower the 2nd-stage one if the acceleration exceeds 6 g."
+      ],
+      "goals": [
+        "Ideal Δv of at least 9400 m/s",
+        "Liftoff thrust-to-weight of at least 1.3",
+        "Peak acceleration up to 6 g",
+        "Liftoff mass up to 56 t"
+      ],
+      "questions": [
+        {
+          "prompt": "A first stage with **Isp 300 s** goes from **50 t** to **20 t** during its burn. What is its ideal Δv? (g0 = 9.80665 m/s²)",
+          "explanation": "Δv = 300 × 9.80665 × ln(50/20) = 2942 × 0.916 ≈ 2696 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "A **53.5 t** rocket lifts off with **250 kg/s** of mass flow and **Isp 280 s**. What is its thrust-to-weight? (g0 = 9.80665 m/s²)",
+          "explanation": "Thrust = 280 × 9.80665 × 250 ≈ 686 466 N. Weight = 53 500 × 9.80665 ≈ 524 656 N. T/W ≈ 1.31.",
+          "unit": ""
+        },
+        {
+          "prompt": "Why does the peak acceleration usually happen at the **end** of the second-stage burn?",
+          "options": [
+            "Because the engine raises its thrust by itself",
+            "Because the air helps to push",
+            "Because the thrust is almost constant and the mass has become much smaller",
+            "Because gravity vanishes in space"
+          ],
+          "explanation": "a = F/m: with the tank almost empty, the same force accelerates a much smaller mass. That's why real engines throttle down at the end."
+        }
+      ]
     }
   }
 }

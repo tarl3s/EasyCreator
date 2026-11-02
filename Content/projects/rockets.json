@@ -561,6 +561,713 @@
           "explanation": "Com empuxo constante, a massa cai à medida que o propelente queima; no fim restam só ~60 kg para o mesmo empuxo."
         }
       ]
+    },
+    {
+      "id": "rkt-11-agua-otima",
+      "title": "Foguete de água: garrafa maior e o ponto ótimo",
+      "level": 3,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Garrafas de **3 L** guardam mais energia: as mesmas regras valem com ainda mais rigor — só PET de refrigerante com gás, **no máximo 6 bar**, gatilho à distância e **óculos**.\n- Nunca pressurize uma garrafa emendada (duas garrafas coladas) sem teste hidrostático com água antes.\n- Todo mundo a **pelo menos 10 m**, fora da linha de voo.",
+      "theory": "# A energia está no ar, a massa está na água\n\nNum foguete de água, o **ar comprimido guarda a energia** e a **água é a massa que é jogada para trás**. Os dois competem pelo mesmo espaço dentro da garrafa:\n\n- **Pouca água**: sobra ar, mas a água acaba em centésimos de segundo e o foguete leva pouco \"empurrão\".\n- **Água demais**: o ar se expande pouco antes de a pressão cair, e o foguete ainda carrega água pesada que mal saiu.\n\nO ponto ótimo fica perto de **1/3 do volume** — e muda com o tamanho da garrafa, a pressão e o bico.\n\n## Empuxo e velocidade de saída\n\nCom a pressão manométrica ΔP no bico de área A:\n\n```\nvelocidade da água  v = √(2 × ΔP / ρ)\nempuxo              F = 2 × A × ΔP\n```\n\nCom 5 bar num bico de 22 mm: v ≈ 31,6 m/s e F ≈ 380 N — mais de 100 g de aceleração num foguete leve!\n\n## Por que a garrafa maior sobe mais\n\nA energia guardada no ar cresce com **pressão × volume**. Uma garrafa de 3 L com a mesma pressão guarda 50% mais energia, e o ar perde pressão mais devagar enquanto empurra a água. A aceleração máxima, porém, chega no **fim** da queima, quando a garrafa está leve — por isso também é preciso cuidar da **carga** (um ovo, uma câmera) que vai no nariz.\n\n## Neste laboratório\n\nA garrafa agora é de **3 L** (mesmo bico de 22 mm). A massa vazia, o nariz e as aletas são os mesmos da lição 1.",
+      "task": "Com a garrafa de **3 L**, passe dos **60 m** de apogeu sem que a aceleração máxima passe de **100 g** (a câmera no nariz não aguenta mais que isso). Ajuste a **pressão** e a **água**.",
+      "hints": [
+        "Comece com 5 bar e teste a água de 0,2 em 0,2 L. Anote o apogeu e a aceleração máxima de cada tentativa.",
+        "Um terço de 3 L é 1 L. Mais água deixa o foguete mais pesado no fim da queima — e a aceleração máxima cai."
+      ],
+      "labParams": {
+        "motor": "water",
+        "bottle": "3",
+        "water.max": "2.9",
+        "diameter": "100",
+        "length": "450",
+        "dryMass": "0.15",
+        "noseWeight": "40",
+        "finSpan": "110",
+        "chute": "0",
+        "nose": "ogive",
+        "pressure": "5",
+        "water": "0.5",
+        "controls": "pressure,water"
+      },
+      "goals": [
+        {
+          "metric": "apogee",
+          "op": ">=",
+          "value": 60,
+          "description": "Apogeu de pelo menos 60 m"
+        },
+        {
+          "metric": "maxAccelG",
+          "op": "<=",
+          "value": 100,
+          "description": "Aceleração máxima de até 100 g"
+        }
+      ],
+      "solutionInputs": {
+        "pressure": "5",
+        "water": "1"
+      },
+      "questions": [
+        {
+          "prompt": "Qual o empuxo inicial de um foguete de água com bico de **22 mm** de diâmetro a **5 bar** (F = 2 × A × ΔP)?",
+          "kind": "number",
+          "answer": "380.1",
+          "unit": "N",
+          "tolerance": 2,
+          "explanation": "A = π × 0,011² = 3,80 × 10⁻⁴ m². F = 2 × 3,80 × 10⁻⁴ × 500 000 ≈ 380 N."
+        },
+        {
+          "prompt": "Com **5 bar** de pressão manométrica, com que velocidade a água sai do bico? (v = √(2 × ΔP / ρ), ρ = 1000 kg/m³)",
+          "kind": "number",
+          "answer": "31.62",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "v = √(2 × 500 000 / 1000) = √1000 ≈ 31,6 m/s."
+        },
+        {
+          "prompt": "Por que a aceleração máxima **diminui** quando você coloca mais água (com a mesma pressão)?",
+          "kind": "choice",
+          "options": [
+            "Porque a água deixa a pressão inicial mais baixa",
+            "Porque, quando o empuxo ainda é forte, ainda há muita água pesada a bordo",
+            "Porque a água deixa o bico maior",
+            "Porque a gravidade é maior com mais água"
+          ],
+          "answer": "1",
+          "explanation": "a = F / m. Com mais água, o ar se expande mais e a pressão já caiu quando a garrafa fica leve; o pico de F/m é menor."
+        }
+      ]
+    },
+    {
+      "id": "rkt-12-estavel-demais",
+      "title": "Estável demais: o cata-vento e o preço das aletas",
+      "level": 3,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Um foguete **estável demais** vira contra o vento (\"cata-vento\") e pode voar baixo e longe: **não lance com vento acima de ~30 km/h** e incline a base no máximo uns poucos graus **a favor** do vento.\n- Mantenha a área de queda livre de pessoas e carros.",
+      "theory": "# Mais estabilidade nem sempre é melhor\n\nNa lição de estabilidade vimos que o **CG precisa ficar na frente do CP**, com margem de **1 a 2 calibres**. Por que não colocar logo aletas enormes e muito peso no nariz, \"para garantir\"?\n\n## O cata-vento (weathercocking)\n\nQuando o foguete sai da base com vento lateral, o ar chega um pouco de lado. As aletas viram o nariz **para dentro do vento**, como um cata-vento. Quanto **maior a margem**, mais forte essa correção: um foguete com 4 calibres de margem pode virar 20° ou 30° contra o vento, voar baixo e cair longe.\n\n## O custo das aletas e do lastro\n\n- **Aletas grandes** aumentam a área molhada e o arrasto de atrito (o Cd sobe).\n- **Peso no nariz** é massa a mais que o motor precisa levantar.\n\nOs dois **roubam altura**. O projeto bom tem a margem **suficiente**, não a máxima.\n\n## Calibres\n\n```\nmargem (calibres) = (CP − CG) / diâmetro\n```\n\nUm foguete de 30 mm com CP a 380 mm e CG a 290 mm da ponta tem margem de 90 / 30 = **3 calibres** — estável demais para a maioria dos voos.\n\n## Neste laboratório\n\nO foguete (25 mm, 400 mm, motor C6) veio de outro clube com aletas enormes e 20 g de massinha no nariz. Faça a margem voltar para a faixa boa e recupere a altura.",
+      "task": "Deixe a margem de estabilidade **entre 1 e 2 calibres** e faça o foguete passar dos **400 m** de apogeu, mexendo na **envergadura das aletas** e no **peso no nariz**.",
+      "hints": [
+        "Tire primeiro o peso do nariz: ele só custa altura se o foguete já é estável.",
+        "Depois diminua as aletas aos poucos e observe a margem: abaixo de ~22 mm ela cai abaixo de 1 calibre."
+      ],
+      "labParams": {
+        "motor": "C6",
+        "dryMass": "0.05",
+        "diameter": "25",
+        "length": "400",
+        "finSpan": "80",
+        "noseWeight": "20",
+        "chute": "30",
+        "delay": "5",
+        "controls": "finSpan,noseWeight,fins"
+      },
+      "goals": [
+        {
+          "metric": "stabilityMargin",
+          "op": "between",
+          "value": 1,
+          "max": 2,
+          "description": "Margem de estabilidade entre 1 e 2 calibres"
+        },
+        {
+          "metric": "apogee",
+          "op": ">=",
+          "value": 400,
+          "description": "Apogeu de pelo menos 400 m"
+        }
+      ],
+      "solutionInputs": {
+        "finSpan": "25",
+        "noseWeight": "0"
+      },
+      "questions": [
+        {
+          "prompt": "Um foguete de **30 mm** tem o CP a **380 mm** e o CG a **290 mm** da ponta. Qual a margem de estabilidade?",
+          "kind": "number",
+          "answer": "3",
+          "unit": "calibres",
+          "tolerance": 2,
+          "explanation": "(380 − 290) / 30 = 3 calibres: estável demais, vai fazer cata-vento com vento lateral."
+        },
+        {
+          "prompt": "Com vento lateral, um foguete estável demais…",
+          "kind": "choice",
+          "options": [
+            "Voa reto, sem notar o vento",
+            "Vira a favor do vento",
+            "Vira o nariz contra o vento e voa inclinado",
+            "Começa a girar em volta do próprio eixo e cai"
+          ],
+          "answer": "2",
+          "explanation": "As aletas alinham o foguete com o vento relativo, que vem um pouco de lado: o nariz aponta para o vento. Quanto maior a margem, maior o desvio."
+        },
+        {
+          "prompt": "Um foguete de **41 mm** de diâmetro deve ter **1,5 calibres** de margem. Quantos milímetros o CG deve ficar à frente do CP?",
+          "kind": "number",
+          "answer": "61.5",
+          "unit": "mm",
+          "tolerance": 1,
+          "explanation": "1,5 × 41 = 61,5 mm."
+        }
+      ]
+    },
+    {
+      "id": "rkt-13-bocal",
+      "title": "O bocal: transformando pressão em velocidade",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# Para que serve o bocal\n\nNa câmara de combustão os gases estão **quentes e sob alta pressão**, mas quase parados. O bocal transforma essa pressão em **velocidade de saída**: quanto mais rápido o gás sai, maior o empuxo por quilo de propelente (o Isp).\n\n## Convergente–divergente (de Laval)\n\nO bocal de foguete **afunila** até a **garganta** e depois **abre** de novo:\n\n- Na parte convergente o gás acelera até a **velocidade do som** exatamente na garganta (escoamento **bloqueado** — a vazão depende só da pressão da câmara e da área da garganta).\n- Na parte divergente, um gás **supersônico** faz o contrário do que a intuição diz: ao **abrir** o tubo ele **acelera** ainda mais, enquanto a pressão e a temperatura caem.\n\nA **razão de expansão** é ε = A_saída / A_garganta.\n\n## O empuxo completo\n\n```\nF = ṁ × ve + (pe − pa) × Ae\n```\n\n- ṁ: vazão de massa; ve: velocidade de saída;\n- pe: pressão na saída do bocal; pa: pressão do ambiente; Ae: área de saída.\n\nO segundo termo é o **empuxo de pressão**. Ao nível do mar (pa ≈ 1 bar), um bocal que solta o gás a 0,5 bar perde empuxo (**sobre-expandido**); no vácuo (pa = 0) o mesmo bocal ganha empuxo. Por isso um motor tem **Isp ao nível do mar** menor que o **Isp no vácuo**, e os motores de estágio superior usam bocais enormes.\n\n## Projeto ideal\n\nO bocal ideal tem pe = pa. Como a pressão do ar cai durante a subida, nenhum bocal fixo é ideal o tempo todo: os do 1º estágio são um compromisso; os do 2º, otimizados para o vácuo. Bocal sobre-expandido demais no chão pode **descolar o escoamento** e vibrar.",
+      "questions": [
+        {
+          "prompt": "Na parte **divergente** do bocal (depois da garganta), o gás supersônico…",
+          "kind": "choice",
+          "options": [
+            "Desacelera, porque o tubo fica mais largo",
+            "Acelera, enquanto a pressão e a temperatura caem",
+            "Mantém a velocidade e só esfria",
+            "Volta a ser subsônico"
+          ],
+          "answer": "1",
+          "explanation": "Em escoamento supersônico, aumentar a área faz o gás acelerar (o oposto do subsônico). É por isso que o bocal abre depois da garganta."
+        },
+        {
+          "prompt": "Um motor tem ṁ = **100 kg/s**, ve = **2500 m/s**, pressão de saída **0,5 bar** e área de saída **0,5 m²**. Qual o empuxo ao nível do mar (pa = 101 325 Pa)?",
+          "kind": "number",
+          "answer": "224300",
+          "unit": "N",
+          "tolerance": 1,
+          "explanation": "F = 100 × 2500 + (50 000 − 101 325) × 0,5 = 250 000 − 25 662 ≈ 224 300 N. O bocal está sobre-expandido ao nível do mar."
+        },
+        {
+          "prompt": "E o mesmo motor no **vácuo** (pa = 0)?",
+          "kind": "number",
+          "answer": "275000",
+          "unit": "N",
+          "tolerance": 1,
+          "explanation": "F = 250 000 + 50 000 × 0,5 = 275 000 N. Sem ar do lado de fora, o empuxo de pressão passa a ajudar."
+        },
+        {
+          "prompt": "Qual o **Isp no vácuo** desse motor? (Isp = F / (ṁ × g0), g0 = 9,80665 m/s²)",
+          "kind": "number",
+          "answer": "280.4",
+          "unit": "s",
+          "tolerance": 1,
+          "explanation": "Isp = 275 000 / (100 × 9,80665) ≈ 280 s. Ao nível do mar seria só ≈ 229 s."
+        },
+        {
+          "prompt": "A garganta tem **0,2 m** de diâmetro e a saída **0,8 m**. Qual a razão de expansão ε = A_saída / A_garganta?",
+          "kind": "number",
+          "answer": "16",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "A área cresce com o quadrado do diâmetro: (0,8 / 0,2)² = 4² = 16."
+        }
+      ]
+    },
+    {
+      "id": "rkt-14-propelentes",
+      "title": "Propelentes: sólidos, líquidos e híbridos",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# O que queima num foguete\n\nUm foguete leva **combustível e oxidante** (não usa o oxigênio do ar). Há três famílias:\n\n- **Sólido**: combustível e oxidante misturados num bloco (o \"grão\"). Simples, guarda por anos, dá muito empuxo — mas **não dá para desligar nem regular** depois de aceso. Ex.: motores de foguetemodelo, boosters laterais. Isp típico 250–270 s.\n- **Líquido**: dois tanques e bombas (ou pressurização). Pode ser **regulado, desligado e religado**. Ex.: querosene + oxigênio líquido (RP-1/LOX, Isp ~300–340 s), metano/LOX (~330–360 s), hidrogênio/LOX (~450 s).\n- **Híbrido**: combustível sólido (borracha, parafina) e oxidante líquido ou gasoso. Mais seguro que o sólido e mais simples que o líquido; Isp intermediário.\n\n## Razão de mistura O/F\n\nÉ a razão entre a massa de **oxidante** e a de **combustível** que entra por segundo. RP-1/LOX usa O/F ≈ 2,56: em cada 3,56 kg, 2,56 kg são oxigênio.\n\n## Por que o hidrogênio tem Isp tão alto\n\nA velocidade de saída cresce com a **temperatura** da câmara e cai com a **massa molar** do gás:\n\n```\nve ∝ √(T / M)\n```\n\nGases leves (vapor d'água + hidrogênio, M ≈ 10–12 g/mol) saem muito mais rápido. Se M cai pela metade na mesma temperatura, ve aumenta √2 ≈ 1,41 vezes.\n\n## O preço: densidade\n\nO hidrogênio líquido tem só **71 kg/m³** (RP-1: ~810 kg/m³). Tanques enormes = estrutura pesada e muito arrasto. Por isso o hidrogênio brilha nos **estágios superiores**, e o primeiro estágio prefere propelentes **densos** (querosene, metano, sólidos) — empuxo alto num tanque pequeno.\n\n## Segurança\n\nPropelentes reais são **tóxicos, criogênicos ou explosivos**: trabalho só de profissionais, com licença e instalações próprias. Em casa, só motores comerciais certificados.",
+      "questions": [
+        {
+          "prompt": "Qual a principal desvantagem de um motor de propelente **sólido**?",
+          "kind": "choice",
+          "options": [
+            "Precisa de bombas complicadas",
+            "Não pode ser guardado por muito tempo",
+            "Depois de aceso, não dá para regular nem desligar",
+            "Dá pouco empuxo"
+          ],
+          "answer": "2",
+          "explanation": "O grão queima até o fim. Por isso sólidos são ótimos como boosters, mas a inserção precisa em órbita costuma ficar com motores líquidos."
+        },
+        {
+          "prompt": "Um motor RP-1/LOX consome **100 kg/s** de propelente com O/F = **2,56**. Quantos kg/s são de oxigênio?",
+          "kind": "number",
+          "answer": "71.91",
+          "unit": "kg/s",
+          "tolerance": 1,
+          "explanation": "Oxidante = 100 × 2,56 / (1 + 2,56) = 100 × 2,56 / 3,56 ≈ 71,9 kg/s; o resto (28,1 kg/s) é querosene."
+        },
+        {
+          "prompt": "Se a massa molar dos gases de exaustão cai **pela metade** e a temperatura da câmara não muda, a velocidade de saída fica multiplicada por quanto? (ve ∝ √(T/M))",
+          "kind": "number",
+          "answer": "1.414",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "√(1 / 0,5) = √2 ≈ 1,414."
+        },
+        {
+          "prompt": "Que volume de tanque ocupam **10 toneladas** de hidrogênio líquido (ρ = **71 kg/m³**)?",
+          "kind": "number",
+          "answer": "140.8",
+          "unit": "m³",
+          "tolerance": 1,
+          "explanation": "V = 10 000 / 71 ≈ 140,8 m³. A mesma massa de RP-1 caberia em ~12,3 m³."
+        },
+        {
+          "prompt": "Por que o hidrogênio, que tem o maior Isp, costuma ficar nos **estágios superiores**?",
+          "kind": "choice",
+          "options": [
+            "Porque ele não funciona ao nível do mar",
+            "Porque é pouco denso: tanques enormes pesam e freiam no ar; em cima, o Isp alto compensa",
+            "Porque é mais barato",
+            "Porque produz mais empuxo por bocal"
+          ],
+          "answer": "1",
+          "explanation": "No 1º estágio importa empuxo alto e tanques compactos (propelentes densos); no vácuo, cada segundo de Isp vale muito Δv."
+        }
+      ]
+    },
+    {
+      "id": "rkt-15-estagios-otimos",
+      "title": "Estágios ótimos e a fração estrutural",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# Por que dividir o foguete\n\nPela equação de Tsiolkovsky, Δv = ve × ln(m0 / mf). O problema é a **estrutura**: tanques, motores e casca pesam. Num foguete de um estágio, essa massa vai junto até o fim, e a razão de massas fica limitada.\n\nAo **descartar** o tanque vazio, o estágio de cima começa \"do zero\" com outra razão de massas — e os Δv **somam**:\n\n```\nΔv total = Σ ve,i × ln(m0,i / mf,i)\n```\n\n## Fração estrutural\n\nO **coeficiente estrutural** ε = m_estrutura / (m_estrutura + m_propelente) diz quanto do estágio é \"peso morto\". Foguetes reais têm ε ≈ 0,05–0,10. Com ε = 0,1 e sem carga útil, a melhor razão de massas possível de um estágio é 1/ε = 10 — e com Isp 300 s isso dá no máximo ~6,8 km/s, menos que os ~9,4 km/s para a órbita. **Um estágio só não chega à órbita com folga**; dois ou três chegam.\n\n## A divisão ótima\n\nPara estágios **iguais** (mesmo Isp e mesmo ε), a divisão ótima dá **o mesmo Δv para cada estágio**. Dois estágios com razão de massas 3 e Isp 300 s dão 2 × 300 × 9,81 × ln 3 ≈ **6,46 km/s**.\n\n## A fração de carga útil\n\nA carga útil costuma ser só **1 a 4%** da massa de decolagem. Cada estágio a mais melhora o Δv, mas acrescenta motores, separação e pontos de falha — os ganhos diminuem depois de 3 ou 4 estágios.\n\n## Razão de massas necessária\n\nInvertendo Tsiolkovsky:\n\n```\nm0 / mf = e^(Δv / ve)\n```\n\nCom Isp 350 s (ve ≈ 3432 m/s), para Δv = 4,5 km/s: m0/mf = e^1,311 ≈ 3,71.",
+      "questions": [
+        {
+          "prompt": "Dois estágios, cada um com **Isp = 300 s** e razão de massas **3**. Qual o Δv ideal total? (g0 = 9,80665 m/s²)",
+          "kind": "number",
+          "answer": "6464",
+          "unit": "m/s",
+          "tolerance": 1,
+          "explanation": "Cada estágio: 300 × 9,80665 × ln 3 ≈ 3232 m/s. Total ≈ 6464 m/s."
+        },
+        {
+          "prompt": "Que razão de massas m0/mf um estágio com **Isp = 350 s** precisa para dar **Δv = 4500 m/s**?",
+          "kind": "number",
+          "answer": "3.71",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "ve = 350 × 9,80665 ≈ 3432 m/s. m0/mf = e^(4500/3432) = e^1,311 ≈ 3,71."
+        },
+        {
+          "prompt": "Um estágio tem coeficiente estrutural **ε = 0,1** e nenhuma carga útil. Qual a maior razão de massas m0/mf possível?",
+          "kind": "number",
+          "answer": "10",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "m0 = estrutura + propelente; mf = estrutura. m0/mf = 1/ε = 10."
+        },
+        {
+          "prompt": "Para estágios **iguais** (mesmo Isp e mesma fração estrutural), qual divisão dá o maior Δv total?",
+          "kind": "choice",
+          "options": [
+            "O mesmo Δv para cada estágio",
+            "Quase todo o propelente no 1º estágio",
+            "Quase todo o propelente no último estágio",
+            "Tanto faz"
+          ],
+          "answer": "0",
+          "explanation": "É o resultado clássico da otimização por multiplicadores de Lagrange: estágios iguais devem dividir o Δv igualmente."
+        },
+        {
+          "prompt": "Por que lançadores raramente têm mais de 3 ou 4 estágios?",
+          "kind": "choice",
+          "options": [
+            "Porque a lei proíbe",
+            "Porque o ganho de Δv diminui e cada estágio acrescenta custo, massa e risco de falha",
+            "Porque estágios a mais diminuem o Δv",
+            "Porque o foguete ficaria instável"
+          ],
+          "answer": "1",
+          "explanation": "O Δv extra de cada novo estágio é cada vez menor, enquanto separações, ignições e interfaces são pontos de falha caros."
+        }
+      ]
+    },
+    {
+      "id": "rkt-16-perdas-gravidade",
+      "title": "Perdas por gravidade e por arrasto: a vazão ideal",
+      "level": 4,
+      "kind": "lab",
+      "lab": "rocket",
+      "theory": "# O Δv ideal e o Δv que sobra\n\nTsiolkovsky dá o Δv **ideal**: sem gravidade e sem ar. Num voo real, parte dele é gasta só para **segurar o foguete contra a gravidade** e para **empurrar o ar**:\n\n```\nΔv útil ≈ Δv ideal − perda por gravidade − perda por arrasto\nperda por gravidade ≈ g × tempo de queima   (subida vertical)\n```\n\n## Queimar devagar: perda por gravidade\n\nSe o motor tem pouca vazão, a relação empuxo/peso fica perto de 1 e a queima demora. Cada segundo de queima vertical \"gasta\" ~9,8 m/s só para não cair. Uma queima de 100 s perde ~**981 m/s**!\n\n## Queimar rápido: perda por arrasto (e por aceleração)\n\nCom vazão muito alta, o foguete chega muito rápido ainda **no ar denso** de baixo. O arrasto ½·ρ·v²·Cd·A cresce com o quadrado da velocidade, e a aceleração pode passar do que a carga e a estrutura aguentam.\n\n## O meio-termo\n\nExiste uma vazão (ou um empuxo/peso) **ótima**, tipicamente com T/W de 1,5 a 2,5 para foguetes de sondagem. Lançadores orbitais decolam com T/W ≈ 1,2–1,5 e **reduzem o empuxo** perto do ponto de pressão dinâmica máxima (\"Max Q\").\n\n## Neste laboratório\n\nUm foguete de sondagem guiado (Isp 230 s, 150 kg de propelente, 50 kg de massa seca, 300 mm de diâmetro). O Δv ideal é o mesmo em todas as tentativas — só muda **quão rápido** o propelente queima.",
+      "task": "Com vazão de 8 kg/s o foguete mal passa dos 36 km e aguenta 24 g. Ajuste a **vazão de massa** para passar dos **130 km** de apogeu com aceleração máxima de até **8 g**.",
+      "hints": [
+        "Diminua a vazão: menos arrasto e menos g. Mas veja o que acontece abaixo de 1,5 kg/s.",
+        "Observe o empuxo/peso: o melhor apogeu fica com T/W perto de 2."
+      ],
+      "labParams": {
+        "motor": "custom",
+        "guided": "1",
+        "isp": "230",
+        "massFlow": "8",
+        "propMass": "150",
+        "dryMass": "50",
+        "diameter": "300",
+        "length": "6000",
+        "finSpan": "0",
+        "chute": "0",
+        "nose": "ogive",
+        "massFlow.min": "0.5",
+        "massFlow.max": "20",
+        "massFlow.step": "0.1",
+        "propMass.max": "500",
+        "dryMass.max": "300",
+        "diameter.max": "600",
+        "length.max": "10000",
+        "controls": "massFlow"
+      },
+      "goals": [
+        {
+          "metric": "apogee",
+          "op": ">=",
+          "value": 130000,
+          "description": "Apogeu de pelo menos 130 km"
+        },
+        {
+          "metric": "maxAccelG",
+          "op": "<=",
+          "value": 8,
+          "description": "Aceleração máxima de até 8 g"
+        }
+      ],
+      "solutionInputs": {
+        "massFlow": "1.7"
+      },
+      "questions": [
+        {
+          "prompt": "Um foguete sobe na vertical queimando por **100 s**. Qual a perda por gravidade aproximada? (g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "981",
+          "unit": "m/s",
+          "tolerance": 1,
+          "explanation": "Perda ≈ g × t = 9,81 × 100 = 981 m/s de Δv gastos só para não cair."
+        },
+        {
+          "prompt": "A 10 km de altitude (ρ = **0,38 kg/m³**), o foguete voa a **1000 m/s** com Cd = **0,5** e área frontal **0,07 m²**. Qual o arrasto?",
+          "kind": "number",
+          "answer": "6650",
+          "unit": "N",
+          "tolerance": 2,
+          "explanation": "D = ½ × 0,38 × 1000² × 0,5 × 0,07 = 6650 N — mais que o peso de 600 kg!"
+        },
+        {
+          "prompt": "Com a mesma quantidade de propelente, por que um T/W de **1,15** dá um apogeu ruim?",
+          "kind": "choice",
+          "options": [
+            "Porque o Δv ideal fica menor",
+            "Porque o arrasto é muito maior",
+            "Porque quase todo o empuxo é gasto para segurar o peso durante uma queima longa",
+            "Porque o motor esquenta demais"
+          ],
+          "answer": "2",
+          "explanation": "O Δv ideal não muda (mesmo Isp e massas). Com T/W perto de 1, a aceleração líquida é pequena e a perda por gravidade (g × tempo de queima) é enorme."
+        }
+      ]
+    },
+    {
+      "id": "rkt-17-reentrada",
+      "title": "Reentrada: voltando do espaço inteiro",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# Toda a energia precisa sumir\n\nUma nave em órbita baixa voa a ~7,8 km/s. Cada quilo dela tem ½·v² ≈ **30 MJ** de energia cinética — mais que a energia química de 7 kg de TNT. Para pousar, quase tudo isso precisa virar **calor no ar** à frente da nave.\n\n## Coeficiente balístico\n\n```\nβ = m / (Cd × A)\n```\n\nβ diz quão \"furador\" é o objeto. **β baixo** (leve e largo) freia **alto**, onde o ar é rarefeito — aquecimento menor e mais espalhado. **β alto** (pesado e fino) mergulha fundo antes de frear — picos enormes de calor e de g. A velocidade terminal perto do chão é:\n\n```\nv = √(2 × β × g / ρ)\n```\n\n## Corpos rombudos\n\nParece estranho, mas cápsulas são **rombudas**, não pontudas: a frente achatada cria uma **onda de choque descolada** que fica longe da superfície, e boa parte do calor vai para o ar em vez de entrar na nave (ideia de H. Julian Allen, 1951).\n\n## Escudos térmicos\n\n- **Ablativos** (resinas fenólicas, PICA): o material carboniza e se desprende, levando o calor embora. Uso único.\n- **Reutilizáveis** (placas cerâmicas do ônibus espacial, carbono-carbono no nariz e bordas): irradiam o calor de volta.\n\n## O corredor de entrada\n\nEntrar **íngreme demais** gera g e calor letais; **raso demais**, a nave \"quica\" na atmosfera e volta ao espaço. Cápsulas tripuladas mantêm a desaceleração em ~4–8 g usando um pouco de sustentação (o CG fica deslocado do eixo).\n\n## Por fim: paraquedas\n\nAbaixo de ~10 km, já subsônica, a cápsula abre o **paraquedas de arrasto** (drogue) e depois os **principais**.",
+      "questions": [
+        {
+          "prompt": "Quanta energia cinética tem **1 kg** a **7800 m/s**? Responda em MJ.",
+          "kind": "number",
+          "answer": "30.42",
+          "unit": "MJ",
+          "tolerance": 1,
+          "explanation": "E = ½ × 1 × 7800² = 30 420 000 J ≈ 30,4 MJ."
+        },
+        {
+          "prompt": "Uma cápsula de **1000 kg**, **2 m** de diâmetro e Cd = **1,2**. Qual o coeficiente balístico β = m / (Cd × A)?",
+          "kind": "number",
+          "answer": "265.3",
+          "unit": "kg/m²",
+          "tolerance": 1,
+          "explanation": "A = π × 1² = 3,1416 m². β = 1000 / (1,2 × 3,1416) ≈ 265 kg/m²."
+        },
+        {
+          "prompt": "Sem paraquedas, qual seria a velocidade terminal dessa cápsula perto do chão? (v = √(2βg/ρ), g = 9,81, ρ = 1,225 kg/m³)",
+          "kind": "number",
+          "answer": "65.18",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "v = √(2 × 265,3 × 9,81 / 1,225) ≈ 65 m/s (~235 km/h): por isso os paraquedas são indispensáveis."
+        },
+        {
+          "prompt": "Por que cápsulas de reentrada têm a frente **rombuda** em vez de pontuda?",
+          "kind": "choice",
+          "options": [
+            "Para caber mais gente",
+            "A onda de choque fica descolada e longe da superfície, e muito calor fica no ar",
+            "Porque pontas aquecem menos",
+            "Para diminuir o arrasto"
+          ],
+          "answer": "1",
+          "explanation": "Um corpo pontudo concentra o calor na ponta; o rombudo afasta o choque e aumenta o arrasto, freando mais alto."
+        },
+        {
+          "prompt": "O que acontece se a nave entrar na atmosfera com um ângulo **raso demais**?",
+          "kind": "choice",
+          "options": [
+            "Aquece muito mais e se desintegra",
+            "Pousa mais longe, mas sem problema",
+            "Pode \"quicar\" na atmosfera e voltar para o espaço",
+            "Os paraquedas abrem cedo demais"
+          ],
+          "answer": "2",
+          "explanation": "Fora do corredor de entrada: íngreme demais = g e calor letais; raso demais = a nave não perde velocidade suficiente e sai da atmosfera."
+        }
+      ]
+    },
+    {
+      "id": "rkt-18-mecanica-orbital",
+      "title": "Mecânica orbital: Kepler, escape e órbita geoestacionária",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# As leis que governam as órbitas\n\nUma órbita é uma **queda livre que nunca acerta o chão**: a nave cai o tempo todo, mas anda de lado rápido o bastante para a Terra \"curvar\" embaixo dela.\n\n## Leis de Kepler\n\n1. As órbitas são **elipses** com a Terra num dos focos.\n2. A nave varre **áreas iguais em tempos iguais**: vai mais rápido no **perigeu** (ponto mais baixo) e mais devagar no **apogeu**.\n3. O período só depende do **semieixo maior** a:\n\n```\nT = 2π × √(a³ / GM)\n```\n\nCom GM da Terra = 3,986 × 10¹⁴ m³/s² e raio R = 6371 km, uma órbita a 400 km (a = 6771 km) tem T ≈ **92 minutos** — a ISS dá ~15,5 voltas por dia.\n\n## Vis-viva\n\nA velocidade em qualquer ponto da órbita, a uma distância r do centro:\n\n```\nv = √(GM × (2/r − 1/a))\n```\n\nPara órbita circular (r = a): v = √(GM/r). Para escapar (a → ∞): **v_escape = √(2GM/r)** — da superfície da Terra, ~**11,2 km/s**.\n\n## Órbita geoestacionária\n\nCom período igual a **um dia sideral** (86 164 s), sobre o equador, o satélite parece parado no céu. Pela 3ª lei: a = ∛(GM × T² / 4π²) ≈ **42 164 km** do centro (~35 786 km de altitude).\n\n## Transferência de Hohmann (revisão)\n\nPara ir da órbita baixa à geoestacionária, a primeira queima eleva o apogeu até 42 164 km. A velocidade no perigeu da elipse de transferência sai da vis-viva com a = (r1 + r2)/2.",
+      "questions": [
+        {
+          "prompt": "Qual o período de uma órbita circular a **400 km** de altitude? (GM = 3,986 × 10¹⁴ m³/s², R = 6371 km). Responda em minutos.",
+          "kind": "number",
+          "answer": "92.41",
+          "unit": "min",
+          "tolerance": 1,
+          "explanation": "a = 6 771 000 m. T = 2π√(a³/GM) ≈ 5545 s ≈ 92,4 min."
+        },
+        {
+          "prompt": "Qual a velocidade de escape na superfície da Terra? (v = √(2GM/R))",
+          "kind": "number",
+          "answer": "11186",
+          "unit": "m/s",
+          "tolerance": 1,
+          "explanation": "v = √(2 × 3,986 × 10¹⁴ / 6 371 000) ≈ 11 186 m/s ≈ 11,2 km/s (sem contar o ar)."
+        },
+        {
+          "prompt": "Qual o raio da órbita geoestacionária (distância ao centro da Terra)? Use T = **86 164 s**.",
+          "kind": "number",
+          "answer": "42164",
+          "unit": "km",
+          "tolerance": 1,
+          "explanation": "a = ∛(GM × T² / 4π²) = ∛(3,986 × 10¹⁴ × 86 164² / 39,48) ≈ 42 164 km."
+        },
+        {
+          "prompt": "Para sair da órbita circular de **400 km** (r1 = 6771 km) para uma elipse com apogeu na geoestacionária (r2 = 42 164 km), qual o Δv da primeira queima? Use vis-viva.",
+          "kind": "number",
+          "answer": "2399",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "a = (6771 + 42 164)/2 = 24 467,5 km. v_perigeu = √(GM(2/r1 − 1/a)) ≈ 10 072 m/s; v_circular = √(GM/r1) ≈ 7673 m/s. Δv ≈ 2399 m/s."
+        },
+        {
+          "prompt": "Numa órbita elíptica, onde a nave anda mais rápido?",
+          "kind": "choice",
+          "options": [
+            "No perigeu (o ponto mais perto da Terra)",
+            "No apogeu (o ponto mais longe)",
+            "A velocidade é a mesma em toda a órbita",
+            "Depende da massa da nave"
+          ],
+          "answer": "0",
+          "explanation": "2ª lei de Kepler (áreas iguais em tempos iguais), ou vis-viva: r menor → v maior. A massa da nave não entra."
+        }
+      ]
+    },
+    {
+      "id": "rkt-19-competicao",
+      "title": "Competição: apogeu e tempo de voo exatos",
+      "level": 5,
+      "kind": "lab",
+      "lab": "rocket",
+      "safety": "- Competições de foguetemodelismo seguem o **código de segurança** do organizador: motores certificados, inspeção do foguete antes do voo, oficial de segurança no comando.\n- Se a carga é um **ovo cru**, ele vai dentro de proteção acolchoada — e o foguete precisa voltar com paraquedas, nunca em queda livre.\n- Ninguém se aproxima de um motor que **falhou** antes de 60 s.",
+      "theory": "# Acertar o alvo, não ir o mais alto possível\n\nNas competições de foguetemodelismo para estudantes (como a American Rocketry Challenge e suas versões em outros países), o desafio **não** é subir o máximo: é chegar a uma **altura exata** e voltar ao chão num **tempo exato**, com uma carga frágil (um ovo) inteira. Errar para cima ou para baixo custa pontos.\n\n## As alavancas do projeto\n\n- **Motor**: define a faixa de alturas possível (a classe de impulso).\n- **Massa**: o ajuste fino do apogeu. Lastro (massinha) perto do CG muda a altura sem estragar a estabilidade.\n- **Atraso de ejeção**: deve abrir o paraquedas **perto do apogeu**, quando a velocidade é mínima (abrir rápido demais rasga o paraquedas; tarde demais, o foguete já está caindo).\n- **Paraquedas**: define a **velocidade de descida** e, portanto, o tempo de voo:\n\n```\ntempo de voo ≈ tempo até o apogeu + apogeu / velocidade de descida\nvelocidade de descida = √(2 m g / (ρ Cd A))\n```\n\nUm paraquedas maior desce mais devagar (mais tempo de voo, pouso suave), mas o vento leva o foguete mais longe.\n\n## Método de engenharia\n\nNa prática as equipes fazem **voos de teste**, anotam o apogeu do altímetro e corrigem a massa: cada grama a mais tira alguns metros. Aqui você faz o mesmo no simulador.\n\n## Neste laboratório\n\nFoguete de 41 mm × 650 mm, ogiva, aletas de 45 mm. A massa seca inclui o ovo e o altímetro.",
+      "task": "Regras da prova: apogeu **entre 240 e 260 m**, tempo de voo **entre 41 e 46 s**, paraquedas abrindo **abaixo de 10 m/s** e pouso **até 7,5 m/s** (o ovo não pode quebrar). Escolha o **motor**, a **massa seca**, o **paraquedas** e o **atraso**.",
+      "hints": [
+        "Com o D12, só um foguete bem leve (menos de 150 g) chega a 240 m. Teste o E9 e ajuste a massa de 5 em 5 g.",
+        "Escolha o atraso para o paraquedas abrir perto do apogeu (tempo do apogeu − tempo de queima). Depois ajuste o paraquedas para acertar o tempo de voo."
+      ],
+      "labParams": {
+        "motor": "D12",
+        "diameter": "41",
+        "length": "650",
+        "finSpan": "45",
+        "nose": "ogive",
+        "dryMass": "0.2",
+        "chute": "45",
+        "delay": "6",
+        "controls": "motor,dryMass,chute,delay"
+      },
+      "goals": [
+        {
+          "metric": "apogee",
+          "op": "between",
+          "value": 240,
+          "max": 260,
+          "description": "Apogeu entre 240 e 260 m"
+        },
+        {
+          "metric": "flightTime",
+          "op": "between",
+          "value": 41,
+          "max": 46,
+          "description": "Tempo de voo entre 41 e 46 s"
+        },
+        {
+          "metric": "deploySpeed",
+          "op": "<=",
+          "value": 10,
+          "description": "Paraquedas abre a até 10 m/s"
+        },
+        {
+          "metric": "landingSpeed",
+          "op": "<=",
+          "value": 7.5,
+          "description": "Pouso a até 7,5 m/s"
+        }
+      ],
+      "solutionInputs": {
+        "motor": "E9",
+        "dryMass": "0.265",
+        "chute": "38",
+        "delay": "5.5"
+      },
+      "questions": [
+        {
+          "prompt": "Um foguete desce de **250 m** a **6 m/s** constantes sob o paraquedas. Quanto tempo dura a descida?",
+          "kind": "number",
+          "answer": "41.67",
+          "unit": "s",
+          "tolerance": 2,
+          "explanation": "t = 250 / 6 ≈ 41,7 s."
+        },
+        {
+          "prompt": "O foguete chega ao apogeu de **240 m** aos **8 s** e desce a **7 m/s**. Qual o tempo de voo aproximado?",
+          "kind": "number",
+          "answer": "42.29",
+          "unit": "s",
+          "tolerance": 2,
+          "explanation": "8 + 240 / 7 = 8 + 34,3 ≈ 42,3 s."
+        },
+        {
+          "prompt": "O foguete passou do alvo por 20 m. Qual o ajuste mais simples, sem mexer no motor nem no paraquedas?",
+          "kind": "choice",
+          "options": [
+            "Aumentar o atraso de ejeção",
+            "Acrescentar alguns gramas de lastro perto do CG",
+            "Tirar as aletas",
+            "Lançar com a base mais inclinada"
+          ],
+          "answer": "1",
+          "explanation": "Massa a mais reduz o apogeu de forma previsível. Perto do CG, ela quase não muda a margem de estabilidade."
+        }
+      ]
+    },
+    {
+      "id": "rkt-20-lancador-orbital",
+      "title": "Projeto final: um lançador orbital leve",
+      "level": 5,
+      "kind": "lab",
+      "lab": "rocket",
+      "theory": "# Juntando tudo\n\nUm lançador orbital é um compromisso entre todas as lições da trilha:\n\n- **Δv**: ~9,4 km/s para a órbita baixa (7,8 km/s de velocidade orbital + perdas por gravidade, arrasto e manobra). Vem de Tsiolkovsky, estágio por estágio.\n- **Empuxo/peso na decolagem**: pelo menos ~1,3. Abaixo disso, a perda por gravidade come o Δv (e com T/W < 1 o foguete nem sai da base).\n- **Aceleração máxima**: no fim da queima o foguete está leve e a aceleração dispara. Cargas e tripulação limitam em ~4–6 g; motores reais **reduzem o empuxo** no fim.\n- **Massa de decolagem**: custa dinheiro. Cada quilo de carga em órbita exige dezenas de quilos na plataforma.\n\n## A divisão entre estágios\n\nO 1º estágio precisa de **muito empuxo** (vazão alta) para vencer o peso de tudo. O 2º estágio é leve: pode ter **vazão menor** (menos g no fim) e um **Isp maior** (bocal de vácuo). Colocar mais propelente no 2º estágio rende mais Δv por quilo — até o 1º estágio não conseguir mais levantar o conjunto.\n\n## Neste laboratório\n\n- Carga útil + estrutura do 2º estágio: **1500 kg** (massa seca).\n- Estrutura do 1º estágio: **4000 kg** (descartada na separação).\n- Isp: **280 s** (1º estágio, ao nível do mar) e **330 s** (2º, bocal de vácuo).\n- Voo guiado por empuxo vetorado; o simulador voa na vertical, então olhe o **Δv ideal**, o **T/W** e a **aceleração** — o apogeu não é a meta aqui.",
+      "task": "Projete os dois estágios: **Δv ideal de pelo menos 9400 m/s**, **empuxo/peso de pelo menos 1,3** na decolagem, aceleração máxima de **até 6 g** e massa de decolagem de **até 56 t**. Você controla o propelente e a vazão de cada estágio.",
+      "hints": [
+        "Primeiro passe propelente do 1º para o 2º estágio (mantendo a massa total) e veja o Δv subir.",
+        "Depois aumente a vazão do 1º estágio até o T/W passar de 1,3, e diminua a do 2º se a aceleração passar de 6 g."
+      ],
+      "labParams": {
+        "motor": "custom",
+        "motor2": "custom",
+        "stages": "2",
+        "guided": "1",
+        "isp": "280",
+        "massFlow": "150",
+        "propMass": "40000",
+        "isp2": "330",
+        "massFlow2": "40",
+        "propMass2": "4000",
+        "dryMass": "1500",
+        "boosterMass": "4000",
+        "diameter": "2000",
+        "length": "30000",
+        "finSpan": "0",
+        "chute": "0",
+        "dryMass.max": "5000",
+        "dryMass.step": "10",
+        "boosterMass.max": "10000",
+        "boosterMass.step": "10",
+        "propMass.max": "60000",
+        "propMass.step": "100",
+        "propMass2.max": "20000",
+        "propMass2.step": "100",
+        "massFlow.max": "600",
+        "massFlow.step": "5",
+        "massFlow2.max": "100",
+        "massFlow2.step": "1",
+        "diameter.max": "5000",
+        "length.max": "50000",
+        "finSpan.max": "5000",
+        "controls": "propMass,massFlow,propMass2,massFlow2"
+      },
+      "goals": [
+        {
+          "metric": "deltaV",
+          "op": ">=",
+          "value": 9400,
+          "description": "Δv ideal de pelo menos 9400 m/s"
+        },
+        {
+          "metric": "thrustToWeight",
+          "op": ">=",
+          "value": 1.3,
+          "description": "Empuxo/peso na decolagem de pelo menos 1,3"
+        },
+        {
+          "metric": "maxAccelG",
+          "op": "<=",
+          "value": 6,
+          "description": "Aceleração máxima de até 6 g"
+        },
+        {
+          "metric": "liftoffMass",
+          "op": "<=",
+          "value": 56000,
+          "description": "Massa de decolagem de até 56 t"
+        }
+      ],
+      "solutionInputs": {
+        "propMass": "38000",
+        "massFlow": "280",
+        "propMass2": "12000",
+        "massFlow2": "30"
+      },
+      "questions": [
+        {
+          "prompt": "Um 1º estágio com **Isp 300 s** vai de **50 t** a **20 t** durante a queima. Qual o seu Δv ideal? (g0 = 9,80665 m/s²)",
+          "kind": "number",
+          "answer": "2696",
+          "unit": "m/s",
+          "tolerance": 1,
+          "explanation": "Δv = 300 × 9,80665 × ln(50/20) = 2942 × 0,916 ≈ 2696 m/s."
+        },
+        {
+          "prompt": "Um foguete de **53,5 t** decola com **250 kg/s** de vazão e **Isp 280 s**. Qual o empuxo/peso? (g0 = 9,80665 m/s²)",
+          "kind": "number",
+          "answer": "1.308",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "Empuxo = 280 × 9,80665 × 250 ≈ 686 466 N. Peso = 53 500 × 9,80665 ≈ 524 656 N. T/W ≈ 1,31."
+        },
+        {
+          "prompt": "Por que a aceleração máxima costuma acontecer no **fim** da queima do 2º estágio?",
+          "kind": "choice",
+          "options": [
+            "Porque o motor aumenta o empuxo sozinho",
+            "Porque o ar ajuda a empurrar",
+            "Porque o empuxo é quase constante e a massa ficou muito menor",
+            "Porque a gravidade some no espaço"
+          ],
+          "answer": "2",
+          "explanation": "a = F/m: com o tanque quase vazio, a mesma força acelera uma massa muito menor. Por isso motores reais reduzem o empuxo no fim."
+        }
+      ]
     }
   ]
 }

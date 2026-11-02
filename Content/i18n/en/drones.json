@@ -392,6 +392,364 @@
           "explanation": "Power grows with weight (P ∝ W^1.5 when hovering); without the package, the drone uses much less. (Lithium batteries do not get lighter as they discharge.)"
         }
       ]
+    },
+    "drone-11-lipo": {
+      "title": "Inside the LiPo battery: current, C rating and internal resistance",
+      "theory": "# Much more than \"mAh\"\n\nIn lesson 3 we saw energy (Wh) and flight time. A drone battery also has to **deliver high current** without losing voltage or overheating.\n\n## C rating\n\nThe **C** rating says how many times its capacity the battery can deliver as continuous current:\n\n```\nmax current = capacity (Ah) × C\n```\n\nA 1500 mAh 100C promises 1.5 × 100 = **150 A** (label numbers tend to be optimistic). A racing drone pulls peaks of 100 A or more; a filming drone, 15–30 A.\n\n## Internal resistance and voltage sag\n\nEach cell has a small internal resistance R (a few mΩ). Under current I:\n\n```\nvoltage drop = I × R_total\nheat loss    = I² × R_total\n```\n\nA 4S with 5 mΩ per cell (20 mΩ in total) pulling 60 A loses **1.2 V** and turns **72 W** into heat. That's why the voltage \"sags\" when you punch the throttle, and old batteries (higher R) get hot and lose punch.\n\n## From power to current\n\n```\nI = P / V\n```\n\nA drone hovering at **300 W** on a 4S (14.8 V) pulls ~**20 A**. On 6S (22.2 V), the same power takes only 13.5 A — less I²R loss, thinner wires.\n\n## Care\n\nA LiPo is concentrated energy: a short circuit, puncture or overcharge can cause a **lithium fire**, which is hard to put out. Respect the minimum (3.3 V under load) and maximum (4.2 V) voltages per cell.",
+      "safety": "- Charge LiPos **only with a balance charger**, on a non-flammable surface, in sight, inside a fireproof bag or box.\n- A **swollen, dented or punctured** battery goes to proper disposal — never back into the drone.\n- Store at **storage voltage** (~3.8 V per cell) and never discharge below ~3.3 V per cell under load.\n- In a lithium fire, step away; use sand or a suitable extinguisher, and never breathe the smoke.",
+      "questions": [
+        {
+          "prompt": "What is the maximum continuous current of a **1500 mAh**, **100C** battery?",
+          "explanation": "1.5 Ah × 100 = 150 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "A **4S** battery has **5 mΩ** of internal resistance per cell. How much does the voltage drop when pulling **60 A**?",
+          "explanation": "Total R = 4 × 0.005 = 0.02 Ω. Drop = 60 × 0.02 = 1.2 V.",
+          "unit": "V"
+        },
+        {
+          "prompt": "How much power turns into heat inside that battery at 60 A?",
+          "explanation": "P = I² × R = 60² × 0.02 = 72 W.",
+          "unit": "W"
+        },
+        {
+          "prompt": "A drone hovers using **300 W** on a 4S battery (**14.8 V**). How much current does it draw?",
+          "explanation": "I = 300 / 14.8 ≈ 20.3 A.",
+          "unit": "A"
+        },
+        {
+          "prompt": "What should you do with a LiPo that has **swollen**?",
+          "options": [
+            "Puncture it to let the gas out and keep using it",
+            "Stop using it and dispose of it properly (discharged, at a collection point)",
+            "Charge it at a higher current to \"deflate\" it",
+            "Keep it in the fridge"
+          ],
+          "explanation": "Swelling means internal decomposition and fire risk. Never puncture it: lithium reacts with air."
+        }
+      ]
+    },
+    "drone-12-bateria-ideal": {
+      "title": "The ideal battery size",
+      "theory": "# More battery, more weight\n\nDoubling the battery doubles the energy, but also increases the drone's mass — and the power to hover grows **faster than the mass**. By momentum theory:\n\n```\nP_hover ∝ m^1.5\n```\n\nA drone 30% heavier needs 1.3^1.5 ≈ **1.48 times** the power. That's why flight time grows less and less with capacity — up to a point where adding battery makes the flight **worse**.\n\n## How much energy weighs\n\nA LiPo holds ~150 Wh/kg. A 4S 5000 mAh stores 14.8 × 5 = 74 Wh and weighs ~**493 g**.\n\n## The other constraint: thrust-to-weight\n\nEven if flight time keeps rising, a heavy battery **eats the thrust margin**. Below T/W ≈ 2 the drone is slow to react, struggles in wind and lacks the force to stop a descent. The ideal battery is the one giving the longest flight time **while keeping T/W ≥ 2**.\n\n## Rule of thumb\n\nIn well-designed multirotors the battery is usually **30–40% of the takeoff mass**. Below that you have performance to spare and little endurance; above, the drone \"hangs\" from its propellers.\n\n## In this lab\n\nAn 800 g quadcopter (without battery), 4 motors of 700 g thrust, 9\" props, 4S battery. The plot shows flight time versus capacity.",
+      "task": "Choose the battery **capacity** so the drone hovers for **at least 21 minutes** without letting **thrust-to-weight drop below 2**.",
+      "hints": [
+        "Try 3000, 4500 and 6000 mAh and note the flight time and T/W of each.",
+        "The window is narrow: between ~5300 and ~6000 mAh."
+      ],
+      "goals": [
+        "Flight time of at least 21 min",
+        "Thrust-to-weight of at least 2"
+      ],
+      "questions": [
+        {
+          "prompt": "How much does a **4S 5000 mAh** battery weigh at **150 Wh/kg**? (3.7 V per cell)",
+          "explanation": "E = 14.8 × 5 = 74 Wh. Mass = 74 / 150 = 0.493 kg ≈ 493 g.",
+          "unit": "g"
+        },
+        {
+          "prompt": "If the drone gets **30% heavier**, the hover power is multiplied by how much? (P ∝ m^1.5)",
+          "explanation": "1.3^1.5 ≈ 1.48: almost 50% more power for 30% more mass.",
+          "unit": ""
+        },
+        {
+          "prompt": "Why does doubling the battery capacity **not** double the flight time?",
+          "options": [
+            "Because the bigger battery has a lower voltage",
+            "Because the motors get weaker",
+            "Because the extra battery weighs, and hover power grows faster than mass",
+            "Because only 50% of the battery can be used"
+          ],
+          "explanation": "Energy ∝ capacity, but power ∝ m^1.5: each extra mAh buys fewer minutes."
+        }
+      ]
+    },
+    "drone-13-motor-kv": {
+      "title": "Choosing motor and propeller: KV, torque and pitch speed",
+      "theory": "# What KV means\n\nThe **KV** of a brushless motor is how many **rpm per volt** it spins **with no load**:\n\n```\nno-load rpm = KV × V\n```\n\nA 920 KV motor on a 4S (14.8 V) spins ~**13 600 rpm** free (with a propeller, some 15–25% less).\n\n## KV and torque are two sides of the same coin\n\nThe torque constant Kt (N·m per ampere) is the **inverse** of KV (in SI units):\n\n```\nKt = 60 / (2π × KV) ≈ 9.55 / KV\n```\n\n**Low-KV** motor = more torque per amp → spins **big propellers** slowly, efficiently (cargo and filming drones). **High-KV** motor = spins **small propellers** very fast (racing drones). 920 KV gives Kt ≈ 0.0104 N·m/A: at 20 A, ~0.21 N·m.\n\n## The propeller\n\nA **10x4.5** propeller is 10\" in diameter with a 4.5\" **pitch** (how far it \"advances\" per turn, like a screw). The **pitch speed** is a theoretical limit of the speed of the air it pushes:\n\n```\nv_pitch = pitch × rpm / 60\n```\n\nA 5x4.3 at 30 000 rpm: 4.3 × 0.0254 × 500 ≈ **54.6 m/s**.\n\n## How thrust scales\n\nFor the same propeller, thrust ∝ **rpm²** and power ∝ **rpm³**. Spinning 20% faster gives 1.2² = **1.44 times** the thrust and 1.73 times the power. For the same thrust, a **bigger, slower** prop uses less (lesson 4).\n\n## Matching them\n\nPick the propeller for thrust and efficiency; then the motor with a KV so that, at the battery voltage, it spins that prop at the right rpm without exceeding the **maximum current** of the motor and ESC.",
+      "questions": [
+        {
+          "prompt": "How many no-load rpm does a **920 KV** motor spin on a **14.8 V** battery?",
+          "explanation": "920 × 14.8 = 13 616 rpm.",
+          "unit": "rpm"
+        },
+        {
+          "prompt": "What is the torque constant Kt of that 920 KV motor? (Kt = 60 / (2π × KV))",
+          "explanation": "Kt = 60 / (2π × 920) ≈ 0.0104 N·m/A.",
+          "unit": "N·m/A"
+        },
+        {
+          "prompt": "What is the pitch speed of a **5x4.3** propeller at **30 000 rpm**? (1\" = 0.0254 m)",
+          "explanation": "4.3 × 0.0254 = 0.109 m per turn; × 500 turns/s ≈ 54.6 m/s.",
+          "unit": "m/s"
+        },
+        {
+          "prompt": "If the same propeller spins **20% faster**, thrust is multiplied by how much? (thrust ∝ rpm²)",
+          "explanation": "1.2² = 1.44.",
+          "unit": ""
+        },
+        {
+          "prompt": "For a cargo drone with **15\"** propellers, which motor makes more sense?",
+          "options": [
+            "Low KV (e.g. 400 KV): lots of torque to spin the big prop slowly",
+            "High KV (e.g. 2600 KV): more rpm is always better",
+            "The KV doesn't matter",
+            "The motor with the most KV per gram"
+          ],
+          "explanation": "A big prop needs torque and low rpm; a high-KV motor would draw too much current and overheat."
+        }
+      ]
+    },
+    "drone-14-carga-pesada": {
+      "title": "Carrying weight: hexa, octo and 6S",
+      "theory": "# A 2 kg cinema camera\n\nA 1.5 kg filming quadcopter with a 5 Ah battery can't lift a **2 kg** camera well: T/W drops close to 1 and the flight time collapses. There are four levers:\n\n## 1. More motors\n\nWith 6 (hexa) or 8 (octo) motors, total thrust grows. Bonus: with 6 or more, the drone can **lose a motor** and still land (redundancy).\n\n## 2. Bigger propellers\n\nMore disc area = less power per newton (P ∝ T^1.5 / √A). On cargo drones, 15–30\" props.\n\n## 3. Higher voltage (6S, 12S)\n\nThe same power at a higher voltage needs **less current**: I = P / V. 600 W on 6S (22.2 V) is ~27 A; on 4S it would be 40.5 A. Less current = less I²R loss in wires, ESC and battery.\n\n## 4. Bigger battery\n\nWith the whole mass larger, the battery can (and must) grow too — again respecting T/W ≥ 2.\n\n## Thrust per motor\n\n```\nthrust per motor = total mass × T/W / number of motors\n```\n\nFor 5.3 kg, T/W = 2 and 8 motors: 5300 × 2 / 8 = **1325 g** per motor.\n\n## In this lab\n\nA 1500 g drone (without battery), a **2000 g** camera. In this model, the motors' mass is already included in the frame.",
+      "task": "Make the drone carry the 2 kg camera with **thrust-to-weight of at least 2**, **flight time of at least 18 min** and **current of up to 35 A** in a hover. Choose the **motors**, **thrust per motor**, **propeller**, **cells** and **capacity**.",
+      "safety": "- Heavy cargo drones are **another risk category**: above 25 kg (in Brazil) they require registration and special authorisations; even below that, a 15\" propeller cuts like a saw.\n- Test with the **propellers removed** while setting up, and fly with the load on a secure hook, away from people.",
+      "hints": [
+        "Switch to 6S and 15\" props: the current drops and the efficiency rises.",
+        "An octo with 1500 g per motor and 12 000 mAh exceeds 20 minutes with T/W ≈ 2.3."
+      ],
+      "goals": [
+        "Thrust-to-weight of at least 2",
+        "Flight time of at least 18 min",
+        "Hover current up to 35 A"
+      ],
+      "questions": [
+        {
+          "prompt": "A drone hovers at **600 W** on a **6S** battery (22.2 V). What is the current?",
+          "explanation": "600 / 22.2 ≈ 27 A (on 4S it would be 40.5 A).",
+          "unit": "A"
+        },
+        {
+          "prompt": "A **5.3 kg** drone with **8 motors** needs T/W = 2. What is the minimum maximum thrust of each motor?",
+          "explanation": "5300 × 2 / 8 = 1325 g per motor.",
+          "unit": "g"
+        },
+        {
+          "prompt": "What safety advantage does a **hexa** or **octo** have over a quadcopter?",
+          "options": [
+            "It doesn't need GPS",
+            "It can lose a motor and still control the descent",
+            "It never falls",
+            "It flies without a battery for a few seconds"
+          ],
+          "explanation": "On a quad, without one motor there's no way to balance torque and thrust; with 6 or 8, the others compensate (with less margin)."
+        }
+      ]
+    },
+    "drone-15-pid-pesado": {
+      "title": "Tuning the altitude hold of a heavy drone",
+      "theory": "# The same gains don't suit every drone\n\nIn lesson 6 you tuned the altitude PID of a light drone with a high T/W. A cargo drone is different:\n\n- **Lower T/W** (here, ~1.6): it hovers at ~**62%** throttle and there's little left to climb or stop a descent. The controller output **saturates** easily.\n- **Bigger motors and props respond more slowly**: the lag between command and thrust grows.\n- **More inertia**: it takes longer to stop.\n\n## What happens with aggressive gains\n\nHigh Kp and Ki ask for 100% throttle for a long time; the drone overshoots, the integrator winds up while saturated, and the result is a large **overshoot** and a slow oscillation.\n\n## P only, again\n\nWithout an integrator, the drone stops where Kp × error = hover throttle:\n\n```\nerror = hover throttle / Kp\n```\n\nWith 62.5% and Kp = 5 %/m: **12.5 m** below the target! The I term is mandatory.\n\n## Method\n\n1. Kd first, for damping.\n2. Moderate Kp — the heavy drone doesn't have the force for abrupt responses.\n3. Small Ki: just to remove the error, without winding up.\n\nIn real life, **feed-forward** (adding the estimated hover throttle) is also used so the integrator has less work to do.\n\n## In this lab\n\nA 3 kg hexa + 10 Ah battery + 1 kg payload, target at **30 m**.",
+      "task": "Tune the PID so the heavy drone **reaches and holds 30 m**, with an overshoot of **up to 3%** and settling within **5 s**.",
+      "hints": [
+        "The light drone's gains (Kp 12, Ki 4, Kd 10) overshoot more than 3% here. Lower Kp and Ki.",
+        "Something like Kp 6, Ki 1.5 and Kd 8 works."
+      ],
+      "goals": [
+        "Reaches and holds the target height",
+        "Overshoot up to 3%",
+        "Settles within 5 s"
+      ],
+      "questions": [
+        {
+          "prompt": "With **T/W = 1.6**, at what % throttle does the drone hover (thrust proportional to throttle)?",
+          "explanation": "100 / 1.6 = 62.5%.",
+          "unit": "%"
+        },
+        {
+          "prompt": "With P only and **Kp = 5 %/m**, how many metres below the target does this drone stop?",
+          "explanation": "error = 62.5 / 5 = 12.5 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "Why do aggressive gains cause a large overshoot on a **low T/W** drone?",
+          "options": [
+            "Because the GPS gets inaccurate",
+            "Because the barometer doesn't work with a load",
+            "Because the output saturates: there's little thrust left to brake, and the integrator winds up meanwhile",
+            "Because big props spin backwards"
+          ],
+          "explanation": "With little margin, the drone accelerates flat out, gains speed and can't brake in time; a full I term makes it worse."
+        }
+      ]
+    },
+    "drone-16-fusao-sensores": {
+      "title": "Sensor fusion: complementary and Kalman filters",
+      "theory": "# No sensor is good on its own\n\n- The **gyroscope** is great in the short term, but integrated it **drifts**.\n- The **accelerometer** knows where \"down\" is in the long run, but it's **noisy** and gets confused by accelerations and vibration.\n- The **barometer** measures height with ~0.5 m of noise; **GPS** gives position with metres of error and slow updates.\n\n**Sensor fusion** combines the best of each.\n\n## Complementary filter\n\n```\nangle = α × (angle + gyro × dt) + (1 − α) × accel_angle\nα = τ / (τ + dt)\n```\n\nτ is the time constant: below it the gyro is trusted, above it the accelerometer. With τ = 0.5 s and dt = 0.01 s: α ≈ **0.980**.\n\n## Kalman filter (the idea)\n\nThe Kalman filter keeps an estimate **and its uncertainty** (variance P). For each measurement with variance R, it blends them using the **Kalman gain**:\n\n```\nK = P / (P + R)\nnew_estimate = estimate + K × (measurement − estimate)\n```\n\nIf the estimate is uncertain (P = 4) and the measurement is good (R = 1): K = 0.8 — the measurement is trusted a lot. Estimate 10, measurement 12 → **11.6**. Afterwards the uncertainty shrinks; between measurements it grows with the model. The **EKF** (extended Kalman filter) is the heart of flight controllers like ArduPilot and PX4.\n\n## Noise and averaging\n\nAveraging N independent measurements reduces the standard deviation by **√N**: 100 samples → 10 times less noise (but more delay).\n\n## Sampling\n\nBy the Nyquist theorem, to see a 200 Hz vibration you must sample at **more than 400 Hz**; otherwise it shows up as a false slow oscillation (*aliasing*). That's why IMUs run at 1–8 kHz and filters remove the motors' vibration.",
+      "questions": [
+        {
+          "prompt": "In a complementary filter with **τ = 0.5 s** and **dt = 0.01 s**, what is α = τ / (τ + dt)?",
+          "explanation": "α = 0.5 / 0.51 ≈ 0.980.",
+          "unit": ""
+        },
+        {
+          "prompt": "The estimate has variance **P = 4** and the measurement **R = 1**. What is the Kalman gain K = P / (P + R)?",
+          "explanation": "K = 4 / 5 = 0.8.",
+          "unit": ""
+        },
+        {
+          "prompt": "With that K, the height estimate was **10 m** and the sensor reads **12 m**. What is the new estimate?",
+          "explanation": "10 + 0.8 × (12 − 10) = 11.6 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "A barometer has **1 m** of noise (standard deviation). What is the noise of the average of **100** independent readings?",
+          "explanation": "1 / √100 = 0.1 m.",
+          "unit": "m"
+        },
+        {
+          "prompt": "To see a **200 Hz** vibration without aliasing, the sampling must be above how many Hz?",
+          "explanation": "Nyquist: more than 2 × 200 = 400 Hz.",
+          "unit": "Hz"
+        }
+      ]
+    },
+    "drone-17-atitude-pesado": {
+      "title": "Attitude of a heavy hexa: motor lag",
+      "theory": "# Copying a small drone's gains can flip the drone\n\nThe **attitude** loop (roll and pitch) is the fastest in the flight controller. On a racing quad, the motors change speed in ~20–30 ms. On a cargo hexa with 15\" props, the **motor takes much longer** to spin up the heavy propeller:\n\n```\nτ ≈ 0.03 × (D / 5\")^1.5 s\n```\n\nWith D = 15\": τ ≈ 0.156 s — five times slower.\n\n## Lag = instability\n\nA control loop with a large lag gets the correction **late**: when the thrust finally arrives, the drone has already gone past, and the next correction arrives late again. With high gains this becomes a **growing oscillation** until the drone flips. It's the phase margin of control theory.\n\n## Inertia\n\nThe moment of inertia grows with mass × arm²:\n\n```\nI ≈ 0.4 × m × arm²\n```\n\nA 4 kg hexa with 0.5 m arms has I ≈ 0.4 kg·m², many times that of a racing quad.\n\n## How to tune\n\n- **Kp** lower than on the small drone (the plant is slow).\n- **Kd** relatively higher: it \"sees\" the roll rate and brakes early.\n- **Ki** small, only against the constant disturbance (wind, off-centre CG).\n\nReal controllers also use **filters** on the gyro signals and sometimes **feed-forward** from the pilot's command.\n\n## In this lab\n\nA 3 kg hexa with 15\" props and 1 kg of payload. It starts with the gains of the quadcopter from lesson 7 — and flips.",
+      "task": "With the small drone's gains, the hexa flips. Tune Kp, Ki and Kd so it **reaches 20°** of roll with an overshoot of **up to 5%** and settles within **1 s**.",
+      "hints": [
+        "Cut Ki first (to ~0.5) and Kp to ~1. Then raise Kd until the overshoot is gone.",
+        "Kp 1, Ki 0.5 and Kd 0.4 work; too high a Kd makes the response sluggish."
+      ],
+      "goals": [
+        "Reaches and holds the target angle",
+        "Overshoot up to 5%",
+        "Settles within 1 s"
+      ],
+      "questions": [
+        {
+          "prompt": "What is the time constant of a motor with a **15\"** propeller, by the model τ = 0.03 × (D / 5\")^1.5?",
+          "explanation": "0.03 × 3^1.5 = 0.03 × 5.196 ≈ 0.156 s.",
+          "unit": "s"
+        },
+        {
+          "prompt": "What is the moment of inertia (I ≈ 0.4 × m × arm²) of a **4 kg** hexa with **0.5 m** arms?",
+          "explanation": "0.4 × 4 × 0.25 = 0.4 kg·m².",
+          "unit": "kg·m²"
+        },
+        {
+          "prompt": "Why do a small quad's gains make the heavy hexa flip?",
+          "options": [
+            "Because the hexa has more motors to control",
+            "Because the big motors' lag makes corrections arrive late, and high gains turn into a growing oscillation",
+            "Because the hexa's gyro is worse",
+            "Because the hexa is lighter"
+          ],
+          "explanation": "Lag in the loop reduces the phase margin; with high Kp and Ki, the late correction pushes the wrong way and the oscillation grows."
+        }
+      ]
+    },
+    "drone-18-velocidade-alcance": {
+      "title": "Maximum-range speed",
+      "theory": "# Slow is not economical\n\nIntuitively, flying slowly would use less battery. On a multirotor that's false, for two reasons:\n\n1. **Hovering is already expensive**: standing still, the drone spends all its lifting power.\n2. Flying forward, the rotor receives **fresh air** all the time (like a wing): the **induced power drops** with speed (Glauert's formula). Up to ~10–15 m/s, total power **decreases**!\n\nAbove that, **body drag** (∝ v²) and the drone's tilt dominate, and power rises again.\n\n## Energy per kilometre\n\nWhat matters for range is not power, it's **energy per distance**:\n\n```\nWh/km = power (W) / speed (m/s) × 1000 / 3600\n```\n\nAt 15 m/s using 170 W: 170 × 1000 / 15 / 3600 ≈ **3.15 Wh/km**. With 59.2 Wh usable (80% of 74 Wh): ≈ **18.8 km** in total.\n\nFlying at 4 m/s can cost 3 times more energy per km than flying at 15 m/s.\n\n## The optimal speed\n\nThe maximum-range speed is where a straight line from the origin is **tangent** to the power-versus-speed curve — the point of fewest W per m/s. With a **headwind**, fly faster than that; with a tailwind, a little slower.\n\n## In this lab\n\nA 1.2 kg quadcopter, 4S 5000 mAh, 10\" props, inspection point **5 km** away. The plot shows Wh/km versus speed.",
+      "task": "At 4 m/s the drone can't go and come back. Choose the **cruise speed** that gives a **maximum range of at least 8.5 km**, completes the mission and uses **up to 50%** of the battery.",
+      "hints": [
+        "Look at the Wh/km plot: it has a minimum. That's where you want to fly.",
+        "Between 14 and 17 m/s the range exceeds 8.5 km."
+      ],
+      "goals": [
+        "Maximum range of at least 8.5 km",
+        "Completes the round trip",
+        "Uses up to 50% of the battery"
+      ],
+      "questions": [
+        {
+          "prompt": "A drone flies at **15 m/s** using **170 W**. How many Wh does it use per km?",
+          "explanation": "1 km takes 1000 / 15 = 66.7 s. 170 × 66.7 / 3600 ≈ 3.15 Wh.",
+          "unit": "Wh/km"
+        },
+        {
+          "prompt": "With **59.2 Wh** usable and **3.148 Wh/km**, how many km does the drone fly in total?",
+          "explanation": "59.2 / 3.148 ≈ 18.8 km (round trip: ~9.4 km radius, not counting takeoff and landing).",
+          "unit": "km"
+        },
+        {
+          "prompt": "Why does flying at **4 m/s** use more energy per km than flying at 15 m/s?",
+          "options": [
+            "Because the motors get hotter",
+            "Because drag is higher when slow",
+            "Because the power is almost the hover power, and it's spent for much longer on each km",
+            "Because the GPS uses more"
+          ],
+          "explanation": "At 4 m/s each km takes 250 s at ~208 W; at 15 m/s, 67 s at ~170 W. Energy = power × time."
+        }
+      ]
+    },
+    "drone-19-teoria-rotor": {
+      "title": "Rotor aerodynamics: disc loading, ground effect and vortex ring",
+      "theory": "# Momentum theory, again\n\nEach drone propeller is a small helicopter rotor. To make thrust T, it accelerates the air to the **induced velocity** vi:\n\n```\nvi = √(T / (2 ρ A))\nP_ideal = T × vi = T^1.5 / √(2 ρ A)\nP_real = P_ideal / FM\n```\n\n**FM** (figure of merit) is the rotor's real aerodynamic efficiency: 0.5–0.65 for drone props, up to ~0.8 for helicopter rotors.\n\nA 10\" prop (A = 0.0507 m²) making 5 N: vi ≈ 6.3 m/s, P_ideal ≈ **31.7 W**; with FM = 0.6, ~**52.9 W**.\n\n## Disc loading\n\n```\ndisc loading = T / A   (N/m²)\n```\n\nThe **lower** the disc loading, the less power per newton. 5\" racing drones have high disc loading (agile, inefficient); cargo drones and helicopters, low.\n\n## Altitude\n\nSince P ∝ 1/√ρ, flying at 3000 m (σ ≈ 0.742) costs **16% more** power — and the props lose thrust margin.\n\n## Ground effect\n\nClose to the ground (less than ~1 rotor diameter), the ground \"holds up\" the airflow: less power for the same thrust. That's why the drone \"floats\" and slides on landing.\n\n## Vortex ring state (VRS)\n\nDescending **straight down** at a speed similar to vi, the rotor enters its own downwash: the air recirculates in a ring, thrust drops and fluctuates, and **adding throttle doesn't help** (it makes it worse). The way out is to **move sideways** out of its own flow. That's why drones (and helicopters) should descend diagonally or slowly.",
+      "questions": [
+        {
+          "prompt": "What is the ideal power of a **10\"** (0.254 m) prop making **5 N** at sea level (ρ = 1.225 kg/m³)? (P = T^1.5 / √(2ρA))",
+          "explanation": "A = π × 0.254² / 4 = 0.0507 m². P = 11.18 / √(2 × 1.225 × 0.0507) = 11.18 / 0.352 ≈ 31.7 W.",
+          "unit": "W"
+        },
+        {
+          "prompt": "With a figure of merit of **0.6**, what is that prop's real power?",
+          "explanation": "31.73 / 0.6 ≈ 52.9 W.",
+          "unit": "W"
+        },
+        {
+          "prompt": "What is that prop's disc loading (5 N over 0.0507 m²)?",
+          "explanation": "5 / 0.05067 ≈ 98.7 N/m².",
+          "unit": "N/m²"
+        },
+        {
+          "prompt": "At 3000 m, σ = ρ/ρ0 = **0.742**. The ideal power for the same thrust is multiplied by how much? (P ∝ 1/√ρ)",
+          "explanation": "1 / √0.742 ≈ 1.161: 16% more power.",
+          "unit": ""
+        },
+        {
+          "prompt": "The drone descends straight down fast, starts wobbling and loses thrust even with high throttle. What should you do?",
+          "options": [
+            "Push even more throttle straight up",
+            "Cut the motors",
+            "Move the drone sideways to get out of the vortex ring",
+            "Spin around its own axis (yaw)"
+          ],
+          "explanation": "In the vortex ring the rotor is in its own downwash; only by leaving it (sideways or forward) does thrust return."
+        }
+      ]
+    },
+    "drone-20-projeto-mapeamento": {
+      "title": "Final project: a mapping drone 6 km away",
+      "theory": "# Putting it all together\n\nA cooperative needs to map an area **6 km** from its base, with a **500 g** camera. Going, mapping and coming back requires a drone that brings together the lessons of this track:\n\n- **Thrust-to-weight ≥ 2** (lesson 2) for wind and manoeuvres.\n- A **battery** of the right size (lessons 3 and 12): more energy, without drowning the T/W.\n- **Voltage** and **props** (lessons 4, 13 and 14): more cells = less current; bigger props = less power.\n- **Cruise speed** (lesson 18): near the maximum-range speed.\n- **Reserve**: come back with at least 40% of the battery (goal of using up to 60%).\n\n## Energy sums\n\n```\nmission energy = power × time\n```\n\n12 km (there and back) at 15 m/s take 800 s; at 180 W, that's **40 Wh**. A 6S 6000 mAh battery stores 22.2 × 6 = **133.2 Wh** — plenty, even after takeoff, landing and the mapping itself.\n\n## How to approach it\n\n1. Set the cruise speed for the fewest Wh/km.\n2. Choose cells and capacity for the energy.\n3. Choose the prop and thrust per motor for T/W ≥ 2 with the new battery.\n4. Run it, see what's missing, repeat.\n\n## In this lab\n\nA 1.2 kg quadcopter (without battery), a 500 g camera, a point 6 km away.",
+      "task": "Design the drone for the 6 km mission: **complete the mission**, use **up to 60%** of the battery, **thrust-to-weight ≥ 2** and a **maximum range of at least 10 km** (for margin).",
+      "safety": "- Long, automatic missions (BVLOS — beyond visual line of sight) need **specific authorisation** from the aviation authorities (ANAC/DECEA in Brazil). In ordinary flight, keep the drone **in sight**.\n- Set up **automatic return** (RTH) on low battery and on signal loss, with a height above the area's obstacles.",
+      "hints": [
+        "Start with the speed (~15 m/s). Then switch to 6S and a bigger battery.",
+        "With 6S 6000 mAh, a 13\" prop and 1500 g motors, every goal is met."
+      ],
+      "goals": [
+        "Completes the round trip",
+        "Uses up to 60% of the battery",
+        "Thrust-to-weight of at least 2",
+        "Maximum range of at least 10 km"
+      ],
+      "questions": [
+        {
+          "prompt": "A **12 km** round trip at **15 m/s** using **180 W**. How much energy (in Wh) do the cruise legs use?",
+          "explanation": "t = 12 000 / 15 = 800 s. E = 180 × 800 / 3600 = 40 Wh.",
+          "unit": "Wh"
+        },
+        {
+          "prompt": "How much energy does a **6S 6000 mAh** battery hold? (3.7 V per cell)",
+          "explanation": "6 × 3.7 = 22.2 V; × 6 Ah = 133.2 Wh.",
+          "unit": "Wh"
+        },
+        {
+          "prompt": "Why plan the mission to use **at most 60%** of the battery?",
+          "options": [
+            "Because the battery only charges to 60%",
+            "To keep a reserve against headwinds, detours, waiting to land and an ageing battery",
+            "Because the GPS turns off below 40%",
+            "Because the law forbids using more"
+          ],
+          "explanation": "Ideal plans never happen: wind on the way back, an extra mapping pass or a worn battery eat the margin quickly."
+        }
+      ]
     }
   }
 }

@@ -460,6 +460,690 @@
           "explanation": "O logaritmo cresce cada vez mais devagar; além disso o avião mais pesado estola mais rápido e precisa de mais pista."
         }
       ]
+    },
+    {
+      "id": "aero-11-planador",
+      "title": "Planador: o melhor planeio",
+      "level": 3,
+      "kind": "lab",
+      "lab": "airplane",
+      "theory": "# Voar sem motor\n\nUm planador está sempre **descendo** em relação ao ar: troca altura por velocidade. O quanto ele anda para cada metro que desce é a **razão de planeio**, igual à razão sustentação/arrasto:\n\n```\ndistância = altura × (L/D)\nrazão de descida = velocidade / (L/D)\n```\n\nCom L/D = 25, de 2000 m dá para planar **50 km** sem vento. Planadores de competição passam de L/D 50; um avião comum fica em 10–15.\n\n## O L/D máximo\n\nPela polar parabólica CD = CD0 + CL²/(π e AR):\n\n```\n(L/D)máx = ½ × √(π × e × AR / CD0)\n```\n\nTrês caminhos: **alongamento** alto (asas longas e finas → menos arrasto induzido), **Oswald** alto (boa distribuição de sustentação, pontas bem feitas) e **CD0** baixo (superfícies lisas, fuselagem fina, trem recolhido).\n\n## Mas também é preciso voar devagar\n\nPlanadores sobem em **térmicas** — colunas de ar quente, às vezes de poucas centenas de metros de diâmetro. Para girar dentro delas, precisam voar **devagar** sem estolar: **carga alar** baixa (massa/área), que dá baixa velocidade de estol.\n\n## Neste laboratório\n\nUm planador de **350 kg** (com piloto), asa de 10 m² e CLmáx 1,4. Você pode mudar a geometria da asa e a área.",
+      "task": "Projete a asa do planador para ter **(L/D)máx de pelo menos 25** e **velocidade de estol de até 70 km/h** (para girar nas térmicas).",
+      "hints": [
+        "O alongamento é o que mais pesa: leve-o perto do máximo (16). Depois melhore o Oswald e o CD0.",
+        "Com 10 m² o estol fica em ~72 km/h. Um pouco mais de área resolve."
+      ],
+      "labParams": {
+        "mode": "polar",
+        "mass": "350",
+        "fuel": "5",
+        "wingArea": "10",
+        "clmax": "1.4",
+        "aspectRatio": "8",
+        "oswald": "0.8",
+        "cd0": "0.03",
+        "show": "aspectRatio,oswald,cd0,wingArea"
+      },
+      "goals": [
+        {
+          "metric": "LDmax",
+          "op": ">=",
+          "value": 25,
+          "description": "(L/D)máx de pelo menos 25"
+        },
+        {
+          "metric": "stallSpeed",
+          "op": "<=",
+          "value": 70,
+          "description": "Estol a até 70 km/h"
+        }
+      ],
+      "solutionInputs": {
+        "aspectRatio": "16",
+        "oswald": "0.9",
+        "cd0": "0.016",
+        "wingArea": "11"
+      },
+      "questions": [
+        {
+          "prompt": "Um planador com **L/D = 25** está a **2000 m** de altura, sem vento. Até que distância ele consegue planar?",
+          "kind": "number",
+          "answer": "50",
+          "unit": "km",
+          "tolerance": 1,
+          "explanation": "2000 × 25 = 50 000 m = 50 km."
+        },
+        {
+          "prompt": "Voando a **90 km/h** com L/D = **30**, qual a razão de descida (quantos m/s ele desce)?",
+          "kind": "number",
+          "answer": "0.8333",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "90 km/h = 25 m/s. 25 / 30 ≈ 0,83 m/s — qualquer térmica mais forte que isso faz o planador subir."
+        },
+        {
+          "prompt": "Qual o (L/D)máx de uma asa com AR = **16**, e = **0,9** e CD0 = **0,016**?",
+          "kind": "number",
+          "answer": "26.59",
+          "unit": "",
+          "tolerance": 2,
+          "explanation": "½ × √(π × 0,9 × 16 / 0,016) = ½ × √2827 ≈ 26,6."
+        }
+      ]
+    },
+    {
+      "id": "aero-12-curvas-fator-carga",
+      "title": "Curvas e fator de carga",
+      "level": 3,
+      "kind": "quiz",
+      "theory": "# Inclinar para virar\n\nUm avião vira **inclinando as asas** (ângulo de inclinação φ). A sustentação, que era vertical, passa a ter uma parte horizontal — é ela que faz a curva. Para não perder altura, a parte vertical ainda precisa igualar o peso, então a sustentação total **aumenta**:\n\n```\nfator de carga  n = L / W = 1 / cos φ\n```\n\nA 60° de inclinação, n = 2: as asas sustentam **o dobro do peso**, e o piloto sente \"2 g\".\n\n## O estol sobe na curva\n\nA velocidade de estol cresce com a raiz de n:\n\n```\nV_estol,curva = V_estol × √n\n```\n\nUm avião que estola a 100 km/h em voo reto estola a **~141 km/h** numa curva de 60°. Curvas fechadas e lentas perto do chão (como na aproximação para pouso) são uma causa clássica de acidentes.\n\n## Raio e taxa de curva\n\n```\nraio      r = v² / (g × tan φ)\ntaxa      ω = g × tan φ / v\n```\n\nA 50 m/s e 30° de inclinação: r ≈ **441 m** e ω ≈ **6,5 °/s**. A \"curva padrão\" dos instrumentos é de **3 °/s** (360° em 2 minutos).\n\n## Limites estruturais\n\nCada avião tem um fator de carga máximo certificado: ~3,8 g para aviões normais, 6 g para acrobáticos. Passar disso pode deformar ou quebrar a estrutura. Rajadas também geram fator de carga: por isso há uma velocidade máxima para ar turbulento.",
+      "questions": [
+        {
+          "prompt": "Qual o fator de carga numa curva nivelada com **60°** de inclinação?",
+          "kind": "number",
+          "answer": "2",
+          "unit": "g",
+          "tolerance": 1,
+          "explanation": "n = 1 / cos 60° = 1 / 0,5 = 2."
+        },
+        {
+          "prompt": "Um avião estola a **100 km/h** em voo reto. A que velocidade ele estola numa curva de **60°**?",
+          "kind": "number",
+          "answer": "141.4",
+          "unit": "km/h",
+          "tolerance": 2,
+          "explanation": "V = 100 × √2 ≈ 141 km/h."
+        },
+        {
+          "prompt": "Qual o raio de uma curva a **50 m/s** com **30°** de inclinação? (g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "441.4",
+          "unit": "m",
+          "tolerance": 2,
+          "explanation": "r = 50² / (9,81 × tan 30°) = 2500 / (9,81 × 0,577) ≈ 441 m."
+        },
+        {
+          "prompt": "Nessa curva (50 m/s, 30°), qual a taxa de curva em graus por segundo?",
+          "kind": "number",
+          "answer": "6.49",
+          "unit": "°/s",
+          "tolerance": 2,
+          "explanation": "ω = 9,81 × 0,577 / 50 = 0,113 rad/s ≈ 6,5 °/s."
+        },
+        {
+          "prompt": "Por que uma curva fechada e lenta perto do chão é perigosa?",
+          "kind": "choice",
+          "options": [
+            "Porque o motor perde potência",
+            "Porque o vento sempre é mais forte perto do chão",
+            "Porque a inclinação aumenta a velocidade de estol, e não há altura para recuperar",
+            "Porque o avião fica mais pesado"
+          ],
+          "answer": "2",
+          "explanation": "Com n > 1 o estol acontece numa velocidade maior; se ele vier perto do chão, não sobra altura para sair do parafuso."
+        }
+      ]
+    },
+    {
+      "id": "aero-13-teto",
+      "title": "Razão de subida e teto de serviço",
+      "level": 4,
+      "kind": "lab",
+      "lab": "airplane",
+      "theory": "# Subir é sobra de potência\n\nUm avião sobe quando a potência disponível passa da potência necessária para voar nivelado. A **razão de subida** é a sobra dividida pelo peso:\n\n```\nRC = (P_disponível − P_necessária) / W\n```\n\nCom 30 kW de sobra e 1100 kg: RC = 30 000 / (1100 × 9,81) ≈ **2,8 m/s**.\n\n## Por que a subida acaba\n\nCom a altitude o ar fica menos denso (σ = ρ/ρ0):\n\n- Um motor a pistão aspirado perde potência mais ou menos na proporção de σ. A 6000 m, σ ≈ 0,54: de 120 kW sobram ~65 kW.\n- O avião precisa voar **mais rápido** para ter a mesma sustentação, e o arrasto induzido (que domina em voo lento) pesa mais.\n\nUma hora a sobra zera: é o **teto absoluto**. Na prática usa-se o **teto de serviço**, onde a razão de subida cai para **0,5 m/s** (100 pés/min).\n\n## Como subir mais alto\n\n- **Mais potência** (ou turbo, que mantém a potência até certa altitude).\n- **Asa de grande alongamento**: lá em cima o voo é \"lento\" para a densidade, e o arrasto induzido manda — asas longas o reduzem. É por isso que aviões de alta altitude (U-2, planadores de onda) têm asas enormes e finas.\n- **Menos peso**.\n\n## Neste laboratório\n\nAvião de 1000 kg + 100 kg de combustível, asa de 16 m², hélice com eficiência 0,8, motor aspirado de 120 kW. O teto é calculado com o motor perdendo potência com a densidade.",
+      "task": "O avião precisa cruzar uma cordilheira: **teto de serviço de pelo menos 8500 m** e **razão de subida de pelo menos 8 m/s** ao nível do mar. Ajuste a **potência**, o **alongamento**, a **massa** e a **área da asa**.",
+      "hints": [
+        "Só potência resolve, mas custa caro: com 180 kW o teto passa de 8500 m. Veja quanto o alongamento ajuda.",
+        "Com AR 10, cerca de 150 kW bastam."
+      ],
+      "labParams": {
+        "mode": "takeoff",
+        "mass": "1000",
+        "fuel": "100",
+        "wingArea": "16",
+        "power": "120",
+        "aspectRatio": "7.5",
+        "propEff": "0.8",
+        "airportAlt": "0",
+        "show": "power,aspectRatio,mass,wingArea"
+      },
+      "goals": [
+        {
+          "metric": "ceiling",
+          "op": ">=",
+          "value": 8500,
+          "description": "Teto de serviço de pelo menos 8500 m"
+        },
+        {
+          "metric": "climbRate",
+          "op": ">=",
+          "value": 8,
+          "description": "Razão de subida de pelo menos 8 m/s"
+        }
+      ],
+      "solutionInputs": {
+        "power": "150",
+        "aspectRatio": "10"
+      },
+      "questions": [
+        {
+          "prompt": "Um avião de **1100 kg** tem **30 kW** de potência sobrando. Qual a razão de subida? (g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "2.78",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "RC = 30 000 / (1100 × 9,81) ≈ 2,78 m/s."
+        },
+        {
+          "prompt": "Pela atmosfera padrão, a 6000 m σ = ((288,15 − 0,0065 × 6000) / 288,15)^4,256. Quanta potência sobra de um motor aspirado de **120 kW** (potência ∝ σ)?",
+          "kind": "number",
+          "answer": "64.62",
+          "unit": "kW",
+          "tolerance": 2,
+          "explanation": "T = 249,15 K; σ = (249,15/288,15)^4,256 ≈ 0,539. P ≈ 120 × 0,539 ≈ 64,6 kW."
+        },
+        {
+          "prompt": "Por que asas de grande alongamento ajudam a subir mais alto?",
+          "kind": "choice",
+          "options": [
+            "Porque pesam menos",
+            "Porque no ar rarefeito o arrasto induzido domina, e asas longas o reduzem",
+            "Porque aumentam a potência do motor",
+            "Porque diminuem a velocidade de estol a zero"
+          ],
+          "answer": "1",
+          "explanation": "Lá em cima o avião precisa de CL alto para se sustentar, e o arrasto induzido ∝ CL²/AR cresce: mais AR, menos potência necessária."
+        }
+      ]
+    },
+    {
+      "id": "aero-14-curva-potencia",
+      "title": "A curva de potência: arrasto mínimo e potência mínima",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# Arrasto em forma de U\n\nO arrasto total em voo nivelado tem duas partes que vão em sentidos opostos:\n\n- **Parasita** (atrito, forma): cresce com v².\n- **Induzido** (custo de gerar sustentação): cai com 1/v² — voar devagar exige CL alto.\n\nA soma tem um **mínimo**. Com a polar CD = CD0 + k CL² (k = 1/(π e AR)):\n\n```\n(L/D)máx = 1 / (2 √(k × CD0))\nD_mín = W / (L/D)máx\nV_md = √(2W / (ρ S)) × (k / CD0)^(1/4)\n```\n\nNa velocidade de **arrasto mínimo** V_md, o arrasto parasita e o induzido são **iguais**. É a velocidade de **melhor planeio** e de **máximo alcance** para aviões a jato (em empuxo, o consumo acompanha o arrasto).\n\n## Potência não é arrasto\n\nA potência necessária é P = D × v. Como v multiplica, o mínimo de potência acontece **mais devagar**:\n\n```\nV_mp = V_md / 3^(1/4) ≈ 0,76 × V_md\n```\n\nNa velocidade de **potência mínima** o avião fica mais tempo no ar com o mesmo combustível (**máxima autonomia** para avião a hélice) e desce mais devagar planando.\n\n## O lado de trás da curva\n\nAbaixo de V_mp, voar **mais devagar exige mais potência** — o contrário da intuição. Numa aproximação lenta, se o piloto puxa o nariz para \"esticar\" o planeio, o avião desacelera, precisa de mais potência e afunda mais.\n\n## Exemplo\n\nW = 10 000 N, S = 15 m², CD0 = 0,03, k = 0,05, ρ = 1,225: (L/D)máx ≈ 12,9; D_mín ≈ 775 N; V_md ≈ 37,5 m/s; P ≈ 29 kW; V_mp ≈ 28,5 m/s.",
+      "questions": [
+        {
+          "prompt": "Qual o (L/D)máx de um avião com CD0 = **0,03** e k = **0,05**?",
+          "kind": "number",
+          "answer": "12.91",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "1 / (2 √(0,05 × 0,03)) = 1 / (2 × 0,0387) ≈ 12,9."
+        },
+        {
+          "prompt": "Com peso de **10 000 N**, qual o arrasto mínimo desse avião?",
+          "kind": "number",
+          "answer": "774.6",
+          "unit": "N",
+          "tolerance": 1,
+          "explanation": "D = W / (L/D)máx = 10 000 / 12,91 ≈ 775 N."
+        },
+        {
+          "prompt": "Com S = **15 m²** e ρ = **1,225 kg/m³**, a que velocidade acontece esse arrasto mínimo? (V_md = √(2W/(ρS)) × (k/CD0)^(1/4))",
+          "kind": "number",
+          "answer": "37.49",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "√(20 000 / 18,375) = 32,99 m/s; (0,05/0,03)^0,25 = 1,136. V_md ≈ 37,5 m/s."
+        },
+        {
+          "prompt": "E a velocidade de **potência mínima** (V_mp = V_md / 3^(1/4))?",
+          "kind": "number",
+          "answer": "28.48",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "37,49 / 1,316 ≈ 28,5 m/s."
+        },
+        {
+          "prompt": "Abaixo da velocidade de potência mínima (\"lado de trás da curva\"), voar mais devagar…",
+          "kind": "choice",
+          "options": [
+            "Exige **mais** potência",
+            "Exige menos potência",
+            "Não muda a potência",
+            "Diminui o arrasto induzido"
+          ],
+          "answer": "0",
+          "explanation": "Ali o arrasto induzido cresce mais rápido do que a velocidade cai. Puxar o nariz numa aproximação lenta só piora."
+        }
+      ]
+    },
+    {
+      "id": "aero-15-alcance-jato",
+      "title": "Jato: alcance, altitude e velocidade de cruzeiro",
+      "level": 4,
+      "kind": "lab",
+      "lab": "airplane",
+      "theory": "# Breguet para jatos\n\nNum jato, o consumo é proporcional ao **empuxo** (TSFC: kg de combustível por N de empuxo por segundo). A equação de alcance de Breguet fica:\n\n```\nR = (V / (g × TSFC)) × (L/D) × ln(W0 / W1)\n```\n\nRepare no **V multiplicando**: diferente do avião a hélice, o jato ganha alcance voando **mais rápido**, desde que o L/D não caia muito. O ótimo fica um pouco acima da velocidade de arrasto mínimo.\n\n## Por que jatos voam alto\n\nNo ar rarefeito, o mesmo CL (e o mesmo L/D) acontece numa velocidade **verdadeira** maior: V ∝ 1/√ρ. A 11 000 m, ρ ≈ 0,36 kg/m³ — o avião voa ~1,8 vezes mais rápido com o mesmo arrasto. Como R ∝ V × L/D, o alcance cresce. Além disso, o motor a jato fica mais eficiente no ar frio.\n\nO limite é a **velocidade do som**: perto de Mach 0,8–0,85 surgem ondas de choque e o arrasto dispara. Por isso aviões comerciais cruzam a ~10–12 km, a ~850 km/h.\n\n## Exemplo\n\nV = 200 m/s, TSFC = 18 g/(kN·s) = 1,8 × 10⁻⁵ kg/(N·s), L/D = 15, W0/W1 = 1,3:\n\nR = 200 / (9,81 × 1,8 × 10⁻⁵) × 15 × ln 1,3 ≈ **4457 km**.\n\n## Neste laboratório\n\nJato executivo de 6000 kg vazio com **3000 kg** de combustível, asa de 30 m², AR 8, TSFC 18 g/(kN·s). O alcance só vale se o avião consegue cruzar (empuxo suficiente e CL abaixo de 90% do máximo).",
+      "task": "Cruzando a 500 km/h e 3000 m o jato não chega a 4000 km. Escolha a **altitude** e a **velocidade** de cruzeiro para passar dos **6500 km** de alcance.",
+      "hints": [
+        "Suba primeiro: perto de 11 000 m o alcance cresce muito.",
+        "Lá em cima, teste velocidades entre 600 e 800 km/h e veja onde o alcance é maior."
+      ],
+      "labParams": {
+        "mode": "range",
+        "propulsion": "jet",
+        "mass": "6000",
+        "fuel": "3000",
+        "wingArea": "30",
+        "aspectRatio": "8",
+        "oswald": "0.8",
+        "cd0": "0.022",
+        "thrust": "30",
+        "tsfc": "18",
+        "clmax": "1.6",
+        "speed": "500",
+        "altitude": "3000",
+        "show": "speed,altitude"
+      },
+      "goals": [
+        {
+          "metric": "range",
+          "op": ">=",
+          "value": 6500,
+          "description": "Alcance de pelo menos 6500 km"
+        },
+        {
+          "metric": "cruiseOk",
+          "op": "=",
+          "value": 1,
+          "description": "Consegue manter o cruzeiro"
+        }
+      ],
+      "solutionInputs": {
+        "speed": "650",
+        "altitude": "11000"
+      },
+      "questions": [
+        {
+          "prompt": "Breguet para jato com V = **200 m/s**, TSFC = **1,8 × 10⁻⁵ kg/(N·s)**, L/D = **15** e W0/W1 = **1,3**. Qual o alcance? (g = 9,81 m/s²)",
+          "kind": "number",
+          "answer": "4457",
+          "unit": "km",
+          "tolerance": 2,
+          "explanation": "200 / (9,81 × 1,8 × 10⁻⁵) = 1 132 600 m; × 15 × ln 1,3 (0,2624) ≈ 4 457 000 m ≈ 4457 km."
+        },
+        {
+          "prompt": "Quantas horas o jato leva para voar **6000 km** a **700 km/h**?",
+          "kind": "number",
+          "answer": "8.571",
+          "unit": "h",
+          "tolerance": 1,
+          "explanation": "6000 / 700 ≈ 8,57 h."
+        },
+        {
+          "prompt": "Por que um jato ganha alcance voando alto?",
+          "kind": "choice",
+          "options": [
+            "Porque a gravidade é menor",
+            "Porque o combustível pesa menos",
+            "Porque no ar rarefeito ele voa mais rápido com o mesmo L/D, e o alcance é proporcional a V × L/D",
+            "Porque não há vento lá em cima"
+          ],
+          "answer": "2",
+          "explanation": "Mesmo CL e mesmo arrasto, mas V verdadeira maior: mais quilômetros pelo mesmo combustível (até o limite de Mach)."
+        }
+      ]
+    },
+    {
+      "id": "aero-16-peso-balanceamento",
+      "title": "Peso e balanceamento: o CG carregado e a cauda",
+      "level": 4,
+      "kind": "lab",
+      "lab": "airplane",
+      "theory": "# Onde está o CG depois de carregar?\n\nO CG muda com **passageiros, bagagem e combustível**. Antes de cada voo o piloto calcula o CG pelo método dos **momentos** (massa × braço, medido a partir de uma referência):\n\n```\nx_CG = Σ (m × x) / Σ m\n```\n\nAvião vazio de 600 kg a 2,0 m, piloto de 80 kg a 1,5 m e 100 kg de combustível a 2,2 m:\n\nx_CG = (1200 + 120 + 220) / 780 ≈ **1,974 m**.\n\n## Em % da corda média (CMA)\n\nSe a CMA começa a 1,5 m e mede 1,5 m: (1,974 − 1,5) / 1,5 ≈ **31,6% da CMA**.\n\n## O ponto neutro e a cauda\n\nO avião é estável se o CG fica **à frente do ponto neutro** (lição 6). Neste modelo o ponto neutro fica em 25% da CMA (centro aerodinâmico da asa) mais o efeito da cauda:\n\n```\nponto neutro = 25% + 40,5% × VH\nmargem estática = ponto neutro − CG\n```\n\nVH é o **volume de cauda** (área do estabilizador × braço / (área da asa × CMA)). Cauda maior ou mais longe → ponto neutro mais para trás → mais margem.\n\n## Margem boa\n\n- **Abaixo de ~5%**: pouco estável, cansativo de pilotar (e instável se negativa).\n- **Acima de ~15–20%**: estável demais, o profundor pode não ter força para arredondar o pouso.\n\n## Neste laboratório\n\nCom a carga do dia, o CG ficou em **40% da CMA** — mais atrás do que o projeto original previa. Redimensione a cauda.",
+      "task": "Com o CG em **40% da CMA**, o avião ficou instável. Ajuste o **volume de cauda** para a margem estática ficar **entre 5% e 15%**.",
+      "hints": [
+        "Ponto neutro = 25 + 40,5 × VH. Para margem de 10%, ele precisa ficar em 50%.",
+        "VH entre ~0,50 e ~0,74 funciona."
+      ],
+      "labParams": {
+        "mode": "stability",
+        "cg": "40",
+        "tailVolume": "0.3",
+        "show": "tailVolume"
+      },
+      "goals": [
+        {
+          "metric": "staticMargin",
+          "op": "between",
+          "value": 5,
+          "max": 15,
+          "description": "Margem estática entre 5% e 15%"
+        }
+      ],
+      "solutionInputs": {
+        "tailVolume": "0.6"
+      },
+      "questions": [
+        {
+          "prompt": "Avião vazio de **600 kg** com CG a **2,0 m**, piloto de **80 kg** a **1,5 m** e **100 kg** de combustível a **2,2 m** da referência. Onde fica o CG?",
+          "kind": "number",
+          "answer": "1.974",
+          "unit": "m",
+          "tolerance": 1,
+          "explanation": "(600 × 2,0 + 80 × 1,5 + 100 × 2,2) / 780 = 1540 / 780 ≈ 1,974 m."
+        },
+        {
+          "prompt": "A CMA começa a **1,5 m** da referência e mede **1,5 m**. Em que porcentagem da CMA está esse CG?",
+          "kind": "number",
+          "answer": "31.62",
+          "unit": "%",
+          "tolerance": 2,
+          "explanation": "(1,974 − 1,5) / 1,5 ≈ 0,316 → 31,6% da CMA."
+        },
+        {
+          "prompt": "Com VH = **0,6** e o CG a **40%**, qual a margem estática? (ponto neutro = 25% + 40,5% × VH)",
+          "kind": "number",
+          "answer": "9.3",
+          "unit": "%",
+          "tolerance": 2,
+          "explanation": "Ponto neutro = 25 + 24,3 = 49,3%. Margem = 49,3 − 40 = 9,3%."
+        }
+      ]
+    },
+    {
+      "id": "aero-17-helicoptero-altitude",
+      "title": "Helicóptero na montanha: teto de pairar",
+      "level": 5,
+      "kind": "lab",
+      "lab": "helicopter",
+      "theory": "# O ar fino cobra duas vezes\n\nPara pairar, o rotor joga ar para baixo. Pela teoria do momento, a potência ideal é:\n\n```\nP_ideal = T^1,5 / √(2 ρ A)\n```\n\nCom a altitude, ρ cai e a potência **necessária** sobe com 1/√ρ: a 3000 m (σ ≈ 0,742), ~**16% a mais**. Ao mesmo tempo, o motor aspirado perde potência **disponível** mais ou menos na proporção de σ: 200 kW viram ~**148 kW**. As duas curvas se cruzam no **teto de pairar**.\n\n## As pás também têm limite\n\nO empuxo de um rotor também é limitado pelo **estol das pás**: o coeficiente de empuxo por solidez CT/σ não passa de ~0,13. No ar fino, as pás precisam de mais ângulo para o mesmo empuxo e estolam antes.\n\n```\nsolidez σ = (nº de pás × corda) / (π × R)\n```\n\nMais pás ou pás mais largas = mais área de pá = mais empuxo antes do estol.\n\n## O que aumenta o teto\n\n- **Rotor maior** (A maior → menos potência por newton de empuxo, como na lição 8).\n- **Mais potência** (ou turbinas, que perdem menos com a altitude).\n- **Mais solidez** (pás) contra o estol.\n- Mas a **ponta da pá** não pode passar de ~0,65–0,7 Mach (ruído, ondas de choque).\n\n## Resgate em montanha\n\nHelicópteros de resgate operam a 3000–5000 m nos Andes e no Himalaia — e por isso voam leves, com o mínimo de combustível, e preferem pousar \"correndo\" (com velocidade) em vez de pairar.\n\n## Neste laboratório\n\nHelicóptero de 1100 kg com rotor de 4 m, 2 pás, 400 rpm e motor de 150 kW.",
+      "task": "O helicóptero vai fazer resgates numa serra: **teto de pairar de pelo menos 2500 m**, **subida vertical de pelo menos 5 m/s** ao nível do mar e ponta da pá **até Mach 0,65**. Ajuste o **motor**, o **rotor**, as **pás** e a **rotação**.",
+      "hints": [
+        "Com rotor de 4 m ele nem paira: o rotor pequeno pede potência demais e as pás estolam. Aumente o raio para 5 m.",
+        "Depois use 3 pás e ~200 kW. Confira o Mach da ponta: 400 rpm com 5 m dá ~0,62."
+      ],
+      "labParams": {
+        "mode": "hover",
+        "mass": "1100",
+        "rotorRadius": "4",
+        "blades": "2",
+        "chord": "0.25",
+        "rpm": "400",
+        "collective": "8",
+        "power": "150",
+        "altitude": "0",
+        "show": "power,rotorRadius,blades,chord,rpm"
+      },
+      "goals": [
+        {
+          "metric": "hoverCeiling",
+          "op": ">=",
+          "value": 2500,
+          "description": "Teto de pairar de pelo menos 2500 m"
+        },
+        {
+          "metric": "climbRate",
+          "op": ">=",
+          "value": 5,
+          "description": "Subida vertical de pelo menos 5 m/s"
+        },
+        {
+          "metric": "tipMach",
+          "op": "<=",
+          "value": 0.65,
+          "description": "Ponta da pá até Mach 0,65"
+        }
+      ],
+      "solutionInputs": {
+        "power": "200",
+        "rotorRadius": "5",
+        "blades": "3",
+        "chord": "0.25"
+      },
+      "questions": [
+        {
+          "prompt": "Um rotor precisa de **100 kW** ideais para pairar ao nível do mar. Quanto ele precisa a 3000 m, onde σ = ρ/ρ0 = **0,742**? (P ∝ 1/√ρ)",
+          "kind": "number",
+          "answer": "116.1",
+          "unit": "kW",
+          "tolerance": 2,
+          "explanation": "100 / √0,742 ≈ 116 kW."
+        },
+        {
+          "prompt": "E quanto sobra, a 3000 m, de um motor aspirado de **200 kW** (potência disponível ∝ σ)?",
+          "kind": "number",
+          "answer": "148.4",
+          "unit": "kW",
+          "tolerance": 1,
+          "explanation": "200 × 0,742 = 148,4 kW."
+        },
+        {
+          "prompt": "Qual a solidez de um rotor de **3 pás** com corda de **0,25 m** e raio de **2,5 m**? (σ = b × c / (π R))",
+          "kind": "number",
+          "answer": "0.0955",
+          "unit": "",
+          "tolerance": 2,
+          "explanation": "σ = 3 × 0,25 / (π × 2,5) = 0,75 / 7,854 ≈ 0,0955."
+        }
+      ]
+    },
+    {
+      "id": "aero-18-rotor-avanco",
+      "title": "Rotor em voo para a frente: a pá que avança e a que recua",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# Duas pás, duas velocidades\n\nPairando, todas as pás veem o mesmo vento: Ω × R na ponta. Voando para a frente com velocidade V:\n\n- A **pá que avança** vê Ω R **+** V.\n- A **pá que recua** vê Ω R **−** V.\n\nCom ponta a 220 m/s e V = 70 m/s (252 km/h), a ponta que avança chega a **290 m/s (Mach 0,85)** e a que recua cai para **150 m/s**.\n\n## Dissimetria de sustentação\n\nSe as pás tivessem ângulo fixo, o lado que avança sustentaria muito mais e o helicóptero **tombaria** para o lado. A solução, de Juan de la Cierva (autogiro, anos 1920), é a **articulação de batimento**: a pá que avança sobe (flapping), o que diminui seu ângulo de ataque efetivo; a que recua desce e ganha ângulo. O **prato cíclico** também ajusta o passo de cada pá ao longo da volta.\n\n## Razão de avanço\n\n```\nμ = V / (Ω R)\n```\n\nCom μ ≈ 0,3, o helicóptero já está perto do seu limite.\n\n## Os limites de velocidade\n\n- **Estol da pá que recua**: para compensar a pouca velocidade, ela precisa de muito ângulo — e estola. Vibração forte, rolagem para o lado da pá que recua.\n- **Compressibilidade na pá que avança**: perto de Mach 0,9 surgem ondas de choque, ruído e arrasto.\n- Na raiz da pá que recua há até uma região de **fluxo reverso**.\n\nPor isso helicópteros convencionais ficam abaixo de ~300 km/h. Para ir além: **rotores coaxiais rígidos com hélice propulsora** (X3, SB-1), ou **tilt-rotor** (V-22), que vira avião no cruzeiro.\n\n## Solidez\n\nσ = b c / (π R): 4 pás de 0,5 m num rotor de 7 m dão σ ≈ 0,091.",
+      "questions": [
+        {
+          "prompt": "A ponta da pá gira a **220 m/s** e o helicóptero voa a **70 m/s**. Qual o Mach da ponta que avança? (som a 340 m/s)",
+          "kind": "number",
+          "answer": "0.8529",
+          "unit": "Mach",
+          "tolerance": 1,
+          "explanation": "(220 + 70) / 340 = 290 / 340 ≈ 0,85."
+        },
+        {
+          "prompt": "E a velocidade do ar na ponta da pá que **recua**?",
+          "kind": "number",
+          "answer": "150",
+          "unit": "m/s",
+          "tolerance": 1,
+          "explanation": "220 − 70 = 150 m/s."
+        },
+        {
+          "prompt": "Qual a razão de avanço μ = V / (ΩR) nesse voo?",
+          "kind": "number",
+          "answer": "0.3182",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "μ = 70 / 220 ≈ 0,32."
+        },
+        {
+          "prompt": "Qual a solidez de um rotor de **4 pás** com corda de **0,5 m** e raio de **7 m**?",
+          "kind": "number",
+          "answer": "0.09095",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "σ = 4 × 0,5 / (π × 7) = 2 / 21,99 ≈ 0,091."
+        },
+        {
+          "prompt": "O que limita a velocidade máxima de um helicóptero convencional?",
+          "kind": "choice",
+          "options": [
+            "O peso do rotor de cauda",
+            "O estol da pá que recua e a compressibilidade na pá que avança",
+            "A falta de potência do motor sempre",
+            "O arrasto da cabine"
+          ],
+          "answer": "1",
+          "explanation": "Rápido demais, a pá que recua precisa de ângulo demais e estola, enquanto a ponta que avança chega perto do som."
+        }
+      ]
+    },
+    {
+      "id": "aero-19-autorrotacao",
+      "title": "Autorrotação: projetando um rotor que salva vidas",
+      "level": 5,
+      "kind": "lab",
+      "lab": "helicopter",
+      "safety": "- Autorrotações de treino são feitas **com instrutor**, em altura segura e sobre área de pouso preparada; a maioria termina com \"religar\" antes do toque.\n- Conheça o **diagrama altura–velocidade** (\"curva do homem morto\") do modelo: há combinações de pouca altura e pouca velocidade em que uma pane de motor não deixa pousar com segurança.",
+      "theory": "# Sem motor, o rotor vira um paraquedas\n\nSe o motor para, o piloto **baixa o coletivo**: o ar que sobe pelo disco mantém o rotor girando (lição 9), e o rotor freia a descida como um paraquedas. A velocidade de descida estabiliza em:\n\n```\nv_descida ≈ √(2 W / (ρ × A × 1,2))\n```\n\nUm helicóptero de 1600 kg com rotor de 5,6 m desce a ~**14,7 m/s** (quase 53 km/h): rápido demais para tocar o chão.\n\n## O arredondamento (flare)\n\nPerto do chão, o piloto **puxa o coletivo**: as pás ganham ângulo e usam a **energia de rotação** guardada no rotor para frear a descida. A energia disponível é:\n\n```\nE = ½ × I × Ω² × (1 − 0,7²)\n```\n\n(o rotor pode perder até ~30% da rotação antes de as pás estolarem; com I = 8 × pás × corda × R³ neste modelo). Se essa energia for maior que a energia cinética da descida (½ m v²), o toque é suave.\n\n## O que dá um rotor bom de autorrotação\n\n- **Rotor grande**: desce mais devagar (A maior) **e** guarda muito mais energia (I ∝ R³).\n- **Pás pesadas/largas** e mais pás: mais inércia.\n- **Rotação alta**: energia ∝ Ω², mas a **ponta** não pode passar de ~Mach 0,65.\n\nHá um compromisso: inércia alta deixa o rotor lento para acelerar e responder; rotores leves são ágeis, mas perdem rotação depressa numa pane.\n\n## Neste laboratório\n\nHelicóptero de **1600 kg**, rotor de 4,5 m, 2 pás de 0,25 m a 450 rpm. Ele desce rápido demais e não tem energia para o flare.",
+      "task": "Redesenhe o rotor para uma pane de motor terminar em **pouso seguro** (toque a até 3 m/s), com **descida em autorrotação de até 15 m/s** e ponta da pá **até Mach 0,65**.",
+      "hints": [
+        "Para descer a 15 m/s com 1600 kg o rotor precisa de ~95 m² de disco: raio de ~5,5 m.",
+        "Com raio maior, reduza a rotação para a ponta não passar de Mach 0,65 (5,6 m a ~370 rpm)."
+      ],
+      "labParams": {
+        "mode": "auto",
+        "mass": "1600",
+        "rotorRadius": "4.5",
+        "blades": "2",
+        "chord": "0.25",
+        "rpm": "450",
+        "show": "rotorRadius,rpm,blades,chord"
+      },
+      "goals": [
+        {
+          "metric": "safeLanding",
+          "op": "=",
+          "value": 1,
+          "description": "Pouso seguro (toque a até 3 m/s)"
+        },
+        {
+          "metric": "autoDescent",
+          "op": "<=",
+          "value": 15,
+          "description": "Descida em autorrotação de até 15 m/s"
+        },
+        {
+          "metric": "tipMach",
+          "op": "<=",
+          "value": 0.65,
+          "description": "Ponta da pá até Mach 0,65"
+        }
+      ],
+      "solutionInputs": {
+        "rotorRadius": "5.6",
+        "rpm": "370"
+      },
+      "questions": [
+        {
+          "prompt": "Qual a velocidade de descida em autorrotação de um helicóptero de **1600 kg** com rotor de raio **5,6 m**? (v = √(2W/(ρ A 1,2)), ρ = 1,225, g = 9,81)",
+          "kind": "number",
+          "answer": "14.72",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "W = 15 696 N; A = π × 5,6² = 98,5 m². v = √(31 392 / (1,225 × 98,5 × 1,2)) ≈ 14,7 m/s."
+        },
+        {
+          "prompt": "Esse rotor tem 2 pás de corda **0,25 m** e gira a **370 rpm**. Qual a energia de rotação ½ I Ω², com I = 8 × pás × corda × R³?",
+          "kind": "number",
+          "answer": "527.3",
+          "unit": "kJ",
+          "tolerance": 2,
+          "explanation": "I = 8 × 2 × 0,25 × 5,6³ = 702,5 kg·m². Ω = 370 × 2π/60 = 38,75 rad/s. E = ½ × 702,5 × 38,75² ≈ 527 kJ."
+        },
+        {
+          "prompt": "Se o rotor pode perder até **30%** da rotação no flare, que porcentagem da sua energia de rotação dá para usar?",
+          "kind": "number",
+          "answer": "51",
+          "unit": "%",
+          "tolerance": 1,
+          "explanation": "A energia vai com Ω²: sobra 0,7² = 49%. Usa-se 1 − 0,49 = 51%."
+        }
+      ]
+    },
+    {
+      "id": "aero-20-projeto-mato",
+      "title": "Projeto final: um avião de pista curta para o interior",
+      "level": 5,
+      "kind": "lab",
+      "lab": "airplane",
+      "theory": "# O avião que liga lugares sem estrada\n\nAviões de **pista curta** (\"bush planes\") levam médicos, vacinas e carga a lugares isolados — na Amazônia, nos Andes, no Alasca. As exigências puxam para lados opostos:\n\n- **Decolar curto e em altitude** (lições 4, 5): baixa **carga alar**, **flapes**, potência.\n- **Ir longe** (lição 10): alto **L/D** — asa de grande alongamento —, combustível suficiente e cruzeiro eficiente.\n- **Subir bem** depois da decolagem para passar por morros (lição 13).\n- **Pousar devagar** com segurança: baixa velocidade de estol.\n\n## Carga alar\n\n```\ncarga alar = massa / área da asa\n```\n\nUm avião de 920 kg com asa de 16 m² tem 57,5 kg/m². A velocidade de estol vem de V = √(2W / (ρ S CLmáx)); com flapes de 20° (CLmáx 1,5 + 0,45 = 1,95): **~78 km/h**.\n\n## Os compromissos\n\n- Asa **maior** reduz o estol e a corrida, mas acrescenta área molhada e diminui o L/D em cruzeiro.\n- Flapes **todos baixados** (30°) dão o maior CL, mas também muito arrasto: na decolagem, a aceleração cai. 10–20° costuma ser o melhor para decolar; 30° para pousar.\n- **Mais combustível** aumenta o alcance, mas pesa: mais estol, corrida maior.\n\n## Neste laboratório\n\nAvião de 700 kg vazio, motor de **130 kW** (fixo), CLmáx 1,5, pista de **300 m** a **1500 m** de altitude, cruzeiro a 200 km/h e 2000 m.",
+      "task": "Feche o projeto: decolar e passar dos 15 m em **até 220 m** na pista a 1500 m, **estol de até 80 km/h**, **alcance de pelo menos 2200 km** e **subida de pelo menos 7 m/s**. Escolha a **área e o alongamento da asa**, os **flapes de decolagem** e o **combustível**.",
+      "hints": [
+        "Comece pelo estol: com 14 m² e sem flapes ele passa de 90 km/h. Uns 16 m² e flapes de 20° resolvem estol e decolagem.",
+        "Para o alcance, aumente o alongamento (~9) e leve ~220 kg de combustível. Confira se o estol continua abaixo de 80 km/h."
+      ],
+      "labParams": {
+        "mode": "takeoff",
+        "mass": "700",
+        "fuel": "150",
+        "wingArea": "14",
+        "aspectRatio": "7",
+        "clmax": "1.5",
+        "flaps": "0",
+        "power": "130",
+        "propEff": "0.8",
+        "airportAlt": "1500",
+        "runway": "300",
+        "speed": "200",
+        "altitude": "2000",
+        "cd0": "0.032",
+        "sfc": "0.30",
+        "show": "wingArea,aspectRatio,flaps,fuel"
+      },
+      "goals": [
+        {
+          "metric": "tookOff",
+          "op": "=",
+          "value": 1,
+          "description": "Decola dentro da pista"
+        },
+        {
+          "metric": "takeoffTotal",
+          "op": "<=",
+          "value": 220,
+          "description": "Passa dos 15 m em até 220 m"
+        },
+        {
+          "metric": "stallSpeed",
+          "op": "<=",
+          "value": 80,
+          "description": "Estol a até 80 km/h"
+        },
+        {
+          "metric": "range",
+          "op": ">=",
+          "value": 2200,
+          "description": "Alcance de pelo menos 2200 km"
+        },
+        {
+          "metric": "climbRate",
+          "op": ">=",
+          "value": 7,
+          "description": "Subida de pelo menos 7 m/s"
+        }
+      ],
+      "solutionInputs": {
+        "wingArea": "16",
+        "aspectRatio": "9",
+        "flaps": "20",
+        "fuel": "220"
+      },
+      "questions": [
+        {
+          "prompt": "Qual a carga alar de um avião de **920 kg** com asa de **16 m²**?",
+          "kind": "number",
+          "answer": "57.5",
+          "unit": "kg/m²",
+          "tolerance": 1,
+          "explanation": "920 / 16 = 57,5 kg/m²."
+        },
+        {
+          "prompt": "Com CLmáx de **1,95** (flapes de 20°), qual a velocidade de estol desse avião (920 kg, 16 m², ρ = 1,225, g = 9,81)?",
+          "kind": "number",
+          "answer": "78.23",
+          "unit": "km/h",
+          "tolerance": 2,
+          "explanation": "V = √(2 × 9025 / (1,225 × 16 × 1,95)) = √472,3 ≈ 21,7 m/s ≈ 78,2 km/h."
+        },
+        {
+          "prompt": "Por que, na decolagem, flapes de 20° costumam ser melhores que os 30° máximos?",
+          "kind": "choice",
+          "options": [
+            "Porque 30° diminuem a sustentação",
+            "Porque 30° acrescentam muito arrasto e o avião acelera e sobe pior",
+            "Porque flapes só funcionam em pouso",
+            "Porque 30° aumentam a velocidade de estol"
+          ],
+          "answer": "1",
+          "explanation": "O último trecho de flape dá pouco CL extra e muito arrasto: ótimo para frear no pouso, ruim para acelerar e subir."
+        }
+      ]
     }
   ]
 }

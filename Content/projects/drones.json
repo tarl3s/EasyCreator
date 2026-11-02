@@ -459,6 +459,702 @@
           "explanation": "A potência cresce com o peso (P ∝ W^1,5 no pairar); sem o pacote, o drone gasta bem menos. (Baterias de lítio não ficam mais leves ao descarregar.)"
         }
       ]
+    },
+    {
+      "id": "drone-11-lipo",
+      "title": "A bateria LiPo por dentro: corrente, C e resistência interna",
+      "level": 3,
+      "kind": "quiz",
+      "safety": "- Carregue LiPo **só com carregador balanceador**, sobre superfície não inflamável, à vista, dentro de saco ou caixa à prova de fogo.\n- Bateria **estufada, amassada ou furada** vai para descarte correto — nunca de volta ao drone.\n- Guarde em **tensão de armazenamento** (~3,8 V por célula) e nunca descarregue abaixo de ~3,3 V por célula sob carga.\n- Em caso de fogo de lítio, afaste-se; use areia ou extintor adequado, e nunca respire a fumaça.",
+      "theory": "# Muito mais que \"mAh\"\n\nNa lição 3 vimos energia (Wh) e tempo de voo. Uma bateria de drone também precisa **entregar corrente alta** sem perder tensão nem esquentar demais.\n\n## Taxa C\n\nA taxa **C** diz quantas vezes a capacidade a bateria aguenta em corrente contínua:\n\n```\ncorrente máxima = capacidade (Ah) × C\n```\n\nUma 1500 mAh 100C promete 1,5 × 100 = **150 A** (números de rótulo costumam ser otimistas). Um drone de corrida puxa picos de 100 A ou mais; um drone de filmagem, 15–30 A.\n\n## Resistência interna e queda de tensão\n\nCada célula tem uma pequena resistência interna R (alguns mΩ). Sob corrente I:\n\n```\nqueda de tensão = I × R_total\nperda em calor   = I² × R_total\n```\n\nUma 4S com 5 mΩ por célula (20 mΩ no total) puxando 60 A perde **1,2 V** e transforma **72 W** em calor. Por isso a tensão \"cai\" quando você acelera, e baterias velhas (R maior) esquentam e perdem força.\n\n## Da potência à corrente\n\n```\nI = P / V\n```\n\nUm drone que paira com **300 W** numa 4S (14,8 V) puxa ~**20 A**. Com 6S (22,2 V), a mesma potência pede só 13,5 A — menos perda I²R, fios mais finos.\n\n## Cuidados\n\nLiPo é energia concentrada: curto-circuito, perfuração ou sobrecarga podem causar **fogo de lítio**, que não se apaga com facilidade. Respeite as tensões mínima (3,3 V sob carga) e máxima (4,2 V) por célula.",
+      "questions": [
+        {
+          "prompt": "Qual a corrente contínua máxima de uma bateria de **1500 mAh** e **100C**?",
+          "kind": "number",
+          "answer": "150",
+          "unit": "A",
+          "tolerance": 1,
+          "explanation": "1,5 Ah × 100 = 150 A."
+        },
+        {
+          "prompt": "Uma bateria **4S** tem **5 mΩ** de resistência interna por célula. Quanto a tensão cai puxando **60 A**?",
+          "kind": "number",
+          "answer": "1.2",
+          "unit": "V",
+          "tolerance": 1,
+          "explanation": "R total = 4 × 0,005 = 0,02 Ω. Queda = 60 × 0,02 = 1,2 V."
+        },
+        {
+          "prompt": "Quanta potência vira calor dentro dessa bateria a 60 A?",
+          "kind": "number",
+          "answer": "72",
+          "unit": "W",
+          "tolerance": 1,
+          "explanation": "P = I² × R = 60² × 0,02 = 72 W."
+        },
+        {
+          "prompt": "Um drone paira gastando **300 W** numa bateria 4S (**14,8 V**). Quanta corrente ele puxa?",
+          "kind": "number",
+          "answer": "20.27",
+          "unit": "A",
+          "tolerance": 2,
+          "explanation": "I = 300 / 14,8 ≈ 20,3 A."
+        },
+        {
+          "prompt": "O que fazer com uma LiPo que ficou **estufada**?",
+          "kind": "choice",
+          "options": [
+            "Furar para tirar o gás e continuar usando",
+            "Parar de usar e descartar corretamente (descarregada, em ponto de coleta)",
+            "Carregar com corrente mais alta para \"desinchar\"",
+            "Guardar na geladeira"
+          ],
+          "answer": "1",
+          "explanation": "O inchaço indica decomposição interna e risco de fogo. Nunca fure: o lítio reage com o ar."
+        }
+      ]
+    },
+    {
+      "id": "drone-12-bateria-ideal",
+      "title": "O tamanho ideal da bateria",
+      "level": 3,
+      "kind": "lab",
+      "lab": "drone",
+      "theory": "# Mais bateria, mais peso\n\nDobrar a bateria dobra a energia, mas também aumenta a massa do drone — e a potência para pairar cresce **mais que a massa**. Pela teoria do momento:\n\n```\nP_pairar ∝ m^1,5\n```\n\nUm drone 30% mais pesado precisa de 1,3^1,5 ≈ **1,48 vezes** a potência. Por isso o tempo de voo cresce cada vez menos com a capacidade — até um ponto em que acrescentar bateria **piora** o voo.\n\n## Quanto pesa a energia\n\nUma LiPo tem ~150 Wh/kg. Uma 4S de 5000 mAh guarda 14,8 × 5 = 74 Wh e pesa ~**493 g**.\n\n## A outra restrição: empuxo/peso\n\nMesmo que o tempo de voo continue subindo, a bateria pesada **come a margem de empuxo**. Abaixo de T/W ≈ 2 o drone fica lento para reagir, sofre com vento e não tem força para frear uma descida. A bateria ideal é a que dá o maior tempo de voo **mantendo T/W ≥ 2**.\n\n## Regra prática\n\nEm multirrotores bem projetados a bateria costuma ser **30–40% da massa** de decolagem. Abaixo disso sobra desempenho e falta autonomia; acima, o drone fica \"pendurado\" nas hélices.\n\n## Neste laboratório\n\nQuadricóptero de 800 g (sem bateria), 4 motores de 700 g de empuxo, hélices de 9\", bateria 4S. O gráfico mostra o tempo de voo em função da capacidade.",
+      "task": "Escolha a **capacidade** da bateria para o drone voar **pelo menos 21 minutos** pairando sem deixar o **empuxo/peso cair abaixo de 2**.",
+      "hints": [
+        "Teste 3000, 4500 e 6000 mAh e anote tempo de voo e T/W de cada uma.",
+        "A janela é estreita: entre ~5300 e ~6000 mAh."
+      ],
+      "labParams": {
+        "mode": "hover",
+        "plot": "capacity",
+        "frameMass": "800",
+        "motors": "4",
+        "motorThrust": "700",
+        "propSize": "9",
+        "cells": "4",
+        "capacity": "1500",
+        "payload": "0",
+        "show": "capacity,cells"
+      },
+      "goals": [
+        {
+          "metric": "flightTime",
+          "op": ">=",
+          "value": 21,
+          "description": "Tempo de voo de pelo menos 21 min"
+        },
+        {
+          "metric": "thrustToWeight",
+          "op": ">=",
+          "value": 2,
+          "description": "Empuxo/peso de pelo menos 2"
+        }
+      ],
+      "solutionInputs": {
+        "capacity": "5800"
+      },
+      "questions": [
+        {
+          "prompt": "Quanto pesa uma bateria **4S de 5000 mAh** a **150 Wh/kg**? (3,7 V por célula)",
+          "kind": "number",
+          "answer": "493.3",
+          "unit": "g",
+          "tolerance": 2,
+          "explanation": "E = 14,8 × 5 = 74 Wh. Massa = 74 / 150 = 0,493 kg ≈ 493 g."
+        },
+        {
+          "prompt": "Se o drone fica **30% mais pesado**, a potência para pairar fica multiplicada por quanto? (P ∝ m^1,5)",
+          "kind": "number",
+          "answer": "1.482",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "1,3^1,5 ≈ 1,48: quase 50% mais potência para 30% mais massa."
+        },
+        {
+          "prompt": "Por que dobrar a capacidade da bateria **não** dobra o tempo de voo?",
+          "kind": "choice",
+          "options": [
+            "Porque a bateria maior tem tensão menor",
+            "Porque os motores ficam mais fracos",
+            "Porque a bateria extra pesa, e a potência para pairar cresce mais rápido que a massa",
+            "Porque só 50% da bateria pode ser usada"
+          ],
+          "answer": "2",
+          "explanation": "Energia ∝ capacidade, mas potência ∝ m^1,5: cada mAh a mais rende menos minutos."
+        }
+      ]
+    },
+    {
+      "id": "drone-13-motor-kv",
+      "title": "Escolhendo motor e hélice: KV, torque e velocidade de passo",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# O que o KV quer dizer\n\nO **KV** de um motor brushless é quantas **rpm por volt** ele gira **sem carga**:\n\n```\nrpm_sem_carga = KV × V\n```\n\nUm motor de 920 KV numa 4S (14,8 V) gira ~**13 600 rpm** livre (com hélice, uns 15–25% menos).\n\n## KV e torque são dois lados da mesma moeda\n\nA constante de torque Kt (N·m por ampère) é o **inverso** do KV (em unidades SI):\n\n```\nKt = 60 / (2π × KV) ≈ 9,55 / KV\n```\n\nMotor de **KV baixo** = mais torque por ampère → gira **hélices grandes** devagar, com eficiência (drones de carga e filmagem). Motor de **KV alto** = gira **hélices pequenas** muito rápido (drones de corrida). 920 KV dá Kt ≈ 0,0104 N·m/A: a 20 A, ~0,21 N·m.\n\n## A hélice\n\nUma hélice **10x4.5** tem 10\" de diâmetro e 4,5\" de **passo** (o quanto ela \"avança\" por volta, como um parafuso). A **velocidade de passo** é um limite teórico da velocidade do ar que ela empurra:\n\n```\nv_passo = passo × rpm / 60\n```\n\nUma 5x4.3 a 30 000 rpm: 4,3 × 0,0254 × 500 ≈ **54,6 m/s**.\n\n## Como o empuxo escala\n\nPara a mesma hélice, empuxo ∝ **rpm²** e potência ∝ **rpm³**. Girar 20% mais rápido dá 1,2² = **1,44 vezes** o empuxo e 1,73 vezes a potência. Para o mesmo empuxo, hélice **maior e mais lenta** gasta menos (lição 4).\n\n## Combinando\n\nEscolha a hélice pelo empuxo e eficiência; depois o motor com KV para que, na tensão da bateria, ele gire essa hélice na rotação certa sem passar da **corrente máxima** do motor e do ESC.",
+      "questions": [
+        {
+          "prompt": "Quantas rpm sem carga gira um motor de **920 KV** numa bateria de **14,8 V**?",
+          "kind": "number",
+          "answer": "13616",
+          "unit": "rpm",
+          "tolerance": 1,
+          "explanation": "920 × 14,8 = 13 616 rpm."
+        },
+        {
+          "prompt": "Qual a constante de torque Kt desse motor de 920 KV? (Kt = 60 / (2π × KV))",
+          "kind": "number",
+          "answer": "0.01038",
+          "unit": "N·m/A",
+          "tolerance": 2,
+          "explanation": "Kt = 60 / (2π × 920) ≈ 0,0104 N·m/A."
+        },
+        {
+          "prompt": "Qual a velocidade de passo de uma hélice **5x4.3** a **30 000 rpm**? (1\" = 0,0254 m)",
+          "kind": "number",
+          "answer": "54.61",
+          "unit": "m/s",
+          "tolerance": 2,
+          "explanation": "4,3 × 0,0254 = 0,109 m por volta; × 500 voltas/s ≈ 54,6 m/s."
+        },
+        {
+          "prompt": "Se a mesma hélice gira **20% mais rápido**, o empuxo fica multiplicado por quanto? (empuxo ∝ rpm²)",
+          "kind": "number",
+          "answer": "1.44",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "1,2² = 1,44."
+        },
+        {
+          "prompt": "Para um drone de carga com hélices de **15\"**, qual motor faz mais sentido?",
+          "kind": "choice",
+          "options": [
+            "KV baixo (ex.: 400 KV): muito torque para girar a hélice grande devagar",
+            "KV alto (ex.: 2600 KV): mais rpm é sempre melhor",
+            "Tanto faz o KV",
+            "O motor com mais KV por grama"
+          ],
+          "answer": "0",
+          "explanation": "Hélice grande precisa de torque e baixa rotação; um motor de KV alto puxaria corrente demais e superaqueceria."
+        }
+      ]
+    },
+    {
+      "id": "drone-14-carga-pesada",
+      "title": "Carregando peso: hexa, octo e 6S",
+      "level": 4,
+      "kind": "lab",
+      "lab": "drone",
+      "safety": "- Drones de carga pesados são **outra categoria de risco**: acima de 25 kg (no Brasil) exigem registro e autorizações especiais; mesmo abaixo disso, uma hélice de 15\" corta como uma serra.\n- Teste com **hélices tiradas** ao configurar, e voe com carga presa por engate seguro, longe de pessoas.",
+      "theory": "# Uma câmera de cinema de 2 kg\n\nUm quadricóptero de filmagem de 1,5 kg com bateria de 5 Ah não levanta bem uma câmera de **2 kg**: o T/W cai perto de 1 e o tempo de voo despenca. Há quatro alavancas:\n\n## 1. Mais motores\n\nCom 6 (hexa) ou 8 (octo) motores, o empuxo total cresce. Bônus: com 6 ou mais, o drone pode **perder um motor** e ainda pousar (redundância).\n\n## 2. Hélices maiores\n\nMais área de disco = menos potência por newton (P ∝ T^1,5 / √A). Em drones de carga, hélices de 15–30\".\n\n## 3. Tensão maior (6S, 12S)\n\nA mesma potência com mais tensão pede **menos corrente**: I = P / V. 600 W em 6S (22,2 V) são ~27 A; em 4S seriam 40,5 A. Menos corrente = menos perda I²R nos fios, no ESC e na bateria.\n\n## 4. Bateria maior\n\nCom a massa toda maior, a bateria pode (e precisa) crescer junto — de novo respeitando T/W ≥ 2.\n\n## Empuxo por motor\n\n```\nempuxo por motor = massa total × T/W / nº de motores\n```\n\nPara 5,3 kg, T/W = 2 e 8 motores: 5300 × 2 / 8 = **1325 g** por motor.\n\n## Neste laboratório\n\nDrone de 1500 g (sem bateria), câmera de **2000 g**. Neste modelo, a massa dos motores já está incluída na estrutura.",
+      "task": "Faça o drone carregar a câmera de 2 kg com **empuxo/peso de pelo menos 2**, **tempo de voo de pelo menos 18 min** e **corrente de até 35 A** pairando. Escolha **motores**, **empuxo por motor**, **hélice**, **células** e **capacidade**.",
+      "hints": [
+        "Passe para 6S e hélices de 15\": a corrente cai e a eficiência sobe.",
+        "Um octo com 1500 g por motor e 12 000 mAh passa de 20 minutos com T/W ≈ 2,3."
+      ],
+      "labParams": {
+        "mode": "hover",
+        "frameMass": "1500",
+        "motors": "4",
+        "motorThrust": "1200",
+        "propSize": "10",
+        "cells": "4",
+        "capacity": "5000",
+        "payload": "2000",
+        "show": "motors,motorThrust,propSize,cells,capacity"
+      },
+      "goals": [
+        {
+          "metric": "thrustToWeight",
+          "op": ">=",
+          "value": 2,
+          "description": "Empuxo/peso de pelo menos 2"
+        },
+        {
+          "metric": "flightTime",
+          "op": ">=",
+          "value": 18,
+          "description": "Tempo de voo de pelo menos 18 min"
+        },
+        {
+          "metric": "hoverCurrent",
+          "op": "<=",
+          "value": 35,
+          "description": "Corrente pairando de até 35 A"
+        }
+      ],
+      "solutionInputs": {
+        "motors": "8",
+        "motorThrust": "1500",
+        "propSize": "15",
+        "cells": "6",
+        "capacity": "12000"
+      },
+      "questions": [
+        {
+          "prompt": "Um drone paira com **600 W** numa bateria **6S** (22,2 V). Qual a corrente?",
+          "kind": "number",
+          "answer": "27.03",
+          "unit": "A",
+          "tolerance": 2,
+          "explanation": "600 / 22,2 ≈ 27 A (em 4S seriam 40,5 A)."
+        },
+        {
+          "prompt": "Um drone de **5,3 kg** com **8 motores** precisa de T/W = 2. Qual o empuxo máximo mínimo de cada motor?",
+          "kind": "number",
+          "answer": "1325",
+          "unit": "g",
+          "tolerance": 1,
+          "explanation": "5300 × 2 / 8 = 1325 g por motor."
+        },
+        {
+          "prompt": "Qual vantagem de segurança um **hexa** ou **octo** tem sobre um quadricóptero?",
+          "kind": "choice",
+          "options": [
+            "Não precisa de GPS",
+            "Pode perder um motor e ainda controlar a descida",
+            "Não cai nunca",
+            "Voa sem bateria por alguns segundos"
+          ],
+          "answer": "1",
+          "explanation": "Num quad, sem um motor não há como equilibrar torque e empuxo; com 6 ou 8, os outros compensam (com menos margem)."
+        }
+      ]
+    },
+    {
+      "id": "drone-15-pid-pesado",
+      "title": "Sintonizando a altura de um drone pesado",
+      "level": 4,
+      "kind": "lab",
+      "lab": "drone",
+      "theory": "# Os mesmos ganhos não servem para todo drone\n\nNa lição 6 você sintonizou o PID de altura de um drone leve, com T/W alto. Um drone de carga é diferente:\n\n- **T/W menor** (aqui, ~1,6): ele paira com ~**62%** do acelerador e sobra pouco para subir ou frear uma descida. A saída do controlador **satura** com facilidade.\n- **Motores e hélices maiores respondem mais devagar**: o atraso entre o comando e o empuxo cresce.\n- **Mais inércia**: ele demora a parar.\n\n## O que acontece com ganhos agressivos\n\nKp e Ki altos pedem 100% do acelerador por muito tempo; o drone passa do alvo, o integrador acumula enquanto satura, e o resultado é um **sobressinal** grande e uma oscilação lenta.\n\n## Só P, de novo\n\nSem integrador, o drone para onde Kp × erro = acelerador de pairar:\n\n```\nerro = acelerador de pairar / Kp\n```\n\nCom 62,5% e Kp = 5 %/m: **12,5 m** abaixo do alvo! O termo I é obrigatório.\n\n## Método\n\n1. Kd primeiro, para amortecer.\n2. Kp moderado — o drone pesado não tem força para respostas bruscas.\n3. Ki pequeno: só para eliminar o erro, sem acumular demais.\n\nNa vida real, também se usa **feed-forward** (somar o acelerador de pairar estimado) para o integrador ter menos trabalho.\n\n## Neste laboratório\n\nHexa de 3 kg + bateria de 10 Ah + 1 kg de carga, alvo a **30 m**.",
+      "task": "Sintonize o PID para o drone pesado **chegar e ficar nos 30 m**, com sobressinal de **até 3%** e acomodação em **até 5 s**.",
+      "hints": [
+        "Os ganhos do drone leve (Kp 12, Ki 4, Kd 10) passam de 3% aqui. Diminua Kp e Ki.",
+        "Algo como Kp 6, Ki 1,5 e Kd 8 funciona."
+      ],
+      "labParams": {
+        "mode": "altitude",
+        "frameMass": "3000",
+        "motors": "6",
+        "motorThrust": "1500",
+        "propSize": "15",
+        "cells": "6",
+        "capacity": "10000",
+        "payload": "1000",
+        "target": "30",
+        "kp": "5",
+        "show": "kp,ki,kd"
+      },
+      "goals": [
+        {
+          "metric": "reachedAltitude",
+          "op": "=",
+          "value": 1,
+          "description": "Chega e fica na altura alvo"
+        },
+        {
+          "metric": "overshoot",
+          "op": "<=",
+          "value": 3,
+          "description": "Sobressinal de até 3%"
+        },
+        {
+          "metric": "settlingTime",
+          "op": "<=",
+          "value": 5,
+          "description": "Acomoda em até 5 s"
+        }
+      ],
+      "solutionInputs": {
+        "kp": "6",
+        "ki": "1.5",
+        "kd": "8"
+      },
+      "questions": [
+        {
+          "prompt": "Com **T/W = 1,6**, com quantos % do acelerador o drone paira (empuxo proporcional ao acelerador)?",
+          "kind": "number",
+          "answer": "62.5",
+          "unit": "%",
+          "tolerance": 1,
+          "explanation": "100 / 1,6 = 62,5%."
+        },
+        {
+          "prompt": "Só com P e **Kp = 5 %/m**, quantos metros abaixo do alvo esse drone para?",
+          "kind": "number",
+          "answer": "12.5",
+          "unit": "m",
+          "tolerance": 1,
+          "explanation": "erro = 62,5 / 5 = 12,5 m."
+        },
+        {
+          "prompt": "Por que ganhos agressivos dão sobressinal grande num drone de **T/W baixo**?",
+          "kind": "choice",
+          "options": [
+            "Porque o GPS fica impreciso",
+            "Porque o barômetro não funciona com carga",
+            "Porque a saída satura: sobra pouco empuxo para frear, e o integrador acumula enquanto isso",
+            "Porque as hélices grandes giram ao contrário"
+          ],
+          "answer": "2",
+          "explanation": "Com pouca margem, o drone acelera ao máximo, ganha velocidade e não consegue frear a tempo; o termo I cheio piora tudo."
+        }
+      ]
+    },
+    {
+      "id": "drone-16-fusao-sensores",
+      "title": "Fusão de sensores: filtros complementar e de Kalman",
+      "level": 4,
+      "kind": "quiz",
+      "theory": "# Nenhum sensor é bom sozinho\n\n- O **giroscópio** é ótimo a curto prazo, mas integrado ele **deriva**.\n- O **acelerômetro** sabe onde é \"para baixo\" a longo prazo, mas é **ruidoso** e se confunde com acelerações e vibração.\n- O **barômetro** mede altura com ruído de ~0,5 m; o **GPS**, posição com erro de metros e atualização lenta.\n\nA **fusão de sensores** combina o melhor de cada um.\n\n## Filtro complementar\n\n```\nângulo = α × (ângulo + giro × dt) + (1 − α) × ângulo_acelerômetro\nα = τ / (τ + dt)\n```\n\nτ é a constante de tempo: abaixo dela confia-se no giroscópio, acima no acelerômetro. Com τ = 0,5 s e dt = 0,01 s: α ≈ **0,980**.\n\n## Filtro de Kalman (a ideia)\n\nO Kalman guarda uma estimativa **e a sua incerteza** (variância P). A cada medida com variância R, mistura as duas com o **ganho de Kalman**:\n\n```\nK = P / (P + R)\nestimativa_nova = estimativa + K × (medida − estimativa)\n```\n\nSe a estimativa é incerta (P = 4) e a medida é boa (R = 1): K = 0,8 — confia-se muito na medida. Estimativa 10, medida 12 → **11,6**. Depois, a incerteza diminui; entre medidas, ela cresce com o modelo. O **EKF** (Kalman estendido) é o coração dos controladores de voo como ArduPilot e PX4.\n\n## Ruído e média\n\nMédia de N medidas independentes reduz o desvio padrão por **√N**: 100 amostras → ruído 10 vezes menor (mas mais atraso).\n\n## Amostragem\n\nPelo teorema de Nyquist, para enxergar uma vibração de 200 Hz é preciso amostrar a **mais de 400 Hz**; senão ela aparece como uma oscilação lenta falsa (*aliasing*). Por isso as IMUs rodam a 1–8 kHz e os filtros cortam as vibrações dos motores.",
+      "questions": [
+        {
+          "prompt": "Num filtro complementar com **τ = 0,5 s** e **dt = 0,01 s**, quanto vale α = τ / (τ + dt)?",
+          "kind": "number",
+          "answer": "0.9804",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "α = 0,5 / 0,51 ≈ 0,980."
+        },
+        {
+          "prompt": "A estimativa tem variância **P = 4** e a medida, **R = 1**. Qual o ganho de Kalman K = P / (P + R)?",
+          "kind": "number",
+          "answer": "0.8",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "K = 4 / 5 = 0,8."
+        },
+        {
+          "prompt": "Com esse K, a estimativa de altura era **10 m** e o sensor mede **12 m**. Qual a nova estimativa?",
+          "kind": "number",
+          "answer": "11.6",
+          "unit": "m",
+          "tolerance": 1,
+          "explanation": "10 + 0,8 × (12 − 10) = 11,6 m."
+        },
+        {
+          "prompt": "Um barômetro tem ruído de **1 m** (desvio padrão). Qual o ruído da média de **100** leituras independentes?",
+          "kind": "number",
+          "answer": "0.1",
+          "unit": "m",
+          "tolerance": 1,
+          "explanation": "1 / √100 = 0,1 m."
+        },
+        {
+          "prompt": "Para enxergar uma vibração de **200 Hz** sem *aliasing*, a amostragem precisa ser maior que quantos Hz?",
+          "kind": "number",
+          "answer": "400",
+          "unit": "Hz",
+          "tolerance": 1,
+          "explanation": "Nyquist: mais que 2 × 200 = 400 Hz."
+        }
+      ]
+    },
+    {
+      "id": "drone-17-atitude-pesado",
+      "title": "Atitude de um hexa pesado: o atraso dos motores",
+      "level": 5,
+      "kind": "lab",
+      "lab": "drone",
+      "theory": "# Copiar os ganhos de um drone pequeno pode virar o drone\n\nO laço de **atitude** (rolagem e arfagem) é o mais rápido do controlador de voo. Num quadricóptero de corrida, os motores mudam a rotação em ~20–30 ms. Num hexa de carga com hélices de 15\", o **motor leva muito mais tempo** para acelerar a hélice pesada:\n\n```\nτ ≈ 0,03 × (D / 5\")^1,5 s\n```\n\nCom D = 15\": τ ≈ 0,156 s — cinco vezes mais lento.\n\n## Atraso = instabilidade\n\nUm laço de controle com atraso grande recebe a correção **tarde**: quando o empuxo finalmente chega, o drone já passou do ponto, e a correção seguinte chega tarde de novo. Com ganhos altos isso vira uma **oscilação que cresce** até o drone capotar. É a margem de fase da teoria de controle.\n\n## Inércia\n\nO momento de inércia cresce com massa × braço²:\n\n```\nI ≈ 0,4 × m × braço²\n```\n\nUm hexa de 4 kg com braços de 0,5 m tem I ≈ 0,4 kg·m², muitas vezes mais que um quad de corrida.\n\n## Como sintonizar\n\n- **Kp** menor que no drone pequeno (a planta é lenta).\n- **Kd** relativamente maior: ele \"vê\" a velocidade de rolagem e freia antes.\n- **Ki** pequeno, só contra a perturbação constante (vento, CG fora do centro).\n\nControladores reais também usam **filtros** nos sinais do giroscópio e às vezes **feed-forward** do comando do piloto.\n\n## Neste laboratório\n\nHexa de 3 kg com hélices de 15\" e 1 kg de carga. Ele começa com os ganhos do quadricóptero da lição 7 — e capota.",
+      "task": "Com os ganhos do drone pequeno, o hexa capota. Sintonize Kp, Ki e Kd para ele **chegar aos 20°** de rolagem com sobressinal de **até 5%** e acomodar em **até 1 s**.",
+      "hints": [
+        "Corte o Ki primeiro (para ~0,5) e o Kp para ~1. Depois suba o Kd até o sobressinal sumir.",
+        "Kp 1, Ki 0,5 e Kd 0,4 funcionam; Kd alto demais deixa a resposta lenta."
+      ],
+      "labParams": {
+        "mode": "attitude",
+        "frameMass": "3000",
+        "motors": "6",
+        "motorThrust": "1500",
+        "propSize": "15",
+        "cells": "6",
+        "capacity": "10000",
+        "payload": "1000",
+        "angle": "20",
+        "kp": "1.5",
+        "ki": "2",
+        "kd": "0.2",
+        "show": "kp,ki,kd"
+      },
+      "goals": [
+        {
+          "metric": "reachedAngle",
+          "op": "=",
+          "value": 1,
+          "description": "Chega e fica no ângulo alvo"
+        },
+        {
+          "metric": "overshoot",
+          "op": "<=",
+          "value": 5,
+          "description": "Sobressinal de até 5%"
+        },
+        {
+          "metric": "settlingTime",
+          "op": "<=",
+          "value": 1,
+          "description": "Acomoda em até 1 s"
+        }
+      ],
+      "solutionInputs": {
+        "kp": "1",
+        "ki": "0.5",
+        "kd": "0.4"
+      },
+      "questions": [
+        {
+          "prompt": "Qual a constante de tempo de um motor com hélice de **15\"**, pelo modelo τ = 0,03 × (D / 5\")^1,5?",
+          "kind": "number",
+          "answer": "0.1559",
+          "unit": "s",
+          "tolerance": 2,
+          "explanation": "0,03 × 3^1,5 = 0,03 × 5,196 ≈ 0,156 s."
+        },
+        {
+          "prompt": "Qual o momento de inércia (I ≈ 0,4 × m × braço²) de um hexa de **4 kg** com braços de **0,5 m**?",
+          "kind": "number",
+          "answer": "0.4",
+          "unit": "kg·m²",
+          "tolerance": 1,
+          "explanation": "0,4 × 4 × 0,25 = 0,4 kg·m²."
+        },
+        {
+          "prompt": "Por que os ganhos de um quad pequeno fazem o hexa pesado capotar?",
+          "kind": "choice",
+          "options": [
+            "Porque o hexa tem mais motores para controlar",
+            "Porque o atraso dos motores grandes faz as correções chegarem tarde, e ganhos altos viram oscilação crescente",
+            "Porque o giroscópio do hexa é pior",
+            "Porque o hexa é mais leve"
+          ],
+          "answer": "1",
+          "explanation": "Atraso no laço reduz a margem de fase; com Kp e Ki altos, a correção atrasada empurra no sentido errado e a oscilação cresce."
+        }
+      ]
+    },
+    {
+      "id": "drone-18-velocidade-alcance",
+      "title": "Velocidade de máximo alcance",
+      "level": 5,
+      "kind": "lab",
+      "lab": "drone",
+      "theory": "# Devagar não é econômico\n\nIntuitivamente, voar devagar gastaria menos bateria. Num multirrotor isso é falso, por dois motivos:\n\n1. **Pairar já custa caro**: parado, o drone gasta toda a potência de sustentação.\n2. Voando para a frente, o rotor recebe **ar novo** o tempo todo (como uma asa): a **potência induzida cai** com a velocidade (fórmula de Glauert). Até ~10–15 m/s, a potência total **diminui**!\n\nAcima disso, o **arrasto do corpo** (∝ v²) e a inclinação do drone dominam, e a potência volta a subir.\n\n## Energia por quilômetro\n\nO que importa para o alcance não é a potência, é a **energia por distância**:\n\n```\nWh/km = potência (W) / velocidade (m/s) × 1000 / 3600\n```\n\nA 15 m/s gastando 170 W: 170 × 1000 / 15 / 3600 ≈ **3,15 Wh/km**. Com 59,2 Wh utilizáveis (80% de 74 Wh): ≈ **18,8 km** no total.\n\nVoar a 4 m/s pode custar 3 vezes mais energia por km que voar a 15 m/s.\n\n## A velocidade ótima\n\nA velocidade de máximo alcance é onde a reta que sai da origem **tangencia** a curva potência × velocidade — o ponto de menor W por m/s. Com **vento contra**, voe mais rápido que isso; com vento a favor, um pouco mais devagar.\n\n## Neste laboratório\n\nQuadricóptero de 1,2 kg, 4S 5000 mAh, hélices de 10\", ponto de inspeção a **5 km**. O gráfico mostra Wh/km em função da velocidade.",
+      "task": "A 4 m/s o drone não consegue ir e voltar. Escolha a **velocidade de cruzeiro** que dê **alcance máximo de pelo menos 8,5 km**, complete a missão e use **até 50%** da bateria.",
+      "hints": [
+        "Olhe o gráfico de Wh/km: ele tem um mínimo. É lá que você quer voar.",
+        "Entre 14 e 17 m/s o alcance passa de 8,5 km."
+      ],
+      "labParams": {
+        "mode": "mission",
+        "frameMass": "1200",
+        "motors": "4",
+        "motorThrust": "1000",
+        "propSize": "10",
+        "cells": "4",
+        "capacity": "5000",
+        "payload": "0",
+        "route": "5",
+        "speed": "4",
+        "show": "speed"
+      },
+      "goals": [
+        {
+          "metric": "maxRange",
+          "op": ">=",
+          "value": 8.5,
+          "description": "Alcance máximo de pelo menos 8,5 km"
+        },
+        {
+          "metric": "missionOk",
+          "op": "=",
+          "value": 1,
+          "description": "Completa a missão de ida e volta"
+        },
+        {
+          "metric": "energyUsed",
+          "op": "<=",
+          "value": 50,
+          "description": "Usa até 50% da bateria"
+        }
+      ],
+      "solutionInputs": {
+        "speed": "15"
+      },
+      "questions": [
+        {
+          "prompt": "Um drone voa a **15 m/s** gastando **170 W**. Quantos Wh ele gasta por km?",
+          "kind": "number",
+          "answer": "3.148",
+          "unit": "Wh/km",
+          "tolerance": 2,
+          "explanation": "1 km leva 1000 / 15 = 66,7 s. 170 × 66,7 / 3600 ≈ 3,15 Wh."
+        },
+        {
+          "prompt": "Com **59,2 Wh** utilizáveis e **3,148 Wh/km**, quantos km o drone voa no total?",
+          "kind": "number",
+          "answer": "18.8",
+          "unit": "km",
+          "tolerance": 2,
+          "explanation": "59,2 / 3,148 ≈ 18,8 km (ida e volta: ~9,4 km de raio, sem contar decolagem e pouso)."
+        },
+        {
+          "prompt": "Por que voar a **4 m/s** gasta mais energia por km do que voar a 15 m/s?",
+          "kind": "choice",
+          "options": [
+            "Porque os motores esquentam mais",
+            "Porque o arrasto é maior devagar",
+            "Porque a potência é quase a de pairar, e ela é gasta por muito mais tempo em cada km",
+            "Porque o GPS consome mais"
+          ],
+          "answer": "2",
+          "explanation": "A 4 m/s cada km leva 250 s com ~208 W; a 15 m/s, 67 s com ~170 W. Energia = potência × tempo."
+        }
+      ]
+    },
+    {
+      "id": "drone-19-teoria-rotor",
+      "title": "Aerodinâmica do rotor: carga de disco, efeito solo e anel de vórtice",
+      "level": 5,
+      "kind": "quiz",
+      "theory": "# A teoria do momento, de novo\n\nCada hélice de um drone é um pequeno rotor de helicóptero. Para gerar empuxo T, ela acelera o ar até a **velocidade induzida** vi:\n\n```\nvi = √(T / (2 ρ A))\nP_ideal = T × vi = T^1,5 / √(2 ρ A)\nP_real = P_ideal / FM\n```\n\n**FM** (figura de mérito) é a eficiência aerodinâmica real do rotor: 0,5–0,65 para hélices de drone, até ~0,8 para rotores de helicóptero.\n\nUma hélice de 10\" (A = 0,0507 m²) gerando 5 N: vi ≈ 6,3 m/s, P_ideal ≈ **31,7 W**; com FM = 0,6, ~**52,9 W**.\n\n## Carga de disco\n\n```\ncarga de disco = T / A   (N/m²)\n```\n\nQuanto **menor** a carga de disco, menor a potência por newton. Drones de 5\" de corrida têm carga alta (ágeis, ineficientes); drones de carga e helicópteros, baixa.\n\n## Altitude\n\nComo P ∝ 1/√ρ, voar a 3000 m (σ ≈ 0,742) custa **16% mais** potência — e as hélices perdem margem de empuxo.\n\n## Efeito solo\n\nPerto do chão (menos de ~1 diâmetro de rotor), o chão \"segura\" o fluxo de ar: menos potência para o mesmo empuxo. Por isso o drone \"flutua\" e escorrega no pouso.\n\n## Anel de vórtice (VRS)\n\nDescendo **reto na vertical** a uma velocidade parecida com vi, o rotor entra no próprio fluxo descendente: o ar recircula num anel, o empuxo cai e oscila, e **acelerar não ajuda** (piora). A saída é **andar para o lado** para sair do próprio fluxo. Por isso drones (e helicópteros) devem descer em diagonal ou devagar.",
+      "questions": [
+        {
+          "prompt": "Qual a potência ideal de uma hélice de **10\"** (0,254 m) gerando **5 N** ao nível do mar (ρ = 1,225 kg/m³)? (P = T^1,5 / √(2ρA))",
+          "kind": "number",
+          "answer": "31.73",
+          "unit": "W",
+          "tolerance": 2,
+          "explanation": "A = π × 0,254² / 4 = 0,0507 m². P = 11,18 / √(2 × 1,225 × 0,0507) = 11,18 / 0,352 ≈ 31,7 W."
+        },
+        {
+          "prompt": "Com figura de mérito **0,6**, qual a potência real dessa hélice?",
+          "kind": "number",
+          "answer": "52.89",
+          "unit": "W",
+          "tolerance": 2,
+          "explanation": "31,73 / 0,6 ≈ 52,9 W."
+        },
+        {
+          "prompt": "Qual a carga de disco dessa hélice (5 N em 0,0507 m²)?",
+          "kind": "number",
+          "answer": "98.68",
+          "unit": "N/m²",
+          "tolerance": 2,
+          "explanation": "5 / 0,05067 ≈ 98,7 N/m²."
+        },
+        {
+          "prompt": "A 3000 m, σ = ρ/ρ0 = **0,742**. A potência ideal para o mesmo empuxo fica multiplicada por quanto? (P ∝ 1/√ρ)",
+          "kind": "number",
+          "answer": "1.161",
+          "unit": "",
+          "tolerance": 1,
+          "explanation": "1 / √0,742 ≈ 1,161: 16% mais potência."
+        },
+        {
+          "prompt": "O drone desce reto e rápido, começa a balançar e perde empuxo mesmo com o acelerador alto. O que fazer?",
+          "kind": "choice",
+          "options": [
+            "Acelerar ainda mais na vertical",
+            "Desligar os motores",
+            "Mover o drone para o lado para sair do anel de vórtice",
+            "Girar no próprio eixo (guinada)"
+          ],
+          "answer": "2",
+          "explanation": "No anel de vórtice o rotor está no próprio fluxo; só saindo dele (para o lado ou para a frente) o empuxo volta."
+        }
+      ]
+    },
+    {
+      "id": "drone-20-projeto-mapeamento",
+      "title": "Projeto final: drone de mapeamento a 6 km",
+      "level": 5,
+      "kind": "lab",
+      "lab": "drone",
+      "safety": "- Missões longas e automáticas (BVLOS — além da linha de visada) exigem **autorização específica** da ANAC/DECEA. Em voo comum, mantenha o drone **à vista**.\n- Configure o **retorno automático** (RTH) por bateria baixa e por perda de sinal, com altura acima dos obstáculos da área.",
+      "theory": "# Juntando tudo\n\nUma cooperativa precisa mapear uma área a **6 km** da sede, com uma câmera de **500 g**. Ir, mapear e voltar exige um drone que una as lições da trilha:\n\n- **Empuxo/peso ≥ 2** (lição 2) para vento e manobras.\n- **Bateria** do tamanho certo (lições 3 e 12): mais energia, mas sem afogar o T/W.\n- **Tensão** e **hélices** (lições 4, 13 e 14): mais células = menos corrente; hélices maiores = menos potência.\n- **Velocidade de cruzeiro** (lição 18): perto da velocidade de máximo alcance.\n- **Reserva**: chegar de volta com pelo menos 40% da bateria (meta de usar até 60%).\n\n## Contas de energia\n\n```\nenergia da missão = potência × tempo\n```\n\n12 km (ida e volta) a 15 m/s levam 800 s; a 180 W, são **40 Wh**. Uma bateria 6S de 6000 mAh guarda 22,2 × 6 = **133,2 Wh** — com folga, mesmo descontando decolagem, pouso e o mapeamento em si.\n\n## Como abordar\n\n1. Ajuste a velocidade de cruzeiro para o mínimo de Wh/km.\n2. Escolha células e capacidade para a energia.\n3. Escolha a hélice e o empuxo por motor para o T/W ≥ 2 com a bateria nova.\n4. Rode, veja o que falta, repita.\n\n## Neste laboratório\n\nQuadricóptero de 1,2 kg (sem bateria), câmera de 500 g, ponto a 6 km.",
+      "task": "Projete o drone para a missão de 6 km: **completar a missão**, usar **até 60%** da bateria, **empuxo/peso ≥ 2** e **alcance máximo de pelo menos 10 km** (para ter folga).",
+      "hints": [
+        "Comece pela velocidade (~15 m/s). Depois passe para 6S e uma bateria maior.",
+        "Com 6S 6000 mAh, hélice de 13\" e motores de 1500 g, todas as metas fecham."
+      ],
+      "labParams": {
+        "mode": "mission",
+        "frameMass": "1200",
+        "motors": "4",
+        "motorThrust": "800",
+        "propSize": "9",
+        "cells": "4",
+        "capacity": "4000",
+        "payload": "500",
+        "route": "6",
+        "speed": "6",
+        "show": "speed,capacity,cells,propSize,motorThrust"
+      },
+      "goals": [
+        {
+          "metric": "missionOk",
+          "op": "=",
+          "value": 1,
+          "description": "Completa a missão de ida e volta"
+        },
+        {
+          "metric": "energyUsed",
+          "op": "<=",
+          "value": 60,
+          "description": "Usa até 60% da bateria"
+        },
+        {
+          "metric": "thrustToWeight",
+          "op": ">=",
+          "value": 2,
+          "description": "Empuxo/peso de pelo menos 2"
+        },
+        {
+          "metric": "maxRange",
+          "op": ">=",
+          "value": 10,
+          "description": "Alcance máximo de pelo menos 10 km"
+        }
+      ],
+      "solutionInputs": {
+        "speed": "15",
+        "capacity": "6000",
+        "cells": "6",
+        "propSize": "13",
+        "motorThrust": "1500"
+      },
+      "questions": [
+        {
+          "prompt": "Ida e volta de **12 km** a **15 m/s** gastando **180 W**. Quanta energia (em Wh) os trechos de cruzeiro consomem?",
+          "kind": "number",
+          "answer": "40",
+          "unit": "Wh",
+          "tolerance": 1,
+          "explanation": "t = 12 000 / 15 = 800 s. E = 180 × 800 / 3600 = 40 Wh."
+        },
+        {
+          "prompt": "Quanta energia tem uma bateria **6S de 6000 mAh**? (3,7 V por célula)",
+          "kind": "number",
+          "answer": "133.2",
+          "unit": "Wh",
+          "tolerance": 1,
+          "explanation": "6 × 3,7 = 22,2 V; × 6 Ah = 133,2 Wh."
+        },
+        {
+          "prompt": "Por que planejar a missão para usar **no máximo 60%** da bateria?",
+          "kind": "choice",
+          "options": [
+            "Porque a bateria só carrega até 60%",
+            "Para ter reserva contra vento contra, desvios, espera para pousar e a bateria envelhecida",
+            "Porque o GPS desliga com menos de 40%",
+            "Porque a lei proíbe usar mais"
+          ],
+          "answer": "1",
+          "explanation": "Planos ideais nunca acontecem: vento na volta, uma passada extra no mapeamento ou uma bateria gasta comem a margem rapidamente."
+        }
+      ]
     }
   ]
 }
