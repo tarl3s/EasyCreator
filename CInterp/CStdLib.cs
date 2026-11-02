@@ -10,12 +10,12 @@ public static class CStdLib
 
     static void Need(CInterpreter ip, CVal[] a, int n, string fn)
     {
-        if (a.Length < n) throw ip.RtErr(fn + "() precisa de " + n + " argumento(s), mas recebeu " + a.Length);
+        if (a.Length < n) throw ip.RtErr(L.F("{0}() precisa de {1} argumento(s), mas recebeu {2}", fn, n, a.Length));
     }
 
     static long Ptr(CInterpreter ip, CVal v, string fn, int argNo)
     {
-        if (!v.T.IsPtr) throw ip.RtErr(fn + "(): o argumento " + argNo + " precisa ser um ponteiro/texto, mas é " + v.T);
+        if (!v.T.IsPtr) throw ip.RtErr(L.F("{0}(): o argumento {1} precisa ser um ponteiro/texto, mas é {2}", fn, argNo, v.T));
         return v.L;
     }
 
@@ -225,7 +225,7 @@ public static class CStdLib
             if (old != 0 && n != 0)
             {
                 long sz = ip.BlockSize(old);
-                if (sz < 0) throw ip.RtErr("realloc() recebeu um ponteiro que não veio de malloc");
+                if (sz < 0) throw ip.RtErr(L.T("realloc() recebeu um ponteiro que não veio de malloc"));
                 Array.Copy(ip.Mem, old, ip.Mem, n, Math.Min(sz, Math.Max(1, a[1].AsLong)));
                 ip.Free(old);
             }
@@ -233,7 +233,7 @@ public static class CStdLib
         });
         ip.AddNative("free", (ip, a) => { Need(ip, a, 1, "free"); ip.Free(a[0].L); return CVal.VoidV; });
         ip.AddNative("exit", (ip, a) => throw new CExit(a.Length > 0 ? (int)a[0].AsLong : 0));
-        ip.AddNative("abort", (ip, a) => throw ip.RtErr("o programa chamou abort()"));
+        ip.AddNative("abort", (ip, a) => throw ip.RtErr(L.T("o programa chamou abort()")));
         ip.AddNative("atoi", (ip, a) => { Need(ip, a, 1, "atoi"); return CVal.Int(ParseLeadingInt(Str(ip, a[0], "atoi", 1))); });
         ip.AddNative("atol", (ip, a) => { Need(ip, a, 1, "atol"); return CVal.LongV(ParseLeadingInt(Str(ip, a[0], "atol", 1))); });
         ip.AddNative("atof", (ip, a) =>
@@ -257,7 +257,7 @@ public static class CStdLib
         ip.AddNative("assert", (ip, a) =>
         {
             Need(ip, a, 1, "assert");
-            if (!a[0].IsTrue) throw ip.RtErr("assert falhou: a condição testada é falsa");
+            if (!a[0].IsTrue) throw ip.RtErr(L.T("assert falhou: a condição testada é falsa"));
             return CVal.VoidV;
         });
 
@@ -447,7 +447,7 @@ public static class CStdLib
                 case 's':
                     {
                         var v = NextArg(ip, args, ref argi, fn, fmt);
-                        if (!v.T.IsPtr) throw ip.RtErr(fn + ": %s precisa de um texto (char*), mas recebeu " + v.T);
+                        if (!v.T.IsPtr) throw ip.RtErr(L.F("{0}: %s precisa de um texto (char*), mas recebeu {1}", fn, v.T));
                         body = v.L == 0 ? "(null)" : ip.ReadCString(v.L, prec >= 0 ? prec : 1 << 20);
                         if (prec >= 0 && body.Length > prec) body = body[..prec];
                         numeric = false;
@@ -467,7 +467,7 @@ public static class CStdLib
                         continue;
                     }
                 default:
-                    throw ip.RtErr(fn + ": formato desconhecido '%" + conv + "'");
+                    throw ip.RtErr(L.F("{0}: formato desconhecido '%{1}'", fn, conv));
             }
             int total = sign.Length + body.Length;
             if (width > total)
@@ -484,9 +484,9 @@ public static class CStdLib
     static CVal NextArg(CInterpreter ip, CVal[] args, ref int argi, string fn, string fmt)
     {
         if (argi >= args.Length)
-            throw ip.RtErr(fn + ": o formato \"" + Escape(fmt) + "\" pede mais valores do que foram passados");
+            throw ip.RtErr(L.F("{0}: o formato \"{1}\" pede mais valores do que foram passados", fn, Escape(fmt)));
         var v = args[argi++];
-        if (v.T.K == TK.Struct || v.T.K == TK.Void) throw ip.RtErr(fn + ": não é possível imprimir um valor do tipo " + v.T);
+        if (v.T.K == TK.Struct || v.T.K == TK.Void) throw ip.RtErr(L.F("{0}: não é possível imprimir um valor do tipo {1}", fn, v.T));
         return v;
     }
 
@@ -649,10 +649,10 @@ public static class CStdLib
             CVal target = default;
             if (!suppress && conv != 'n')
             {
-                if (argi >= args.Length) throw ip.RtErr(fn + ": o formato \"" + Escape(fmt) + "\" pede mais variáveis do que foram passadas");
+                if (argi >= args.Length) throw ip.RtErr(L.F("{0}: o formato \"{1}\" pede mais variáveis do que foram passadas", fn, Escape(fmt)));
                 target = args[argi++];
                 if (!target.T.IsPtr || target.L == 0)
-                    throw ip.RtErr(fn + ": o argumento " + argi + " precisa ser um endereço — você esqueceu o & antes da variável? (ex.: scanf(\"%d\", &x))");
+                    throw ip.RtErr(L.F("{0}: o argumento {1} precisa ser um endereço — você esqueceu o & antes da variável? (ex.: scanf(\"%d\", &x))", fn, argi));
                 CheckScanTarget(ip, fn, len, conv, target.T.Elem!);
             }
             if (r.AtEnd && conv != 'n') return count == 0 && !anyInput ? -1 : count;
@@ -709,7 +709,7 @@ public static class CStdLib
                 case '[':
                     {
                         int close = fmt.IndexOf(']', i + 2);
-                        if (close < 0) throw ip.RtErr(fn + ": %[ sem ]");
+                        if (close < 0) throw ip.RtErr(L.F("{0}: %[ sem ]", fn));
                         string set = fmt[(i + 1)..close];
                         i = close;
                         bool negate = set.StartsWith("^");
@@ -731,7 +731,7 @@ public static class CStdLib
                     if (!suppress && argi < args.Length) { var t = args[argi++]; if (t.T.IsPtr) StoreScanned(ip, t, CVal.LongV(r.Pos), fn); }
                     break;
                 default:
-                    throw ip.RtErr(fn + ": formato desconhecido '%" + conv + "'");
+                    throw ip.RtErr(L.F("{0}: formato desconhecido '%{1}'", fn, conv));
             }
         }
         return count;
@@ -802,7 +802,7 @@ public static class CStdLib
     static void StoreScanned(CInterpreter ip, CVal ptr, CVal v, string fn)
     {
         var et = ptr.T.Elem!;
-        if (!et.IsArith) throw ip.RtErr(fn + ": não é possível ler um número para uma variável do tipo " + et);
+        if (!et.IsArith) throw ip.RtErr(L.F("{0}: não é possível ler um número para uma variável do tipo {1}", fn, et));
         ip.Store(ptr.L, et, v);
     }
 }

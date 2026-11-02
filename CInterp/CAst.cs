@@ -54,7 +54,7 @@ public abstract class Expr
     public int Line;
     public abstract CVal Eval(CInterpreter ip);
     public virtual LVal Addr(CInterpreter ip) =>
-        throw ip.RtErr(Line, "esta expressão não é uma variável (não pode receber valor nem ter seu endereço pego)");
+        throw ip.RtErr(Line, EasyCreator.L.T("esta expressão não é uma variável (não pode receber valor nem ter seu endereço pego)"));
     public virtual CType TypeOf(CInterpreter ip) => Eval(ip).T;
     public virtual bool IsLValue => false;
 }
@@ -112,18 +112,18 @@ public sealed class UnaryExpr : Expr
         switch (Op)
         {
             case UnKind.Not:
-                if (!v.T.IsScalar) throw ip.RtErr(Line, "operador ! não funciona com " + v.T);
+                if (!v.T.IsScalar) throw ip.RtErr(Line, EasyCreator.L.F("operador ! não funciona com {0}", v.T));
                 return CVal.BoolV(!v.IsTrue);
             case UnKind.Neg:
             case UnKind.Plus:
-                if (!v.T.IsArith) throw ip.RtErr(Line, "sinal " + (Op == UnKind.Neg ? "-" : "+") + " só funciona com números");
+                if (!v.T.IsArith) throw ip.RtErr(Line, EasyCreator.L.F("sinal {0} só funciona com números", (Op == UnKind.Neg ? "-" : "+")));
                 if (v.T.IsFloat) return new CVal { T = v.T, D = Op == UnKind.Neg ? -v.D : v.D };
                 {
                     var t = v.T.Promoted;
                     return new CVal { T = t, L = Conv.Norm(Op == UnKind.Neg ? unchecked(-v.L) : v.L, t) };
                 }
             default:
-                if (!v.T.IsInteger) throw ip.RtErr(Line, "operador ~ só funciona com inteiros");
+                if (!v.T.IsInteger) throw ip.RtErr(Line, EasyCreator.L.T("operador ~ só funciona com inteiros"));
                 {
                     var t = v.T.Promoted;
                     return new CVal { T = t, L = Conv.Norm(~v.L, t) };
@@ -139,9 +139,9 @@ public sealed class DerefExpr : Expr
     public override LVal Addr(CInterpreter ip)
     {
         var v = E.Eval(ip);
-        if (!v.T.IsPtr) throw ip.RtErr(Line, "o operador * só pode ser usado com ponteiros (aqui foi usado com " + v.T + ")");
-        if (v.T.Elem!.K == TK.Void) throw ip.RtErr(Line, "não é possível usar * em um ponteiro void* (converta antes, ex.: (int*)p)");
-        if (v.L == 0) throw ip.RtErr(Line, "acesso a um ponteiro NULL (o ponteiro não aponta para nada)");
+        if (!v.T.IsPtr) throw ip.RtErr(Line, EasyCreator.L.F("o operador * só pode ser usado com ponteiros (aqui foi usado com {0})", v.T));
+        if (v.T.Elem!.K == TK.Void) throw ip.RtErr(Line, EasyCreator.L.T("não é possível usar * em um ponteiro void* (converta antes, ex.: (int*)p)"));
+        if (v.L == 0) throw ip.RtErr(Line, EasyCreator.L.T("acesso a um ponteiro NULL (o ponteiro não aponta para nada)"));
         return new LVal(v.L, v.T.Elem);
     }
 
@@ -155,7 +155,7 @@ public sealed class DerefExpr : Expr
     {
         var t = E.TypeOf(ip);
         if (t.K == TK.Array || t.K == TK.Ptr) return t.Elem!;
-        throw ip.RtErr(Line, "o operador * só pode ser usado com ponteiros");
+        throw ip.RtErr(Line, EasyCreator.L.T("o operador * só pode ser usado com ponteiros"));
     }
 
     public override bool IsLValue => true;
@@ -188,7 +188,7 @@ public sealed class IncDecExpr : Expr
         if (lv.T.IsPtr) nv = new CVal { T = lv.T, L = cur.L + Delta * Math.Max(1, lv.T.Elem!.K == TK.Void ? 1 : lv.T.Elem.Cells) };
         else if (lv.T.IsFloat) nv = new CVal { T = lv.T, D = cur.D + Delta };
         else if (lv.T.IsInteger) nv = new CVal { T = lv.T, L = cur.L + Delta };
-        else throw ip.RtErr(Line, (Delta > 0 ? "++" : "--") + " não funciona com " + lv.T);
+        else throw ip.RtErr(Line, EasyCreator.L.F("{0} não funciona com {1}", (Delta > 0 ? "++" : "--"), lv.T));
         nv = ip.Store(lv.A, lv.T, nv);
         return Prefix ? nv : cur;
     }
@@ -210,8 +210,8 @@ public sealed class CastExpr : Expr
     {
         var v = E.Eval(ip);
         if (T.K == TK.Void) return CVal.VoidV;
-        if (T.K == TK.Struct || T.K == TK.Array) throw ip.RtErr(Line, "conversão (cast) para " + T + " não é permitida");
-        if (!v.T.IsScalar) throw ip.RtErr(Line, "não é possível converter " + v.T + " para " + T);
+        if (T.K == TK.Struct || T.K == TK.Array) throw ip.RtErr(Line, EasyCreator.L.F("conversão (cast) para {0} não é permitida", T));
+        if (!v.T.IsScalar) throw ip.RtErr(Line, EasyCreator.L.F("não é possível converter {0} para {1}", v.T, T));
         return Conv.To(v, T);
     }
 
@@ -273,9 +273,9 @@ public sealed class AssignExpr : Expr
         var v = R.Eval(ip);
         if (Op != BinKind.None) v = ip.BinOp(Op, ip.Load(lv.A, lv.T), v, Line);
         if (lv.T.K == TK.Array)
-            throw ip.RtErr(Line, "não é possível atribuir a um vetor inteiro (para textos use strcpy; para números copie elemento por elemento)");
+            throw ip.RtErr(Line, EasyCreator.L.T("não é possível atribuir a um vetor inteiro (para textos use strcpy; para números copie elemento por elemento)"));
         if (lv.T.IsScalar && !v.T.IsScalar)
-            throw ip.RtErr(Line, "não é possível guardar " + v.T + " em uma variável " + lv.T);
+            throw ip.RtErr(Line, EasyCreator.L.F("não é possível guardar {0} em uma variável {1}", v.T, lv.T));
         return ip.Store(lv.A, lv.T, v);
     }
 }
@@ -294,28 +294,28 @@ public sealed class IndexExpr : Expr
             if (b.T.K == TK.Array)
             {
                 var iv = Index.Eval(ip);
-                if (!iv.T.IsInteger) throw ip.RtErr(Line, "o índice de um vetor precisa ser inteiro");
+                if (!iv.T.IsInteger) throw ip.RtErr(Line, EasyCreator.L.T("o índice de um vetor precisa ser inteiro"));
                 long i = iv.L;
                 if (b.T.Len >= 0 && (i < 0 || i >= b.T.Len))
-                    throw ip.RtErr(Line, "índice " + i + " fora dos limites do vetor (tamanho " + b.T.Len + ", índices válidos de 0 a " + (b.T.Len - 1) + ")");
+                    throw ip.RtErr(Line, EasyCreator.L.F("índice {0} fora dos limites do vetor (tamanho {1}, índices válidos de 0 a {2})", i, b.T.Len, (b.T.Len - 1)));
                 elem = b.T.Elem!;
                 return new LVal(b.A + i * elem.Cells, elem);
             }
-            if (b.T.K != TK.Ptr) throw ip.RtErr(Line, "[ ] só pode ser usado com vetores ou ponteiros");
+            if (b.T.K != TK.Ptr) throw ip.RtErr(Line, EasyCreator.L.T("[ ] só pode ser usado com vetores ou ponteiros"));
             baseAddr = ip.Read(b.A);
             elem = b.T.Elem!;
         }
         else
         {
             var v = Base.Eval(ip);
-            if (!v.T.IsPtr) throw ip.RtErr(Line, "[ ] só pode ser usado com vetores ou ponteiros");
+            if (!v.T.IsPtr) throw ip.RtErr(Line, EasyCreator.L.T("[ ] só pode ser usado com vetores ou ponteiros"));
             baseAddr = v.L;
             elem = v.T.Elem!;
         }
         var ix = Index.Eval(ip);
-        if (!ix.T.IsInteger) throw ip.RtErr(Line, "o índice de um vetor precisa ser inteiro");
-        if (baseAddr == 0) throw ip.RtErr(Line, "acesso a um ponteiro NULL (o ponteiro não aponta para nada)");
-        if (elem.K == TK.Void) throw ip.RtErr(Line, "não é possível indexar um ponteiro void*");
+        if (!ix.T.IsInteger) throw ip.RtErr(Line, EasyCreator.L.T("o índice de um vetor precisa ser inteiro"));
+        if (baseAddr == 0) throw ip.RtErr(Line, EasyCreator.L.T("acesso a um ponteiro NULL (o ponteiro não aponta para nada)"));
+        if (elem.K == TK.Void) throw ip.RtErr(Line, EasyCreator.L.T("não é possível indexar um ponteiro void*"));
         return new LVal(baseAddr + ix.L * elem.Cells, elem);
     }
 
@@ -329,7 +329,7 @@ public sealed class IndexExpr : Expr
     {
         var t = Base.TypeOf(ip);
         if (t.K == TK.Array || t.K == TK.Ptr) return t.Elem!;
-        throw ip.RtErr(Line, "[ ] só pode ser usado com vetores ou ponteiros");
+        throw ip.RtErr(Line, EasyCreator.L.T("[ ] só pode ser usado com vetores ou ponteiros"));
     }
 
     public override bool IsLValue => true;
@@ -347,12 +347,12 @@ public sealed class MemberExpr : Expr
     {
         if (t.K != TK.Struct)
         {
-            if (t.K == TK.Native) throw ip.RtErr(Line, t.N!.Name + "." + Name + " não existe (talvez faltem os parênteses: " + Name + "(...))");
-            throw ip.RtErr(Line, (Arrow ? "->" : ".") + Name + ": isto não é uma struct" + (Arrow ? "" : " (se for ponteiro, use ->)"));
+            if (t.K == TK.Native) throw ip.RtErr(Line, EasyCreator.L.F("{0}.{1} não existe (talvez faltem os parênteses: {2}(...))", t.N!.Name, Name, Name));
+            throw ip.RtErr(Line, Arrow ? EasyCreator.L.F("->{0}: isto não é uma struct", Name) : EasyCreator.L.F(".{0}: isto não é uma struct (se for ponteiro, use ->)", Name));
         }
         if (_s == t.S) return _f!;
         if (!t.S!.ByName.TryGetValue(Name, out var f))
-            throw ip.RtErr(Line, "a struct " + t.S.Name + " não tem um campo chamado '" + Name + "'");
+            throw ip.RtErr(Line, EasyCreator.L.F("a struct {0} não tem um campo chamado '{1}'", t.S.Name, Name));
         _s = t.S;
         _f = f;
         return f;
@@ -363,14 +363,14 @@ public sealed class MemberExpr : Expr
         var v = Base.Eval(ip);
         if (Arrow)
         {
-            if (!v.T.IsPtr) throw ip.RtErr(Line, "-> só pode ser usado com ponteiros para struct (para variáveis use .)");
+            if (!v.T.IsPtr) throw ip.RtErr(Line, EasyCreator.L.T("-> só pode ser usado com ponteiros para struct (para variáveis use .)"));
             var f = FieldOf(ip, v.T.Elem!);
-            if (v.L == 0) throw ip.RtErr(Line, "acesso a um ponteiro NULL com ->");
+            if (v.L == 0) throw ip.RtErr(Line, EasyCreator.L.T("acesso a um ponteiro NULL com ->"));
             return new LVal(v.L + f.Offset, f.T);
         }
         else
         {
-            if (v.T.IsPtr && v.T.Elem!.K == TK.Struct) throw ip.RtErr(Line, "'" + Name + "': isto é um ponteiro para struct, use -> em vez de .");
+            if (v.T.IsPtr && v.T.Elem!.K == TK.Struct) throw ip.RtErr(Line, EasyCreator.L.F("'{0}': isto é um ponteiro para struct, use -> em vez de .", Name));
             var f = FieldOf(ip, v.T);
             return new LVal(v.L + f.Offset, f.T);
         }
@@ -421,10 +421,10 @@ public sealed class MethodCallExpr : Expr
     {
         var lv = Obj.Addr(ip);
         if (lv.T.K != TK.Native)
-            throw ip.RtErr(Line, "." + Name + "(...): só objetos de bibliotecas (como Serial, Servo, LiquidCrystal) têm funções com ponto");
+            throw ip.RtErr(Line, EasyCreator.L.F(".{0}(...): só objetos de bibliotecas (como Serial, Servo, LiquidCrystal) têm funções com ponto", Name));
         var cls = lv.T.N!;
         if (!cls.Methods.TryGetValue(Name, out var m))
-            throw ip.RtErr(Line, "o objeto " + cls.Name + " não tem a função " + Name + "()");
+            throw ip.RtErr(Line, EasyCreator.L.F("o objeto {0} não tem a função {1}()", cls.Name, Name));
         long h = ip.Read(lv.A);
         if (h == 0)
         {
@@ -444,7 +444,7 @@ public sealed class MethodCallExpr : Expr
 public sealed class InitList : Expr
 {
     public List<InitItem> Items = new();
-    public override CVal Eval(CInterpreter ip) => throw ip.RtErr(Line, "uma lista { ... } só pode ser usada para inicializar uma variável");
+    public override CVal Eval(CInterpreter ip) => throw ip.RtErr(Line, EasyCreator.L.T("uma lista { ... } só pode ser usada para inicializar uma variável"));
 }
 
 public sealed class InitItem
@@ -582,7 +582,7 @@ public sealed class SwitchStmt : Stmt
     {
         ip.Step(Line);
         var v = E.Eval(ip);
-        if (!v.T.IsInteger) throw ip.RtErr(Line, "switch só funciona com valores inteiros (int, char...)");
+        if (!v.T.IsInteger) throw ip.RtErr(Line, EasyCreator.L.T("switch só funciona com valores inteiros (int, char...)"));
         if (_table == null)
         {
             var t = new Dictionary<long, int>();
@@ -591,8 +591,8 @@ public sealed class SwitchStmt : Stmt
                 if (Body.S[i] is not CaseLabel c) continue;
                 if (c.Value == null) { _default = i; continue; }
                 var cv = c.Value.Eval(ip);
-                if (!cv.T.IsInteger) throw ip.RtErr(c.Line, "o valor de um case precisa ser inteiro constante");
-                if (!t.TryAdd(cv.L, i)) throw ip.RtErr(c.Line, "case " + cv.L + " repetido");
+                if (!cv.T.IsInteger) throw ip.RtErr(c.Line, EasyCreator.L.T("o valor de um case precisa ser inteiro constante"));
+                if (!t.TryAdd(cv.L, i)) throw ip.RtErr(c.Line, EasyCreator.L.F("case {0} repetido", cv.L));
             }
             _table = t;
         }
@@ -647,15 +647,15 @@ public sealed class DeclStmt : Stmt
             for (int i = 0; i < V.VlaDims.Count; i++)
             {
                 var d = V.VlaDims[i]!.Eval(ip);
-                if (!d.T.IsInteger || d.L <= 0) throw ip.RtErr(Line, "tamanho de vetor inválido (" + d + "): precisa ser inteiro maior que zero");
+                if (!d.T.IsInteger || d.L <= 0) throw ip.RtErr(Line, EasyCreator.L.F("tamanho de vetor inválido ({0}): precisa ser inteiro maior que zero", d));
                 ip.Mem[slot + 1 + i] = d.L;
                 cells *= d.L;
-                if (cells > ip.StackCells) throw ip.RtErr(Line, "vetor local grande demais (use malloc ou uma variável global)");
+                if (cells > ip.StackCells) throw ip.RtErr(Line, EasyCreator.L.T("vetor local grande demais (use malloc ou uma variável global)"));
             }
             a = ip.Alloc(cells);
             ip.Mem[slot] = a;
             t = V.VlaType(ip, slot);
-            if (Init != null) throw ip.RtErr(Line, "vetores de tamanho variável não podem ter inicializador");
+            if (Init != null) throw ip.RtErr(Line, EasyCreator.L.T("vetores de tamanho variável não podem ter inicializador"));
             return Flow.Normal;
         }
         a = V.Global ? V.Addr : ip.FP + V.Offset;
@@ -689,7 +689,7 @@ public static class Initializer
                 ip.Store(a, t, v);
                 return;
             }
-            throw ip.RtErr(line, "um vetor precisa ser inicializado com { ... } ou com um texto entre aspas");
+            throw ip.RtErr(line, EasyCreator.L.T("um vetor precisa ser inicializado com { ... } ou com um texto entre aspas"));
         }
         if (init is InitList l)
         {
@@ -697,14 +697,14 @@ public static class Initializer
             init = l.Items[0].Value;
         }
         var val = init.Eval(ip);
-        if (t.IsScalar && !val.T.IsScalar) throw ip.RtErr(line, "não é possível inicializar " + t + " com " + val.T);
+        if (t.IsScalar && !val.T.IsScalar) throw ip.RtErr(line, EasyCreator.L.F("não é possível inicializar {0} com {1}", t, val.T));
         ip.Store(a, t, val);
     }
 
     static void CopyStr(CInterpreter ip, long a, CType t, StrLit s, int line)
     {
         long n = s.Text.Length;
-        if (t.Len >= 0 && n > t.Len) throw ip.RtErr(line, "o texto \"" + s.Text + "\" não cabe no vetor de " + t.Len + " caracteres");
+        if (t.Len >= 0 && n > t.Len) throw ip.RtErr(line, EasyCreator.L.F("o texto \"{0}\" não cabe no vetor de {1} caracteres", s.Text, t.Len));
         for (int i = 0; i < n; i++) ip.Mem[a + i] = (sbyte)(byte)(s.Text[i] > 255 ? '?' : s.Text[i]);
         if (t.Len < 0 || n < t.Len) ip.Mem[a + n] = 0;
     }
@@ -719,17 +719,17 @@ public static class Initializer
             while (pos < items.Count)
             {
                 var it = items[pos];
-                if (it.Field != null) { if (braced) throw ip.RtErr(line, "inicializador .campo usado em um vetor"); return; }
+                if (it.Field != null) { if (braced) throw ip.RtErr(line, EasyCreator.L.T("inicializador .campo usado em um vetor")); return; }
                 if (it.Index != null)
                 {
                     if (!braced) return;
                     var iv = it.Index.Eval(ip);
-                    if (iv.L < 0 || iv.L >= len) throw ip.RtErr(line, "índice [" + iv.L + "] fora do vetor no inicializador");
+                    if (iv.L < 0 || iv.L >= len) throw ip.RtErr(line, EasyCreator.L.F("índice [{0}] fora do vetor no inicializador", iv.L));
                     i = iv.L;
                 }
                 if (i >= len)
                 {
-                    if (braced) throw ip.RtErr(line, "valores demais no inicializador do vetor (tamanho " + t.Len + ")");
+                    if (braced) throw ip.RtErr(line, EasyCreator.L.F("valores demais no inicializador do vetor (tamanho {0})", t.Len));
                     return;
                 }
                 FillElem(ip, a + i * t.Elem!.Cells, t.Elem, items, ref pos, line);
@@ -743,16 +743,16 @@ public static class Initializer
             while (pos < items.Count)
             {
                 var it = items[pos];
-                if (it.Index != null) { if (braced) throw ip.RtErr(line, "inicializador [i] usado em uma struct"); return; }
+                if (it.Index != null) { if (braced) throw ip.RtErr(line, EasyCreator.L.T("inicializador [i] usado em uma struct")); return; }
                 if (it.Field != null)
                 {
                     if (!braced) return;
                     fi = fields.FindIndex(f => f.Name == it.Field);
-                    if (fi < 0) throw ip.RtErr(line, "a struct " + t.S.Name + " não tem o campo '" + it.Field + "'");
+                    if (fi < 0) throw ip.RtErr(line, EasyCreator.L.F("a struct {0} não tem o campo '{1}'", t.S.Name, it.Field));
                 }
                 if (fi >= fields.Count)
                 {
-                    if (braced) throw ip.RtErr(line, "valores demais no inicializador da struct " + t.S.Name);
+                    if (braced) throw ip.RtErr(line, EasyCreator.L.F("valores demais no inicializador da struct {0}", t.S.Name));
                     return;
                 }
                 FillElem(ip, a + fields[fi].Offset, fields[fi].T, items, ref pos, line);
@@ -795,7 +795,7 @@ public static class Initializer
         }
         pos++;
         var v = it.Value is InitList l ? (l.Items.Count > 0 ? l.Items[0].Value.Eval(ip) : CVal.Int(0)) : it.Value.Eval(ip);
-        if (t.IsScalar && !v.T.IsScalar) throw ip.RtErr(line, "não é possível inicializar " + t + " com " + v.T);
+        if (t.IsScalar && !v.T.IsScalar) throw ip.RtErr(line, EasyCreator.L.F("não é possível inicializar {0} com {1}", t, v.T));
         ip.Store(a, t, v);
     }
 

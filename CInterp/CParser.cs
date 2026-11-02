@@ -81,26 +81,30 @@ internal sealed class CParser
     {
         if (Accept(s)) return;
         var got = Peek();
+        // context: a whole Portuguese phrase ("depois de break"), translated as a unit
+        string? ctx = context != null ? L.T(context) : null;
         if (s == ";")
         {
             var prev = _p > 0 ? _t[_p - 1] : got;
-            throw new CError(prev.Line, "faltou ';' no fim da instrução" + (context != null ? " (" + context + ")" : "") +
-                                        (got.K != TokKind.EOF ? " — encontrei " + Describe(got) : ""), false);
+            string msg = ctx != null ? L.F("faltou ';' no fim da instrução ({0})", ctx) : L.T("faltou ';' no fim da instrução");
+            if (got.K != TokKind.EOF) msg += L.F(" — encontrei {0}", Describe(got));
+            throw new CError(prev.Line, msg, false);
         }
-        throw Err("esperado '" + s + "'" + (context != null ? " " + context : "") + ", mas encontrei " + Describe(got));
+        throw Err(ctx != null ? L.F("esperado '{0}' {1}, mas encontrei {2}", s, ctx, Describe(got))
+                              : L.F("esperado '{0}', mas encontrei {1}", s, Describe(got)));
     }
 
     static string Describe(Token t) => t.K switch
     {
-        TokKind.EOF => "o fim do arquivo (faltou fechar alguma chave '}'?)",
-        TokKind.String => "o texto \"" + t.Text + "\"",
+        TokKind.EOF => L.T("o fim do arquivo (faltou fechar alguma chave '}'?)"),
+        TokKind.String => L.F("o texto \"{0}\"", t.Text),
         _ => "'" + t.Text + "'"
     };
 
     string ExpectIdent(string what)
     {
         var t = Peek();
-        if (t.K != TokKind.Ident || Keywords.Contains(t.Text)) throw Err("esperado " + what + ", mas encontrei " + Describe(t));
+        if (t.K != TokKind.Ident || Keywords.Contains(t.Text)) throw Err(L.F("esperado {0}, mas encontrei {1}", L.T(what), Describe(t)));
         _p++;
         return t.Text;
     }
@@ -123,19 +127,19 @@ internal sealed class CParser
             if (_ip.Funcs.TryGetValue(c.Name, out var f))
             {
                 if (f.Body == null && !_ip.Natives.ContainsKey(c.Name))
-                    throw new CError(c.Line, "a função " + c.Name + "() foi declarada mas não foi escrita (falta o corpo { })", false);
+                    throw new CError(c.Line, L.F("a função {0}() foi declarada mas não foi escrita (falta o corpo {{ }})", c.Name), false);
                 if (f.Body != null)
                 {
                     if (!f.OldStyle && c.Args.Length != f.Params.Count)
-                        throw new CError(c.Line, "a função " + c.Name + "() espera " + f.Params.Count + " argumento(s), mas recebeu " + c.Args.Length, false);
+                        throw new CError(c.Line, L.F("a função {0}() espera {1} argumento(s), mas recebeu {2}", c.Name, f.Params.Count, c.Args.Length), false);
                     c.F = f;
                     continue;
                 }
             }
             if (_ip.Natives.TryGetValue(c.Name, out var n)) { c.N = n; continue; }
-            string msg = "a função " + c.Name + "() não existe";
             var sug = Suggest(c.Name, _ip.Funcs.Keys.Concat(_ip.Natives.Keys));
-            if (sug != null) msg += " — você quis dizer " + sug + "()?";
+            string msg = sug != null ? L.F("a função {0}() não existe — você quis dizer {1}()?", c.Name, sug)
+                                     : L.F("a função {0}() não existe", c.Name);
             throw new CError(c.Line, msg, false);
         }
     }
@@ -217,8 +221,8 @@ internal sealed class CParser
                 case "uint64_t": case "size_t": named = CType.ULong; _p++; continue;
                 case "struct": _p++; named = ParseStruct(); continue;
                 case "enum": _p++; named = ParseEnum(); continue;
-                case "union": throw Err("union não é suportada neste interpretador (use struct)");
-                case "String": throw Err("o tipo String do Arduino não é suportado aqui; use vetores de char (ex.: char texto[20])");
+                case "union": throw Err(L.T("union não é suportada neste interpretador (use struct)"));
+                case "String": throw Err(L.T("o tipo String do Arduino não é suportado aqui; use vetores de char (ex.: char texto[20])"));
             }
             if (_ip.Classes.TryGetValue(w, out var cls) && _scope.Find(w) == null)
             {
@@ -229,12 +233,12 @@ internal sealed class CParser
         }
         if (named != null)
         {
-            if (nUnsigned > 0 || nLong > 0 || nShort > 0) throw Err("combinação de tipos inválida", start);
+            if (nUnsigned > 0 || nLong > 0 || nShort > 0) throw Err(L.T("combinação de tipos inválida"), start);
             sp.T = named;
             return sp;
         }
         bool u = nUnsigned > 0;
-        if (nUnsigned > 0 && nSigned > 0) throw Err("um tipo não pode ser signed e unsigned ao mesmo tempo", start);
+        if (nUnsigned > 0 && nSigned > 0) throw Err(L.T("um tipo não pode ser signed e unsigned ao mesmo tempo"), start);
         switch (baseWord)
         {
             case "void": sp.T = CType.Void; break;
@@ -246,7 +250,7 @@ internal sealed class CParser
                 if (baseWord == null && nUnsigned == 0 && nSigned == 0 && nLong == 0 && nShort == 0)
                 {
                     if (sp.Static || sp.Const || sp.Extern || sp.Typedef) { sp.T = CType.Int; break; }
-                    throw Err("esperado um tipo (int, float, char...)", start);
+                    throw Err(L.T("esperado um tipo (int, float, char...)"), start);
                 }
                 if (nShort > 0) sp.T = u ? CType.UShort : CType.Short;
                 else if (nLong > 0) sp.T = u ? CType.ULong : CType.Long;
@@ -267,22 +271,22 @@ internal sealed class CParser
             _p++;
             if (def == null || def.Complete)
             {
-                def = new StructDef { Name = tag ?? "(anônima)" };
+                def = new StructDef { Name = tag ?? L.T("(anônima)") };
                 if (tag != null) _tags[tag] = def;
             }
             while (!Accept("}"))
             {
-                if (Peek().K == TokKind.EOF) throw Err("faltou fechar a struct com '}'");
+                if (Peek().K == TokKind.EOF) throw Err(L.T("faltou fechar a struct com '}'"));
                 var sp = ParseSpecs();
                 do
                 {
                     var d = ParseDeclarator(sp.T, false);
-                    if (d.Params != null) throw Err("funções dentro de struct não são suportadas");
-                    if (d.Dims != null) throw Err("o tamanho de um vetor dentro de struct precisa ser constante");
-                    if (Accept(":")) throw Err("campos de bits (:) não são suportados");
-                    if (d.T.K == TK.Struct && !d.T.S!.Complete) throw Err("a struct " + d.T.S.Name + " não pode conter a si mesma (use um ponteiro)");
-                    if (d.T.K == TK.Array && d.T.Len < 0) throw Err("vetor dentro de struct precisa de tamanho");
-                    if (def.ByName.ContainsKey(d.Name!)) throw Err("campo '" + d.Name + "' repetido na struct");
+                    if (d.Params != null) throw Err(L.T("funções dentro de struct não são suportadas"));
+                    if (d.Dims != null) throw Err(L.T("o tamanho de um vetor dentro de struct precisa ser constante"));
+                    if (Accept(":")) throw Err(L.T("campos de bits (:) não são suportados"));
+                    if (d.T.K == TK.Struct && !d.T.S!.Complete) throw Err(L.F("a struct {0} não pode conter a si mesma (use um ponteiro)", d.T.S.Name));
+                    if (d.T.K == TK.Array && d.T.Len < 0) throw Err(L.T("vetor dentro de struct precisa de tamanho"));
+                    if (def.ByName.ContainsKey(d.Name!)) throw Err(L.F("campo '{0}' repetido na struct", d.Name));
                     def.Add(d.Name!, d.T);
                 } while (Accept(","));
                 Expect(";", "depois do campo da struct");
@@ -291,7 +295,7 @@ internal sealed class CParser
             TagAsType(tag, StructType(def));
             return StructType(def);
         }
-        if (tag == null) throw Err("esperado o nome da struct ou '{'");
+        if (tag == null) throw Err(L.T("esperado o nome da struct ou '{'"));
         if (def == null)
         {
             def = new StructDef { Name = tag };
@@ -328,7 +332,7 @@ internal sealed class CParser
                 if (Accept("="))
                 {
                     var e = ParseAssign();
-                    v = ConstEval(e) ?? throw Err("o valor de um enum precisa ser constante", nameTok);
+                    v = ConstEval(e) ?? throw Err(L.T("o valor de um enum precisa ser constante"), nameTok);
                 }
                 Declare(new EnumSym { Name = name, Value = v, Line = nameTok.Line }, nameTok);
                 v++;
@@ -356,16 +360,16 @@ internal sealed class CParser
         while (true)
         {
             if (Accept("*")) { t = t.Pointer; while (Accept("const") || Accept("volatile")) { } continue; }
-            if (IsPunct("&")) throw Err("referências (&) do C++ não são suportadas; use ponteiros (*)");
+            if (IsPunct("&")) throw Err(L.T("referências (&) do C++ não são suportadas; use ponteiros (*)"));
             break;
         }
-        if (IsPunct("(") && IsPunct("*", 1)) throw Err("ponteiros para função não são suportados neste interpretador");
+        if (IsPunct("(") && IsPunct("*", 1)) throw Err(L.T("ponteiros para função não são suportados neste interpretador"));
         if (Peek().K == TokKind.Ident && !Keywords.Contains(Peek().Text))
         {
             d.NameTok = Peek();
             d.Name = Next().Text;
         }
-        else if (!allowAbstract) throw Err("esperado o nome da variável, mas encontrei " + Describe(Peek()));
+        else if (!allowAbstract) throw Err(L.F("esperado o nome da variável, mas encontrei {0}", Describe(Peek())));
 
         if (IsPunct("(") && d.Name != null && !(_ip.Classes.ContainsKey(baseT.N?.Name ?? "") && baseT.K == TK.Native && t == baseT))
         {
@@ -387,15 +391,15 @@ internal sealed class CParser
                 for (int i = dims.Count - 1; i >= 0; i--)
                 {
                     long n = consts[i]!.Value;
-                    if (n == -1 && i > 0) throw Err("só a primeira dimensão de um vetor pode ficar sem tamanho");
-                    if (n < -1 || n == 0 && dims[i] != null) throw Err("o tamanho do vetor precisa ser maior que zero");
+                    if (n == -1 && i > 0) throw Err(L.T("só a primeira dimensão de um vetor pode ficar sem tamanho"));
+                    if (n < -1 || n == 0 && dims[i] != null) throw Err(L.T("o tamanho do vetor precisa ser maior que zero"));
                     t = CType.ArrayOf(t, n);
                 }
             }
             else
             {
-                if (dims.Any(e => e == null)) throw Err("vetor de tamanho variável precisa de todos os tamanhos");
-                if (dims.Count > 3) throw Err("vetores de tamanho variável com mais de 3 dimensões não são suportados");
+                if (dims.Any(e => e == null)) throw Err(L.T("vetor de tamanho variável precisa de todos os tamanhos"));
+                if (dims.Count > 3) throw Err(L.T("vetores de tamanho variável com mais de 3 dimensões não são suportados"));
                 d.Dims = dims;
                 d.VlaBase = t;
                 t = t.Pointer; // placeholder; real type built at runtime
@@ -413,8 +417,8 @@ internal sealed class CParser
         if (Is("void") && IsPunct(")", 1)) { _p += 2; return list; }
         while (true)
         {
-            if (IsPunct("...")) throw Err("funções com número variável de argumentos (...) não são suportadas");
-            if (!IsTypeStart()) throw Err("esperado o tipo do parâmetro, mas encontrei " + Describe(Peek()));
+            if (IsPunct("...")) throw Err(L.T("funções com número variável de argumentos (...) não são suportadas"));
+            if (!IsTypeStart()) throw Err(L.F("esperado o tipo do parâmetro, mas encontrei {0}", Describe(Peek())));
             var sp = ParseSpecs();
             var d = ParseDeclarator(sp.T, true);
             var t = d.T;
@@ -422,13 +426,13 @@ internal sealed class CParser
             {
                 // int m[n][k] parameters: treat as pointer to the inner part when inner is constant
                 if (d.Dims.Skip(1).Any(e => ConstEval(e!) == null))
-                    throw Err("em parâmetros, só a primeira dimensão do vetor pode ser variável");
+                    throw Err(L.T("em parâmetros, só a primeira dimensão do vetor pode ser variável"));
                 var inner = d.VlaBase!;
                 for (int i = d.Dims.Count - 1; i >= 1; i--) inner = CType.ArrayOf(inner, ConstEval(d.Dims[i]!)!.Value);
                 t = inner.Pointer;
             }
             else if (t.K == TK.Array) t = t.Elem!.Pointer;
-            if (t.K == TK.Void) throw Err("um parâmetro não pode ser void");
+            if (t.K == TK.Void) throw Err(L.T("um parâmetro não pode ser void"));
             list.Add(new VarSym { Name = d.Name ?? "", T = t, IsConst = sp.Const && t.IsScalar && !t.IsPtr, Line = d.NameTok.Line });
             if (Accept(")")) break;
             Expect(",", "entre os parâmetros");
@@ -444,7 +448,7 @@ internal sealed class CParser
             if (old is TypedefSym { FromTag: true }) { _scope.Syms[s.Name] = s; return; }
             if (old is TypedefSym ot && s is TypedefSym nt && ReferenceEquals(ot.T, nt.T)) return;
             if (old is VarSym ov && ov.Global && s is VarSym) return; // extern + definition
-            throw new CError(at.Line, "'" + s.Name + "' já foi declarado(a) antes (linha " + old.Line + ")", false);
+            throw new CError(at.Line, L.F("'{0}' já foi declarado(a) antes (linha {1})", s.Name, old.Line), false);
         }
         _scope.Syms[s.Name] = s;
     }
@@ -458,7 +462,7 @@ internal sealed class CParser
             {
                 // function without return type: treat as int (old C)
             }
-            else throw Err("esperado uma declaração (variável ou função), mas encontrei " + Describe(start));
+            else throw Err(L.F("esperado uma declaração (variável ou função), mas encontrei {0}", Describe(start)));
         }
         var sp = IsTypeStart() ? ParseSpecs() : new Specs { T = CType.Int };
         if (Accept(";")) return;
@@ -468,7 +472,7 @@ internal sealed class CParser
             var d = ParseDeclarator(sp.T, false);
             if (sp.Typedef)
             {
-                if (d.Params != null) throw Err("typedef de função não é suportado");
+                if (d.Params != null) throw Err(L.T("typedef de função não é suportado"));
                 Declare(new TypedefSym { Name = d.Name!, T = d.T, Line = d.NameTok.Line }, d.NameTok);
             }
             else if (d.Params != null)
@@ -482,7 +486,7 @@ internal sealed class CParser
             }
             else
             {
-                if (d.Dims != null) throw Err("variáveis globais precisam de tamanho constante no vetor", d.NameTok);
+                if (d.Dims != null) throw Err(L.T("variáveis globais precisam de tamanho constante no vetor"), d.NameTok);
                 DeclareVar(d, sp, true);
             }
             first = false;
@@ -494,7 +498,7 @@ internal sealed class CParser
 
     FuncDef DeclareFunc(Decl d, Specs sp)
     {
-        if (d.T.K == TK.Array) throw Err("uma função não pode retornar um vetor");
+        if (d.T.K == TK.Array) throw Err(L.T("uma função não pode retornar um vetor"));
         if (_global.Syms.TryGetValue(d.Name!, out var old) && old is FuncSym fs)
         {
             if (fs.F.Body == null)
@@ -505,7 +509,7 @@ internal sealed class CParser
             }
             return fs.F;
         }
-        if (old != null) throw Err("'" + d.Name + "' já foi declarado como variável (linha " + old.Line + ")", d.NameTok);
+        if (old != null) throw Err(L.F("'{0}' já foi declarado como variável (linha {1})", d.Name, old.Line), d.NameTok);
         var f = new FuncDef { Name = d.Name!, Ret = d.T, Params = d.Params!, Line = d.NameTok.Line, OldStyle = d.OldStyle };
         _global.Syms[f.Name] = new FuncSym { Name = f.Name, F = f, Line = f.Line };
         _ip.Funcs[f.Name] = f;
@@ -514,7 +518,7 @@ internal sealed class CParser
 
     void ParseFunctionBody(FuncDef f, Decl d)
     {
-        if (f.Body != null) throw Err("a função " + f.Name + "() foi escrita duas vezes", d.NameTok);
+        if (f.Body != null) throw Err(L.F("a função {0}() foi escrita duas vezes", f.Name), d.NameTok);
         f.Params = d.Params!;
         f.Ret = d.T;
         f.OldStyle = false;
@@ -524,7 +528,7 @@ internal sealed class CParser
         _scope = new Scope(_global);
         foreach (var p in f.Params)
         {
-            if (p.Name.Length == 0) throw Err("parâmetro sem nome na função " + f.Name + "()", d.NameTok);
+            if (p.Name.Length == 0) throw Err(L.F("parâmetro sem nome na função {0}()", f.Name), d.NameTok);
             p.Offset = f.FrameCells;
             f.FrameCells += p.T.Cells;
             Declare(p, d.NameTok);
@@ -538,8 +542,8 @@ internal sealed class CParser
     VarSym DeclareVar(Decl d, Specs sp, bool global)
     {
         var t = d.T;
-        if (t.K == TK.Void) throw Err("uma variável não pode ser do tipo void", d.NameTok);
-        if (t.K == TK.Struct && !t.S!.Complete) throw Err("a struct " + t.S.Name + " ainda não foi definida", d.NameTok);
+        if (t.K == TK.Void) throw Err(L.T("uma variável não pode ser do tipo void"), d.NameTok);
+        if (t.K == TK.Struct && !t.S!.Complete) throw Err(L.F("a struct {0} ainda não foi definida", t.S.Name), d.NameTok);
         Expr? init = null;
         Expr[]? ctor = null;
         if (Accept("="))
@@ -555,8 +559,8 @@ internal sealed class CParser
         {
             ctor = ParseArgs();
         }
-        if (t.K == TK.Array && t.Len < 0) throw Err("o vetor '" + d.Name + "' precisa de um tamanho ou de uma lista de valores", d.NameTok);
-        if (t.K == TK.Native && init != null) throw Err("objetos " + t.N!.Name + " não podem receber valor com =", d.NameTok);
+        if (t.K == TK.Array && t.Len < 0) throw Err(L.F("o vetor '{0}' precisa de um tamanho ou de uma lista de valores", d.Name), d.NameTok);
+        if (t.K == TK.Native && init != null) throw Err(L.F("objetos {0} não podem receber valor com =", t.N!.Name), d.NameTok);
 
         var v = new VarSym { Name = d.Name!, T = t, Line = d.NameTok.Line, IsConst = sp.Const && t.IsScalar && !t.IsPtr };
         if (global || sp.Static)
@@ -608,7 +612,7 @@ internal sealed class CParser
             {
                 _p++;
                 var ie = ParseExpr();
-                long idx = ConstEval(ie) ?? throw Err("o índice do inicializador precisa ser constante");
+                long idx = ConstEval(ie) ?? throw Err(L.T("o índice do inicializador precisa ser constante"));
                 item.Index = new ConstExpr { V = CVal.Int(idx), Line = ie.Line };
                 Expect("]");
                 Expect("=", "depois de [índice]");
@@ -631,7 +635,7 @@ internal sealed class CParser
         var list = new List<Stmt>();
         while (!IsPunct("}"))
         {
-            if (Peek().K == TokKind.EOF) throw new CError(open.Line, "a chave '{' aberta na linha " + open.Line + " não foi fechada com '}'", false);
+            if (Peek().K == TokKind.EOF) throw new CError(open.Line, L.F("a chave '{{' aberta na linha {0} não foi fechada com '}}'", open.Line), false);
             ParseStatementInto(list);
         }
         _p++;
@@ -666,7 +670,7 @@ internal sealed class CParser
             var d = ParseDeclarator(sp.T, false);
             if (sp.Typedef)
             {
-                if (d.Params != null || d.Dims != null) throw Err("typedef inválido");
+                if (d.Params != null || d.Dims != null) throw Err(L.T("typedef inválido"));
                 Declare(new TypedefSym { Name = d.Name!, T = d.T, Line = d.NameTok.Line }, d.NameTok);
             }
             else if (d.Params != null)
@@ -675,7 +679,7 @@ internal sealed class CParser
             }
             else
             {
-                if (sp.Static && d.Dims != null) throw Err("variável static precisa de tamanho constante", d.NameTok);
+                if (sp.Static && d.Dims != null) throw Err(L.T("variável static precisa de tamanho constante"), d.NameTok);
                 _pendingDecls.Clear();
                 DeclareVar(d, sp, false);
                 list.AddRange(_pendingDecls);
@@ -729,7 +733,7 @@ internal sealed class CParser
                         _loopDepth++;
                         var body = ParseSubStatement();
                         _loopDepth--;
-                        if (!Accept("while")) throw Err("esperado 'while' depois do bloco do 'do'");
+                        if (!Accept("while")) throw Err(L.T("esperado 'while' depois do bloco do 'do'"));
                         Expect("(", "depois de while");
                         var c = ParseExpr();
                         Expect(")", "para fechar a condição do while");
@@ -773,7 +777,7 @@ internal sealed class CParser
                         Expect("(", "depois de switch");
                         var e = ParseExpr();
                         Expect(")", "para fechar o switch");
-                        if (!IsPunct("{")) throw Err("o switch precisa de um bloco { case ...: }");
+                        if (!IsPunct("{")) throw Err(L.T("o switch precisa de um bloco { case ...: }"));
                         _switchDepth++;
                         _blockLevelOfSwitch.Push(_blockLevel + 1);
                         var body = ParseBlock();
@@ -785,26 +789,26 @@ internal sealed class CParser
                 case "default":
                     {
                         _p++;
-                        if (_switchDepth == 0) throw Err("'" + t.Text + "' fora de um switch", t);
+                        if (_switchDepth == 0) throw Err(L.F("'{0}' fora de um switch", t.Text), t);
                         if (_blockLevelOfSwitch.Peek() != _blockLevel)
-                            throw Err("'" + t.Text + "' precisa ficar direto dentro do bloco do switch", t);
+                            throw Err(L.F("'{0}' precisa ficar direto dentro do bloco do switch", t.Text), t);
                         Expr? v = null;
                         if (t.Text == "case")
                         {
                             v = ParseCond();
                             if (ConstEval(v) is long cv) v = new ConstExpr { V = CVal.LongV(cv), Line = line };
                         }
-                        Expect(":", "depois do " + t.Text);
+                        Expect(":", t.Text == "case" ? "depois do case" : "depois do default");
                         return new CaseLabel { Value = v, Line = line };
                     }
                 case "break":
                     _p++;
-                    if (_loopDepth == 0 && _switchDepth == 0) throw Err("'break' fora de um laço ou switch", t);
+                    if (_loopDepth == 0 && _switchDepth == 0) throw Err(L.T("'break' fora de um laço ou switch"), t);
                     Expect(";", "depois de break");
                     return new JumpStmt { Kind = Flow.Break, Line = line };
                 case "continue":
                     _p++;
-                    if (_loopDepth == 0) throw Err("'continue' fora de um laço", t);
+                    if (_loopDepth == 0) throw Err(L.T("'continue' fora de um laço"), t);
                     Expect(";", "depois de continue");
                     return new JumpStmt { Kind = Flow.Continue, Line = line };
                 case "return":
@@ -812,14 +816,14 @@ internal sealed class CParser
                         _p++;
                         Expr? e = null;
                         if (!IsPunct(";")) e = ParseExpr();
-                        if (_fn != null && _fn.Ret.K == TK.Void && e != null) throw Err("a função " + _fn.Name + "() é void e não pode retornar um valor", t);
+                        if (_fn != null && _fn.Ret.K == TK.Void && e != null) throw Err(L.F("a função {0}() é void e não pode retornar um valor", _fn.Name), t);
                         Expect(";", "depois do return");
                         return new ReturnStmt { E = e, Line = line };
                     }
                 case "goto":
-                    throw Err("goto não é suportado (use laços e break)");
+                    throw Err(L.T("goto não é suportado (use laços e break)"));
                 case "else":
-                    throw Err("'else' sem um 'if' antes (verifique as chaves e o ';' antes do else)");
+                    throw Err(L.T("'else' sem um 'if' antes (verifique as chaves e o ';' antes do else)"));
             }
         }
         var ex = ParseExpr();
@@ -867,8 +871,8 @@ internal sealed class CParser
         if (t.K == TokKind.Punct && AssignOps.TryGetValue(t.Text, out var op))
         {
             _p++;
-            if (!l.IsLValue) throw Err("o lado esquerdo de '" + t.Text + "' precisa ser uma variável", t);
-            if (l is IdentExpr id && id.S.IsConst) throw Err("'" + id.S.Name + "' é constante (const) e não pode ser alterada", t);
+            if (!l.IsLValue) throw Err(L.F("o lado esquerdo de '{0}' precisa ser uma variável", t.Text), t);
+            if (l is IdentExpr id && id.S.IsConst) throw Err(L.F("'{0}' é constante (const) e não pode ser alterada", id.S.Name), t);
             var r = ParseAssign();
             return new AssignExpr { Op = op, L = l, R = r, Line = t.Line };
         }
@@ -942,7 +946,7 @@ internal sealed class CParser
                     {
                         _p++;
                         var e = ParseUnary();
-                        if (!e.IsLValue) throw Err(t.Text + " precisa de uma variável", t);
+                        if (!e.IsLValue) throw Err(L.F("{0} precisa de uma variável", t.Text), t);
                         CheckNotConst(e, t);
                         return new IncDecExpr { E = e, Delta = t.Text == "++" ? 1 : -1, Prefix = true, Line = line };
                     }
@@ -962,7 +966,7 @@ internal sealed class CParser
                     {
                         _p++;
                         var e = ParseUnary();
-                        if (!e.IsLValue) throw Err("o operador & precisa de uma variável (ex.: &x)", t);
+                        if (!e.IsLValue) throw Err(L.T("o operador & precisa de uma variável (ex.: &x)"), t);
                         return new AddrOfExpr { E = e, Line = line };
                     }
                 case "(":
@@ -971,7 +975,7 @@ internal sealed class CParser
                         _p++;
                         var ty = ParseTypeName();
                         Expect(")", "para fechar a conversão de tipo");
-                        if (IsPunct("{")) throw Err("literais compostos (tipo){...} não são suportados");
+                        if (IsPunct("{")) throw Err(L.T("literais compostos (tipo){...} não são suportados"));
                         var e = ParseUnary();
                         if (e is ConstExpr c && ty.IsArith && c.V.T.IsArith) return new ConstExpr { V = Conv.To(c.V, ty), Line = line };
                         return new CastExpr { T = ty, E = e, Line = line };
@@ -998,15 +1002,15 @@ internal sealed class CParser
 
     void CheckNotConst(Expr e, Token t)
     {
-        if (e is IdentExpr id && id.S.IsConst) throw Err("'" + id.S.Name + "' é constante (const) e não pode ser alterada", t);
+        if (e is IdentExpr id && id.S.IsConst) throw Err(L.F("'{0}' é constante (const) e não pode ser alterada", id.S.Name), t);
     }
 
     CType ParseTypeName()
     {
         var sp = ParseSpecs();
         var d = ParseDeclarator(sp.T, true);
-        if (d.Name != null) throw Err("nome inesperado '" + d.Name + "' dentro do tipo");
-        if (d.Dims != null) throw Err("tamanho de vetor precisa ser constante aqui");
+        if (d.Name != null) throw Err(L.F("nome inesperado '{0}' dentro do tipo", d.Name));
+        if (d.Dims != null) throw Err(L.T("tamanho de vetor precisa ser constante aqui"));
         return d.T;
     }
 
@@ -1040,12 +1044,12 @@ internal sealed class CParser
                         break;
                     }
                 case "(":
-                    throw Err("só é possível chamar funções pelo nome", t);
+                    throw Err(L.T("só é possível chamar funções pelo nome"), t);
                 case ".":
                 case "->":
                     {
                         _p++;
-                        string name = ExpectIdent("o nome do campo depois de " + t.Text);
+                        string name = ExpectIdent(t.Text == "." ? "o nome do campo depois de ." : "o nome do campo depois de ->");
                         if (IsPunct("(") && t.Text == ".")
                         {
                             _p++;
@@ -1058,7 +1062,7 @@ internal sealed class CParser
                 case "++":
                 case "--":
                     _p++;
-                    if (!e.IsLValue) throw Err(t.Text + " precisa de uma variável", t);
+                    if (!e.IsLValue) throw Err(L.F("{0} precisa de uma variável", t.Text), t);
                     CheckNotConst(e, t);
                     e = new IncDecExpr { E = e, Delta = t.Text == "++" ? 1 : -1, Prefix = false, Line = t.Line };
                     break;
@@ -1099,19 +1103,19 @@ internal sealed class CParser
                     Expect(")", "para fechar o parêntese");
                     return e;
                 }
-                throw new CError(line, "expressão esperada, mas encontrei '" + t.Text + "'", false);
+                throw new CError(line, L.F("expressão esperada, mas encontrei '{0}'", t.Text), false);
             case TokKind.EOF:
-                throw new CError(line, "o código terminou no meio de uma expressão (faltou algo no final?)", false);
+                throw new CError(line, L.T("o código terminou no meio de uma expressão (faltou algo no final?)"), false);
         }
         // identifier
         string name = t.Text;
         if (name == "true") return new ConstExpr { V = CVal.Of(CType.Bool, 1), Line = line };
         if (name == "false") return new ConstExpr { V = CVal.Of(CType.Bool, 0), Line = line };
-        if (Keywords.Contains(name)) throw new CError(line, "palavra reservada '" + name + "' em lugar inesperado", false);
+        if (Keywords.Contains(name)) throw new CError(line, L.F("palavra reservada '{0}' em lugar inesperado", name), false);
         var sym = _scope.Find(name);
         if (IsPunct("("))
         {
-            if (sym is VarSym) throw new CError(line, "'" + name + "' é uma variável, não uma função", false);
+            if (sym is VarSym) throw new CError(line, L.F("'{0}' é uma variável, não uma função", name), false);
             _p++;
             var args = ParseArgs();
             var call = new CallExpr { Name = name, Args = args, Line = line };
@@ -1127,18 +1131,18 @@ internal sealed class CParser
             case EnumSym en:
                 return new ConstExpr { V = CVal.Int(en.Value), Line = line };
             case TypedefSym:
-                throw new CError(line, "'" + name + "' é um tipo, não um valor", false);
+                throw new CError(line, L.F("'{0}' é um tipo, não um valor", name), false);
             case FuncSym:
-                throw new CError(line, "ponteiros para função não são suportados (faltaram os parênteses para chamar " + name + "()?)", false);
+                throw new CError(line, L.F("ponteiros para função não são suportados (faltaram os parênteses para chamar {0}()?)", name), false);
         }
         if (_ip.Natives.ContainsKey(name))
-            throw new CError(line, "'" + name + "' é uma função: chame com parênteses, " + name + "(...)", false);
-        string msg = "'" + name + "' não foi declarado(a)";
+            throw new CError(line, L.F("'{0}' é uma função: chame com parênteses, {1}(...)", name, name), false);
         var names = new List<string>();
         for (var s = _scope; s != null; s = (s == _global ? null : FindParent(s)))
             names.AddRange(s.Syms.Where(kv => kv.Value is VarSym).Select(kv => kv.Key));
         var sug = Suggest(name, names);
-        msg += sug != null ? " — você quis dizer '" + sug + "'?" : " (declare a variável antes de usar, ex.: int " + name + ";)";
+        string msg = sug != null ? L.F("'{0}' não foi declarado(a) — você quis dizer '{1}'?", name, sug)
+                                 : L.F("'{0}' não foi declarado(a) (declare a variável antes de usar, ex.: int {0};)", name);
         throw new CError(line, msg, false);
     }
 
