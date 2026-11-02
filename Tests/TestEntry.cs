@@ -35,7 +35,9 @@ public static partial class TestEntry
 
     static int RunSuites(TextWriter log)
     {
-        int f = TestEntryRunners.Run();
+        int r = TestEntryRunners.Run();
+        log.WriteLine($"Runners: {r} failures (see easycreator_runnertests.log)");
+        int f = r;
         int a = Tests.ArduinoTestEntry.RunToLog();
         log.WriteLine($"Arduino/C: {a} failures (see easycreator_arduino_tests.log)");
         f += a;
@@ -44,7 +46,11 @@ public static partial class TestEntry
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_labtests.log"), labLog.ToString());
         log.WriteLine($"Labs/quizzes: {l} failures (see easycreator_labtests.log)");
         f += l;
-        log.WriteLine($"Runners: {f} failures (see easycreator_runnertests.log)");
+        var elLog = new StringWriter();
+        int el = ElectricalTests.Run(elLog);
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_electrical.log"), elLog.ToString());
+        log.WriteLine($"Electrical: {el} failures (see easycreator_electrical.log)");
+        f += el;
         return f;
     }
 }

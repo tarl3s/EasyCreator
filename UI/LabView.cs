@@ -69,7 +69,7 @@ public sealed partial class LabView : Grid, IDisposable
         foreach (var g in _lesson.Goals)
         {
             bool met = _labRan && _lab != null && g.IsMet(_lab.Metrics);
-            string value = _labRan && _lab != null && _lab.Metrics.TryGetValue(g.Metric, out var v) ? $"  (agora: {v:0.###})" : "";
+            string value = _labRan && _lab != null && _lab.Metrics.TryGetValue(g.Metric, out var v) ? $"  (agora: {v:G4})" : "";
             _goals.Children.Add(Ui.Label($"{(met ? "✓" : "○")} {g.Description}{value}", 14, met ? Ui.Good : Ui.Text));
         }
     }
