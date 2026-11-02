@@ -52,8 +52,8 @@ public sealed class HeatTreatLab : ILab
         bool lockC = Str(p, "lock", "").Contains("carbon");
 
         _root.Children.Clear();
-        var title = steel.Length > 0 ? $"🔥 Tratamento térmico · aço {steel.ToUpperInvariant()}" : "🔥 Tratamento térmico de um aço carbono";
-        var (bar, run, _) = Header(title, "▶ Tratar");
+        var title = steel.Length > 0 ? L.F("🔥 Tratamento térmico · aço {0}", steel.ToUpperInvariant()) : L.T("🔥 Tratamento térmico de um aço carbono");
+        var (bar, run, _) = Header(title, L.T("▶ Tratar"));
         _run = run;
         run.Click += (_, _) => { if (_running) StopRun(); else StartRun(); };
         _root.Children.Add(bar);
@@ -64,11 +64,11 @@ public sealed class HeatTreatLab : ILab
         _root.Children.Add(res);
 
         var form = new Form();
-        _carbon = new SliderRow("Carbono", 0.05, 1.4, 0.01, _c, v => $"{F(v, "0.00")} % C ({Kind(v)})", 80, 150);
+        _carbon = new SliderRow(L.T("Carbono"), 0.05, 1.4, 0.01, _c, v => $"{F(v, "0.00")} % C ({Kind(v)})", 80, 150);
         if (lockC) _carbon.Enabled = false;
-        _temp = new SliderRow("Aquecer a", 500, 1300, 5, _t, v => $"{v:0} °C ({(_c <= HeatTreatModel.Eutectoid ? "A3" : "Acm")} {HeatTreatModel.Upper(_c):0})", 80, 150);
-        _medium = new ChoiceRow("Resfriar em", HeatTreatModel.Media.Select(m => (m.id, m.name)), _med, 80);
-        _temper = new SliderRow("Revenir a", 0, 650, 25, _tempering, v => v < 150 ? "sem revenimento" : $"{v:0} °C", 80, 150);
+        _temp = new SliderRow(L.T("Aquecer a"), 500, 1300, 5, _t, v => $"{v:0} °C ({(_c <= HeatTreatModel.Eutectoid ? "A3" : "Acm")} {HeatTreatModel.Upper(_c):0})", 80, 150);
+        _medium = new ChoiceRow(L.T("Resfriar em"), HeatTreatModel.Media.Select(m => (m.id, L.T(m.name))), _med, 80);
+        _temper = new SliderRow(L.T("Revenir a"), 0, 650, 25, _tempering, v => v < 150 ? L.T("sem revenimento") : $"{v:0} °C", 80, 150);
         foreach (var s in new[] { _carbon, _temp, _temper }) s.Changed += Changed;
         _medium.Changed += Changed;
         form.Add(_carbon.Row);
@@ -79,7 +79,7 @@ public sealed class HeatTreatLab : ILab
         ShowText();
     }
 
-    static string Kind(double c) => c < 0.7 ? "hipoeutetoide" : c <= 0.82 ? "eutetoide" : "hipereutetoide";
+    static string Kind(double c) => c < 0.73 ? L.T("hipoeutetoide") : c <= 0.79 ? L.T("eutetoide") : L.T("hipereutetoide");
 
     void Read()
     {
@@ -113,7 +113,7 @@ public sealed class HeatTreatLab : ILab
         Read();
         _shown = HeatTreatModel.Compute(_c, _t, _med, TemperOrZero);
         _phase = 0; _running = true;
-        if (_run != null) _run.Content = "■ Parar";
+        if (_run != null) _run.Content = L.T("■ Parar");
         ShowText();
         _clock.Restart();
         _timer.Start();
@@ -122,7 +122,7 @@ public sealed class HeatTreatLab : ILab
     void StopRun()
     {
         _timer.Stop(); _running = false; _phase = -1; _shown = null;
-        if (_run != null) _run.Content = "▶ Tratar";
+        if (_run != null) _run.Content = L.T("▶ Tratar");
         ShowText();
         _canvas.InvalidateVisual();
     }
@@ -133,7 +133,7 @@ public sealed class HeatTreatLab : ILab
         _canvas.InvalidateVisual();
         if (_phase < 1) return;
         _timer.Stop(); _running = false;
-        if (_run != null) _run.Content = "▶ Tratar";
+        if (_run != null) _run.Content = L.T("▶ Tratar");
         _metrics = new Dictionary<string, double>(_shown!.Metrics);
         ShowText();
         Finished?.Invoke();
@@ -146,7 +146,7 @@ public sealed class HeatTreatLab : ILab
         _shown = HeatTreatModel.Compute(_c, _t, _med, TemperOrZero);
         _phase = 1;
         _metrics = new Dictionary<string, double>(_shown.Metrics);
-        if (_run != null) _run.Content = "▶ Tratar";
+        if (_run != null) _run.Content = L.T("▶ Tratar");
         ShowText();
         _canvas.InvalidateVisual();
     }
@@ -159,14 +159,20 @@ public sealed class HeatTreatLab : ILab
         if (r == null || _phase < 1)
         {
             var (fg, _, phases) = HeatTreatModel.AtTemperature(_c, _t);
-            _structure.Text = _running ? "Aquecendo, mantendo na temperatura e resfriando…"
-                : $"A {_t:0} °C este aço fica: {phases}" + (fg > 0 && fg < 1 ? $" ({fg * 100:0}% austenita)" : "") + ".";
-            _tip.Text = "Escolha a temperatura no diagrama, o meio de resfriamento e clique em ▶ Tratar.";
+            _structure.Text = _running ? L.T("Aquecendo, mantendo na temperatura e resfriando…")
+                : fg > 0 && fg < 1 ? L.F("A {0:0} °C este aço fica: {1} ({2:0}% austenita).", _t, phases, fg * 100) : L.F("A {0:0} °C este aço fica: {1}.", _t, phases);
+            _tip.Text = L.T("Escolha a temperatura no diagrama, o meio de resfriamento e clique em ▶ Tratar.");
             _tip.Foreground = Ui.TextDim;
             return;
         }
-        _structure.Text = $"Resultado: {r.Structure}.  Dureza ≈ {r.HV:0} HV" + (r.HRC >= 20 ? $" ≈ {F(r.HRC, "0")} HRC" : " (abaixo da escala HRC)") +
-                          $" · tenacidade {r.Toughness:0}/100" + (r.QuenchCrack > 0.3 ? $" · risco de trinca de têmpera {r.QuenchCrack * 100:0}%" : "");
+        var parts = new List<string>
+        {
+            L.F("Resultado: {0}.", r.Structure),
+            r.HRC >= 20 ? L.F("Dureza ≈ {0:0} HV ≈ {1:0} HRC", r.HV, r.HRC) : L.F("Dureza ≈ {0:0} HV (abaixo da escala HRC)", r.HV),
+            L.F("tenacidade {0:0}/100", r.Toughness),
+        };
+        if (r.QuenchCrack > 0.3) parts.Add(L.F("risco de trinca de têmpera {0:0}%", r.QuenchCrack * 100));
+        _structure.Text = parts[0] + "  " + string.Join(" · ", parts.Skip(1));
         _tip.Text = "💡 " + r.Tip;
         _tip.Foreground = Ui.Text;
     }
@@ -206,7 +212,7 @@ public sealed class HeatTreatLab : ILab
 
     void DrawDiagram(DrawingContext dc, Rect a)
     {
-        dc.DrawText(Text("Diagrama Fe–Fe₃C (simplificado)", 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Diagrama Fe–Fe₃C (simplificado)"), 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
         var plot = new Rect(a.X + 40, a.Y + 22, a.Width - 52, a.Height - 44);
         Point P(double c, double t) => new(plot.X + plot.Width * c / CMax, plot.Bottom - plot.Height * (t - TMin) / (TMax - TMin));
         void Poly(Brush b, params (double c, double t)[] pts)
@@ -242,10 +248,10 @@ public sealed class HeatTreatLab : ILab
             dc.DrawText(Text(F(c, "0.##"), 9.5, Ui.TextDim, _canvas), new Point(P(c, 0).X - 8, plot.Bottom + 2));
         dc.DrawText(Text("% C →", 9.5, Ui.TextDim, _canvas), new Point(plot.Right - 30, plot.Bottom + 2));
         var lab = Brush("#E6E6EA", 0.8);
-        dc.DrawText(Text("γ austenita", 11, lab, _canvas, true), P(0.62, 1010));
+        dc.DrawText(Text(L.T("γ austenita"), 11, lab, _canvas, true), P(0.62, 1010));
         dc.DrawText(Text("α+γ", 10, lab, _canvas), P(0.04, 790));
         dc.DrawText(Text("γ+Fe₃C", 10, lab, _canvas), P(1.4, 860));
-        dc.DrawText(Text("α + Fe₃C (ferrita + perlita / perlita + cementita)", 9.5, lab, _canvas), P(0.05, 640));
+        dc.DrawText(Text(L.T("α + Fe₃C (ferrita + perlita / perlita + cementita)"), 9.5, lab, _canvas), P(0.05, 640));
         dc.DrawText(Text("L+γ", 10, lab, _canvas), P(1.75, 1320));
         dc.DrawText(Text("A1 727 °C", 9.5, Hot, _canvas), P(1.5, 755));
         dc.DrawText(Text("A3", 9.5, Hot, _canvas), P(0.3, 900));
@@ -261,7 +267,7 @@ public sealed class HeatTreatLab : ILab
 
     void DrawCurve(DrawingContext dc, Rect a)
     {
-        dc.DrawText(Text("Temperatura × tempo (escala ilustrativa)", 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Temperatura × tempo (escala ilustrativa)"), 11, Ui.TextDim, _canvas), new Point(a.X + 10, a.Y + 3));
         var plot = new Rect(a.X + 36, a.Y + 22, a.Width - 46, a.Height - 30);
         Point P(double p, double t) => new(plot.X + plot.Width * p, plot.Bottom - plot.Height * Math.Clamp(t / 1300, 0, 1));
         dc.DrawLine(AxisPen, new Point(plot.X, plot.Bottom), new Point(plot.Right, plot.Bottom));
@@ -280,17 +286,17 @@ public sealed class HeatTreatLab : ILab
         g.Freeze();
         dc.DrawGeometry(null, Pen(Hot, 2), g);
         var color = _med switch { "water" => "#4A90D9", "oil" => "#C9A25E", "air" => "#A0A0AA", _ => "#FF5C6C" };
-        if (end > 0.42) dc.DrawText(Text(HeatTreatModel.Media.First(m => m.id == _med).name, 10, Brush(color), _canvas), new Point(P(0.44, 0).X, plot.Bottom - 15));
-        if (TemperOrZero > 0 && end > 0.9) dc.DrawText(Text($"revenimento {TemperOrZero:0} °C", 10, Ui.TextDim, _canvas), new Point(P(0.74, 0).X, P(0, TemperOrZero).Y - 16));
+        if (end > 0.42) dc.DrawText(Text(L.T(HeatTreatModel.Media.First(m => m.id == _med).name), 10, Brush(color), _canvas), new Point(P(0.44, 0).X, plot.Bottom - 15));
+        if (TemperOrZero > 0 && end > 0.9) dc.DrawText(Text(L.F("revenimento {0:0} °C", TemperOrZero), 10, Ui.TextDim, _canvas), new Point(P(0.74, 0).X, P(0, TemperOrZero).Y - 16));
     }
 
     void DrawMicro(DrawingContext dc, Rect a)
     {
         double d = Math.Min(a.Height - 12, 110), cx = a.X + 12 + d / 2, cy = a.Y + a.Height / 2;
         string title; BitmapSource img;
-        if (_shown != null && _phase >= 1) { img = Micro(_shown, false); title = "Microestrutura final"; }
-        else if (_phase >= 0 && _shown != null && TempAt(_phase) >= HeatTreatModel.A1 && _phase < 0.42) { img = Micro(_shown, true); title = $"A {TempAt(_phase):0} °C"; }
-        else { img = Micro(HeatTreatModel.Compute(_c, 25, "furnace", 0), false); title = "Antes (recozido)"; }
+        if (_shown != null && _phase >= 1) { img = Micro(_shown, false); title = L.T("Microestrutura final"); }
+        else if (_phase >= 0 && _shown != null && TempAt(_phase) >= HeatTreatModel.A1 && _phase < 0.42) { img = Micro(_shown, true); title = L.F("A {0:0} °C", TempAt(_phase)); }
+        else { img = Micro(HeatTreatModel.Compute(_c, 25, "furnace", 0), false); title = L.T("Antes (recozido)"); }
         dc.PushClip(new EllipseGeometry(new Point(cx, cy), d / 2, d / 2));
         dc.DrawImage(img, new Rect(cx - d / 2, cy - d / 2, d, d));
         dc.Pop();
@@ -300,7 +306,7 @@ public sealed class HeatTreatLab : ILab
         var r = _shown != null && _phase >= 1 ? _shown : null;
         var rows = r == null ? new List<(string, double, Color)>() : Legend(r);
         if (r == null && _phase >= 0 && _shown != null && TempAt(_phase) >= HeatTreatModel.A1)
-            rows.Add(("austenita (γ)", _shown.AustAtTemp, PhaseColor("A")));
+            rows.Add((L.T("austenita (γ)"), _shown.AustAtTemp, PhaseColor("A")));
         double y = a.Y + 26;
         foreach (var (name, f, col) in rows)
         {
@@ -314,12 +320,12 @@ public sealed class HeatTreatLab : ILab
     static List<(string, double, Color)> Legend(HeatTreatModel.Result r)
     {
         var l = new List<(string, double, Color)>();
-        if (r.Ferrite >= 0.01) l.Add(("ferrita", r.Ferrite, PhaseColor("F")));
-        if (r.Pearlite >= 0.01) l.Add((r.FinePearlite ? "perlita fina" : "perlita", r.Pearlite, PhaseColor("P")));
-        if (r.Cementite >= 0.01) l.Add(("cementita", r.Cementite, PhaseColor("C")));
-        if (r.Bainite >= 0.01) l.Add(("bainita", r.Bainite, PhaseColor("B")));
-        if (r.Martensite >= 0.01) l.Add((r.Tempered ? "martensita revenida" : "martensita", r.Martensite, PhaseColor(r.Tempered ? "T" : "M")));
-        if (r.RetainedAustenite >= 0.01) l.Add(("austenita retida", r.RetainedAustenite, PhaseColor("A")));
+        if (r.Ferrite >= 0.01) l.Add((L.T("ferrita"), r.Ferrite, PhaseColor("F")));
+        if (r.Pearlite >= 0.01) l.Add((L.T(r.FinePearlite ? "perlita fina" : "perlita"), r.Pearlite, PhaseColor("P")));
+        if (r.Cementite >= 0.01) l.Add((L.T("cementita"), r.Cementite, PhaseColor("C")));
+        if (r.Bainite >= 0.01) l.Add((L.T("bainita"), r.Bainite, PhaseColor("B")));
+        if (r.Martensite >= 0.01) l.Add((L.T(r.Tempered ? "martensita revenida" : "martensita"), r.Martensite, PhaseColor(r.Tempered ? "T" : "M")));
+        if (r.RetainedAustenite >= 0.01) l.Add((L.T("austenita retida"), r.RetainedAustenite, PhaseColor("A")));
         return l;
     }
 

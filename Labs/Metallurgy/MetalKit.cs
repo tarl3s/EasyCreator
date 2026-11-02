@@ -7,12 +7,17 @@ using System.Windows.Media;
 namespace EasyCreator;
 
 /// <summary>Small helpers shared by the metallurgy labs (welding, heat treatment, tensile test): a click-and-drag
-/// slider, labelled control rows, combo boxes with values in Tag, pt-BR number formatting and frozen drawing brushes.</summary>
+/// slider, labelled control rows, combo boxes with values in Tag, number formatting in the current language and frozen drawing brushes.</summary>
 public static class MetalKit
 {
     public static readonly CultureInfo Pt = CultureInfo.GetCultureInfo("pt-BR");
 
-    public static string F(double v, string fmt = "0.0") => v.ToString(fmt, Pt);
+    static readonly CultureInfo En = CultureInfo.GetCultureInfo("en-US"), Es = CultureInfo.GetCultureInfo("es-ES");
+
+    /// <summary>Number culture of the current language: decimal comma in Portuguese and Spanish, point in English.</summary>
+    public static CultureInfo NumCulture => L.Lang switch { "en" => En, "es" => Es, _ => Pt };
+
+    public static string F(double v, string fmt = "0.0") => v.ToString(fmt, NumCulture);
 
     public static double Clamp01(double v) => double.IsNaN(v) ? 0 : Math.Clamp(v, 0, 1);
 
@@ -53,7 +58,7 @@ public static class MetalKit
     }
 
     public static FormattedText Text(string s, double size, Brush fg, Visual v, bool bold = false) =>
-        new(s, Pt, FlowDirection.LeftToRight,
+        new(s, NumCulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, bold ? FontWeights.SemiBold : FontWeights.Normal, FontStretches.Normal),
             size, fg, VisualTreeHelper.GetDpi(v).PixelsPerDip);
 

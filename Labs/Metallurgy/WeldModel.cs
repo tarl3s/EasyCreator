@@ -41,13 +41,13 @@ public sealed class WeldSetup
     {
         "gmaw" => "MIG/MAG (GMAW)",
         "gtaw" => "TIG (GTAW)",
-        _ => "Eletrodo revestido (SMAW)",
+        _ => L.T("Eletrodo revestido (SMAW)"),
     };
-    public string MetalName => Metal switch { "stainless" => "aço inox 304", "aluminum" => "alumínio", _ => "aço carbono" };
-    public string JointName => Joint switch { "butt" => "junta de topo", "lap" => "junta sobreposta", _ => "filete em T" };
+    public string MetalName => Metal switch { "stainless" => L.T("aço inox 304"), "aluminum" => L.T("alumínio"), _ => L.T("aço carbono") };
+    public string JointName => Joint switch { "butt" => L.T("junta de topo"), "lap" => L.T("junta sobreposta"), _ => L.T("filete em T") };
     public string PositionName => Position switch
     {
-        "horizontal" => "horizontal", "vertical" => "vertical ascendente", "overhead" => "sobrecabeça", _ => "plana",
+        "horizontal" => L.T("horizontal"), "vertical" => L.T("vertical ascendente"), "overhead" => L.T("sobrecabeça"), _ => L.T("plana"),
     };
 }
 
@@ -89,6 +89,17 @@ public static class WeldModel
 {
     public static readonly string[] Electrodes = { "E6013", "E7018", "E6010", "E308L" };
 
+    /// <summary>Thermal efficiency η (EN 1011-1 / ISO/TR 17671-1): SMAW 0.8, GMAW 0.8, GTAW 0.6.</summary>
+    public static double Efficiency(string process) => process == "gtaw" ? 0.6 : 0.8;
+
+    /// <summary>Heat input Q (kJ/mm) = η · U (V) · I (A) / v (mm/s) / 1000.</summary>
+    public static double HeatInput(double eta, double volts, double amps, double mmPerSecond) =>
+        eta * volts * amps / Math.Max(1e-6, mmPerSecond) / 1000;
+
+    /// <summary>Carbon equivalent of the IIW (all in weight %): C + Mn/6 + (Cr+Mo+V)/5 + (Ni+Cu)/15.</summary>
+    public static double CeIIW(double c, double mn, double cr = 0, double mo = 0, double v = 0, double ni = 0, double cu = 0) =>
+        c + mn / 6 + (cr + mo + v) / 5 + (ni + cu) / 15;
+
     /// <summary>Recommended SMAW current range (flat position) by electrode and diameter.</summary>
     public static (double lo, double hi) ElectrodeRange(string electrode, double d)
     {
@@ -119,8 +130,9 @@ public static class WeldModel
         }
         if (s.Process == "gmaw")
             return x.WireDiameter < 0.9 ? (50, 180 * pf) : x.WireDiameter < 1.1 ? (80, 250 * pf) : (120, 320 * pf);
-        // TIG: about 30–45 A per mm of thickness (aluminum needs more), within the tungsten's capacity.
-        double perMm = s.Metal == "aluminum" ? 42 : s.Metal == "stainless" ? 30 : 35;
+        // TIG: the shop rule "1 A per 0.001 in" ≈ 40 A per mm on steel; stainless (conducts little heat) a bit less,
+        // aluminum (spreads the heat, AC) a bit more — within the tungsten's capacity.
+        double perMm = s.Metal == "aluminum" ? 42 : s.Metal == "stainless" ? 32 : 40;
         double mid = perMm * Math.Min(s.Thickness, 6) * pf;
         return (Math.Round(mid * 0.75 / 5) * 5, Math.Round(Math.Min(mid * 1.3, 300) / 5) * 5);
     }
@@ -154,8 +166,8 @@ public static class WeldModel
         double pf = PositionFactor(s.Position);
         double I = Current(s, x), V = ArcVoltage(s, x), v = Math.Max(0.2, x.TravelSpeed), t = Math.Max(0.5, s.Thickness);
         r.Current = I; r.Voltage = V;
-        r.Efficiency = s.Process == "gtaw" ? 0.6 : 0.8;
-        r.HeatInput = r.Efficiency * V * I / v / 1000;
+        r.Efficiency = Efficiency(s.Process);
+        r.HeatInput = HeatInput(r.Efficiency, V, I, v);
         var (ilo, ihi) = CurrentWindow(s, x);
         r.ILow = ilo; r.IHigh = ihi;
         double lowI = C01((ilo - I) / (0.3 * ilo)), highI = C01((I - ihi) / (0.3 * ihi));
@@ -211,7 +223,9 @@ public static class WeldModel
         r.HazWidth = (0.6 + 1.8 * r.HeatInput) * (al ? 1.8 : inox ? 0.8 : 1.0);
 
         // ---- cooling (EN 1011-2) and HAZ hardness ----
-        var (f2, f3) = s.Joint switch { "butt" => (0.9, 0.9), _ => (0.8, 0.67) };
+        // Shape factors of EN 1011-2 (Annex D): butt weld passes F2 = F3 = 0.9; single-run fillet on a T-joint
+        // F2 = 0.45–0.67, F3 = 0.67 (the lap joint is treated like a fillet).
+        var (f2, f3) = s.Joint switch { "butt" => (0.9, 0.9), _ => (0.67, 0.67) };
         r.CoolingTime = CoolingTime(r.HeatInput, x.Preheat, t, f2, f3);
         r.HazHardness = steel ? HazHardness(s.Carbon, s.CE, r.CoolingTime) : inox ? 210 : 75;
 
@@ -225,35 +239,35 @@ public static class WeldModel
         // ---- lack of fusion ----
         double ratio = r.Penetration / r.Required;
         double lof = 0;
-        Add(ref lof, C01((1.15 - ratio) / 0.5), $"Penetração de {MetalKit.F(r.Penetration)} mm, mas a junta precisa de {MetalKit.F(r.Required)} mm: aumente a corrente ou reduza a velocidade (falta de fusão).");
-        Add(ref lof, 0.5 * lowI, $"Corrente abaixo da faixa ({ilo:0}–{ihi:0} A): o metal não funde direito.");
-        if (s.Process == "gmaw") Add(ref lof, 0.1 * Math.Max(0, -dv - 2.5), "Tensão baixa demais para essa velocidade de arame: o arame \"bate\" na peça e o cordão fica frio (colagem).");
-        if (v < vlo * 0.6) Add(ref lof, 0.15, "Velocidade muito baixa: a poça corre na frente do arco e o metal cai sobre metal frio (sobreposição).");
-        if (al && s.Process == "gtaw" && x.Polarity != "ac") Add(ref lof, x.Polarity == "dcen" ? 0.6 : 0.2, "No alumínio use corrente alternada (CA): só ela quebra a camada de óxido (Al₂O₃) que funde a 2050 °C.");
-        if (al && s.Process == "smaw") Add(ref lof, 0.45, "Eletrodo revestido no alumínio é muito difícil: use TIG em CA ou MIG com argônio.");
-        if (s.Process == "smaw" && arcRatio < 0.6) Add(ref lof, 0.2, "Arco curto demais: o eletrodo gruda na peça.");
+        Add(ref lof, C01((1.15 - ratio) / 0.5), L.F("Penetração de {0} mm, mas a junta precisa de {1} mm: aumente a corrente ou reduza a velocidade (falta de fusão).", MetalKit.F(r.Penetration), MetalKit.F(r.Required)));
+        Add(ref lof, 0.5 * lowI, L.F("Corrente abaixo da faixa ({0:0}–{1:0} A): o metal não funde direito.", ilo, ihi));
+        if (s.Process == "gmaw") Add(ref lof, 0.1 * Math.Max(0, -dv - 2.5), L.T("Tensão baixa demais para essa velocidade de arame: o arame \"bate\" na peça e o cordão fica frio (colagem)."));
+        if (v < vlo * 0.6) Add(ref lof, 0.15, L.T("Velocidade muito baixa: a poça corre na frente do arco e o metal cai sobre metal frio (sobreposição)."));
+        if (al && s.Process == "gtaw" && x.Polarity != "ac") Add(ref lof, x.Polarity == "dcen" ? 0.6 : 0.2, L.T("No alumínio use corrente alternada (CA): o meio ciclo positivo quebra a camada de óxido (Al₂O₃, que só funde a ≈ 2070 °C) e o negativo aquece a peça."));
+        if (al && s.Process == "smaw") Add(ref lof, 0.45, L.T("Eletrodo revestido no alumínio é muito difícil: use TIG em CA ou MIG com argônio."));
+        if (s.Process == "smaw" && arcRatio < 0.6) Add(ref lof, 0.2, L.T("Arco curto demais: o eletrodo gruda na peça."));
         r.LackOfFusion = C01(lof);
 
         // ---- burn-through ----
         double bt = 0, through = r.Penetration / t;
         Add(ref bt, s.Joint == "butt" ? C01((through - 1.25) / 0.5) : C01((through - 0.85) / 0.4),
-            $"Penetração de {MetalKit.F(r.Penetration)} mm numa chapa de {MetalKit.F(t)} mm: furou! Reduza a corrente ou aumente a velocidade.");
+            L.F("Penetração de {0} mm numa chapa de {1} mm: furou! Reduza a corrente ou aumente a velocidade.", MetalKit.F(r.Penetration), MetalKit.F(t)));
         if (t < 3.5)
         {
             double hiMax = 0.18 * t + 0.1;
-            Add(ref bt, 0.6 * C01((r.HeatInput - hiMax) / hiMax), $"Chapa fina: aporte térmico de {MetalKit.F(r.HeatInput, "0.00")} kJ/mm é muito para {MetalKit.F(t)} mm (máx. ≈ {MetalKit.F(hiMax, "0.00")}).");
+            Add(ref bt, 0.6 * C01((r.HeatInput - hiMax) / hiMax), L.F("Chapa fina: aporte térmico de {0} kJ/mm é muito para {1} mm (máx. ≈ {2}).", MetalKit.F(r.HeatInput, "0.00"), MetalKit.F(t), MetalKit.F(hiMax, "0.00")));
         }
-        if (s.Position is "vertical" or "overhead") Add(ref bt, 0.25 * highI, "Fora da posição plana a poça escorre: use uns 10–15% menos corrente.");
+        if (s.Position is "vertical" or "overhead") Add(ref bt, 0.25 * highI, L.T("Fora da posição plana a poça escorre: use uns 10–15% menos corrente."));
         r.BurnThrough = C01(bt);
 
         // ---- undercut ----
         double u = 0, posU = s.Position switch { "horizontal" => 1.4, "vertical" => 1.3, "overhead" => 1.3, _ => 1.0 };
-        Add(ref u, 0.9 * highI * posU, $"Corrente acima da faixa ({ilo:0}–{ihi:0} A): a borda do cordão derrete e fica um sulco (mordedura).");
-        if (s.Process == "smaw") Add(ref u, 0.3 * C01((arcRatio - 1.3) / 1.0) * posU, "Arco longo demais: tensão alta, o arco \"abre\" e cava as bordas (mordedura). Mantenha o arco ≈ diâmetro do eletrodo.");
-        if (s.Process == "gmaw") Add(ref u, 0.08 * Math.Max(0, dv - 2) * posU, $"Tensão alta demais (ideal ≈ {MetalKit.F(MigBestVoltage(I))} V para {I:0} A): arco longo, cordão largo e mordedura.");
-        Add(ref u, 0.35 * C01((v - vhi) / vhi) * posU, $"Velocidade alta demais (bom: {MetalKit.F(vlo)}–{MetalKit.F(vhi)} mm/s): o metal não preenche as bordas.");
-        Add(ref u, 0.012 * angleExcess * posU, $"Ângulo de {x.Angle:0}° é inclinado demais: mantenha 5–20°.");
-        if (s.Process == "gmaw" && gas == "ar" && !al) Add(ref u, 0.25, "Argônio puro no aço deixa o arco instável e o cordão não molha as bordas: use Ar + CO₂.");
+        Add(ref u, 0.9 * highI * posU, L.F("Corrente acima da faixa ({0:0}–{1:0} A): a borda do cordão derrete e fica um sulco (mordedura).", ilo, ihi));
+        if (s.Process == "smaw") Add(ref u, 0.3 * C01((arcRatio - 1.3) / 1.0) * posU, L.T("Arco longo demais: tensão alta, o arco \"abre\" e cava as bordas (mordedura). Mantenha o arco ≈ diâmetro do eletrodo."));
+        if (s.Process == "gmaw") Add(ref u, 0.08 * Math.Max(0, dv - 2) * posU, L.F("Tensão alta demais (ideal ≈ {0} V para {1:0} A): arco longo, cordão largo e mordedura.", MetalKit.F(MigBestVoltage(I)), I));
+        Add(ref u, 0.35 * C01((v - vhi) / vhi) * posU, L.F("Velocidade alta demais (bom: {0}–{1} mm/s): o metal não preenche as bordas.", MetalKit.F(vlo), MetalKit.F(vhi)));
+        Add(ref u, 0.012 * angleExcess * posU, L.F("Ângulo de {0:0}° é inclinado demais: mantenha 5–20°.", x.Angle));
+        if (s.Process == "gmaw" && gas == "ar" && !al) Add(ref u, 0.25, L.T("Argônio puro no aço deixa o arco instável e o cordão não molha as bordas: use Ar + CO₂."));
         r.Undercut = C01(u);
 
         // ---- spatter ----
@@ -261,21 +275,22 @@ public static class WeldModel
         if (s.Process == "smaw")
         {
             sp += x.Electrode switch { "E6010" => 0.15, "E7018" => 0.07, _ => 0.05 };
-            Add(ref sp, 0.7 * highI, "Corrente alta demais: respingos para todo lado.");
-            Add(ref sp, 0.25 * C01((arcRatio - 1.3) / 1.0), "Arco longo: o metal atravessa um arco instável e respinga.");
+            Add(ref sp, 0.7 * highI, L.T("Corrente alta demais: respingos para todo lado."));
+            Add(ref sp, 0.25 * C01((arcRatio - 1.3) / 1.0), L.T("Arco longo: o metal atravessa um arco instável e respinga."));
         }
         else if (s.Process == "gmaw")
         {
             sp += 0.04;
-            if (gas == "co2") Add(ref sp, 0.18, "CO₂ puro respinga mais que a mistura Ar + CO₂ (mas penetra mais e é mais barato).");
-            if (dv < -2) Add(ref sp, 0.1 * (-dv - 2), $"Tensão baixa para {I:0} A (ideal ≈ {MetalKit.F(MigBestVoltage(I))} V): o arame entra na poça e explode em respingos.");
-            if (dv > 3) Add(ref sp, 0.06 * (dv - 3), "Tensão alta demais: gotas grandes (transferência globular) e respingos.");
-            if (x.Stickout > 25) Add(ref sp, 0.1, "Stick-out (arame para fora do bico) longo demais: arco instável. Use 10–20 mm.");
-            if (x.Stickout < 6) Add(ref sp, 0.08, "Bico encostado na poça: respingos grudam no bocal.");
+            if (gas == "co2") Add(ref sp, 0.18, L.T("CO₂ puro respinga mais que a mistura Ar + CO₂ (mas penetra mais e é mais barato)."));
+            if (dv < -2) Add(ref sp, 0.1 * (-dv - 2), L.F("Tensão baixa para {0:0} A (ideal ≈ {1} V): o arame entra na poça e explode em respingos.", I, MetalKit.F(MigBestVoltage(I))));
+            if (dv > 3) Add(ref sp, 0.06 * (dv - 3), L.T("Tensão alta demais: gotas grandes (transferência globular) e respingos."));
+            if (x.Stickout > 25) Add(ref sp, 0.1, L.T("Stick-out (arame para fora do bico) longo demais: arco instável. Use 10–20 mm."));
+            if (x.Stickout < 6) Add(ref sp, 0.08, L.T("Bico encostado na poça: respingos grudam no bocal."));
         }
-        else if (x.Polarity == "dcep") Add(ref sp, 0.05, "TIG com eletrodo no positivo (CC+) aquece demais o tungstênio.");
-        Add(ref sp, 0.1 * angleExcess / 20, "Ângulo muito inclinado: o arco sopra o metal para fora.");
+        else if (x.Polarity == "dcep") Add(ref sp, 0.05, L.T("TIG com eletrodo no positivo (CC+) aquece demais o tungstênio."));
+        Add(ref sp, 0.1 * angleExcess / 20, L.T("Ângulo muito inclinado: o arco sopra o metal para fora."));
         r.Spatter = C01(sp);
+        // Transfer mode: a key (the Portuguese name), translated where it is shown.
         if (s.Process == "gmaw")
             r.Transfer = I < 200 && V < 24 ? "curto-circuito" : I >= 230 && V >= 25 && gas is "ar-co2" or "ar-o2" or "ar" or "ar-he" ? "spray" : "globular";
 
@@ -283,40 +298,40 @@ public static class WeldModel
         double po = al ? 0.06 : 0.02;
         if (shielded)
         {
-            if (gas == "none") Add(ref po, 0.95, "Sem gás de proteção o ar entra na poça: porosidade total!");
+            if (gas == "none") Add(ref po, 0.95, L.T("Sem gás de proteção o ar entra na poça: porosidade total!"));
             else
             {
-                if (x.GasFlow < flo) Add(ref po, 0.9 * Math.Pow((flo - x.GasFlow) / flo, 1.2), $"Vazão de gás baixa ({MetalKit.F(x.GasFlow)} L/min; bom: {flo:0}–{fhi:0}): o ar contamina a poça (poros).");
-                if (x.GasFlow > fhi * 1.6) Add(ref po, 0.5 * (x.GasFlow - fhi * 1.6) / fhi, "Vazão de gás alta demais: turbulência puxa ar para a poça.");
-                if (al && gas is "co2" or "ar-co2" or "ar-o2") Add(ref po, 0.7, "Alumínio só aceita gás inerte (argônio ou Ar + He): CO₂/O₂ oxidam a poça.");
-                if (s.Process == "gtaw" && gas is "co2" or "ar-co2" or "ar-o2") Add(ref po, 0.6, "No TIG use só gás inerte: CO₂/O₂ queimam o tungstênio.");
+                if (x.GasFlow < flo) Add(ref po, 0.9 * Math.Pow((flo - x.GasFlow) / flo, 1.2), L.F("Vazão de gás baixa ({0} L/min; bom: {1:0}–{2:0}): o ar contamina a poça (poros).", MetalKit.F(x.GasFlow), flo, fhi));
+                if (x.GasFlow > fhi * 1.6) Add(ref po, 0.5 * (x.GasFlow - fhi * 1.6) / fhi, L.T("Vazão de gás alta demais: turbulência puxa ar para a poça."));
+                if (al && gas is "co2" or "ar-co2" or "ar-o2") Add(ref po, 0.7, L.T("Alumínio só aceita gás inerte (argônio ou Ar + He): CO₂/O₂ oxidam a poça."));
+                if (s.Process == "gtaw" && gas is "co2" or "ar-co2" or "ar-o2") Add(ref po, 0.6, L.T("No TIG use só gás inerte: CO₂/O₂ queimam o tungstênio."));
             }
-            if (s.Process == "gmaw" && x.Stickout > 22) Add(ref po, 0.03 * (x.Stickout - 22), "Bico longe da peça: o gás não cobre a poça.");
-            Add(ref po, 0.02 * angleExcess, "Tocha muito inclinada: o gás não protege a poça.");
+            if (s.Process == "gmaw" && x.Stickout > 22) Add(ref po, 0.03 * (x.Stickout - 22), L.T("Bico longe da peça: o gás não cobre a poça."));
+            Add(ref po, 0.02 * angleExcess, L.T("Tocha muito inclinada: o gás não protege a poça."));
         }
         else
         {
             double longArc = C01((arcRatio - 1.2) / 1.0);
             Add(ref po, (x.Electrode == "E7018" ? 0.5 : 0.25) * longArc, x.Electrode == "E7018"
-                ? "E7018 com arco longo dá porosidade: o revestimento básico só protege com arco curto."
-                : "Arco longo: o revestimento não protege a poça e o ar entra (poros).");
-            Add(ref po, 0.012 * angleExcess, "Eletrodo muito inclinado: a escória e os gases não cobrem a poça.");
+                ? L.T("E7018 com arco longo dá porosidade: o revestimento básico só protege com arco curto.")
+                : L.T("Arco longo: o revestimento não protege a poça e o ar entra (poros)."));
+            Add(ref po, 0.012 * angleExcess, L.T("Eletrodo muito inclinado: a escória e os gases não cobrem a poça."));
         }
-        if (v > vhi * 1.3) Add(ref po, 0.1, "Muito rápido: a poça solidifica antes dos gases saírem.");
+        if (v > vhi * 1.3) Add(ref po, 0.1, L.T("Muito rápido: a poça solidifica antes dos gases saírem."));
         r.Porosity = C01(po);
 
         // ---- slag / tungsten inclusions ----
         double inc = 0;
         if (s.Process == "smaw")
         {
-            Add(ref inc, 0.4 * lowI, "Corrente baixa: a escória fica presa dentro do cordão (inclusão).");
-            if (arcRatio < 0.7) Add(ref inc, 0.4 * (0.7 - arcRatio) / 0.3, "Arco muito curto: escória presa no cordão.");
-            if (x.Angle < 5) Add(ref inc, 0.15, "Eletrodo em pé (0°): a escória corre na frente do arco. Incline 10–20° (puxando).");
+            Add(ref inc, 0.4 * lowI, L.T("Corrente baixa: a escória fica presa dentro do cordão (inclusão)."));
+            if (arcRatio < 0.7) Add(ref inc, 0.4 * (0.7 - arcRatio) / 0.3, L.T("Arco muito curto: escória presa no cordão."));
+            if (x.Angle < 5) Add(ref inc, 0.15, L.T("Eletrodo em pé (0°): a escória corre na frente do arco. Incline 10–20° (puxando)."));
         }
         else if (s.Process == "gtaw")
         {
-            if (x.ArcLength < 1) Add(ref inc, 0.5 * (1 - x.ArcLength), "Tungstênio quase tocando a poça: pedaços dele ficam no cordão.");
-            if (x.Polarity == "dcep") Add(ref inc, 0.7, "TIG em CC+ derrete a ponta do tungstênio (inclusão de tungstênio).");
+            if (x.ArcLength < 1) Add(ref inc, 0.5 * (1 - x.ArcLength), L.T("Tungstênio quase tocando a poça: pedaços dele ficam no cordão."));
+            if (x.Polarity == "dcep") Add(ref inc, 0.7, L.T("TIG em CC+ derrete a ponta do tungstênio (inclusão de tungstênio)."));
         }
         r.Inclusion = C01(inc);
 
@@ -326,7 +341,7 @@ public static class WeldModel
         if (steel)
         {
             cr = CrackRisk(s, x, r.HazHardness, t);
-            if (cr > 0) causes.Add((cr, $"ZTA dura ({r.HazHardness:0} HV) + hidrogênio: risco de trinca a frio. Use eletrodo básico (E7018), mais aporte ou pré-aquecimento."));
+            if (cr > 0) causes.Add((cr, L.F("ZTA dura ({0:0} HV) + hidrogênio: risco de trinca a frio. Use eletrodo básico (E7018), mais aporte ou pré-aquecimento.", r.HazHardness)));
             r.PreheatNeeded = 20;
             for (double t0 = 20; t0 <= 300; t0 += 10)
             {
@@ -337,13 +352,13 @@ public static class WeldModel
         }
         else if (inox)
         {
-            if (s.Process == "smaw" && x.Electrode != "E308L") Add(ref cr, 0.6, "Eletrodo de aço carbono no inox: o cordão fica martensítico, trinca e enferruja. Use E308L.");
-            Add(ref cr, 0.3 * C01((r.HeatInput - 1.5) / 1.0), "Aporte alto no inox: risco de trinca a quente e de perder a resistência à corrosão.");
+            if (s.Process == "smaw" && x.Electrode != "E308L") Add(ref cr, 0.6, L.T("Eletrodo de aço carbono no inox: o cordão fica martensítico, trinca e enferruja. Use E308L."));
+            Add(ref cr, 0.3 * C01((r.HeatInput - 1.5) / 1.0), L.T("Aporte alto no inox: risco de trinca a quente e de perder a resistência à corrosão."));
         }
         else
         {
             cr = 0.04;
-            Add(ref cr, 0.25 * C01((v - vhi) / vhi), "Alumínio soldado rápido demais: trinca de cratera/solidificação.");
+            Add(ref cr, 0.25 * C01((v - vhi) / vhi), L.T("Alumínio soldado rápido demais: trinca de cratera/solidificação."));
         }
         r.Crack = C01(cr);
 
@@ -354,19 +369,19 @@ public static class WeldModel
         if (convex > 0.45)
         {
             q *= Math.Max(0.7, 1 - (convex - 0.45));
-            causes.Add((convex - 0.45, "Cordão alto e estreito (convexo demais): aumente a velocidade ou a tensão para ele \"molhar\" as bordas."));
+            causes.Add((convex - 0.45, L.T("Cordão alto e estreito (convexo demais): aumente a velocidade ou a tensão para ele \"molhar\" as bordas.")));
         }
         if (s.Process == "gmaw" && inox && gas is "ar-co2" or "co2")
         {
             q *= 0.8;
-            causes.Add((0.2, "No inox use Ar + 2% O₂ (ou 2% CO₂): CO₂ demais coloca carbono no cordão e ele perde a resistência à corrosão."));
+            causes.Add((0.2, L.T("No inox use Ar + 2% O₂ (ou 2% CO₂): CO₂ demais coloca carbono no cordão e ele perde a resistência à corrosão.")));
         }
         r.Quality = Math.Round(100 * Math.Clamp(q, 0, 1));
 
         var worst = causes.OrderByDescending(c => c.weight).FirstOrDefault();
-        r.Tip = r.Quality >= 85 ? "Ótimo cordão! Parâmetros dentro da janela do processo."
-            : worst.text == null ? "Ajuste os parâmetros para melhorar o cordão."
-            : (r.Quality >= 80 ? "Bom cordão. Para melhorar: " : "") + worst.text;
+        r.Tip = r.Quality >= 85 ? L.T("Ótimo cordão! Parâmetros dentro da janela do processo.")
+            : worst.text == null ? L.T("Ajuste os parâmetros para melhorar o cordão.")
+            : r.Quality >= 80 ? L.F("Bom cordão. Para melhorar: {0}", worst.text) : worst.text;
 
         r.Metrics = new()
         {

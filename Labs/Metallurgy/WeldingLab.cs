@@ -96,8 +96,8 @@ public sealed class WeldingLab : ILab
         _root.Children.Clear();
         _sliders.Clear();
         _choices.Clear();
-        var title = $"🔥 {_setup.ProcessName} · {_setup.MetalName} {F(_setup.Thickness, "0.#")} mm · {_setup.JointName} · posição {_setup.PositionName}";
-        var (bar, run, _) = Header(title, "▶ Soldar");
+        var title = L.F("🔥 {0} · {1} {2} mm · {3} · posição {4}", _setup.ProcessName, _setup.MetalName, F(_setup.Thickness, "0.#"), _setup.JointName, _setup.PositionName);
+        var (bar, run, _) = Header(title, L.T("▶ Soldar"));
         _run = run;
         run.Click += (_, _) => { if (_running) StopRun(); else StartRun(); };
         _root.Children.Add(bar);
@@ -115,15 +115,15 @@ public sealed class WeldingLab : ILab
         var lockSet = locked.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(StringComparer.OrdinalIgnoreCase);
         void S(string key, string label, double min, double max, double step, double value, Func<double, string> fmt)
         {
-            var row = new SliderRow(label, min, max, step, value, fmt, 100, 136);
+            var row = new SliderRow(L.T(label), min, max, step, value, fmt, 100, 136);
             row.Changed += () => { if (_syncing) return; Read(); RefreshLabels(); MarkStale(); };
             if (lockSet.Contains(key)) row.Enabled = false;
             _sliders[key] = row;
             form.Add(row.Row);
         }
-        void C(string key, string label, (string, string)[] options, string value)
+        void C(string key, string label, (string, string)[] options, string value, bool translate = true)
         {
-            var row = new ChoiceRow(label, options, value, 100);
+            var row = new ChoiceRow(L.T(label), options.Select(o => (o.Item1, translate ? L.T(o.Item2) : o.Item2)), value, 100);
             row.Changed += () => { if (_syncing) return; Read(); RefreshLabels(); MarkStale(); };
             if (lockSet.Contains(key)) { row.Combo.IsEnabled = false; row.Row.Opacity = 0.55; }
             _choices[key] = row;
@@ -136,7 +136,7 @@ public sealed class WeldingLab : ILab
         switch (_setup.Process)
         {
             case "gmaw":
-                C("wireDiameter", "Arame", new[] { ("0.8", "0,8 mm"), ("1.0", "1,0 mm"), ("1.2", "1,2 mm") }, WireKey(_in.WireDiameter));
+                C("wireDiameter", "Arame", Mm("0.8", "1.0", "1.2"), WireKey(_in.WireDiameter), false);
                 C("gas", "Gás", gases, _in.Gas);
                 S("wireFeed", "Arame (veloc.)", 1.5, 15, 0.25, _in.WireFeed, v => $"{F(v, "0.0#")} m/min ≈ {WeldModel.MigCurrent(_in):0} A");
                 S("voltage", "Tensão", 14, 34, 0.5, _in.Voltage, v => $"{F(v)} V");
@@ -152,14 +152,14 @@ public sealed class WeldingLab : ILab
                 break;
             default:
                 C("electrode", "Eletrodo", new[] { ("E6013", "E6013 (rutílico)"), ("E7018", "E7018 (básico, baixo H)"), ("E6010", "E6010 (celulósico)"), ("E308L", "E308L-16 (inox)") }, _in.Electrode);
-                C("diameter", "Diâmetro", new[] { ("2.5", "2,5 mm"), ("3.25", "3,25 mm"), ("4.0", "4,0 mm") }, DiaKey(_in.Diameter));
+                C("diameter", "Diâmetro", Mm("2.5", "3.25", "4.0"), DiaKey(_in.Diameter), false);
                 S("current", "Corrente", 40, 220, 5, _in.Current, CurrentText);
                 S("arcLength", "Arco (compr.)", 0.5, 8, 0.25, _in.ArcLength, v => $"{F(v, "0.0#")} mm ≈ {F(WeldModel.ArcVoltage(_setup, _in))} V");
                 break;
         }
         S("travelSpeed", "Velocidade", 0.5, 15, 0.25, _in.TravelSpeed, v => $"{F(v, "0.0#")} mm/s ({v * 6:0} cm/min)");
-        S("angle", _setup.Process == "smaw" ? "Ângulo eletrodo" : "Ângulo da tocha", 0, 45, 1, _in.Angle, v => _setup.Process == "smaw" ? $"{v:0}° (puxando)" : $"{v:0}° (empurrando)");
-        S("preheat", "Pré-aquecer", 20, 300, 10, _in.Preheat, v => v <= 20 ? "não (20 °C)" : $"{v:0} °C");
+        S("angle", _setup.Process == "smaw" ? "Ângulo eletrodo" : "Ângulo da tocha", 0, 45, 1, _in.Angle, v => _setup.Process == "smaw" ? L.F("{0:0}° (puxando)", v) : L.F("{0:0}° (empurrando)", v));
+        S("preheat", "Pré-aquecer", 20, 300, 10, _in.Preheat, v => v <= 20 ? L.T("não (20 °C)") : $"{v:0} °C");
         _root.Children.Add(form.Root);
         ShowResults();
     }
@@ -167,8 +167,11 @@ public sealed class WeldingLab : ILab
     string CurrentText(double v)
     {
         var (lo, hi) = WeldModel.CurrentWindow(_setup, _in);
-        return $"{v:0} A (faixa {lo:0}–{hi:0})";
+        return L.F("{0:0} A (faixa {1:0}–{2:0})", v, lo, hi);
     }
+
+    /// <summary>Diameter options: value "3.25" shown as "3,25 mm" (or "3.25 mm" in English).</summary>
+    static (string, string)[] Mm(params string[] values) => values.Select(v => (v, $"{F(double.Parse(v, System.Globalization.CultureInfo.InvariantCulture), "0.0#")} mm")).ToArray();
 
     static string WireKey(double d) => d < 0.9 ? "0.8" : d < 1.1 ? "1.0" : "1.2";
     static string DiaKey(double d) => d < 2.9 ? "2.5" : d < 3.6 ? "3.25" : "4.0";
@@ -249,7 +252,7 @@ public sealed class WeldingLab : ILab
         _progress = 0;
         _running = true;
         _stale = false;
-        if (_run != null) _run.Content = "■ Parar";
+        if (_run != null) _run.Content = L.T("■ Parar");
         ShowResults();
         _clock.Restart();
         _timer.Start();
@@ -259,7 +262,7 @@ public sealed class WeldingLab : ILab
     {
         _timer.Stop();
         _running = false;
-        if (_run != null) _run.Content = "▶ Soldar";
+        if (_run != null) _run.Content = L.T("▶ Soldar");
         if (_progress < 1) { _shown = null; _progress = 0; }
         ShowResults();
         _canvas.InvalidateVisual();
@@ -272,7 +275,7 @@ public sealed class WeldingLab : ILab
         if (_progress < 1) return;
         _timer.Stop();
         _running = false;
-        if (_run != null) _run.Content = "▶ Soldar";
+        if (_run != null) _run.Content = L.T("▶ Soldar");
         _metrics = new Dictionary<string, double>(_shown!.Metrics);
         ShowResults();
         Finished?.Invoke();
@@ -286,7 +289,7 @@ public sealed class WeldingLab : ILab
         _progress = 1;
         _stale = false;
         _metrics = new Dictionary<string, double>(_shown.Metrics);
-        if (_run != null) _run.Content = "▶ Soldar";
+        if (_run != null) _run.Content = L.T("▶ Soldar");
         ShowResults();
         _canvas.InvalidateVisual();
     }
@@ -305,29 +308,39 @@ public sealed class WeldingLab : ILab
         var r = _shown;
         if (r == null || (_running && _progress < 1))
         {
-            _numbers.Text = _running ? "Soldando… observe o arco, a poça e os respingos." : "Ajuste a máquina e as mãos e clique em ▶ Soldar.";
+            _numbers.Text = _running ? L.T("Soldando… observe o arco, a poça e os respingos.") : L.T("Ajuste a máquina e as mãos e clique em ▶ Soldar.");
             _tip.Text = _setup.Process switch
             {
-                "gmaw" => "No MIG/MAG a corrente vem da velocidade do arame; a tensão define o comprimento do arco.",
-                "gtaw" => "No TIG o arco é curto (≈ 1,5–3 mm) e o metal de adição entra pela mão esquerda.",
-                _ => "No eletrodo revestido o comprimento do arco (≈ diâmetro do eletrodo) define a tensão.",
+                "gmaw" => L.T("No MIG/MAG a corrente vem da velocidade do arame; a tensão define o comprimento do arco."),
+                "gtaw" => L.T("No TIG o arco é curto (≈ 1,5–3 mm) e o metal de adição entra pela outra mão."),
+                _ => L.T("No eletrodo revestido o comprimento do arco (≈ diâmetro do eletrodo) define a tensão."),
             };
             return;
         }
-        string mode = r.Transfer.Length > 0 ? $" · transferência {r.Transfer}" : "";
-        _numbers.Text = $"Aporte térmico {F(r.HeatInput, "0.00")} kJ/mm · {r.Current:0} A × {F(r.Voltage)} V · penetração {F(r.Penetration)} mm (precisa {F(r.Required)}) · " +
-                        $"largura {F(r.Width)} mm · altura {F(r.Height)} mm · t8/5 {F(r.CoolingTime)} s" +
-                        (_setup.Metal == "carbon" ? $" · ZTA {r.HazHardness:0} HV" : "") + mode;
-        Chip($"Qualidade {r.Quality:0}/100", r.Quality >= 80 ? 0 : r.Quality >= 60 ? 0.3 : 1, true);
-        Chip($"Porosidade {r.Porosity * 100:0}%", r.Porosity);
-        Chip($"Mordedura {r.Undercut * 100:0}%", r.Undercut);
-        Chip($"Falta de fusão {r.LackOfFusion * 100:0}%", r.LackOfFusion);
-        Chip($"Perfuração {r.BurnThrough * 100:0}%", r.BurnThrough);
-        Chip($"Respingos {r.Spatter * 100:0}%", r.Spatter);
-        Chip($"Trinca {r.Crack * 100:0}%", r.Crack);
-        if (r.Inclusion > 0.01) Chip($"Inclusão {r.Inclusion * 100:0}%", r.Inclusion);
-        _tip.Text = (_stale ? "Você mudou os parâmetros: clique em ▶ Soldar de novo. " : "💡 ") + r.Tip +
-                    (_setup.Metal == "carbon" && r.PreheatNeeded > r.Metrics.GetValueOrDefault("preheat", 20) ? $" (Pré-aquecimento sugerido pelo modelo: ≈ {r.PreheatNeeded:0} °C.)" : "");
+        var parts = new List<string>
+        {
+            L.F("Aporte térmico {0} kJ/mm", F(r.HeatInput, "0.00")),
+            $"{r.Current:0} A × {F(r.Voltage)} V",
+            L.F("penetração {0} mm (precisa {1})", F(r.Penetration), F(r.Required)),
+            L.F("largura {0} mm", F(r.Width)),
+            L.F("altura {0} mm", F(r.Height)),
+            $"t8/5 {F(r.CoolingTime)} s",
+        };
+        if (_setup.Metal == "carbon") parts.Add(L.F("ZTA {0:0} HV", r.HazHardness));
+        if (r.Transfer.Length > 0) parts.Add(L.F("transferência {0}", L.T(r.Transfer)));
+        _numbers.Text = string.Join(" · ", parts);
+        Chip(L.F("Qualidade {0:0}/100", r.Quality), r.Quality >= 80 ? 0 : r.Quality >= 60 ? 0.3 : 1, true);
+        Chip(L.F("Porosidade {0:0}%", r.Porosity * 100), r.Porosity);
+        Chip(L.F("Mordedura {0:0}%", r.Undercut * 100), r.Undercut);
+        Chip(L.F("Falta de fusão {0:0}%", r.LackOfFusion * 100), r.LackOfFusion);
+        Chip(L.F("Perfuração {0:0}%", r.BurnThrough * 100), r.BurnThrough);
+        Chip(L.F("Respingos {0:0}%", r.Spatter * 100), r.Spatter);
+        Chip(L.F("Trinca {0:0}%", r.Crack * 100), r.Crack);
+        if (r.Inclusion > 0.01) Chip(L.F("Inclusão {0:0}%", r.Inclusion * 100), r.Inclusion);
+        string tip = _stale ? L.F("Você mudou os parâmetros: clique em ▶ Soldar de novo. {0}", r.Tip) : "💡 " + r.Tip;
+        if (_setup.Metal == "carbon" && r.PreheatNeeded > r.Metrics.GetValueOrDefault("preheat", 20))
+            tip += " " + L.F("(Pré-aquecimento sugerido pelo modelo: ≈ {0:0} °C.)", r.PreheatNeeded);
+        _tip.Text = tip;
         _tip.Foreground = _stale ? Ui.TextDim : Ui.Text;
     }
 
@@ -371,7 +384,7 @@ public sealed class WeldingLab : ILab
     {
         var plateC = PlateColor;
         var plate = new Rect(a.X + 8, a.Y + 20, a.Width - 16, a.Height - 28);
-        dc.DrawText(Text("Vista de cima", 11, DimText, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Vista de cima"), 11, DimText, _canvas), new Point(a.X + 10, a.Y + 3));
         double cy = plate.Y + plate.Height / 2, mm = (plate.Width) / 80.0; // 80 mm of plate across
         var lighter = Brush(Mix(plateC, Colors.White, 0.12));
         var darker = Brush(Mix(plateC, Colors.Black, 0.25));
@@ -391,7 +404,7 @@ public sealed class WeldingLab : ILab
                 dc.DrawRectangle(pb, PlateOutline, plate);
                 double band = Math.Clamp(_setup.Thickness * mm, 6, plate.Height / 2 - 4);
                 dc.DrawRectangle(lighter, PlateOutline, new Rect(plate.X, cy - band, plate.Width, band));
-                dc.DrawText(Text("chapa em pé", 10, Brush("#FFFFFF", 0.6), _canvas), new Point(plate.X + 4, cy - band + 1));
+                dc.DrawText(Text(L.T("chapa em pé"), 10, Brush("#FFFFFF", 0.6), _canvas), new Point(plate.X + 4, cy - band + 1));
                 break;
         }
 
@@ -537,7 +550,7 @@ public sealed class WeldingLab : ILab
 
     void DrawSection(DrawingContext dc, Rect a)
     {
-        dc.DrawText(Text("Corte A–A", 11, DimText, _canvas), new Point(a.X + 10, a.Y + 3));
+        dc.DrawText(Text(L.T("Corte A–A"), 11, DimText, _canvas), new Point(a.X + 10, a.Y + 3));
         var r = _shown;
         double t = _setup.Thickness;
         bool showWeld = r != null && _progress >= 0.6;
@@ -559,7 +572,7 @@ public sealed class WeldingLab : ILab
         {
             dc.DrawGeometry(Brush(PlateColor), PlateOutline, Px(plateG));
             if (r == null || _running)
-                dc.DrawText(Text(r == null ? "o corte aparece depois de soldar" : "esperando o cordão passar por A…", 10.5, DimText, _canvas), new Point(a.X + 10, a.Bottom - 16));
+                dc.DrawText(Text(r == null ? L.T("o corte aparece depois de soldar") : L.T("esperando o cordão passar por A…"), 10.5, DimText, _canvas), new Point(a.X + 10, a.Bottom - 16));
             dc.Pop();
             return;
         }
@@ -646,11 +659,11 @@ public sealed class WeldingLab : ILab
         // labels
         var lbl = Brush("#E6E6EA", 0.9);
         var zf = toPx.Transform(fillet ? new Point(leg * 0.3, -leg * 0.3) : new Point(0, -H * 0.4));
-        dc.DrawText(Text("ZF", 10, Brush("#2A1E08"), _canvas, true), new Point(zf.X - 7, zf.Y - 7));
+        dc.DrawText(Text(L.T("ZF"), 10, Brush("#2A1E08"), _canvas, true), new Point(zf.X - 7, zf.Y - 7));
         var zt = toPx.Transform(new Point(fillet ? leg + r.HazWidth * 0.6 : W / 2 + r.HazWidth * 0.5, Math.Min(t * 0.25 + 0.4, t - 0.3)));
-        dc.DrawText(Text("ZTA", 10, lbl, _canvas, true), new Point(zt.X + 2, zt.Y - 6));
-        dc.DrawText(Text("MB", 10, lbl, _canvas), toPx.Transform(new Point(-widthMm / 2 + 1, t * 0.5 - 0.4)));
-        dc.DrawText(Text($"p = {F(r.Penetration)} mm · e = {F(t, "0.#")} mm", 10.5, DimText, _canvas), new Point(a.X + 10, a.Bottom - 16));
+        dc.DrawText(Text(L.T("ZTA"), 10, lbl, _canvas, true), new Point(zt.X + 2, zt.Y - 6));
+        dc.DrawText(Text(L.T("MB"), 10, lbl, _canvas), toPx.Transform(new Point(-widthMm / 2 + 1, t * 0.5 - 0.4)));
+        dc.DrawText(Text(L.F("p = {0} mm · e = {1} mm", F(r.Penetration), F(t, "0.#")), 10.5, DimText, _canvas), new Point(a.X + 10, a.Bottom - 16));
     }
 
     /// <summary>The plates around the joint in mm (origin at the weld root/surface, y down into the base plate).</summary>
