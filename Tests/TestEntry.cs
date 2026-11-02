@@ -24,5 +24,10 @@ public static partial class TestEntry
         return true;
     }
 
-    static int RunSuites(TextWriter log) => 0; // wired to the feature suites after merge
+    static int RunSuites(TextWriter log)
+    {
+        int f = TestEntryRunners.Run();
+        log.WriteLine($"Runners: {f} failures (see easycreator_runnertests.log)");
+        return f;
+    }
 }
