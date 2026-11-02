@@ -73,6 +73,10 @@ public static class ElectricalTests
             Check("reversed LED does not conduct", Math.Abs(n.Find("D1")!.Id) < 1e-6, $"(I = {n.Find("D1")!.Id})");
             s = Dc("V1 n1 0 5; R1 n1 n2 1k; D1 n2 n3; D2 n3 0", out n);
             Near("two silicon diodes: I = (5-1.4)/1k", n.Find("R1")!.Id, 0.0036, 2);
+            s = Dc("V1 n1 0 9; R1 n1 n2 350; D1 n2 0 led", out n);
+            Check("lesson LED: 350 Ω from 9 V gives about 20 mA", Math.Abs(n.Find("D1")!.Id - 0.02) < 0.002, $"(I = {n.Find("D1")!.Id:0.#####})");
+            s = Dc("I1 n1 0 3m; R1 n1 0 1k; R2 n1 0 2k", out n);
+            Near("current source into 1k ∥ 2k = 2 V", s.V("n1"), 2);
 
             s = Dc("V1 n1 0 5; S1 n1 n2 off; R1 n2 0 1k", out n);
             Check("open switch: no current", Math.Abs(n.Find("R1")!.Id) < 1e-6);
@@ -407,7 +411,13 @@ public static class ElectricalTests
         Lesson("ele-01-ohm", "R1", "470", true);
         Lesson("ele-01-ohm", "R1", "390", false);
         Lesson("ele-01-ohm", "R1", "510", false);
+        Lesson("ele-02-serie-paralelo", "R3", "200", true);
         Lesson("ele-02-serie-paralelo", "R3", "220", false);
+        Lesson("ele-03-kirchhoff", "V2", "8", true);
+        Lesson("ele-05-thevenin", "RL", "3k", true);
+        Lesson("ele-06-rc", "R1", "1k", true);
+        Lesson("ele-09-retificador", "C1", "2.2m", true);
+        Lesson("ele-10-trifasico", "Rc", "10", true);
         Lesson("ele-03-kirchhoff", "V2", "7.5", false);
         Lesson("ele-05-thevenin", "RL", "2k", false);
         Lesson("ele-06-rc", "R1", "910", false);
