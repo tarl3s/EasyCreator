@@ -8,13 +8,8 @@ static class Cx
     public static string Prog(string body, string globals = "") =>
         "#include <stdio.h>\n\n" + (globals.Length > 0 ? globals + "\n\n" : "") + "int main() {\n" + body + "    return 0;\n}\n";
 
-    /// <summary>"What does it print?": the draws change the program, not the wording, so a short neutral tag keeps each prompt unique.</summary>
-    public static Exercise Output(string prompt, string code, string expected, string explanation)
-    {
-        int h = 17;
-        foreach (var c in code) h = unchecked(h * 31 + c);
-        return Ex.Output(prompt + "\n\n`#" + (h & 0xFFFF).ToString("X4") + "`", code, expected, explanation);
-    }
+    public static Exercise Output(string prompt, string code, string expected, string explanation) =>
+        Ex.Output(prompt, code, expected, explanation);
     public static string Ints(IEnumerable<int> items) => string.Join(", ", items);
 }
 
