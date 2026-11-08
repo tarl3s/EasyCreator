@@ -188,8 +188,8 @@ public sealed class Ele09Rectifier : PoolGen
         Difficulty.Medium => F(r =>
         {
             double v = S(r, 5, 30, 0.5), vp = v * Sqrt(2), vo = vp - 1.4;
-            return Q(XF("Uma ponte de 4 diodos (0,7 V cada) é ligada a um secundário de {0} V RMS. Qual o pico da tensão de saída?", "A 4-diode bridge (0.7 V each) is connected to a {0} V RMS secondary. What is the peak output voltage?", "Un puente de 4 diodos (0,7 V cada uno) se conecta a un secundario de {0} V RMS. ¿Cuál es el pico de la tensión de salida?", N(v, 0)), vo, "V",
-                YF("Vp = {0}·√2 = {1} V; em cada meio-ciclo conduzem 2 diodos: Vsaída = {1} − 1,4 = {2} V.", N(v, 0), N(vp, 2), N(vo, 2)));
+            return Q(XF("Uma ponte de 4 diodos (0,7 V cada) é ligada a um secundário de {0} V RMS. Qual o pico da tensão de saída?", "A 4-diode bridge (0.7 V each) is connected to a {0} V RMS secondary. What is the peak output voltage?", "Un puente de 4 diodos (0,7 V cada uno) se conecta a un secundario de {0} V RMS. ¿Cuál es el pico de la tensión de salida?", N(v, 1)), vo, "V",
+                YF("Vp = {0}·√2 = {1} V; em cada meio-ciclo conduzem 2 diodos: Vsaída = {1} − 1,4 = {2} V.", N(v, 1), N(vp, 2), N(vo, 2)));
         }, r =>
         {
             double vp = S(r, 10, 40, 1), vm = 2 * vp / Pi - 0.0, rl = P(r, 100.0, 220, 470, 1000), i = vm / rl * 1000;

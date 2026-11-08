@@ -26,7 +26,7 @@ public sealed class Ele16Transformer : PoolGen
         Difficulty.Hard => F(r =>
         {
             double a = S(r, 1.5, 20, 0.5), zl = S(r, 2, 60, 1), zp = a * a * zl;
-            return Q(XF("Um transformador ideal com relação de espiras {0}:1 tem uma carga de {1} Ω no secundário. Que impedância o primário enxerga?", "An ideal transformer with a {0}:1 turns ratio has a {1} Ω load on the secondary. What impedance does the primary see?", "Un transformador ideal con relación de espiras {0}:1 tiene una carga de {1} Ω en el secundario. ¿Qué impedancia ve el primario?", N(a, 0), N(zl, 0)), zp, "Ω", YF("Zp = (Np/Ns)²·ZL = {0}² · {1} = {2} Ω.", N(a, 0), N(zl, 0), N(zp, 0)));
+            return Q(XF("Um transformador ideal com relação de espiras {0}:1 tem uma carga de {1} Ω no secundário. Que impedância o primário enxerga?", "An ideal transformer with a {0}:1 turns ratio has a {1} Ω load on the secondary. What impedance does the primary see?", "Un transformador ideal con relación de espiras {0}:1 tiene una carga de {1} Ω en el secundario. ¿Qué impedancia ve el primario?", N(a, 1), N(zl, 0)), zp, "Ω", YF("Zp = (Np/Ns)²·ZL = {0}² · {1} = {2} Ω.", N(a, 1), N(zl, 0), N(zp, 0)));
         }, r =>
         {
             double rs = P(r, 4.0, 8, 16), rp = P(r, 400.0, 800, 1600, 3200), a = Sqrt(rp / rs);
@@ -39,7 +39,7 @@ public sealed class Ele16Transformer : PoolGen
         }, r =>
         {
             double vp = 220, vs = S(r, 6, 60, 1), RL = S(r, 1, 20, 0.5), a = vp / vs, ip = vs / RL * vs / vp;
-            return Q(XF("Um transformador ideal de 220 V para {0} V alimenta um resistor de {1} Ω. Qual a corrente no primário?", "An ideal 220 V to {0} V transformer feeds a {1} Ω resistor. What is the primary current?", "Un transformador ideal de 220 V a {0} V alimenta una resistencia de {1} Ω. ¿Cuál es la corriente en el primario?", N(vs, 0), N(RL, 0)), ip, "A", YF("Is = {0}/{1} = {2} A; Ip = Is·Vs/Vp = {2} · {0}/220 = {3} A (a = {4}; equivale a Zp = a²·R = {5} Ω).", N(vs, 0), N(RL, 0), N(vs / RL, 3), N(ip, 4), N(a, 3), N(a * a * RL, 1)));
+            return Q(XF("Um transformador ideal de 220 V para {0} V alimenta um resistor de {1} Ω. Qual a corrente no primário?", "An ideal 220 V to {0} V transformer feeds a {1} Ω resistor. What is the primary current?", "Un transformador ideal de 220 V a {0} V alimenta una resistencia de {1} Ω. ¿Cuál es la corriente en el primario?", N(vs, 0), N(RL, 1)), ip, "A", YF("Is = {0}/{1} = {2} A; Ip = Is·Vs/Vp = {2} · {0}/220 = {3} A (a = {4}; equivale a Zp = a²·R = {5} Ω).", N(vs, 0), N(RL, 1), N(vs / RL, 3), N(ip, 4), N(a, 3), N(a * a * RL, 1)));
         })
     };
 }
