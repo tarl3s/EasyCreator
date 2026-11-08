@@ -51,20 +51,12 @@ static class PK
         string prompt = t.Input.Length == 0
             ? statement + "\n\n" + L.T("Saída esperada:") + "\n" + Fence(t.Expected)
             : statement + "\n\n" + L.T("Exemplo de entrada:") + "\n" + Fence(t.Input) + "\n" + L.T("Saída esperada:") + "\n" + Fence(t.Expected);
-        return Ex.Code(prompt + "\n\n" + Tag(solution + string.Join("|", tests.Select(x => x.Input))), starter, solution, tests, explanation);
+        return Ex.Code(prompt, starter, solution, tests, explanation);
     }
 
     /// <summary>"What does it print?" — <paramref name="intro"/> must differ between draws (mention a value from the program).</summary>
     public static Exercise Predict(string intro, string code, string expected, string explanation) =>
-        Ex.Output(intro + " " + L.T("Escreva exatamente o que ele imprime.") + " " + Tag(code), code, expected, explanation);
-
-    /// <summary>A short stable id for a draw (keeps two different programs from having the same prompt text).</summary>
-    public static string Tag(string s)
-    {
-        uint h = 2166136261;
-        foreach (char c in s) h = (h ^ c) * 16777619;
-        return "`#" + (h % 900 + 100) + "`";
-    }
+        Ex.Output(intro + " " + L.T("Escreva exatamente o que ele imprime."), code, expected, explanation);
 
     public const string CHead = "#include <stdio.h>\n\n";
     public const string CStarter = "#include <stdio.h>\n\nint main(void) {\n    // escreva seu código aqui\n    return 0;\n}\n";

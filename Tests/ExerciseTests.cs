@@ -51,8 +51,7 @@ public static class ExerciseTests
             Exercise ex;
             try { ex = g.Make(lesson, d, new Random(seed)); }
             catch (Exception e) { check($"{id} seed {seed}: generates", false, e.Message); return; }
-            prompts.Add(ex.Prompt + "
-" + ex.Code);
+            prompts.Add(ex.Key);
             if (ex.Prompt.Trim().Length == 0) { check($"{id} seed {seed}: has a prompt", false, ""); continue; }
             if (ex.Prompt.Contains("NaN") || ex.Prompt.Contains("∞") || ex.Prompt.Contains("Infinity")) check($"{id} seed {seed}: prompt numbers", false, ex.Prompt);
             if (ex.IsCode)

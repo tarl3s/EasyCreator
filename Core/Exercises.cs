@@ -23,6 +23,8 @@ public sealed class Exercise
     /// <summary>Shown after answering, or with "show solution": the worked reasoning.</summary>
     public string Explanation { get; init; } = "";
     public bool IsCode => Tests.Count > 0;
+    /// <summary>What makes two draws different exercises (the same wording with another program or other test inputs counts).</summary>
+    public string Key => Prompt + "\n" + Code + "\n" + string.Join("\n", Tests.Select(t => t.Input + "\u0001" + t.Expected));
 }
 
 /// <summary>Makes exercises for the lessons named in its <see cref="ExercisesAttribute"/>. Must be deterministic for a
@@ -69,8 +71,8 @@ public static class ExerciseRegistry
         var rng = new Random();
         LastPrompt.TryGetValue(lesson.Id, out var last);
         Exercise ex = g.Make(lesson, d, rng);
-        for (int i = 0; i < 10 && ex.Prompt + ex.Code == last; i++) ex = g.Make(lesson, d, rng);
-        LastPrompt[lesson.Id] = ex.Prompt + ex.Code;
+        for (int i = 0; i < 10 && ex.Key == last; i++) ex = g.Make(lesson, d, rng);
+        LastPrompt[lesson.Id] = ex.Key;
         return ex;
     }
 }
