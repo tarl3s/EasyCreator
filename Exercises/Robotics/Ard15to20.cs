@@ -184,7 +184,7 @@ public sealed class Ard18Pid : IExerciseGenerator
                 {
                     // Steady-state error of a P-only control against a constant disturbance.
                     double kp = Ex.Step(r, 1, 10, 0.5), dist = Ex.Step(r, 5, 50, 5), err = dist / kp;
-                    return Ex.Num(L.F("Num sistema, a saída do controle P (Kp = {0}) precisa vencer uma força constante que exige saída = {1} para manter o robô parado. Qual o erro que sobra em regime (o que o termo integral eliminaria)?", P.N(kp, 0), P.N(dist, 0)), err, "", L.F("Em repouso Kp·erro = {0} → erro = {1} / {2} = {3}. Um termo integral acumula esse erro até zerá-lo.", P.N(dist, 0), P.N(dist, 0), P.N(kp, 0), P.N(err)));
+                    return Ex.Num(L.F("Num sistema, a saída do controle P (Kp = {0}) precisa vencer uma força constante que exige saída = {1} para manter o robô parado. Qual o erro que sobra em regime (o que o termo integral eliminaria)?", P.N(kp, 1), P.N(dist, 0)), err, "", L.F("Em repouso Kp·erro = {0} → erro = {1} / {2} = {3}. Um termo integral acumula esse erro até zerá-lo.", P.N(dist, 0), P.N(dist, 0), P.N(kp, 1), P.N(err)));
                 }
                 int kpI = Ex.Int(r, 1, 5), kiI = Ex.Int(r, 1, 3), start = Ex.Int(r, 50, 120);
                 // Integer PID on a toy plant: position += output / 10.
