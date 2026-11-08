@@ -15,6 +15,7 @@ public sealed class VEle01 : IExerciseVerifier
 {
     public double? Solve(string p)
     {
+        p = p.Split(" (Cobre:")[0]; // the constant note added by the generator
         var n = Vx.Nums(p);
         if (Vx.Has(p, "Por um resistor de", "Qual a tensão")) return n[0] * n[1];
         if (Vx.Has(p, "submetido a", "resistência")) return n[0] / n[1];
@@ -424,6 +425,7 @@ public sealed class VEle19 : IExerciseVerifier
 {
     public double? Solve(string p)
     {
+        p = p.Split(" (Cobre:")[0]; // the constant note added by the generator
         var n = Vx.Nums(p);
         double rho = Vx.Has(p, "ρ =") ? n[0] / n[1] : Ev.Rho;
         if (Vx.Has(p, "resistência de um condutor")) return rho * n[2] / n[3];

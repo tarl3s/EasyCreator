@@ -140,6 +140,9 @@ public sealed class Ele19Conductors : PoolGen
 {
     const double Rho = 1.0 / 56;
 
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("cobre") && !prompt.Contains("ρ") ? L.T("(Cobre: ρ = 1/56 Ω·mm²/m.)") : "";
+
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
     {
         Difficulty.Easy => F(r =>

@@ -10,8 +10,17 @@ public abstract class PoolGen : IExerciseGenerator
     public Exercise Make(Lesson lesson, Difficulty d, Random r)
     {
         var p = Pool(d);
-        return p[r.Next(p.Length)](r);
+        var ex = p[r.Next(p.Length)](r);
+        var note = ex.Question?.Kind == "number" ? NoteFor(ex.Prompt) : "";
+        return note.Length == 0 ? ex : new Exercise
+        {
+            Prompt = ex.Prompt + " " + note, Question = ex.Question, Code = ex.Code, Starter = ex.Starter,
+            Solution = ex.Solution, Tests = ex.Tests, Explanation = ex.Explanation,
+        };
     }
+
+    /// <summary>A constant the answer needs but the prompt does not state, added to number prompts ("" = none).</summary>
+    protected virtual string NoteFor(string prompt) => "";
 
     protected static string X(string pt, string en, string es) => L.T(pt);
     protected static string XF(string pt, string en, string es, params object?[] a) => L.F(pt, a);

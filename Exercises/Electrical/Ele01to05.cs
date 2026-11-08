@@ -3,6 +3,9 @@ namespace EasyCreator.Exercises;
 [Exercises("ele-01-ohm")]
 public sealed class Ele01Ohm : PoolGen
 {
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("20 °C") && !prompt.Contains("α") ? L.T("(Cobre: α = 0,0039 /°C.)") : "";
+
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
     {
         Difficulty.Easy => F(r =>
@@ -70,6 +73,9 @@ public sealed class Ele01Ohm : PoolGen
 [Exercises("ele-02-serie-paralelo")]
 public sealed class Ele02SeriesParallel : PoolGen
 {
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("20 °C") && !prompt.Contains("α") ? L.T("(Cobre: α = 0,0039 /°C.)") : "";
+
     static double Par(double a, double b) => a * b / (a + b);
 
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
@@ -140,6 +146,9 @@ public sealed class Ele02SeriesParallel : PoolGen
 [Exercises("ele-03-kirchhoff")]
 public sealed class Ele03Kirchhoff : PoolGen
 {
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("20 °C") && !prompt.Contains("α") ? L.T("(Cobre: α = 0,0039 /°C.)") : "";
+
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
     {
         Difficulty.Easy => F(r =>
@@ -180,6 +189,9 @@ public sealed class Ele03Kirchhoff : PoolGen
 [Exercises("ele-04-potencia-energia")]
 public sealed class Ele04Power : PoolGen
 {
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("20 °C") && !prompt.Contains("α") ? L.T("(Cobre: α = 0,0039 /°C.)") : "";
+
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
     {
         Difficulty.Easy => F(r =>
@@ -230,6 +242,9 @@ public sealed class Ele04Power : PoolGen
 [Exercises("ele-05-thevenin")]
 public sealed class Ele05Thevenin : PoolGen
 {
+    protected override string NoteFor(string prompt) =>
+        prompt.Contains("20 °C") && !prompt.Contains("α") ? L.T("(Cobre: α = 0,0039 /°C.)") : "";
+
     protected override Func<Random, Exercise>[] Pool(Difficulty d) => d switch
     {
         Difficulty.Easy => F(r =>
