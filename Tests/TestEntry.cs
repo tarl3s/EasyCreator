@@ -23,6 +23,11 @@ public static partial class TestEntry
             Application.Current.Shutdown(arduinoFailures == 0 ? 0 : 1);
             return true;
         }
+        if (ExerciseTests.TryRun(args, out int exerciseFailures))
+        {
+            Application.Current.Shutdown(exerciseFailures == 0 ? 0 : 1);
+            return true;
+        }
         if (!args.Contains("--test")) return false;
         var log = new StringWriter();
         int failures = 0;
@@ -82,6 +87,11 @@ public static partial class TestEntry
         File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_i18n.log"), i18nLog.ToString());
         log.WriteLine($"Translations: {i18n} failures (see easycreator_i18n.log)");
         f += i18n;
+        var exLog = new StringWriter();
+        int exf = ExerciseTests.Run(exLog);
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_exercises.log"), exLog.ToString());
+        log.WriteLine($"Exercises: {exf} failures (see easycreator_exercises.log)");
+        f += exf;
         return f;
     }
 }

@@ -21,6 +21,11 @@ public static class LessonText
         p.Children.Add(back);
         p.Children.Add(Ui.Label(L.F("{0} · Lição {1} de {2}", track.Title, index + 1, track.Lessons.Count), 13, Ui.TextDim));
         p.Children.Add(Ui.Label(lesson.Title, 24, Ui.Accent, true));
+        if (Progress.Current.Done.Contains(Progress.Key(track, lesson)) && ExerciseView.Button(w, track, lesson) is { } ex)
+        {
+            ex.Margin = new Thickness(0, 8, 0, 0);
+            p.Children.Add(ex);
+        }
         p.Children.Add(new Border { Height = 12 });
 
         if (lesson.Safety.Length > 0)
@@ -97,6 +102,11 @@ public static class LessonText
             p.Children.Add(next);
         }
         else p.Children.Add(Ui.Label(L.T("🏆 Você terminou a trilha!"), 15, Ui.Good, true));
+        if (ExerciseView.Button(w, track, track.Lessons[index]) is { } ex)
+        {
+            ex.Margin = new Thickness(10, 0, 0, 0);
+            p.Children.Add(ex);
+        }
         into.Children.Add(p);
     }
 }

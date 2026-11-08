@@ -40,6 +40,7 @@ public sealed class Question
     {
         given = (given ?? "").Trim();
         if (Kind == "choice") return given == Answer.Trim();
+        if (Kind == "text") return Grader.Normalize(given) == Grader.Normalize(Answer);
         if (!TryNum(given, out var g) || !TryNum(Answer, out var a)) return false;
         if (a == 0) return Math.Abs(g) < 1e-9 + Tolerance / 100;
         return Math.Abs(g - a) <= Math.Abs(a) * Math.Max(Tolerance, 0.01) / 100;
