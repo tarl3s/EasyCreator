@@ -74,13 +74,7 @@ static class Pg
 
 static class PgOut
 {
-    /// <summary>Prompt of a "what does it print" exercise (the program itself is shown by the page from Exercise.Code).
-    /// Tells the size of the output, which also helps the student check the answer.</summary>
-    public static string Prompt(string expected, string extra = "")
-    {
-        var ls = expected.Split('\n');
-        return L.T("O que este programa mostra? Escreva a saída exata.") + " "
-            + L.F("(A saída tem {0} linha(s) e {1} caracteres, sem contar as quebras de linha.)", ls.Length, ls.Sum(x => x.Length))
-            + (extra.Length > 0 ? "\n\n" + extra : "");
-    }
+    /// <summary>Prompt of a "what does it print" exercise (the program itself is shown by the page from Exercise.Code).</summary>
+    public static string Prompt(string expected, string extra = "") =>
+        L.T("O que este programa mostra? Escreva a saída exata.") + (extra.Length > 0 ? "\n\n" + extra : "");
 }

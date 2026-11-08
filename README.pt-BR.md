@@ -21,6 +21,8 @@ Descompacte em qualquer pasta e abra o `EasyCreator.exe`. Não precisa instalar 
 
 Cada trilha tem 20 lições, do nível 1 (iniciante) ao 5 (faculdade). As lições liberam em ordem e o progresso fica salvo.
 
+**💡 Gerador de exercícios** — ao terminar uma lição, um botão 💡 cria um exercício novo sobre ela a cada clique, no nível que você escolher (Fácil, Médio, Difícil, Extremo/Genial). Sem IA: os valores são sorteados e as respostas vêm das fórmulas (ou, na programação, de rodar o código).
+
 **🧪 Sandbox** — modo livre: programe em qualquer uma das quatro linguagens, ou monte seu próprio circuito de Arduino (escolhendo peças e pinos) e simule.
 
 ## Compilar o código

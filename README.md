@@ -21,6 +21,8 @@ Unzip anywhere and run `EasyCreator.exe`. No installation, no .NET needed.
 
 Every track has 20 lessons, levels 1 (beginner) to 5 (university). Lessons unlock in order and your progress is saved.
 
+**💡 Exercise generator** — after you finish a lesson, a 💡 button makes a new exercise about it on every click, at the level you pick (Easy, Medium, Hard, Extreme/Genius). No AI: values are drawn at random and the answers come from the formulas (or, in programming, from running the code).
+
 **🧪 Sandbox** — free mode: write programs in any of the four languages, or build your own Arduino circuit (pick the parts and pins) and simulate it.
 
 ## Build from source

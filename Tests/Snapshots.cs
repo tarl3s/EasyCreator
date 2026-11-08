@@ -42,6 +42,10 @@ public static partial class TestEntry
             w.Go(() => csView);
             File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_snap_check.txt"), await csView.SnapCheckSolution());
             await Shot("lesson_csharp_check");
+            w.Go(() => new ExerciseView(w, ContentStore.Find("physics")!, ContentStore.Find("physics")!.Lessons[1]));
+            await Shot("exercise_physics");
+            w.Go(() => new ExerciseView(w, py, py.Lessons[4]));
+            await Shot("exercise_python");
             var ard = ContentStore.InArea("robotics").First();
             foreach (int i in new[] { 0, 6, 9 })
             {
