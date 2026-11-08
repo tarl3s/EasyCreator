@@ -69,8 +69,8 @@ public static class ExerciseRegistry
         var rng = new Random();
         LastPrompt.TryGetValue(lesson.Id, out var last);
         Exercise ex = g.Make(lesson, d, rng);
-        for (int i = 0; i < 10 && ex.Prompt == last; i++) ex = g.Make(lesson, d, rng);
-        LastPrompt[lesson.Id] = ex.Prompt;
+        for (int i = 0; i < 10 && ex.Prompt + ex.Code == last; i++) ex = g.Make(lesson, d, rng);
+        LastPrompt[lesson.Id] = ex.Prompt + ex.Code;
         return ex;
     }
 }
