@@ -299,9 +299,9 @@ public sealed class Air05 : IExerciseGenerator
                 if (r.Next(2) == 0)
                     return Ex.Num(ac + " " + L.F("A corrida tem aceleração média de {0} m/s² e o vento de proa é {1} m/s. Qual a distância da corrida até a decolagem (1,2 × V_estol no ar), em m?", N(a), N(wind)), runW, "m",
                         L.F("Velocidade em relação ao solo na decolagem: {0} − {1} = {2} m/s; s = (V − vento)² / (2a) = {3} m.", N(vlof), N(wind), N(vlof - wind), N(runW)), 3);
-                double Tobs = T * 0.9, Dcl = m * G / Ex.Step(r, 8, 12, 0.5), gam = (Tobs - Dcl) / (m * G), hobs = 15, dair = hobs / Math.Tan(Math.Asin(Math.Min(0.99, Math.Max(gam, 0.01))));
+                double Tobs = T * 0.9, Dcl = m * G / Ex.Step(r, 8, 12, 0.5), gam = (Tobs - Dcl) / (m * G), hobs = 15, dair = hobs / Math.Min(0.99, Math.Max(gam, 0.01));
                 return Ex.Num(ac + " " + L.F("Depois de decolar, o avião sobe com empuxo de {0} N e arrasto de {1} N. Que distância horizontal, em m, ele percorre até passar um obstáculo de 15 m? (g = 9,8 m/s², ângulo pequeno)", N(Tobs), N(Dcl)), dair, "m",
-                    L.F("sen γ = (T − D)/W = {0}; distância = h / tg γ = 15 / tg({1}°) = {2} m.", N(gam, 4), N(Math.Asin(Math.Min(0.99, Math.Max(gam, 0.01))) * 180 / Math.PI), N(dair)), 4);
+                    L.F("γ ≈ (T − D)/W = {0}; distância = h / γ = 15 / {0} = {1} m.", N(gam, 4), N(dair)), 4);
             }
         }
     }

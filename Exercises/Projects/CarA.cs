@@ -323,7 +323,7 @@ public sealed class Car05 : IExerciseGenerator
                     return Ex.Num(L.F("Um carro a {0} km/h freia numa SUBIDA de {1}% (tg θ), com μ = {2} (g = 9,8 m/s²). Qual a distância de frenagem, em metros?", N(kmh), N(slope), N(mu)), v * v / (2 * aU), "m",
                         L.F("Na subida o peso ajuda a frear: a = g·(μ·cos θ + sen θ) = {0} m/s²; d = v²/(2a) = {1} m.", N(aU), N(v * v / (2 * aU))));
                 }
-                double dist = Ex.Step(r, 40, 80, 5), v0 = Ms(Ex.Step(r, 90, 130, 10)), rest = dist - v0 * t, v2 = v0 * v0 - 2 * a * rest;
+                double dist = Ex.Step(r, 40, 80, 5), v0 = Ms(Ex.Step(r, 90, 130, 10)), rest = Math.Max(0, dist - v0 * t), v2 = v0 * v0 - 2 * a * rest;
                 string intro = L.F("Um carro vem a {0} km/h e o motorista vê um obstáculo parado a {1} m. Ele reage em {2} s e freia com μ = {3} (g = 9,8 m/s²).", N(Kmh(v0)), N(dist), N(t), N(mu));
                 if (v2 > 0)
                     return Ex.Num(intro + " " + L.T("Se não consegue parar, bate. Qual a velocidade do impacto, em km/h?"), Kmh(Math.Sqrt(v2)), "km/h",

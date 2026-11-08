@@ -92,7 +92,7 @@ public sealed class Car12 : IExerciseGenerator
             {
                 switch (r.Next(2))
                 {
-                    case 0: return Ex.Num(L.F("Um câmbio de {0} marchas tem 1ª com relação {1} e última com relação {2}, em progressão geométrica. Qual a razão q entre marchas consecutivas?", N(n, 0), N(i1), N(iN)), q, "",
+                    case 0: return Ex.Num(L.F("Um câmbio de {0} marchas tem 1ª com relação {1} e última com relação {2}, em progressão geométrica. Qual a razão q = i_k / i_(k+1) entre marchas consecutivas?", N(n, 0), N(i1), N(iN)), q, "",
                         L.F("q = (i₁/i_última)^(1/(N−1)) = ({0}/{1})^(1/{2}) = {3}.", N(i1), N(iN), N(n - 1, 0), N(q, 3)), 3);
                     default:
                     {
