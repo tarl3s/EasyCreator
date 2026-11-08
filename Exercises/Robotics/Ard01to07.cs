@@ -38,7 +38,17 @@ public sealed class Ard01Led : IExerciseGenerator
                     case 0:
                         return Ex.Num(L.F("Um sketch liga o LED, espera {0} ms, desliga e espera {1} ms (delay), repetindo. Qual a frequência do pisca, em Hz?", on, off), 1000.0 / per, "Hz", L.F("Período = {0} + {1} = {2} ms; f = 1000 / {3} = {4} Hz.", on, off, per, per, P.N(1000.0 / per, 3)));
                     case 1:
+                        // A whole number of blinks: the time is a multiple of the period.
                         int secs = Ex.Int(r, 5, 60);
+                        int ip = (int)per;
+                        for (int tries = 0; tries < 60 && secs * 1000 % ip != 0; tries++) secs = Ex.Int(r, 5, 60);
+                        if (secs * 1000 % ip != 0)
+                        {
+                            int g = ip, b = 1000;
+                            while (b != 0) (g, b) = (b, g % b);
+                            int step = ip / g;
+                            secs = step * Math.Max(1, (int)Math.Ceiling(5.0 / step));
+                        }
                         double n = secs * 1000.0 / per;
                         return Ex.Num(L.F("Um LED fica {0} ms aceso e {1} ms apagado, em repetição. Quantas vezes ele acende em {2} segundos?", on, off, secs), n, "vezes", L.F("Período = {0} ms; {1}·1000 / {2} = {3} vezes.", per, secs, per, P.N(n)));
                     default:
