@@ -14,7 +14,7 @@ public sealed class Fis16Amortecimento : IExerciseGenerator
             case Difficulty.Easy:
                 if (r.Next(2) == 0)
                     return Ex.Num(sys + ". " + L.T("Qual a frequência angular natural (sem amortecimento)?"), w0, "rad/s", $"ω₀ = √(k/m) = √({P.N(k, 0)} / {P.N(m)}) = {P.N(w0)} rad/s.");
-                return Ex.Num(sys + ". " + L.T("Qual o coeficiente de amortecimento crítico b?"), bc, "kg/s", $"b_crít = 2√(k m) = 2√({P.N(k, 0)}·{P.N(m)}) = {P.N(bc)} kg/s.");
+                return Ex.Num(sys + ". " + L.T("Qual o coeficiente de amortecimento crítico b?"), bc, "kg/s", L.F("b_crít = 2√(k m) = 2√({0}·{1}) = {2} kg/s.", P.N(k, 0), P.N(m), P.N(bc)));
             case Difficulty.Medium:
             {
                 if (r.Next(2) == 0)
@@ -24,7 +24,7 @@ public sealed class Fis16Amortecimento : IExerciseGenerator
                     string right = b < bc - 1e-9 ? L.T("Subamortecido") : b > bc + 1e-9 ? L.T("Superamortecido") : L.T("Criticamente amortecido");
                     return Ex.Choice(r, sys + L.F(" e amortecimento b = {0} kg/s. Como é o movimento?", P.N(b, 1)),
                         right, new[] { L.T("Subamortecido"), L.T("Superamortecido"), L.T("Criticamente amortecido") },
-                        $"b_crít = 2√(k m) = {P.N(bc, 3)} kg/s. b = {P.N(b, 1)}: " + (b < bc - 1e-9 ? "b < b_crít" : b > bc + 1e-9 ? "b > b_crít" : "b = b_crít") + ".");
+                        L.F("b_crít = 2√(k m) = {0} kg/s. b = {1}: ", P.N(bc, 3), P.N(b, 1)) + (b < bc - 1e-9 ? L.T("b < b_crít") : b > bc + 1e-9 ? L.T("b > b_crít") : L.T("b = b_crít")) + ".");
                 }
                 double b2 = Ex.Step(r, 0.2, 2, 0.1), t = Ex.Step(r, 1, 10, 1), A0 = Ex.Step(r, 2, 20, 1);
                 double A = A0 * Math.Exp(-b2 * t / (2 * m));
@@ -52,7 +52,7 @@ public sealed class Fis16Amortecimento : IExerciseGenerator
                 }
                 // The energy decays as e^(-b t / m): it falls to 1/e after t = m / b.
                 double te = m / b;
-                return Ex.Num(sys + L.F(" e b = {0} kg/s (fraco). Em quanto tempo a ENERGIA cai a 1/e (≈ 37%) do valor inicial?", P.N(b, 2)), te, "s", $"A energia vai com A², então E = E₀ e^(−b t / m). Cai a 1/e quando b t / m = 1 → t = m / b = {P.N(m)} / {P.N(b, 2)} = {P.N(te)} s.");
+                return Ex.Num(sys + L.F(" e b = {0} kg/s (fraco). Em quanto tempo a ENERGIA cai a 1/e (≈ 37%) do valor inicial?", P.N(b, 2)), te, "s", L.F("A energia vai com A², então E = E₀ e^(−b t / m). Cai a 1/e quando b t / m = 1 → t = m / b = {0} / {1} = {2} s.", P.N(m), P.N(b, 2), P.N(te)));
             }
         }
     }
@@ -95,7 +95,7 @@ public sealed class Fis17Espectrometro : IExerciseGenerator
                 double V = Ex.Step(r, 1, 5, 0.5) * 1000, B = Ex.Step(r, 0.2, 1, 0.1);
                 double r1 = Math.Sqrt(2 * m1 * U * V / E) / B, r2 = Math.Sqrt(2 * m2 * U * V / E) / B, dx = 2 * (r2 - r1);
                 return Ex.Num(L.F("Íons {0} e {1} (carga +e) são acelerados por {2} kV e entram num campo magnético de {3} T. Qual a distância (em mm) entre os pontos onde batem no detector, depois de meia volta?", n1, n2, P.N(V / 1e3, 1), P.N(B)), dx * 1000, "mm",
-                    $"r = (1/B)√(2 m V / q): r₁ = {P.N(r1, 4)} m, r₂ = {P.N(r2, 4)} m. Distância = 2 (r₂ − r₁) = {P.N(dx * 1000)} mm.");
+                    L.F("r = (1/B)√(2 m V / q): r₁ = {0} m, r₂ = {1} m. Distância = 2 (r₂ − r₁) = {2} mm.", P.N(r1, 4), P.N(r2, 4), P.N(dx * 1000)));
             }
             default:
             {
@@ -103,7 +103,7 @@ public sealed class Fis17Espectrometro : IExerciseGenerator
                 {
                     double V = Ex.Step(r, 1, 5, 0.5) * 1000, B = Ex.Step(r, 0.2, 1, 0.1), mu = Ex.Step(r, 10, 240, 1), rad = Math.Sqrt(2 * mu * U * V / E) / B;
                     return Ex.Num(L.F("Num espectrômetro, um íon de carga +e acelerado por {0} kV descreve uma semicircunferência de raio {1} cm num campo de {2} T. Qual a massa do íon, em u (1 u = 1,661·10⁻²⁷ kg)?", P.N(V / 1e3, 1), P.N(rad * 100), P.N(B)), mu, "u",
-                        $"m = q B² r² / (2V) = {P.Sci(E)}·{P.N(B)}²·{P.N(rad, 4)}² / (2·{P.N(V, 0)}) = {P.Sci(mu * U)} kg = {P.N(mu)} u.");
+                        L.F("m = q B² r² / (2V) = {0}·{1}²·{2}² / (2·{3}) = {4} kg = {5} u.", P.Sci(E), P.N(B), P.N(rad, 4), P.N(V, 0), P.Sci(mu * U), P.N(mu)));
                 }
                 double Vv = Ex.Step(r, 50, 400, 10), lam = 1.226e-9 / Math.Sqrt(Vv);
                 double B2 = Ex.Step(r, 1, 10, 1) * 1e-3, ve = Math.Sqrt(2 * E * Vv / Me), re = Me * ve / (E * B2);
@@ -147,7 +147,7 @@ public sealed class Fis18Inducao : IExerciseGenerator
                 double Np = Ex.Step(r, 500, 2000, 100), Ns = Ex.Step(r, 50, 400, 50), Vp = Ex.Pick(r, 110.0, 220), Is = Ex.Step(r, 1, 10, 1);
                 double Vs = Vp * Ns / Np, Ip = Is * Ns / Np;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um transformador ideal reduz {0} V para {1} V ({2} espiras no secundário). O secundário fornece {3} A. Qual a corrente no primário?", P.N(Vp, 0), P.N(Vs), P.N(Ns, 0), P.N(Is, 0)), Ip, "A", $"Potência igual: Vp Ip = Vs Is → Ip = Is·Ns / Np, com Np = {P.N(Np, 0)}: Ip = {P.N(Is, 0)}·{P.N(Ns, 0)} / {P.N(Np, 0)} = {P.N(Ip, 3)} A.");
+                    return Ex.Num(L.F("Um transformador ideal reduz {0} V para {1} V ({2} espiras no secundário). O secundário fornece {3} A. Qual a corrente no primário?", P.N(Vp, 0), P.N(Vs), P.N(Ns, 0), P.N(Is, 0)), Ip, "A", L.F("Potência igual: Vp Ip = Vs Is → Ip = Is·Ns / Np, com Np = {0}: Ip = {1}·{2} / {3} = {4} A.", P.N(Np, 0), P.N(Is, 0), P.N(Ns, 0), P.N(Np, 0), P.N(Ip, 3)));
                 double P2 = Vs * Is;
                 return Ex.Num(L.F("Um transformador ideal com {0} espiras no primário (ligado a {1} V) e {2} no secundário alimenta uma carga com {3} A. Qual a potência fornecida à carga?", P.N(Np, 0), P.N(Vp, 0), P.N(Ns, 0), P.N(Is, 0)), P2, "W", $"Vs = Vp Ns / Np = {P.N(Vs)} V; P = Vs·Is = {P.N(Vs)}·{P.N(Is, 0)} = {P.N(P2)} W.");
             }
@@ -159,12 +159,12 @@ public sealed class Fis18Inducao : IExerciseGenerator
                     double Pw = Ex.Step(r, 10, 100, 10) * 1000, V1 = Ex.Step(r, 1, 5, 1) * 1000, n = Ex.Pick(r, 10.0, 20, 50), Rl = Ex.Step(r, 1, 10, 1);
                     double V2 = V1 * n, I2 = Pw / V2, loss = I2 * I2 * Rl, pct = loss / Pw * 100;
                     return Ex.Num(L.F("Uma usina envia {0} kW por uma linha de {1} Ω. Um transformador eleva a tensão de {2} kV para {3} kV antes da linha. Que porcentagem da potência se perde na linha?", P.N(Pw / 1e3, 0), P.N(Rl, 0), P.N(V1 / 1e3, 0), P.N(V2 / 1e3, 0)), pct, "%",
-                        $"I = P / V = {P.N(Pw, 0)} / {P.N(V2, 0)} = {P.N(I2, 3)} A; perda = I² R = {P.N(loss)} W; {P.N(loss)} / {P.N(Pw, 0)} = {P.N(pct, 3)}%.");
+                        L.F("I = P / V = {0} / {1} = {2} A; perda = I² R = {3} W; {4} / {5} = {6}%.", P.N(Pw, 0), P.N(V2, 0), P.N(I2, 3), P.N(loss), P.N(loss), P.N(Pw, 0), P.N(pct, 3)));
                 }
                 double m = Ex.Step(r, 0.05, 0.5, 0.05), Rr = Ex.Step(r, 0.5, 5, 0.5), B = Ex.Step(r, 0.2, 1.5, 0.1), len = Ex.Step(r, 0.1, 0.5, 0.1);
                 double vt = m * P.G * Rr / (B * B * len * len);
                 return Ex.Num(L.F("Uma barra de {0} kg e {1} m desliza na vertical, por gravidade, sobre trilhos verticais sem atrito ligados por um resistor de {2} Ω, num campo magnético horizontal de {3} T. Qual a velocidade terminal?", P.N(m), P.N(len), P.N(Rr), P.N(B)), vt, "m/s",
-                    $"Na velocidade terminal: m g = B I L com I = B L v / R → v = m g R / (B² L²) = {P.N(m)}·{P.N(P.G)}·{P.N(Rr)} / ({P.N(B)}²·{P.N(len)}²) = {P.N(vt)} m/s.");
+                    L.F("Na velocidade terminal: m g = B I L com I = B L v / R → v = m g R / (B² L²) = {0}·{1}·{2} / ({3}²·{4}²) = {5} m/s.", P.N(m), P.N(P.G), P.N(Rr), P.N(B), P.N(len), P.N(vt)));
             }
         }
     }
@@ -193,7 +193,7 @@ public sealed class Fis19Relatividade : IExerciseGenerator
             {
                 double t0 = Ex.Step(r, 1, 20, 1);
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um astronauta mede {0} anos de viagem no relógio da nave, que viaja a {1}c. Quantos anos passam na Terra?", P.N(t0, 0), P.N(beta)), gam * t0, "anos", $"Δt = γ Δt₀ = {P.N(gam, 3)}·{P.N(t0, 0)} = {P.N(gam * t0)} anos.");
+                    return Ex.Num(L.F("Um astronauta mede {0} anos de viagem no relógio da nave, que viaja a {1}c. Quantos anos passam na Terra?", P.N(t0, 0), P.N(beta)), gam * t0, "anos", L.F("Δt = γ Δt₀ = {0}·{1} = {2} anos.", P.N(gam, 3), P.N(t0, 0), P.N(gam * t0)));
                 double L0 = Ex.Step(r, 10, 200, 10);
                 return Ex.Num(L.F("Uma nave tem {0} m de comprimento em repouso. Qual o comprimento medido por quem a vê passar a {1}c?", P.N(L0, 0), P.N(beta)), L0 / gam, "m", $"L = L₀ / γ = {P.N(L0, 0)} / {P.N(gam, 3)} = {P.N(L0 / gam)} m.");
             }
@@ -205,14 +205,14 @@ public sealed class Fis19Relatividade : IExerciseGenerator
                     return Ex.Num(L.F("Um elétron (mc² = 0,511 MeV) tem velocidade {0}c. Qual a sua energia cinética, em MeV?", P.N(beta)), ke, "MeV", $"Ec = (γ − 1) m c² = ({P.N(gam, 3)} − 1)·{P.N(MeV, 3)} = {P.N(ke, 3)} MeV.");
                 }
                 double tau = 2.2e-6, dist = beta * C * gam * tau;
-                return Ex.Num(L.F("Múons têm vida média de 2,2 μs em repouso. Qual a distância média percorrida (em km), no referencial da Terra, por um múon a {0}c?", P.N(beta)), dist / 1e3, "km", $"τ' = γ τ = {P.N(gam, 3)}·2,2 μs; d = v τ' = {P.N(beta)}·3·10⁸·{P.N(gam * tau * 1e6, 3)}·10⁻⁶ = {P.N(dist / 1e3, 3)} km.");
+                return Ex.Num(L.F("Múons têm vida média de 2,2 μs em repouso. Qual a distância média percorrida (em km), no referencial da Terra, por um múon a {0}c?", P.N(beta)), dist / 1e3, "km", L.F("τ' = γ τ = {0}·2,2 μs; d = v τ' = {1}·3·10⁸·{2}·10⁻⁶ = {3} km.", P.N(gam, 3), P.N(beta), P.N(gam * tau * 1e6, 3), P.N(dist / 1e3, 3)));
             }
             default:
             {
                 if (r.Next(2) == 0)
                 {
                     double u = Ex.Step(r, 0.3, 0.95, 0.05), w = Ex.Step(r, 0.3, 0.95, 0.05), vr = (u + w) / (1 + u * w);
-                    return Ex.Num(L.F("Uma nave se afasta da Terra a {0}c e dispara um projétil para a frente a {1}c (medido na nave). Qual a velocidade do projétil medida da Terra, em unidades de c?", P.N(u), P.N(w)), vr, "c", $"v = (u + w) / (1 + u w/c²) = ({P.N(u)} + {P.N(w)}) / (1 + {P.N(u)}·{P.N(w)}) = {P.N(vr, 3)}c (e não {P.N(u + w)}c).");
+                    return Ex.Num(L.F("Uma nave se afasta da Terra a {0}c e dispara um projétil para a frente a {1}c (medido na nave). Qual a velocidade do projétil medida da Terra, em unidades de c?", P.N(u), P.N(w)), vr, "c", L.F("v = (u + w) / (1 + u w/c²) = ({0} + {1}) / (1 + {0}·{1}) = {2}c (e não {3}c).", P.N(u), P.N(w), P.N(vr, 3), P.N(u + w)));
                 }
                 double ke = Ex.Step(r, 0.5, 5, 0.5), pc = Math.Sqrt(ke * ke + 2 * ke * MeV);
                 return Ex.Num(L.F("Um elétron (mc² = 0,511 MeV) tem energia cinética de {0} MeV. Qual o seu momento, em MeV/c?", P.N(ke)), pc, "MeV/c", $"E = Ec + mc² = {P.N(ke + MeV, 3)} MeV; (pc)² = E² − (mc²)² → pc = √({P.N(ke + MeV, 3)}² − {P.N(MeV, 3)}²) = {P.N(pc)} MeV.");
@@ -252,14 +252,14 @@ public sealed class Fis20Quantica : IExerciseGenerator
                     return Ex.Num(L.F("Luz de {0} nm incide num metal de função trabalho {1} eV. Qual a energia cinética máxima dos elétrons, em eV? (hc = 1240 eV·nm)", P.N(lam, 0), P.N(phi)), ke, "eV", $"E = 1240 / {P.N(lam, 0)} = {P.N(E, 3)} eV; Ec = E − φ = {P.N(E, 3)} − {P.N(phi)} = {P.N(ke)} eV.", 3);
                 }
                 double thr = HC / phi;
-                return Ex.Num(L.F("Um metal tem função trabalho de {0} eV. Qual o maior comprimento de onda, em nm, que arranca elétrons dele? (hc = 1240 eV·nm)", P.N(phi)), thr, "nm", $"λ_limiar = hc / φ = 1240 / {P.N(phi)} = {P.N(thr)} nm.");
+                return Ex.Num(L.F("Um metal tem função trabalho de {0} eV. Qual o maior comprimento de onda, em nm, que arranca elétrons dele? (hc = 1240 eV·nm)", P.N(phi)), thr, "nm", L.F("λ_limiar = hc / φ = 1240 / {0} = {1} nm.", P.N(phi), P.N(thr)));
             }
             case Difficulty.Hard:
             {
                 int n1 = r.Next(2, 8), n2 = r.Next(1, n1);
                 double E = 13.6 * (1.0 / (n2 * n2) - 1.0 / (n1 * n1)), lam = HC / E;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um átomo de hidrogênio passa do nível n = {0} para n = {1}. Qual o comprimento de onda do fóton emitido, em nm? (Eₙ = −13,6/n² eV, hc = 1240 eV·nm)", n1, n2), lam, "nm", $"ΔE = 13,6·(1/{n2}² − 1/{n1}²) = {P.N(E, 3)} eV; λ = hc / ΔE = 1240 / {P.N(E, 3)} = {P.N(lam)} nm.");
+                    return Ex.Num(L.F("Um átomo de hidrogênio passa do nível n = {0} para n = {1}. Qual o comprimento de onda do fóton emitido, em nm? (Eₙ = −13,6/n² eV, hc = 1240 eV·nm)", n1, n2), lam, "nm", L.F("ΔE = 13,6·(1/{0}² − 1/{1}²) = {2} eV; λ = hc / ΔE = 1240 / {3} = {4} nm.", n2, n1, P.N(E, 3), P.N(E, 3), P.N(lam)));
                 double phi = Ex.Pick(r, 2.28, 2.9, 4.08), lam2 = Ex.Step(r, 150, 250, 10), Vs = HC / lam2 - phi;
                 return Ex.Num(L.F("Luz de {0} nm ilumina um metal de função trabalho {1} eV. Qual o potencial de corte (que para os fotoelétrons), em V? (hc = 1240 eV·nm)", P.N(lam2, 0), P.N(phi)), Vs, "V", $"e·V = hc/λ − φ = {P.N(HC / lam2, 3)} − {P.N(phi)} → V = {P.N(Vs)} V.", 3);
             }
@@ -268,10 +268,10 @@ public sealed class Fis20Quantica : IExerciseGenerator
                 if (r.Next(2) == 0)
                 {
                     double V = Ex.Step(r, 50, 500, 10), lam = 1.226 / Math.Sqrt(V);
-                    return Ex.Num(L.F("Qual o comprimento de onda de de Broglie, em nm, de um elétron acelerado do repouso por {0} V? (use λ ≈ 1,226 nm / √V, com V em volts)", P.N(V, 0)), lam, "nm", $"λ = h / p = 1,226 / √V = 1,226 / √{P.N(V, 0)} = {P.N(lam, 4)} nm.");
+                    return Ex.Num(L.F("Qual o comprimento de onda de de Broglie, em nm, de um elétron acelerado do repouso por {0} V? (use λ ≈ 1,226 nm / √V, com V em volts)", P.N(V, 0)), lam, "nm", L.F("λ = h / p = 1,226 / √V = 1,226 / √{0} = {1} nm.", P.N(V, 0), P.N(lam, 4)));
                 }
                 double dx = Ex.Step(r, 0.5, 5, 0.5) * 1e-10, dv = Hbar / (2 * dx * Me);
-                return Ex.Num(L.F("Um elétron está confinado num átomo de {0} Å (1 Å = 10⁻¹⁰ m). Pelo princípio da incerteza (Δx·Δp ≥ ħ/2), qual a incerteza mínima na velocidade, em 10⁵ m/s?", P.N(dx * 1e10)), dv / 1e5, "·10⁵ m/s", $"Δp = ħ / (2Δx) = 1,0546·10⁻³⁴ / (2·{P.N(dx * 1e10)}·10⁻¹⁰) ; Δv = Δp / m = {P.N(dv / 1e5)}·10⁵ m/s.");
+                return Ex.Num(L.F("Um elétron está confinado num átomo de {0} Å (1 Å = 10⁻¹⁰ m). Pelo princípio da incerteza (Δx·Δp ≥ ħ/2), qual a incerteza mínima na velocidade, em 10⁵ m/s?", P.N(dx * 1e10)), dv / 1e5, "·10⁵ m/s", L.F("Δp = ħ / (2Δx) = 1,0546·10⁻³⁴ / (2·{0}·10⁻¹⁰) ; Δv = Δp / m = {1}·10⁵ m/s.", P.N(dx * 1e10), P.N(dv / 1e5)));
             }
         }
     }

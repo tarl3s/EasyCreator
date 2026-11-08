@@ -26,7 +26,7 @@ public sealed class Ard15Histerese : IExerciseGenerator
                 string right = now ? L.T("Acesa") : L.T("Apagada");
                 return Ex.Choice(r, L.F("Um poste liga a lâmpada quando a luz fica abaixo de {0} e desliga quando passa de {1} (histerese). Se a luz agora é {2} e a lâmpada estava {3}, como ela fica?", on, off, x, wasOn ? L.T("acesa") : L.T("apagada")),
                     right, new[] { L.T("Acesa"), L.T("Apagada") },
-                    x < on ? $"{x} < {on}: liga." : x > off ? $"{x} > {off}: desliga." : $"{on} ≤ {x} ≤ {off}: zona de histerese, mantém o estado anterior.");
+                    x < on ? L.F("{0} < {1}: liga.", x, on) : x > off ? L.F("{0} > {1}: desliga.", x, off) : L.F("{0} ≤ {1} ≤ {2}: zona de histerese, mantém o estado anterior.", on, x, off));
             }
             case Difficulty.Hard:
             {
@@ -35,7 +35,7 @@ public sealed class Ard15Histerese : IExerciseGenerator
                 int newV = Ex.Int(r, 200, 800);
                 double before = window.Average();
                 var after = window.Skip(1).Append(newV).ToList();
-                return Ex.Num(L.F("Uma média móvel de {0} leituras guarda: {1}. Chega a leitura {2} (a mais antiga sai). Qual a nova média?", n, string.Join(", ", window), newV), after.Average(), "", $"Soma antiga = {window.Sum()}; nova soma = {window.Sum()} − {window[0]} + {newV} = {after.Sum()}; média = {after.Sum()} / {n} = {P.N(after.Average())}.");
+                return Ex.Num(L.F("Uma média móvel de {0} leituras guarda: {1}. Chega a leitura {2} (a mais antiga sai). Qual a nova média?", n, string.Join(", ", window), newV), after.Average(), "", L.F("Soma antiga = {0}; nova soma = {1} − {2} + {3} = {4}; média = {5} / {6} = {7}.", window.Sum(), window.Sum(), window[0], newV, after.Sum(), after.Sum(), n, P.N(after.Average())));
             }
             default:
             {
@@ -123,14 +123,14 @@ public sealed class Ard17Solar : IExerciseGenerator
                 string right = Math.Abs(diff) <= zone ? L.T("Fica parado") : diff > 0 ? L.T("Gira para o lado esquerdo") : L.T("Gira para o lado direito");
                 return Ex.Choice(r, L.F("Um seguidor solar compara o sensor esquerdo ({0}) com o direito ({1}); se a diferença for menor ou igual a {2} em módulo (zona morta), ele fica parado; senão gira para o lado mais claro. O que faz?", a, b, zone),
                     right, new[] { L.T("Fica parado"), L.T("Gira para o lado esquerdo"), L.T("Gira para o lado direito") },
-                    $"Diferença = {a} − {b} = {diff}; |{diff}| " + (Math.Abs(diff) <= zone ? $"≤ {zone}: zona morta." : $"> {zone}: gira para o lado com mais luz."));
+                    L.F("Diferença = {0} − {1} = {2}; |{2}| ", a, b, diff) + (Math.Abs(diff) <= zone ? L.F("≤ {0}: zona morta.", zone) : L.F("> {0}: gira para o lado com mais luz.", zone)));
             }
             case Difficulty.Hard:
             {
                 int step = Ex.Pick(r, 1, 2, 5), a0 = Ex.Int(r, 60, 120), n = Ex.Int(r, 5, 25);
                 bool toLeft = r.Next(2) == 0;
                 int ang = Math.Clamp(a0 + (toLeft ? 1 : -1) * step * n, 0, 180);
-                return Ex.Num(L.F("O servo está em {0}° e, a cada ciclo, o rastreador o move {1}° para {2} (limitado a 0..180°). Em que ângulo ele está depois de {3} ciclos?", a0, step, toLeft ? L.T("o lado do ângulo maior") : L.T("o lado do ângulo menor"), n), ang, "°", $"{a0} {(toLeft ? "+" : "−")} {step}·{n} = {a0 + (toLeft ? 1 : -1) * step * n}" + (ang != a0 + (toLeft ? 1 : -1) * step * n ? $" → limitado a {ang}°." : "°."), 0.1);
+                return Ex.Num(L.F("O servo está em {0}° e, a cada ciclo, o rastreador o move {1}° para {2} (limitado a 0..180°). Em que ângulo ele está depois de {3} ciclos?", a0, step, toLeft ? L.T("o lado do ângulo maior") : L.T("o lado do ângulo menor"), n), ang, "°", $"{a0} {(toLeft ? "+" : "−")} {step}·{n} = {a0 + (toLeft ? 1 : -1) * step * n}" + (ang != a0 + (toLeft ? 1 : -1) * step * n ? L.F(" → limitado a {0}°.", ang) : "°."), 0.1);
             }
             default:
             {
@@ -163,12 +163,12 @@ public sealed class Ard18Pid : IExerciseGenerator
             case Difficulty.Easy:
             {
                 double dist = Ex.Step(r, 21, 120, 1), err = dist - sp;
-                return Ex.Num(L.F("O robô deve parar a 20 cm da parede e mede {0} cm. Qual o erro (medida − alvo)?", P.N(dist, 0)), err, "cm", $"erro = {P.N(dist, 0)} − 20 = {P.N(err, 0)} cm.");
+                return Ex.Num(L.F("O robô deve parar a 20 cm da parede e mede {0} cm. Qual o erro (medida − alvo)?", P.N(dist, 0)), err, "cm", L.F("erro = {0} − 20 = {1} cm.", P.N(dist, 0), P.N(err, 0)));
             }
             case Difficulty.Medium:
             {
                 double dist = Ex.Step(r, 21, 120, 1), kp = Ex.Pick(r, 0.5, 1.0, 2.0, 3.0), err = dist - sp;
-                return Ex.Num(L.F("O robô mede {0} cm da parede (alvo: 20 cm) e usa um controle P com Kp = {1} sobre erro = medida − alvo. Qual a saída do controle?", P.N(dist, 0), P.N(kp, 1)), kp * err, "", $"erro = {P.N(dist, 0)} − 20 = {P.N(err, 0)}; saída = Kp·erro = {P.N(kp, 1)}·{P.N(err, 0)} = {P.N(kp * err)}.");
+                return Ex.Num(L.F("O robô mede {0} cm da parede (alvo: 20 cm) e usa um controle P com Kp = {1} sobre erro = medida − alvo. Qual a saída do controle?", P.N(dist, 0), P.N(kp, 1)), kp * err, "", L.F("erro = {0} − 20 = {1}; saída = Kp·erro = {2}·{3} = {4}.", P.N(dist, 0), P.N(err, 0), P.N(kp, 1), P.N(err, 0), P.N(kp * err)));
             }
             case Difficulty.Hard:
             {
@@ -176,7 +176,7 @@ public sealed class Ard18Pid : IExerciseGenerator
                 double e0 = Ex.Step(r, 5, 40, 5), e1 = Ex.Step(r, 0, 40, 5), integral = Ex.Step(r, 0, 20, 2);
                 double integ = integral + e1 * dt, der = (e1 - e0) / dt, u = kp * e1 + ki * integ + kd * der;
                 return Ex.Num(L.F("Um PID (Kp = {0}, Ki = {1}, Kd = {2}) roda a cada {3} s. O erro anterior foi {4}, o erro atual é {5} e a integral até o ciclo anterior vale {6}. Qual a saída do PID neste ciclo? (integral += erro·dt; derivada = (erro − erro anterior)/dt)", P.N(kp, 1), P.N(ki, 1), P.N(kd, 1), P.N(dt, 1), P.N(e0, 0), P.N(e1, 0), P.N(integral, 0)),
-                    u, "", $"integral = {P.N(integral, 0)} + {P.N(e1, 0)}·{P.N(dt, 1)} = {P.N(integ, 2)}; derivada = ({P.N(e1, 0)} − {P.N(e0, 0)}) / {P.N(dt, 1)} = {P.N(der, 2)}; u = {P.N(kp, 1)}·{P.N(e1, 0)} + {P.N(ki, 1)}·{P.N(integ, 2)} + {P.N(kd, 1)}·{P.N(der, 2)} = {P.N(u)}.");
+                    u, "", L.F("integral = {0} + {1}·{2} = {3}; derivada = ({4} − {5}) / {6} = {7}; u = {8}·{9} + {10}·{11} + {12}·{13} = {14}.", P.N(integral, 0), P.N(e1, 0), P.N(dt, 1), P.N(integ, 2), P.N(e1, 0), P.N(e0, 0), P.N(dt, 1), P.N(der, 2), P.N(kp, 1), P.N(e1, 0), P.N(ki, 1), P.N(integ, 2), P.N(kd, 1), P.N(der, 2), P.N(u)));
             }
             default:
             {
@@ -184,7 +184,7 @@ public sealed class Ard18Pid : IExerciseGenerator
                 {
                     // Steady-state error of a P-only control against a constant disturbance.
                     double kp = Ex.Step(r, 1, 10, 0.5), dist = Ex.Step(r, 5, 50, 5), err = dist / kp;
-                    return Ex.Num(L.F("Num sistema, a saída do controle P (Kp = {0}) precisa vencer uma força constante que exige saída = {1} para manter o robô parado. Qual o erro que sobra em regime (o que o termo integral eliminaria)?", P.N(kp, 0), P.N(dist, 0)), err, "", $"Em repouso Kp·erro = {P.N(dist, 0)} → erro = {P.N(dist, 0)} / {P.N(kp, 0)} = {P.N(err)}. Um termo integral acumula esse erro até zerá-lo.");
+                    return Ex.Num(L.F("Num sistema, a saída do controle P (Kp = {0}) precisa vencer uma força constante que exige saída = {1} para manter o robô parado. Qual o erro que sobra em regime (o que o termo integral eliminaria)?", P.N(kp, 0), P.N(dist, 0)), err, "", L.F("Em repouso Kp·erro = {0} → erro = {1} / {2} = {3}. Um termo integral acumula esse erro até zerá-lo.", P.N(dist, 0), P.N(dist, 0), P.N(kp, 0), P.N(err)));
                 }
                 int kpI = Ex.Int(r, 1, 5), kiI = Ex.Int(r, 1, 3), start = Ex.Int(r, 50, 120);
                 // Integer PID on a toy plant: position += output / 10.
@@ -215,11 +215,11 @@ public sealed class Ard19Odometria : IExerciseGenerator
         switch (d)
         {
             case Difficulty.Easy:
-                return Ex.Num(L.F("Uma roda de {0} cm de diâmetro tem um encoder de {1} pulsos por volta. Que distância (em cm) corresponde a cada pulso?", P.N(D, 1), P.N(N, 0)), perTick, "cm", $"Perímetro = π·{P.N(D, 1)} = {P.N(Math.PI * D)} cm; por pulso: {P.N(Math.PI * D)} / {P.N(N, 0)} = {P.N(perTick, 4)} cm.");
+                return Ex.Num(L.F("Uma roda de {0} cm de diâmetro tem um encoder de {1} pulsos por volta. Que distância (em cm) corresponde a cada pulso?", P.N(D, 1), P.N(N, 0)), perTick, "cm", L.F("Perímetro = π·{0} = {1} cm; por pulso: {2} / {3} = {4} cm.", P.N(D, 1), P.N(Math.PI * D), P.N(Math.PI * D), P.N(N, 0), P.N(perTick, 4)));
             case Difficulty.Medium:
             {
                 int ticks = Ex.Int(r, 2, 40) * 50;
-                return Ex.Num(L.F("Roda de {0} cm de diâmetro, encoder de {1} pulsos por volta. O robô contou {2} pulsos. Quantos centímetros andou?", P.N(D, 1), P.N(N, 0), ticks), ticks * perTick, "cm", $"d = pulsos·π·D / N = {ticks}·π·{P.N(D, 1)} / {P.N(N, 0)} = {P.N(ticks * perTick)} cm.");
+                return Ex.Num(L.F("Roda de {0} cm de diâmetro, encoder de {1} pulsos por volta. O robô contou {2} pulsos. Quantos centímetros andou?", P.N(D, 1), P.N(N, 0), ticks), ticks * perTick, "cm", L.F("d = pulsos·π·D / N = {0}·π·{1} / {2} = {3} cm.", ticks, P.N(D, 1), P.N(N, 0), P.N(ticks * perTick)));
             }
             case Difficulty.Hard:
             {
@@ -235,7 +235,7 @@ public sealed class Ard19Odometria : IExerciseGenerator
                     // Radius of the arc and 90-degree-turn distance: the outer wheel travels more.
                     double b = Ex.Pick(r, 10.0, 12, 15), R = Ex.Step(r, 20, 60, 5), ang = Ex.Pick(r, 90.0, 180, 60);
                     double dOuter = (R + b / 2) * P.Rad(ang);
-                    return Ex.Num(L.F("Um robô com rodas distantes {0} cm faz uma curva de {1}° em volta de um arco de {2} cm de raio (medido no centro do robô). Quantos centímetros a roda de FORA percorre?", P.N(b, 0), P.N(ang, 0), P.N(R, 0)), dOuter, "cm", $"A roda de fora tem raio R + b/2 = {P.N(R + b / 2)} cm; arco = raio·ângulo = {P.N(R + b / 2)}·{P.N(P.Rad(ang), 4)} = {P.N(dOuter)} cm.");
+                    return Ex.Num(L.F("Um robô com rodas distantes {0} cm faz uma curva de {1}° em volta de um arco de {2} cm de raio (medido no centro do robô). Quantos centímetros a roda de FORA percorre?", P.N(b, 0), P.N(ang, 0), P.N(R, 0)), dOuter, "cm", L.F("A roda de fora tem raio R + b/2 = {0} cm; arco = raio·ângulo = {1}·{2} = {3} cm.", P.N(R + b / 2), P.N(R + b / 2), P.N(P.Rad(ang), 4), P.N(dOuter)));
                 }
                 // Dead reckoning with integer math: x += d cos θ, y += d sin θ for four straight-and-turn steps (θ in multiples of 90°).
                 var steps = Enumerable.Range(0, 5).Select(_ => (Ex.Int(r, 1, 9) * 10, Ex.Pick(r, 0, 90, 180, 270))).ToList();
@@ -269,14 +269,14 @@ public sealed class Ard20Missao : IExerciseGenerator
                 double side = Ex.Step(r, 10, 40, 5), turn = Ex.Pick(r, 90.0, 60);
                 // Dodge: turn, go around, come back: three straight legs of the detour (a rectangle detour has 3 sides).
                 double path = 2 * side + side;
-                return Ex.Num(L.F("Para desviar de uma caixa, o robô faz um contorno retangular de três lados de {0} cm cada (sai da linha, passa ao lado, volta). A {1} cm/s, quanto tempo dura o contorno, ignorando as curvas?", P.N(side, 0), P.N(v, 0)), path / v, "s", $"Percurso = 3·{P.N(side, 0)} = {P.N(path, 0)} cm; t = {P.N(path, 0)} / {P.N(v, 0)} = {P.N(path / v)} s.");
+                return Ex.Num(L.F("Para desviar de uma caixa, o robô faz um contorno retangular de três lados de {0} cm cada (sai da linha, passa ao lado, volta). A {1} cm/s, quanto tempo dura o contorno, ignorando as curvas?", P.N(side, 0), P.N(v, 0)), path / v, "s", L.F("Percurso = 3·{0} = {1} cm; t = {2} / {3} = {4} s.", P.N(side, 0), P.N(path, 0), P.N(path, 0), P.N(v, 0), P.N(path / v)));
             }
             case Difficulty.Hard:
             {
                 double side = Ex.Step(r, 10, 60, 1), box = Ex.Step(r, 5, 40, 1);
                 // Detour around a box of width `box` with a sideways step `side` out and back: sides = side + (box + 2*margin) + side.
                 double margin = 5, mid = box + 2 * margin, total = 2 * side + mid;
-                return Ex.Num(L.F("O robô desvia de uma caixa de {0} cm de largura (na direção do desvio) com folga de 5 cm de cada lado: anda {1} cm para o lado, depois passa pela caixa e volta {1} cm para a linha. Quantos cm ele percorre no desvio inteiro?", P.N(box, 0), P.N(side, 0)), total, "cm", $"Trecho ao lado da caixa: {P.N(box, 0)} + 2·5 = {P.N(mid, 0)} cm; total = {P.N(side, 0)} + {P.N(mid, 0)} + {P.N(side, 0)} = {P.N(total, 0)} cm.");
+                return Ex.Num(L.F("O robô desvia de uma caixa de {0} cm de largura (na direção do desvio) com folga de 5 cm de cada lado: anda {1} cm para o lado, depois passa pela caixa e volta {1} cm para a linha. Quantos cm ele percorre no desvio inteiro?", P.N(box, 0), P.N(side, 0)), total, "cm", L.F("Trecho ao lado da caixa: {0} + 2·5 = {1} cm; total = {2} + {3} + {4} = {5} cm.", P.N(box, 0), P.N(mid, 0), P.N(side, 0), P.N(mid, 0), P.N(side, 0), P.N(total, 0)));
             }
             default:
             {

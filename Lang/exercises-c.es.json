@@ -215,5 +215,7 @@
   "`n << k` multiplica por 2^k e `n >> k` divide por 2^k (inteiro). `n & 1` isola o último bit: 1 para ímpar, 0 para par.": "`n << k` multiplica por 2^k y `n >> k` divide por 2^k (entero). `n & 1` aísla el último bit: 1 para impar, 0 para par.",
   "`p + k` aponta k elementos adiante (não k bytes). `*p++` lê o valor e depois avança o ponteiro. A diferença de dois ponteiros do mesmo vetor é o número de elementos entre eles.": "`p + k` apunta k elementos adelante (no k bytes). `*p++` lee el valor y luego avanza el puntero. La diferencia de dos punteros del mismo vector es el número de elementos entre ellos.",
   "depois a letra e a letra seguinte": "luego la letra y la letra siguiente",
-  "depois o código numérico da letra e a letra minúscula (sem `tolower`)": "luego el código numérico de la letra y la letra minúscula (sin `tolower`)"
+  "depois o código numérico da letra e a letra minúscula (sem `tolower`)": "luego el código numérico de la letra y la letra minúscula (sin `tolower`)",
+  "a / b (inteira)": "a / b (entera)",
+  "a / b com casas decimais": "a / b con decimales"
 }

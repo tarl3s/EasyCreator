@@ -26,8 +26,8 @@ public sealed class Fis02Newton : IExerciseGenerator
                 string intro = L.F("Um bloco é solto do repouso no topo de uma rampa sem atrito, inclinada {0}° e com {1} m de comprimento.", P.N(th), P.N(len));
                 return r.Next(3) switch
                 {
-                    0 => Ex.Num(intro + " " + L.T("Qual a aceleração do bloco?"), a, "m/s²", $"a = g·sen θ = {P.N(G)}·sen {P.N(th)}° = {P.N(a)} m/s²."),
-                    1 => Ex.Num(intro + " " + L.T("Quanto tempo ele leva para chegar embaixo?"), t, "s", $"a = g·sen θ = {P.N(a)} m/s²; L = a t²/2 → t = √(2L/a) = √(2·{P.N(len)}/{P.N(a)}) = {P.N(t)} s."),
+                    0 => Ex.Num(intro + " " + L.T("Qual a aceleração do bloco?"), a, "m/s²", L.F("a = g·sen θ = {0}·sen {1}° = {2} m/s².", P.N(G), P.N(th), P.N(a))),
+                    1 => Ex.Num(intro + " " + L.T("Quanto tempo ele leva para chegar embaixo?"), t, "s", L.F("a = g·sen θ = {0} m/s²; L = a t²/2 → t = √(2L/a) = √(2·{1}/{2}) = {3} s.", P.N(a), P.N(len), P.N(a), P.N(t))),
                     _ => Ex.Num(intro + " " + L.T("Com que velocidade ele chega embaixo?"), v, "m/s", $"a = {P.N(a)} m/s²; v = √(2aL) = √(2·{P.N(a)}·{P.N(len)}) = {P.N(v)} m/s."),
                 };
             }
@@ -39,9 +39,9 @@ public sealed class Fis02Newton : IExerciseGenerator
                 string ramp = L.F("Um bloco de {0} kg está numa rampa de {1}° com coeficiente de atrito cinético {2}.", P.N(m), P.N(th), P.N(mu));
                 if (r.Next(2) == 0)
                     return Ex.Num(ramp + " " + L.T("Ele desce escorregando. Qual a aceleração?"), a, "m/s²",
-                        $"a = g (sen θ − μ cos θ) = {P.N(G)}·({P.N(s, 3)} − {P.N(mu)}·{P.N(c, 3)}) = {P.N(a)} m/s².");
+                        L.F("a = g (sen θ − μ cos θ) = {0}·({1} − {2}·{3}) = {4} m/s².", P.N(G), P.N(s, 3), P.N(mu), P.N(c, 3), P.N(a)));
                 return Ex.Num(ramp + " " + L.T("Que força paralela à rampa, para cima, faz o bloco subir com velocidade constante?"), F, "N",
-                    $"F = m g (sen θ + μ cos θ) = {P.N(m)}·{P.N(G)}·({P.N(s, 3)} + {P.N(mu)}·{P.N(c, 3)}) = {P.N(F)} N.");
+                    L.F("F = m g (sen θ + μ cos θ) = {0}·{1}·({2} + {3}·{4}) = {5} N.", P.N(m), P.N(G), P.N(s, 3), P.N(mu), P.N(c, 3), P.N(F)));
             }
             default:
             {
@@ -50,7 +50,7 @@ public sealed class Fis02Newton : IExerciseGenerator
                 string intro = L.F("Um bloco de {0} kg sobe uma rampa sem atrito de {1}° puxado por um fio, que passa por uma polia ideal e segura um bloco pendurado de {2} kg.", P.N(m1), P.N(th), P.N(m2));
                 if (r.Next(2) == 0)
                     return Ex.Num(intro + " " + L.T("Qual a aceleração do sistema?"), a, "m/s²",
-                        $"a = (m₂ − m₁ sen θ)·g / (m₁ + m₂) = ({P.N(m2)} − {P.N(m1)}·sen {P.N(th)}°)·{P.N(G)} / {P.N(m1 + m2)} = {P.N(a)} m/s².");
+                        L.F("a = (m₂ − m₁ sen θ)·g / (m₁ + m₂) = ({0} − {1}·sen {2}°)·{3} / {4} = {5} m/s².", P.N(m2), P.N(m1), P.N(th), P.N(G), P.N(m1 + m2), P.N(a)));
                 return Ex.Num(intro + " " + L.T("Qual a tensão no fio?"), T, "N",
                     $"a = {P.N(a)} m/s². m₂ g − T = m₂ a → T = m₂ (g − a) = {P.N(m2)}·({P.N(G)} − {P.N(a)}) = {P.N(T)} N.");
             }
@@ -112,12 +112,12 @@ public sealed class Fis03Energia : IExerciseGenerator
                 {
                     double h = 2.5 * R;
                     return Ex.Num(L.F("Um carrinho sem atrito é solto do repouso de uma pista e entra num looping circular de raio {0} m. De que altura mínima, medida a partir da base do looping, ele deve ser solto para não cair no topo?", P.N(R)),
-                        h, "m", $"v² = g R (topo); m g h = m g (2R) + m v²/2 → h = {P.N(2.5)} R = {P.N(2.5)}·{P.N(R)} = {P.N(h)} m.");
+                        h, "m", L.F("v² = g R (topo); m g h = m g (2R) + m v²/2 → h = {0} R = {1}·{2} = {3} m.", P.N(2.5), P.N(2.5), P.N(R), P.N(h)));
                 }
                 double k = Ex.Step(r, 500, 3000, 100), m = Ex.Step(r, 0.1, 1, 0.1);
                 double x = Math.Sqrt(5 * m * G * R / k);
                 return Ex.Num(L.F("Uma mola de {0} N/m lança uma bolinha de {1} kg que entra, sem atrito, num looping de raio {2} m (o início da pista está na altura da base do looping). Qual a compressão mínima da mola para a bolinha completar a volta?", P.N(k), P.N(m), P.N(R)),
-                    x, "m", $"v² = g R (topo); k x² / 2 = m g (2R) + m g R / 2 → x = √(5 m g R / k) = √(5·{P.N(m)}·{P.N(G)}·{P.N(R)} / {P.N(k)}) = {P.N(x, 3)} m.");
+                    x, "m", L.F("v² = g R (topo); k x² / 2 = m g (2R) + m g R / 2 → x = √(5 m g R / k) = √(5·{0}·{1}·{2} / {3}) = {4} m.", P.N(m), P.N(G), P.N(R), P.N(k), P.N(x, 3)));
             }
         }
     }
@@ -168,7 +168,7 @@ public sealed class Fis04Colisoes : IExerciseGenerator
                 double m1 = Ex.Step(r, 1, 8, 1), m2 = Ex.Step(r, 1, 8, 1), v1 = Ex.Step(r, 4, 15, 1);
                 double vf = m1 * v1 / (m1 + m2), loss = m1 * v1 * v1 / 2 - (m1 + m2) * vf * vf / 2;
                 return Ex.Num(L.F("Um bloco de {0} kg a {1} m/s bate num bloco parado de {2} kg e os dois seguem juntos. Quanta energia cinética é perdida no choque?", P.N(m1), P.N(v1), P.N(m2)),
-                    loss, "J", $"v = {P.N(m1)}·{P.N(v1)} / {P.N(m1 + m2)} = {P.N(vf)} m/s; Ec antes = {P.N(m1 * v1 * v1 / 2)} J; depois = {P.N((m1 + m2) * vf * vf / 2)} J; perda = {P.N(loss)} J.");
+                    loss, "J", L.F("v = {0}·{1} / {2} = {3} m/s; Ec antes = {4} J; depois = {5} J; perda = {6} J.", P.N(m1), P.N(v1), P.N(m1 + m2), P.N(vf), P.N(m1 * v1 * v1 / 2), P.N((m1 + m2) * vf * vf / 2), P.N(loss)));
             }
             default:
             {
@@ -213,7 +213,7 @@ public sealed class Fis05Orbitas : IExerciseGenerator
                 {
                     double T = Ex.Step(r, 2, 24, 0.25) * 3600, rr = Math.Cbrt(GM * T * T / (4 * Math.PI * Math.PI)), alt = (rr - Re) / 1e3;
                     return Ex.Num(L.F("A que altitude (acima da superfície) um satélite circular da Terra tem período de {0} horas? (GM = 3,986·10¹⁴ m³/s², raio da Terra = 6371 km)", P.N(T / 3600, 2)), alt, "km",
-                        $"T² = 4π² r³ / GM → r = ∛(GM T² / 4π²) = {P.N(rr / 1e3, 0)} km; altitude = r − R = {P.N(alt, 0)} km.");
+                        L.F("T² = 4π² r³ / GM → r = ∛(GM T² / 4π²) = {0} km; altitude = r − R = {1} km.", P.N(rr / 1e3, 0), P.N(alt, 0)));
                 }
                 var (name, gm, rad) = Ex.Pick(r, (L.T("da Lua"), 4.905e12, 1.7374e6), (L.T("de Marte"), 4.283e13, 3.3895e6), (L.T("da Terra"), GM, Re), (L.T("de Mercúrio"), 2.203e13, 2.4397e6), (L.T("de Vênus"), 3.249e14, 6.0518e6), (L.T("de Júpiter"), 1.2669e17, 6.9911e7));
                 double ve = Math.Sqrt(2 * gm / rad);

@@ -47,18 +47,18 @@ public sealed class Fis06Pendulo : IExerciseGenerator
                 {
                     double len = Ex.Step(r, 0.5, 2, 0.1), a = Ex.Step(r, 1, 6, 0.5), T = 2 * Math.PI * Math.Sqrt(len / (G + a));
                     return Ex.Num(L.F("Um pêndulo de {0} m está dentro de um elevador que sobe com aceleração de {1} m/s². Qual o período das oscilações? (g = 9,8 m/s²)", P.N(len), P.N(a)),
-                        T, "s", $"Na gravidade aparente g' = g + a = {P.N(G + a)} m/s²: T = 2π √(L/g') = 2π √({P.N(len)} / {P.N(G + a)}) = {P.N(T)} s.");
+                        T, "s", L.F("Na gravidade aparente g' = g + a = {0} m/s²: T = 2π √(L/g') = 2π √({1} / {2}) = {3} s.", P.N(G + a), P.N(len), P.N(G + a), P.N(T)));
                 }
                 double k1 = Ex.Step(r, 20, 200, 10), k2 = Ex.Step(r, 20, 200, 10), m = Ex.Step(r, 0.5, 4, 0.5);
                 if (r.Next(2) == 0)
                 {
                     double keq = k1 + k2, T = 2 * Math.PI * Math.Sqrt(m / keq);
                     return Ex.Num(L.F("Um bloco de {0} kg é preso entre duas molas, uma de cada lado, de {1} N/m e {2} N/m (as duas esticam ou comprimem juntas). Qual o período de oscilação?", P.N(m), P.N(k1), P.N(k2)),
-                        T, "s", $"As forças somam: k = k₁ + k₂ = {P.N(keq)} N/m; T = 2π √(m/k) = {P.N(T)} s.");
+                        T, "s", L.F("As forças somam: k = k₁ + k₂ = {0} N/m; T = 2π √(m/k) = {1} s.", P.N(keq), P.N(T)));
                 }
                 double ks = k1 * k2 / (k1 + k2), Ts = 2 * Math.PI * Math.Sqrt(m / ks);
                 return Ex.Num(L.F("Um bloco de {0} kg está preso a duas molas ligadas em série, de {1} N/m e {2} N/m. Qual o período de oscilação?", P.N(m), P.N(k1), P.N(k2)),
-                    Ts, "s", $"Em série: 1/k = 1/k₁ + 1/k₂ → k = {P.N(ks)} N/m; T = 2π √(m/k) = {P.N(Ts)} s.");
+                    Ts, "s", L.F("Em série: 1/k = 1/k₁ + 1/k₂ → k = {0} N/m; T = 2π √(m/k) = {1} s.", P.N(ks), P.N(Ts)));
             }
         }
     }
@@ -87,7 +87,7 @@ public sealed class Fis07Optica : IExerciseGenerator
                 double n2 = Ex.Step(r, 1.3, 2.5, 0.01), th1 = Ex.Step(r, 10, 70, 5), th2 = P.Deg(Math.Asin(Math.Sin(P.Rad(th1)) / n2));
                 if (r.Next(2) == 0)
                     return Ex.Num(L.F("Um raio de luz no ar incide a {0}° da normal sobre um material de índice de refração {1}. Qual o ângulo de refração?", P.N(th1), P.N(n2)), th2, "°",
-                        $"n₁ sen θ₁ = n₂ sen θ₂ → sen θ₂ = sen {P.N(th1)}° / {P.N(n2)} = {P.N(Math.Sin(P.Rad(th1)) / n2, 3)} → θ₂ = {P.N(th2)}°.");
+                        L.F("n₁ sen θ₁ = n₂ sen θ₂ → sen θ₂ = sen {0}° / {1} = {2} → θ₂ = {3}°.", P.N(th1), P.N(n2), P.N(Math.Sin(P.Rad(th1)) / n2, 3), P.N(th2)));
                 double v = 3e8 / n2;
                 return Ex.Num(L.F("A luz atravessa um material de índice de refração {0}. Qual a velocidade da luz nele, em 10⁸ m/s? (c = 3·10⁸ m/s)", P.N(n2)), v / 1e8, "·10⁸ m/s", $"v = c / n = 3 / {P.N(n2)} = {P.N(v / 1e8)}·10⁸ m/s.");
             }
@@ -102,12 +102,12 @@ public sealed class Fis07Optica : IExerciseGenerator
                             $"1/f = 1/p + 1/q → 1/q = 1/{P.N(f)} − 1/{P.N(p)} → q = {P.N(q)} cm.");
                     case 1:
                         return Ex.Num(L.F("Uma lente convergente de {0} cm de foco forma a imagem de um objeto de {1} cm de altura colocado a {2} cm dela. Qual a altura da imagem (em módulo, em cm)?", P.N(f), P.N(h), P.N(p)), Math.Abs(A) * h, "cm",
-                            $"q = {P.N(q)} cm; |A| = q / p = {P.N(Math.Abs(A), 3)}; altura = {P.N(h)}·{P.N(Math.Abs(A), 3)} = {P.N(Math.Abs(A) * h)} cm.");
+                            L.F("q = {0} cm; |A| = q / p = {1}; altura = {2}·{3} = {4} cm.", P.N(q), P.N(Math.Abs(A), 3), P.N(h), P.N(Math.Abs(A), 3), P.N(Math.Abs(A) * h)));
                     default:
                         double c = P.Deg(Math.Asin(1 / Ex.Pick(r, 1.33, 1.5, 1.6, 2.0)));
                         double n = Ex.Pick(r, 1.33, 1.5, 1.6, 2.0);
                         c = P.Deg(Math.Asin(1 / n));
-                        return Ex.Num(L.F("Qual o ângulo crítico para reflexão total na fronteira de um material de índice {0} com o ar?", P.N(n)), c, "°", $"sen θc = n₂ / n₁ = 1 / {P.N(n)} → θc = {P.N(c)}°.");
+                        return Ex.Num(L.F("Qual o ângulo crítico para reflexão total na fronteira de um material de índice {0} com o ar?", P.N(n)), c, "°", L.F("sen θc = n₂ / n₁ = 1 / {0} → θc = {1}°.", P.N(n), P.N(c)));
                 }
             }
             default:
@@ -118,7 +118,7 @@ public sealed class Fis07Optica : IExerciseGenerator
                 double p2 = gap - q1, q2 = p2 * f2 / (p2 - f2);
                 if (Math.Abs(p2 - f2) < 2) { f2 = Math.Round(p2 / 2); q2 = p2 * f2 / (p2 - f2); }
                 return Ex.Num(L.F("Duas lentes convergentes, de {0} cm e {1} cm de foco, estão a {2} cm uma da outra. Um objeto fica a {3} cm da primeira. A que distância da SEGUNDA lente (em cm) se forma a imagem final?", P.N(f1), P.N(f2), P.N(gap), P.N(p1)),
-                    q2, "cm", $"1ª lente: q₁ = {P.N(q1)} cm. Esse ponto é o objeto da 2ª: p₂ = {P.N(gap)} − {P.N(q1)} = {P.N(p2)} cm. 1/q₂ = 1/{P.N(f2)} − 1/{P.N(p2)} → q₂ = {P.N(q2)} cm.");
+                    q2, "cm", L.F("1ª lente: q₁ = {0} cm. Esse ponto é o objeto da 2ª: p₂ = {1} − {0} = {2} cm. 1/q₂ = 1/{3} − 1/{2} → q₂ = {4} cm.", P.N(q1), P.N(gap), P.N(p2), P.N(f2), P.N(q2)));
             }
         }
     }
@@ -139,7 +139,7 @@ public sealed class Fis08Termo : IExerciseGenerator
                 if (r.Next(2) == 0)
                 {
                     double n = Ex.Step(r, 0.5, 5, 0.5), T = Ex.Step(r, 250, 500, 10), V = Ex.Step(r, 5, 50, 1) / 1000, p = n * R * T / V;
-                    return Ex.Num(L.F("{0} mol de um gás ideal ocupam {1} litros a {2} K. Qual a pressão, em kPa? (R = 8,314 J/mol·K)", P.N(n), P.N(V * 1000, 0), P.N(T, 0)), p / 1000, "kPa", $"P = nRT / V = {P.N(n)}·8,314·{P.N(T, 0)} / {P.N(V, 3)} = {P.N(p, 0)} Pa = {P.N(p / 1000)} kPa.".Replace("8,314", P.N(R, 3)));
+                    return Ex.Num(L.F("{0} mol de um gás ideal ocupam {1} litros a {2} K. Qual a pressão, em kPa? (R = 8,314 J/mol·K)", P.N(n), P.N(V * 1000, 0), P.N(T, 0)), p / 1000, "kPa", L.F("P = nRT / V = {0}·8,314·{1} / {2} = {3} Pa = {4} kPa.", P.N(n), P.N(T, 0), P.N(V, 3), P.N(p, 0), P.N(p / 1000)).Replace("8,314", P.N(R, 3)));
                 }
                 double Q = Ex.Step(r, 100, 1000, 50), W = Ex.Step(r, 20, 90, 10);
                 return Ex.Num(L.F("Um gás recebe {0} J de calor e realiza {1} J de trabalho. Qual a variação da energia interna?", P.N(Q), P.N(W)), Q - W, "J", $"ΔU = Q − W = {P.N(Q)} − {P.N(W)} = {P.N(Q - W)} J.");
@@ -154,7 +154,7 @@ public sealed class Fis08Termo : IExerciseGenerator
                         return Ex.Num(L.F("Um gás se expande a pressão constante de {0} kPa, aumentando o volume em {1} litros. Qual o trabalho realizado?", P.N(p / 1000, 0), P.N(dV * 1000, 0)), p * dV, "J", $"W = P ΔV = {P.N(p, 0)}·{P.N(dV, 3)} = {P.N(p * dV)} J.");
                     case 1:
                         double dT = Ex.Step(r, 20, 200, 10);
-                        return Ex.Num(L.F("{0} mol de um gás ideal monoatômico são aquecidos em {1} K. Qual a variação de energia interna? (R = 8,314 J/mol·K)", P.N(n), P.N(dT, 0)), 1.5 * n * R * dT, "J", $"ΔU = (3/2) n R ΔT = 1,5·{P.N(n)}·{P.N(R, 3)}·{P.N(dT, 0)} = {P.N(1.5 * n * R * dT)} J.");
+                        return Ex.Num(L.F("{0} mol de um gás ideal monoatômico são aquecidos em {1} K. Qual a variação de energia interna? (R = 8,314 J/mol·K)", P.N(n), P.N(dT, 0)), 1.5 * n * R * dT, "J", L.F("ΔU = (3/2) n R ΔT = 1,5·{0}·{1}·{2} = {3} J.", P.N(n), P.N(R, 3), P.N(dT, 0), P.N(1.5 * n * R * dT)));
                     default:
                         double T = Ex.Step(r, 250, 450, 10), ratio = Ex.Pick(r, 2.0, 3, 4);
                         double W = n * R * T * Math.Log(ratio);
@@ -170,7 +170,7 @@ public sealed class Fis08Termo : IExerciseGenerator
                 }
                 double T1 = Ex.Step(r, 280, 400, 10), ratio = Ex.Pick(r, 2.0, 4, 8), gamma = 5.0 / 3;
                 double T2 = T1 * Math.Pow(1 / ratio, gamma - 1);
-                return Ex.Num(L.F("Um gás ideal monoatômico (γ = 5/3) a {0} K se expande adiabaticamente até {1} vezes o volume inicial. Qual a temperatura final, em K?", P.N(T1, 0), P.N(ratio, 0)), T2, "K", $"T V^(γ−1) = constante → T₂ = T₁ (V₁/V₂)^(2/3) = {P.N(T1, 0)}·(1/{P.N(ratio, 0)})^{P.N(2.0 / 3, 3)} = {P.N(T2)} K.");
+                return Ex.Num(L.F("Um gás ideal monoatômico (γ = 5/3) a {0} K se expande adiabaticamente até {1} vezes o volume inicial. Qual a temperatura final, em K?", P.N(T1, 0), P.N(ratio, 0)), T2, "K", L.F("T V^(γ−1) = constante → T₂ = T₁ (V₁/V₂)^(2/3) = {0}·(1/{1})^{2} = {3} K.", P.N(T1, 0), P.N(ratio, 0), P.N(2.0 / 3, 3), P.N(T2)));
             }
             default:
             {
@@ -179,14 +179,14 @@ public sealed class Fis08Termo : IExerciseGenerator
                     double Th = Ex.Step(r, 450, 900, 50), Tc = Ex.Step(r, 280, 350, 10), P1 = Ex.Step(r, 1, 20, 1) * 1000;
                     double e = 1 - Tc / Th, Qh = P1 / e, Qc = Qh - P1;
                     return Ex.Num(L.F("Uma máquina de Carnot entre {0} K e {1} K fornece {2} W de potência útil. Quanto calor ela joga na fonte fria a cada segundo, em watts?", P.N(Th, 0), P.N(Tc, 0), P.N(P1, 0)), Qc, "W",
-                        $"η = 1 − {P.N(Tc, 0)}/{P.N(Th, 0)} = {P.N(e, 3)}; potência recebida = {P.N(P1, 0)} / {P.N(e, 3)} = {P.N(Qh)} W; rejeitado = {P.N(Qh)} − {P.N(P1, 0)} = {P.N(Qc)} W.");
+                        L.F("η = 1 − {0}/{1} = {2}; potência recebida = {3} / {4} = {5} W; rejeitado = {6} − {7} = {8} W.", P.N(Tc, 0), P.N(Th, 0), P.N(e, 3), P.N(P1, 0), P.N(e, 3), P.N(Qh), P.N(Qh), P.N(P1, 0), P.N(Qc)));
                 }
                 double Th2 = Ex.Step(r, 500, 800, 50), Tc2 = Ex.Step(r, 250, 300, 10), dT = Ex.Step(r, 20, 50, 10);
                 double eUp = 1 - Tc2 / (Th2 + dT), eDown = 1 - (Tc2 - dT) / Th2;
                 bool coldWins = eDown > eUp;
                 return Ex.Choice(r, L.F("Uma máquina de Carnot trabalha entre {0} K e {1} K. Para aumentar o rendimento, é melhor subir a fonte quente em {2} K ou baixar a fonte fria em {2} K?", P.N(Th2, 0), P.N(Tc2, 0), P.N(dT, 0)),
                     coldWins ? L.T("Baixar a fonte fria") : L.T("Subir a fonte quente"), new[] { coldWins ? L.T("Subir a fonte quente") : L.T("Baixar a fonte fria"), L.T("Dá exatamente o mesmo rendimento") },
-                    $"Subir: η = 1 − {P.N(Tc2, 0)}/{P.N(Th2 + dT, 0)} = {P.N(eUp, 4)}. Baixar: η = 1 − {P.N(Tc2 - dT, 0)}/{P.N(Th2, 0)} = {P.N(eDown, 4)}.");
+                    L.F("Subir: η = 1 − {0}/{1} = {2}. Baixar: η = 1 − {3}/{4} = {5}.", P.N(Tc2, 0), P.N(Th2 + dT, 0), P.N(eUp, 4), P.N(Tc2 - dT, 0), P.N(Th2, 0), P.N(eDown, 4)));
             }
         }
     }
@@ -219,10 +219,10 @@ public sealed class Fis09Eletro : IExerciseGenerator
                 {
                     case 0:
                         double F = K * q1 * q2 * 1e-12 / (dist * dist);
-                        return Ex.Num(L.F("Duas cargas de {0} μC e {1} μC estão separadas por {2} m no vácuo. Qual a força entre elas? (k = 8,99·10⁹ N·m²/C²)", P.N(q1, 0), P.N(q2, 0), P.N(dist)), F, "N", $"F = k q₁ q₂ / r² = 8,99·10⁹·{P.N(q1, 0)}·10⁻⁶·{P.N(q2, 0)}·10⁻⁶ / {P.N(dist)}² = {P.N(F)} N.".Replace("8,99", P.N(8.99)));
+                        return Ex.Num(L.F("Duas cargas de {0} μC e {1} μC estão separadas por {2} m no vácuo. Qual a força entre elas? (k = 8,99·10⁹ N·m²/C²)", P.N(q1, 0), P.N(q2, 0), P.N(dist)), F, "N", L.F("F = k q₁ q₂ / r² = 8,99·10⁹·{0}·10⁻⁶·{1}·10⁻⁶ / {2}² = {3} N.", P.N(q1, 0), P.N(q2, 0), P.N(dist), P.N(F)).Replace("8,99", P.N(8.99)));
                     case 1:
                         double E = K * q1 * 1e-6 / (dist * dist);
-                        return Ex.Num(L.F("Qual o campo elétrico, em kN/C, a {0} m de uma carga pontual de {1} μC? (k = 8,99·10⁹ N·m²/C²)", P.N(dist), P.N(q1, 0)), E / 1e3, "kN/C", $"E = k q / r² = 8,99·10⁹·{P.N(q1, 0)}·10⁻⁶ / {P.N(dist)}² = {P.N(E)} N/C = {P.N(E / 1e3)} kN/C.".Replace("8,99", P.N(8.99)));
+                        return Ex.Num(L.F("Qual o campo elétrico, em kN/C, a {0} m de uma carga pontual de {1} μC? (k = 8,99·10⁹ N·m²/C²)", P.N(dist), P.N(q1, 0)), E / 1e3, "kN/C", L.F("E = k q / r² = 8,99·10⁹·{0}·10⁻⁶ / {1}² = {2} N/C = {3} kN/C.", P.N(q1, 0), P.N(dist), P.N(E), P.N(E / 1e3)).Replace("8,99", P.N(8.99)));
                     default:
                         double r1 = Ex.Step(r, 10, 200, 10), r2 = Ex.Step(r, 10, 200, 10), rp = r1 * r2 / (r1 + r2), V = Ex.Step(r, 5, 24, 1);
                         return Ex.Num(L.F("Dois resistores de {0} Ω e {1} Ω estão em paralelo, ligados a {2} V. Qual a corrente total fornecida pela fonte?", P.N(r1, 0), P.N(r2, 0), P.N(V, 0)), V / rp, "A", $"R = R₁R₂/(R₁+R₂) = {P.N(rp)} Ω; I = V / R = {P.N(V, 0)} / {P.N(rp)} = {P.N(V / rp, 3)} A.");
@@ -256,7 +256,7 @@ public sealed class Fis09Eletro : IExerciseGenerator
                 // Maximum power transfer from a battery with internal resistance happens when R = r.
                 double eps = Ex.Step(r, 6, 24, 1), ri = Ex.Step(r, 1, 10, 1), pmax = eps * eps / (4 * ri);
                 return Ex.Num(L.F("Uma bateria de {0} V com resistência interna de {1} Ω alimenta um resistor variável. Qual a potência máxima que se consegue entregar ao resistor?", P.N(eps, 0), P.N(ri, 0)), pmax, "W",
-                    $"A potência é máxima quando R = r = {P.N(ri, 0)} Ω: I = ε / (2r) = {P.N(eps / (2 * ri))} A; P = I²R = {P.N(pmax)} W (= ε²/4r).");
+                    L.F("A potência é máxima quando R = r = {0} Ω: I = ε / (2r) = {1} A; P = I²R = {2} W (= ε²/4r).", P.N(ri, 0), P.N(eps / (2 * ri)), P.N(pmax)));
             }
         }
     }
@@ -277,7 +277,7 @@ public sealed class Fis10Arrasto : IExerciseGenerator
                 double rho = 1.2, cd = Ex.Pick(r, 0.47, 0.8, 1.0, 1.2), A = Ex.Step(r, 0.01, 1, 0.01), v = Ex.Step(r, 2, 40, 1);
                 double F = 0.5 * rho * cd * A * v * v;
                 return Ex.Num(L.F("Qual a força de arrasto do ar (ρ = 1,2 kg/m³) sobre um objeto com Cd = {0} e área frontal de {1} m², a {2} m/s?", P.N(cd), P.N(A), P.N(v)), F, "N",
-                    $"F = ½ ρ Cd A v² = 0,5·{P.N(1.2)}·{P.N(cd)}·{P.N(A)}·{P.N(v)}² = {P.N(F)} N.");
+                    L.F("F = ½ ρ Cd A v² = 0,5·{0}·{1}·{2}·{3}² = {4} N.", P.N(1.2), P.N(cd), P.N(A), P.N(v), P.N(F)));
             }
             case Difficulty.Medium:
             {
@@ -285,7 +285,7 @@ public sealed class Fis10Arrasto : IExerciseGenerator
                 if (m > 5) m = Math.Round(m);
                 double vt = Math.Sqrt(2 * m * G / (1.2 * cd * A));
                 return Ex.Num(L.F("Qual a velocidade terminal de um corpo de {0} kg, com Cd = {1} e área frontal de {2} m², caindo no ar (ρ = 1,2 kg/m³)?", P.N(m), P.N(cd), P.N(A)), vt, "m/s",
-                    $"Peso = arrasto: m g = ½ ρ Cd A v² → v = √(2 m g / (ρ Cd A)) = √(2·{P.N(m)}·{P.N(G)} / ({P.N(1.2)}·{P.N(cd)}·{P.N(A)})) = {P.N(vt)} m/s.");
+                    L.F("Peso = arrasto: m g = ½ ρ Cd A v² → v = √(2 m g / (ρ Cd A)) = √(2·{0}·{1} / ({2}·{3}·{4})) = {5} m/s.", P.N(m), P.N(G), P.N(1.2), P.N(cd), P.N(A), P.N(vt)));
             }
             case Difficulty.Hard:
             {
@@ -296,7 +296,7 @@ public sealed class Fis10Arrasto : IExerciseGenerator
                     return Ex.Num(L.F("Um corpo de {0} kg cai com arrasto linear (força = {1}·v, em N, com v em m/s). Usando o método de Euler com passo de {2} s, qual a velocidade 1 passo depois de v = {3} m/s?", P.N(m), P.N(b, 0), P.N(dt), P.N(v0, 0)),
                         v1, "m/s", $"a = g − (b/m) v = {P.N(G)} − ({P.N(b, 0)}/{P.N(m)})·{P.N(v0, 0)} = {P.N(a0)} m/s²; v₁ = v₀ + a·Δt = {P.N(v0, 0)} + {P.N(a0)}·{P.N(dt)} = {P.N(v1, 3)} m/s.");
                 return Ex.Num(L.F("Um corpo de {0} kg cai com arrasto linear (força = {1}·v, em N, com v em m/s). Usando o método de Euler com passo de {2} s, qual a velocidade 2 passos depois de v = {3} m/s?", P.N(m), P.N(b, 0), P.N(dt), P.N(v0, 0)),
-                    v2, "m/s", $"Passo 1: a = {P.N(a0)}, v₁ = {P.N(v1, 3)}. Passo 2: a = {P.N(G)} − ({P.N(b, 0)}/{P.N(m)})·{P.N(v1, 3)} = {P.N(a1, 3)} m/s²; v₂ = {P.N(v1, 3)} + {P.N(a1, 3)}·{P.N(dt)} = {P.N(v2, 3)} m/s.");
+                    v2, "m/s", L.F("Passo 1: a = {0}, v₁ = {1}. Passo 2: a = {2} − ({3}/{4})·{5} = {6} m/s²; v₂ = {7} + {8}·{9} = {10} m/s.", P.N(a0), P.N(v1, 3), P.N(G), P.N(b, 0), P.N(m), P.N(v1, 3), P.N(a1, 3), P.N(v1, 3), P.N(a1, 3), P.N(dt), P.N(v2, 3)));
             }
             default:
             {
@@ -305,7 +305,7 @@ public sealed class Fis10Arrasto : IExerciseGenerator
                     // Quadratic drag: a = g (1 − (v/vt)²). At a fraction f of the terminal speed...
                     double f = Ex.Pick(r, 0.5, 0.6, 0.8, 0.9), vt = Ex.Step(r, 10, 60, 1), a = G * (1 - f * f);
                     return Ex.Num(L.F("Um paraquedista tem velocidade terminal de {0} m/s (arrasto proporcional a v²). Qual a sua aceleração no instante em que a velocidade é {1} da terminal?", P.N(vt, 0), P.N(f * 100, 0) + "%"), a, "m/s²",
-                        $"Com arrasto ∝ v²: a = g (1 − (v/vₜ)²) = {P.N(G)}·(1 − {P.N(f)}²) = {P.N(a)} m/s².");
+                        L.F("Com arrasto ∝ v²: a = g (1 − (v/vₜ)²) = {0}·(1 − {1}²) = {2} m/s².", P.N(G), P.N(f), P.N(a)));
                 }
                 double m = Ex.Step(r, 1, 10, 1), b = Ex.Step(r, 2, 20, 1), t = Ex.Step(r, 0.2, 2, 0.1);
                 double vt2 = m * G / b, v = vt2 * (1 - Math.Exp(-b * t / m));

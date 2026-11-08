@@ -107,7 +107,7 @@ public sealed class CBasics : IExerciseGenerator
         }
         string decl = $"    int a = {a};\n    int b = {b};\n    double preco = {price.ToString("0.00", PK.Inv)};\n    char letra = '{letra}';\n";
         string head = "#include <stdio.h>\n\nint main(void) {\n" + decl;
-        var op = new Dictionary<string, string> { ["Soma"] = "a + b", ["Diferenca"] = "a - b", ["Produto"] = "a * b", ["Divisao inteira"] = "a / b (inteira)", ["Resto"] = "a % b", ["Divisao real"] = "a / b com casas decimais", ["Dobro do preco"] = "preco * 2" };
+        var op = new Dictionary<string, string> { ["Soma"] = "a + b", ["Diferenca"] = "a - b", ["Produto"] = "a * b", ["Divisao inteira"] = L.T("a / b (inteira)"), ["Resto"] = "a % b", ["Divisao real"] = L.T("a / b com casas decimais"), ["Dobro do preco"] = "preco * 2" };
         string st = L.F("Crie `int a = {0}`, `int b = {1}`, `double preco = {2}` e `char letra = '{3}'` e mostre exatamente as linhas abaixo, **calculando** cada valor a partir das variáveis (sem escrever o resultado à mão). Reais usam 2 casas decimais.", a, b, Ex.N(price), letra);
         st += "\n\n" + L.T("As contas pedidas, na ordem:") + " " + string.Join("; ", chosen.Select(c => $"{c.label} = {op[c.label]}"));
         if (d >= Difficulty.Hard) st += "; " + L.T("depois a letra e a letra seguinte") + (d == Difficulty.Genius ? "; " + L.T("depois o código numérico da letra e a letra minúscula (sem `tolower`)") : "");

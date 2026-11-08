@@ -27,7 +27,7 @@ public sealed class Ard01Led : IExerciseGenerator
                 if (vs - vf < 1) vs = 5;
                 if (vs == 3.3 && vf > 2.2) vf = 2.0;
                 double R = (vs - vf) / i;
-                return Ex.Num(L.F("Um LED de {0} V de queda de tensão deve conduzir {1} mA numa fonte de {2} V. Qual o resistor em série necessário, em ohms?", P.N(vf, 1), P.N(i * 1000, 0), P.N(vs, 1)), R, "Ω", $"R = (Vfonte − Vled) / I = ({P.N(vs, 1)} − {P.N(vf, 1)}) / {P.N(i, 3)} = {P.N(R, 0)} Ω.");
+                return Ex.Num(L.F("Um LED de {0} V de queda de tensão deve conduzir {1} mA numa fonte de {2} V. Qual o resistor em série necessário, em ohms?", P.N(vf, 1), P.N(i * 1000, 0), P.N(vs, 1)), R, "Ω", L.F("R = (Vfonte − Vled) / I = ({0} − {1}) / {2} = {3} Ω.", P.N(vs, 1), P.N(vf, 1), P.N(i, 3), P.N(R, 0)));
             }
             case Difficulty.Medium:
             {
@@ -36,11 +36,11 @@ public sealed class Ard01Led : IExerciseGenerator
                 switch (r.Next(3))
                 {
                     case 0:
-                        return Ex.Num(L.F("Um sketch liga o LED, espera {0} ms, desliga e espera {1} ms (delay), repetindo. Qual a frequência do pisca, em Hz?", on, off), 1000.0 / per, "Hz", $"Período = {on} + {off} = {per} ms; f = 1000 / {per} = {P.N(1000.0 / per, 3)} Hz.");
+                        return Ex.Num(L.F("Um sketch liga o LED, espera {0} ms, desliga e espera {1} ms (delay), repetindo. Qual a frequência do pisca, em Hz?", on, off), 1000.0 / per, "Hz", L.F("Período = {0} + {1} = {2} ms; f = 1000 / {3} = {4} Hz.", on, off, per, per, P.N(1000.0 / per, 3)));
                     case 1:
                         int secs = Ex.Int(r, 5, 60);
                         double n = secs * 1000.0 / per;
-                        return Ex.Num(L.F("Um LED fica {0} ms aceso e {1} ms apagado, em repetição. Quantas vezes ele acende em {2} segundos?", on, off, secs), n, "vezes", $"Período = {per} ms; {secs}·1000 / {per} = {P.N(n)} vezes.");
+                        return Ex.Num(L.F("Um LED fica {0} ms aceso e {1} ms apagado, em repetição. Quantas vezes ele acende em {2} segundos?", on, off, secs), n, "vezes", L.F("Período = {0} ms; {1}·1000 / {2} = {3} vezes.", per, secs, per, P.N(n)));
                     default:
                         double duty = on / per * 100;
                         return Ex.Num(L.F("Um LED fica {0} ms aceso e {1} ms apagado em cada ciclo. Qual a fração do tempo em que ele está aceso, em %?", on, off), duty, "%", $"{on} / ({on} + {off}) = {P.N(duty)}%.");
@@ -63,7 +63,7 @@ public sealed class Ard01Led : IExerciseGenerator
                     int n = Ex.Int(r, 2, 4);
                     double vf = Ex.Pick(r, 1.8, 2.0, 2.2), vs = Ex.Pick(r, 9.0, 12), i = Ex.Pick(r, 10.0, 15, 20) / 1000;
                     double R = (vs - n * vf) / i;
-                    return Ex.Num(L.F("{0} LEDs iguais de {1} V ficam em série com um único resistor, ligados a uma fonte de {2} V. Para circular {3} mA, qual o valor do resistor, em ohms?", n, P.N(vf, 1), P.N(vs, 0), P.N(i * 1000, 0)), R, "Ω", $"As quedas somam: {n}·{P.N(vf, 1)} = {P.N(n * vf, 1)} V. R = ({P.N(vs, 0)} − {P.N(n * vf, 1)}) / {P.N(i, 3)} = {P.N(R, 0)} Ω.");
+                    return Ex.Num(L.F("{0} LEDs iguais de {1} V ficam em série com um único resistor, ligados a uma fonte de {2} V. Para circular {3} mA, qual o valor do resistor, em ohms?", n, P.N(vf, 1), P.N(vs, 0), P.N(i * 1000, 0)), R, "Ω", L.F("As quedas somam: {0}·{1} = {2} V. R = ({3} − {4}) / {5} = {6} Ω.", n, P.N(vf, 1), P.N(n * vf, 1), P.N(vs, 0), P.N(n * vf, 1), P.N(i, 3), P.N(R, 0)));
                 }
                 int times = Ex.Int(r, 4, 9), pin = Ex.Int(r, 1, 3);
                 var sb = new StringBuilder();
@@ -98,10 +98,10 @@ public sealed class Ard02Botao : IExerciseGenerator
                 if (r.Next(2) == 0)
                 {
                     int n = Ex.Int(r, 3, 12), secs = Ex.Int(r, 10, 60);
-                    return Ex.Num(L.F("Uma pessoa aperta o botão uma vez a cada {0} segundos. Quantos apertos acontecem em {1} segundos?", n, n * secs), secs, "apertos", $"{n * secs} / {n} = {secs} apertos.");
+                    return Ex.Num(L.F("Uma pessoa aperta o botão uma vez a cada {0} segundos. Quantos apertos acontecem em {1} segundos?", n, n * secs), secs, "apertos", L.F("{0} / {1} = {2} apertos.", n * secs, n, secs));
                 }
                 double scans = hold / (double)ms;
-                return Ex.Num(L.F("O loop() lê o botão a cada {0} ms (por causa de um delay). O botão fica apertado por {1} ms. Quantas leituras vão ver o botão apertado?", ms, hold), Math.Floor(scans), "leituras", $"{hold} / {ms} = {P.N(scans)} → {Math.Floor(scans)} leituras (inteiras).", 0.1);
+                return Ex.Num(L.F("O loop() lê o botão a cada {0} ms (por causa de um delay). O botão fica apertado por {1} ms. Quantas leituras vão ver o botão apertado?", ms, hold), Math.Floor(scans), "leituras", L.F("{0} / {1} = {2} → {3} leituras (inteiras).", hold, ms, P.N(scans), Math.Floor(scans)), 0.1);
             }
             case Difficulty.Hard:
             {
@@ -138,7 +138,7 @@ public sealed class Ard03Pwm : IExerciseGenerator
                 if (r.Next(2) == 0)
                     return Ex.Num(L.F("Com analogWrite(pino, {0}), qual o ciclo de trabalho (duty cycle), em %?", v), duty, "%", $"{v} / 255 = {P.N(duty / 100, 3)} → {P.N(duty)}%.", 3);
                 double vm = 5 * v / 255.0;
-                return Ex.Num(L.F("Um pino de 5 V recebe analogWrite(pino, {0}). Qual a tensão média na saída, em volts?", v), vm, "V", $"Vmédia = 5·{v} / 255 = {P.N(vm, 3)} V.", 3);
+                return Ex.Num(L.F("Um pino de 5 V recebe analogWrite(pino, {0}). Qual a tensão média na saída, em volts?", v), vm, "V", L.F("Vmédia = 5·{0} / 255 = {1} V.", v, P.N(vm, 3)), 3);
             }
             case Difficulty.Medium:
             {
@@ -154,7 +154,7 @@ public sealed class Ard03Pwm : IExerciseGenerator
                         return Ex.Num(L.F("O PWM do Arduino roda a {0} Hz. Qual o período de cada ciclo, em ms?", P.N(f, 0)), T, "ms", $"T = 1 / f = 1 / {P.N(f, 0)} Hz = {P.N(T, 3)} ms.");
                     default:
                         double Tm = 1000.0 / f, ton = Tm * duty / 100;
-                        return Ex.Num(L.F("Com PWM a {0} Hz e ciclo de trabalho de {1}%, por quantos milissegundos a saída fica em HIGH em cada ciclo?", P.N(f, 0), P.N(duty, 0)), ton, "ms", $"T = {P.N(Tm, 3)} ms; ton = T·duty = {P.N(Tm, 3)}·{P.N(duty / 100)} = {P.N(ton, 3)} ms.");
+                        return Ex.Num(L.F("Com PWM a {0} Hz e ciclo de trabalho de {1}%, por quantos milissegundos a saída fica em HIGH em cada ciclo?", P.N(f, 0), P.N(duty, 0)), ton, "ms", L.F("T = {0} ms; ton = T·duty = {1}·{2} = {3} ms.", P.N(Tm, 3), P.N(Tm, 3), P.N(duty / 100), P.N(ton, 3)));
                 }
             }
             case Difficulty.Hard:
@@ -162,8 +162,8 @@ public sealed class Ard03Pwm : IExerciseGenerator
                 int step = Ex.Pick(r, 5, 10, 15, 17, 51), delay = Ex.Pick(r, 5, 10, 20, 30);
                 int steps = (int)Math.Ceiling(255.0 / step);
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um fade soma {0} ao brilho a cada {1} ms, de 0 até chegar a 255 ou mais (então fica em 255). Quantos passos até o brilho máximo?", step, delay), steps, "passos", $"255 / {step} = {P.N(255.0 / step, 2)} → {steps} passos.", 0.1);
-                return Ex.Num(L.F("Um fade soma {0} ao brilho a cada {1} ms, de 0 até chegar a 255 ou mais. Quanto tempo leva até o brilho máximo, em ms?", step, delay), steps * delay, "ms", $"Passos = ⌈255 / {step}⌉ = {steps}; tempo = {steps}·{delay} = {steps * delay} ms.", 0.1);
+                    return Ex.Num(L.F("Um fade soma {0} ao brilho a cada {1} ms, de 0 até chegar a 255 ou mais (então fica em 255). Quantos passos até o brilho máximo?", step, delay), steps, "passos", L.F("255 / {0} = {1} → {2} passos.", step, P.N(255.0 / step, 2), steps), 0.1);
+                return Ex.Num(L.F("Um fade soma {0} ao brilho a cada {1} ms, de 0 até chegar a 255 ou mais. Quanto tempo leva até o brilho máximo, em ms?", step, delay), steps * delay, "ms", L.F("Passos = ⌈255 / {0}⌉ = {1}; tempo = {2}·{3} = {4} ms.", step, steps, steps, delay, steps * delay), 0.1);
             }
             default:
             {
@@ -198,14 +198,14 @@ public sealed class Ard04Pot : IExerciseGenerator
                 if (r.Next(2) == 0)
                     return Ex.Num(L.F("analogRead devolveu {0} (ADC de 10 bits, referência de 5 V). Qual a tensão no pino, em volts?", raw), raw * 5.0 / 1023, "V", $"V = {raw}·5 / 1023 = {P.N(raw * 5.0 / 1023, 3)} V.", 3);
                 double v = Ex.Step(r, 0.5, 4.5, 0.5);
-                return Ex.Num(L.F("O pino analógico está em {0} V (referência de 5 V, ADC de 10 bits). Qual o valor lido por analogRead (inteiro mais próximo)?", P.N(v, 1)), Math.Round(v * 1023 / 5), "", $"leitura = V·1023 / 5 = {P.N(v, 1)}·1023 / 5 = {P.N(v * 1023 / 5, 1)} ≈ {P.N(Math.Round(v * 1023 / 5), 0)}.", 1);
+                return Ex.Num(L.F("O pino analógico está em {0} V (referência de 5 V, ADC de 10 bits). Qual o valor lido por analogRead (inteiro mais próximo)?", P.N(v, 1)), Math.Round(v * 1023 / 5), "", L.F("leitura = V·1023 / 5 = {0}·1023 / 5 = {1} ≈ {2}.", P.N(v, 1), P.N(v * 1023 / 5, 1), P.N(Math.Round(v * 1023 / 5), 0)), 1);
             }
             case Difficulty.Medium:
             {
                 int raw = Ex.Int(r, 0, 1023);
                 int outMax = Ex.Pick(r, 255, 180, 100);
                 long mapped = raw * outMax / 1023; // map(raw,0,1023,0,outMax) with integer math
-                return Ex.Num(L.F("Com a leitura {0}, qual o resultado de map(leitura, 0, 1023, 0, {1})? (a divisão é inteira, trunca)", raw, outMax), mapped, "", $"map = (x − 0)·({outMax} − 0) / (1023 − 0) + 0 = {raw}·{outMax} / 1023 = {mapped} (divisão inteira).", 0.1);
+                return Ex.Num(L.F("Com a leitura {0}, qual o resultado de map(leitura, 0, 1023, 0, {1})? (a divisão é inteira, trunca)", raw, outMax), mapped, "", L.F("map = (x − 0)·({0} − 0) / (1023 − 0) + 0 = {1}·{2} / 1023 = {3} (divisão inteira).", outMax, raw, outMax, mapped), 0.1);
             }
             case Difficulty.Hard:
             {
@@ -238,24 +238,24 @@ public sealed class Ard05Serial : IExerciseGenerator
             case Difficulty.Easy:
             {
                 double r1 = Ex.Step(r, 1, 50, 1) * 1000, r2 = Ex.Step(r, 1, 50, 1) * 1000, vo = 5 * r2 / (r1 + r2);
-                return Ex.Num(L.F("Um divisor de tensão tem R1 = {0} kΩ (ligado a 5 V) e R2 = {1} kΩ (ligado ao GND). Qual a tensão na junção, em volts?", P.N(r1 / 1000, 1), P.N(r2 / 1000, 1)), vo, "V", $"Vsaída = 5·R2 / (R1 + R2) = 5·{P.N(r2 / 1000, 1)} / ({P.N(r1 / 1000, 1)} + {P.N(r2 / 1000, 1)}) = {P.N(vo, 3)} V.");
+                return Ex.Num(L.F("Um divisor de tensão tem R1 = {0} kΩ (ligado a 5 V) e R2 = {1} kΩ (ligado ao GND). Qual a tensão na junção, em volts?", P.N(r1 / 1000, 1), P.N(r2 / 1000, 1)), vo, "V", L.F("Vsaída = 5·R2 / (R1 + R2) = 5·{0} / ({1} + {2}) = {3} V.", P.N(r2 / 1000, 1), P.N(r1 / 1000, 1), P.N(r2 / 1000, 1), P.N(vo, 3)));
             }
             case Difficulty.Medium:
             {
                 double rl = Ex.Step(r, 1, 100, 1) * 1000, rf = 10000, vo = 5 * rf / (rf + rl);
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um LDR (ligado a 5 V) forma um divisor com um resistor fixo de 10 kΩ (ligado ao GND). Com o LDR em {0} kΩ, qual a tensão lida no pino, em volts?", P.N(rl / 1000, 0)), vo, "V", $"Vsaída = 5·10 / (10 + {P.N(rl / 1000, 0)}) = {P.N(vo, 3)} V.");
+                    return Ex.Num(L.F("Um LDR (ligado a 5 V) forma um divisor com um resistor fixo de 10 kΩ (ligado ao GND). Com o LDR em {0} kΩ, qual a tensão lida no pino, em volts?", P.N(rl / 1000, 0)), vo, "V", L.F("Vsaída = 5·10 / (10 + {0}) = {1} V.", P.N(rl / 1000, 0), P.N(vo, 3)));
                 int raw = (int)Math.Round(vo / 5 * 1023);
-                return Ex.Num(L.F("Um LDR de {0} kΩ (ligado a 5 V) e um resistor fixo de 10 kΩ (ao GND) formam um divisor. Que valor o analogRead devolve (inteiro mais próximo)?", P.N(rl / 1000, 0)), raw, "", $"Vsaída = {P.N(vo, 3)} V → leitura = {P.N(vo, 3)}·1023 / 5 ≈ {raw}.", 1);
+                return Ex.Num(L.F("Um LDR de {0} kΩ (ligado a 5 V) e um resistor fixo de 10 kΩ (ao GND) formam um divisor. Que valor o analogRead devolve (inteiro mais próximo)?", P.N(rl / 1000, 0)), raw, "", L.F("Vsaída = {0} V → leitura = {1}·1023 / 5 ≈ {2}.", P.N(vo, 3), P.N(vo, 3), raw), 1);
             }
             case Difficulty.Hard:
             {
                 int baud = Ex.Pick(r, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200), n = Ex.Int(r, 5, 40);
                 double t = n * 10.0 / baud * 1000;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("A {0} baud, cada caractere gasta 10 bits (início + 8 dados + fim). Quanto tempo, em ms, leva para enviar uma linha de {1} caracteres?", baud, n), t, "ms", $"{n}·10 bits = {n * 10} bits; {n * 10} / {baud} = {P.N(t, 3)} ms.");
+                    return Ex.Num(L.F("A {0} baud, cada caractere gasta 10 bits (início + 8 dados + fim). Quanto tempo, em ms, leva para enviar uma linha de {1} caracteres?", baud, n), t, "ms", L.F("{0}·10 bits = {1} bits; {2} / {3} = {4} ms.", n, n * 10, n * 10, baud, P.N(t, 3)));
                 double cps = baud / 10.0;
-                return Ex.Num(L.F("A {0} baud, cada caractere usa 10 bits no total. Quantos caracteres por segundo a porta serial transmite?", baud), cps, "caract./s", $"{baud} / 10 = {P.N(cps, 0)} caracteres/s.");
+                return Ex.Num(L.F("A {0} baud, cada caractere usa 10 bits no total. Quantos caracteres por segundo a porta serial transmite?", baud), cps, "caract./s", L.F("{0} / 10 = {1} caracteres/s.", baud, P.N(cps, 0)));
             }
             default:
             {
@@ -286,7 +286,7 @@ public sealed class Ard06Semaforo : IExerciseGenerator
                 if (r.Next(2) == 0)
                     return Ex.Num(cfg + " " + L.T("Quanto dura um ciclo completo, em segundos?"), cycle / 1000.0, "s", $"{tv / 1000} + {ta / 1000} + {tr / 1000} = {cycle / 1000} s.");
                 double cars = 3600.0 / (cycle / 1000.0);
-                return Ex.Num(cfg + " " + L.T("Quantos ciclos completos acontecem em 1 hora?"), cars, "ciclos", $"3600 / {cycle / 1000} = {P.N(cars)} ciclos.");
+                return Ex.Num(cfg + " " + L.T("Quantos ciclos completos acontecem em 1 hora?"), cars, "ciclos", L.F("3600 / {0} = {1} ciclos.", cycle / 1000, P.N(cars)));
             }
             case Difficulty.Medium:
             {
@@ -301,9 +301,9 @@ public sealed class Ard06Semaforo : IExerciseGenerator
             {
                 int k = Ex.Int(r, 2, 6);
                 if (r.Next(2) == 0)
-                    return Ex.Num(cfg + " " + L.F("Em que valor de millis() (em segundos) o vermelho acende pela {0}ª vez? (o primeiro verde começa em 0)", k), ((k - 1) * cycle + tv + ta) / 1000.0, "s", $"Em cada ciclo o vermelho começa depois de {tv / 1000} + {ta / 1000} = {(tv + ta) / 1000} s. Na {k}ª vez: ({k} − 1)·{cycle / 1000} + {(tv + ta) / 1000} = {((k - 1) * cycle + tv + ta) / 1000} s.");
+                    return Ex.Num(cfg + " " + L.F("Em que valor de millis() (em segundos) o vermelho acende pela {0}ª vez? (o primeiro verde começa em 0)", k), ((k - 1) * cycle + tv + ta) / 1000.0, "s", L.F("Em cada ciclo o vermelho começa depois de {0} + {1} = {2} s. Na {3}ª vez: ({4} − 1)·{5} + {6} = {7} s.", tv / 1000, ta / 1000, (tv + ta) / 1000, k, k, cycle / 1000, (tv + ta) / 1000, ((k - 1) * cycle + tv + ta) / 1000));
                 double span = Ex.Int(r, 2, 6) * cycle / 1000.0;
-                return Ex.Num(cfg + " " + L.F("Quanto tempo o vermelho fica aceso, no total, em {0} s?", P.N(span, 0)), span / (cycle / 1000.0) * tr / 1000, "s", $"{P.N(span, 0)} s = {P.N(span / (cycle / 1000.0), 0)} ciclos; {P.N(span / (cycle / 1000.0), 0)}·{tr / 1000} = {P.N(span / (cycle / 1000.0) * tr / 1000, 0)} s.");
+                return Ex.Num(cfg + " " + L.F("Quanto tempo o vermelho fica aceso, no total, em {0} s?", P.N(span, 0)), span / (cycle / 1000.0) * tr / 1000, "s", L.F("{0} s = {1} ciclos; {2}·{3} = {4} s.", P.N(span, 0), P.N(span / (cycle / 1000.0), 0), P.N(span / (cycle / 1000.0), 0), tr / 1000, P.N(span / (cycle / 1000.0) * tr / 1000, 0)));
             }
             default:
             {
@@ -341,8 +341,8 @@ public sealed class Ard07Servo : IExerciseGenerator
                 int step = Ex.Pick(r, 1, 2, 3, 5, 6, 9), dl = Ex.Pick(r, 10, 15, 20, 30);
                 int steps = 180 / step;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um sweep vai de 0° a 180° em passos de {0}°, com delay({1}) após cada passo. Quantos passos tem uma ida (de 0° a 180°)?", step, dl), steps, "passos", $"180 / {step} = {steps} passos.", 0.1);
-                return Ex.Num(L.F("Um sweep vai de 0° a 180° em passos de {0}°, com delay({1}) após cada passo. Quanto tempo leva uma ida, em ms?", step, dl), steps * dl, "ms", $"{180 / step} passos·{dl} ms = {steps * dl} ms.", 0.1);
+                    return Ex.Num(L.F("Um sweep vai de 0° a 180° em passos de {0}°, com delay({1}) após cada passo. Quantos passos tem uma ida (de 0° a 180°)?", step, dl), steps, "passos", L.F("180 / {0} = {1} passos.", step, steps), 0.1);
+                return Ex.Num(L.F("Um sweep vai de 0° a 180° em passos de {0}°, com delay({1}) após cada passo. Quanto tempo leva uma ida, em ms?", step, dl), steps * dl, "ms", L.F("{0} passos·{1} ms = {2} ms.", 180 / step, dl, steps * dl), 0.1);
             }
             case Difficulty.Hard:
             {
@@ -351,7 +351,7 @@ public sealed class Ard07Servo : IExerciseGenerator
                 if (r.Next(2) == 0)
                     return Ex.Num(L.F("Um servo (1000 μs = 0°, 2000 μs = 180°) recebe pulsos de {0} μs. Para qual ângulo ele vai?", us), ang, "°", $"({us} − 1000) / 1000·180 = {P.N(ang)}°.");
                 int a1 = Ex.Pick(r, 20, 30, 45), a2 = Ex.Pick(r, 120, 150, 160), dl = Ex.Pick(r, 15, 20, 25);
-                return Ex.Num(L.F("Um servo varre de {0}° a {1}° de 1 em 1 grau, com delay({2}) a cada grau. Quanto dura a varredura, em segundos?", a1, a2, dl), (a2 - a1) * dl / 1000.0, "s", $"{a2} − {a1} = {a2 - a1} graus·{dl} ms = {(a2 - a1) * dl} ms = {P.N((a2 - a1) * dl / 1000.0, 3)} s.");
+                return Ex.Num(L.F("Um servo varre de {0}° a {1}° de 1 em 1 grau, com delay({2}) a cada grau. Quanto dura a varredura, em segundos?", a1, a2, dl), (a2 - a1) * dl / 1000.0, "s", L.F("{0} − {1} = {2} graus·{3} ms = {4} ms = {5} s.", a2, a1, a2 - a1, dl, (a2 - a1) * dl, P.N((a2 - a1) * dl / 1000.0, 3)));
             }
             default:
             {

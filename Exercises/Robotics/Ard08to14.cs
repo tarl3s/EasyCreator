@@ -14,7 +14,7 @@ public sealed class Ard08Ultra : IExerciseGenerator
             {
                 int us = Ex.Int(r, 2, 60) * 100;
                 double cm = us * 0.0343 / 2;
-                return Ex.Num(L.F("O HC-SR04 mede um eco de {0} μs (ida e volta). Qual a distância até o obstáculo, em cm? (som a 343 m/s = 0,0343 cm/μs)", us), cm, "cm", $"d = t·v / 2 = {us}·0,0343 / 2 = {P.N(cm)} cm (divide por 2 porque o som vai e volta).".Replace("0,0343", P.N(0.0343, 4)));
+                return Ex.Num(L.F("O HC-SR04 mede um eco de {0} μs (ida e volta). Qual a distância até o obstáculo, em cm? (som a 343 m/s = 0,0343 cm/μs)", us), cm, "cm", L.F("d = t·v / 2 = {0}·0,0343 / 2 = {1} cm (divide por 2 porque o som vai e volta).", us, P.N(cm)).Replace("0,0343", P.N(0.0343, 4)));
             }
             case Difficulty.Medium:
             {
@@ -25,7 +25,7 @@ public sealed class Ard08Ultra : IExerciseGenerator
                     return Ex.Num(L.F("Um obstáculo está a {0} cm do sensor ultrassônico. Quanto tempo, em μs, leva o eco? (som a 343 m/s)", P.N(cm, 0)), us, "μs", $"t = 2d / v = 2·{P.N(cm, 0)} / {P.N(0.0343, 4)} = {P.N(us, 0)} μs.");
                 }
                 double T = Ex.Step(r, -10, 40, 5), c = 331.3 + 0.606 * T;
-                return Ex.Num(L.F("Qual a velocidade do som no ar a {0} °C, em m/s? (use v = 331,3 + 0,606·T)", P.N(T, 0)), c, "m/s", $"v = 331,3 + 0,606·{P.N(T, 0)} = {P.N(c, 1)} m/s.".Replace("331,3", P.N(331.3, 1)).Replace("0,606", P.N(0.606, 3)));
+                return Ex.Num(L.F("Qual a velocidade do som no ar a {0} °C, em m/s? (use v = 331,3 + 0,606·T)", P.N(T, 0)), c, "m/s", L.F("v = 331,3 + 0,606·{0} = {1} m/s.", P.N(T, 0), P.N(c, 1)).Replace("331,3", P.N(331.3, 1)).Replace("0,606", P.N(0.606, 3)));
             }
             case Difficulty.Hard:
             {
@@ -33,7 +33,7 @@ public sealed class Ard08Ultra : IExerciseGenerator
                 double dTrue = us * c / 1e6 / 2 * 100, dAssumed = us * 0.0343 / 2;
                 if (r.Next(2) == 0)
                     return Ex.Num(L.F("A {0} °C, um eco de {1} μs chega ao sensor. Qual a distância real, em cm? (v = 331,3 + 0,606·T m/s)", P.N(T, 0), us), dTrue, "cm", $"v = {P.N(c, 1)} m/s = {P.N(c / 1e4, 5)} cm/μs; d = {us}·{P.N(c / 1e4, 5)} / 2 = {P.N(dTrue)} cm.");
-                return Ex.Num(L.F("Um sketch supõe som a 343 m/s e lê um eco de {0} μs, mas a temperatura é {1} °C (v = 331,3 + 0,606·T m/s). Qual o erro da distância calculada (calculada − real), em cm?", us, P.N(T, 0)), dAssumed - dTrue, "cm", $"Calculada: {us}·0,0343/2 = {P.N(dAssumed)} cm. Real: {us}·{P.N(c / 1e4, 5)}/2 = {P.N(dTrue)} cm. Erro = {P.N(dAssumed - dTrue)} cm.".Replace("0,0343", P.N(0.0343, 4)), 5);
+                return Ex.Num(L.F("Um sketch supõe som a 343 m/s e lê um eco de {0} μs, mas a temperatura é {1} °C (v = 331,3 + 0,606·T m/s). Qual o erro da distância calculada (calculada − real), em cm?", us, P.N(T, 0)), dAssumed - dTrue, "cm", L.F("Calculada: {0}·0,0343/2 = {1} cm. Real: {2}·{3}/2 = {4} cm. Erro = {5} cm.", us, P.N(dAssumed), us, P.N(c / 1e4, 5), P.N(dTrue), P.N(dAssumed - dTrue)).Replace("0,0343", P.N(0.0343, 4)), 5);
             }
             default:
             {
@@ -85,10 +85,10 @@ public sealed class Ard09Motor : IExerciseGenerator
                         return Ex.Num(L.F("Um motor de {0} V consome {1} A. Qual a potência elétrica, em watts?", P.N(V, 0), P.N(I, 1)), V * I, "W", $"P = V·I = {P.N(V, 0)}·{P.N(I, 1)} = {P.N(V * I)} W.");
                     case 1:
                         double C = Ex.Pick(r, 1000.0, 1500, 2000, 2500), h = C / (I * 1000);
-                        return Ex.Num(L.F("Uma bateria de {0} mAh alimenta um motor que consome {1} A de forma contínua. Quanto tempo ela dura, em horas?", P.N(C, 0), P.N(I, 1)), h, "h", $"t = capacidade / corrente = {P.N(C / 1000, 1)} Ah / {P.N(I, 1)} A = {P.N(h)} h.");
+                        return Ex.Num(L.F("Uma bateria de {0} mAh alimenta um motor que consome {1} A de forma contínua. Quanto tempo ela dura, em horas?", P.N(C, 0), P.N(I, 1)), h, "h", L.F("t = capacidade / corrente = {0} Ah / {1} A = {2} h.", P.N(C / 1000, 1), P.N(I, 1), P.N(h)));
                     default:
                         double duty = Ex.Pick(r, 25.0, 50, 75, 80), vm = V * duty / 100;
-                        return Ex.Num(L.F("Uma ponte H alimentada com {0} V aplica PWM de {1}% ao motor. Qual a tensão média no motor, em volts?", P.N(V, 0), P.N(duty, 0)), vm, "V", $"Vmédia = {P.N(V, 0)}·{P.N(duty, 0)}/100 = {P.N(vm)} V.");
+                        return Ex.Num(L.F("Uma ponte H alimentada com {0} V aplica PWM de {1}% ao motor. Qual a tensão média no motor, em volts?", P.N(V, 0), P.N(duty, 0)), vm, "V", L.F("Vmédia = {0}·{1}/100 = {2} V.", P.N(V, 0), P.N(duty, 0), P.N(vm)));
                 }
             }
             default:
@@ -117,7 +117,7 @@ public sealed class Ard10Seguidor : IExerciseGenerator
             case Difficulty.Easy:
             {
                 int err = Ex.Int(r, -40, 40);
-                return Ex.Num(L.F("Num controle proporcional, a correção é Kp·erro. Com Kp = {0} e erro = {1}, qual a correção?", P.N(kp, 1), err), kp * err, "", $"correção = Kp·erro = {P.N(kp, 1)}·{err} = {P.N(kp * err)}.");
+                return Ex.Num(L.F("Num controle proporcional, a correção é Kp·erro. Com Kp = {0} e erro = {1}, qual a correção?", P.N(kp, 1), err), kp * err, "", L.F("correção = Kp·erro = {0}·{1} = {2}.", P.N(kp, 1), err, P.N(kp * err)));
             }
             case Difficulty.Medium:
             {
@@ -125,7 +125,7 @@ public sealed class Ard10Seguidor : IExerciseGenerator
                 double corr = kp * err;
                 bool left = r.Next(2) == 0;
                 double val = left ? basePwm + corr : basePwm - corr;
-                return Ex.Num(L.F("Um robô tem PWM base {0} e Kp = {1}. A velocidade do motor {2} é base {3} correção (correção = Kp·erro). Com erro = {4}, qual o PWM desse motor?", basePwm, P.N(kp, 1), left ? L.T("esquerdo") : L.T("direito"), left ? "+" : "−", err), val, "", $"correção = {P.N(kp, 1)}·{err} = {P.N(corr)}; PWM = {basePwm} {(left ? "+" : "−")} ({P.N(corr)}) = {P.N(val)}.");
+                return Ex.Num(L.F("Um robô tem PWM base {0} e Kp = {1}. A velocidade do motor {2} é base {3} correção (correção = Kp·erro). Com erro = {4}, qual o PWM desse motor?", basePwm, P.N(kp, 1), left ? L.T("esquerdo") : L.T("direito"), left ? "+" : "−", err), val, "", L.F("correção = {0}·{1} = {2}; PWM = {3} {4} ({2}) = {5}.", P.N(kp, 1), err, P.N(corr), basePwm, left ? "+" : "−", P.N(val)));
             }
             case Difficulty.Hard:
             {
@@ -134,7 +134,7 @@ public sealed class Ard10Seguidor : IExerciseGenerator
                 int sum = s.Sum(), wsum = 0; for (int i = 0; i < 5; i++) wsum += s[i] * (i - 2);
                 double pos = wsum / (double)sum;
                 string sens = string.Join(" ", s);
-                return Ex.Num(L.F("Cinco sensores de linha (da esquerda para a direita, pesos −2, −1, 0, 1, 2) leem: {0} (1 = vê a linha). Qual a posição da linha, calculada como a média ponderada dos sensores que veem a linha?", sens), pos, "", $"Soma dos pesos dos sensores ativos = {wsum}; número de sensores ativos = {sum}; posição = {wsum} / {sum} = {P.N(pos)}.", 3);
+                return Ex.Num(L.F("Cinco sensores de linha (da esquerda para a direita, pesos −2, −1, 0, 1, 2) leem: {0} (1 = vê a linha). Qual a posição da linha, calculada como a média ponderada dos sensores que veem a linha?", sens), pos, "", L.F("Soma dos pesos dos sensores ativos = {0}; número de sensores ativos = {1}; posição = {2} / {3} = {4}.", wsum, sum, wsum, sum, P.N(pos)), 3);
             }
             default:
             {
@@ -175,10 +175,10 @@ public sealed class Ard11Debounce : IExerciseGenerator
                 if (r.Next(2) == 0)
                 {
                     double maxHz = 1000.0 / deb;
-                    return Ex.Num(L.F("Com um debounce de {0} ms, quantos apertos por segundo, no máximo, o programa consegue contar?", deb), maxHz, "apertos/s", $"1000 / {deb} = {P.N(maxHz)} apertos por segundo.");
+                    return Ex.Num(L.F("Com um debounce de {0} ms, quantos apertos por segundo, no máximo, o programa consegue contar?", deb), maxHz, "apertos/s", L.F("1000 / {0} = {1} apertos por segundo.", deb, P.N(maxHz)));
                 }
                 int n = Ex.Int(r, 3, 40);
-                return Ex.Num(L.F("O botão quica {0} vezes (cada quique é lido como um aperto) em cada aperto real, se não houver debounce. Em 6 apertos reais, quantos apertos o programa conta sem debounce?", n), 6.0 * n, "apertos", $"6·{n} = {6 * n} contagens, e com um debounce correto seriam apenas 6.");
+                return Ex.Num(L.F("O botão quica {0} vezes (cada quique é lido como um aperto) em cada aperto real, se não houver debounce. Em 6 apertos reais, quantos apertos o programa conta sem debounce?", n), 6.0 * n, "apertos", L.F("6·{0} = {1} contagens, e com um debounce correto seriam apenas 6.", n, 6 * n));
             }
             case Difficulty.Hard:
             {
@@ -224,23 +224,23 @@ public sealed class Ard12Multi : IExerciseGenerator
             {
                 int T = Ex.Int(r, 2, 20);
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Uma tarefa roda a cada {0} ms usando millis(). Quantas vezes ela roda em {1} segundos?", p1, T), Math.Floor(T * 1000.0 / p1), "vezes", $"{T}·1000 / {p1} = {P.N(T * 1000.0 / p1)} → {Math.Floor(T * 1000.0 / p1)} vezes.", 0.1);
+                    return Ex.Num(L.F("Uma tarefa roda a cada {0} ms usando millis(). Quantas vezes ela roda em {1} segundos?", p1, T), Math.Floor(T * 1000.0 / p1), "vezes", L.F("{0}·1000 / {1} = {2} → {3} vezes.", T, p1, P.N(T * 1000.0 / p1), Math.Floor(T * 1000.0 / p1)), 0.1);
                 return Ex.Num(L.F("Uma tarefa roda a cada {0} ms. Se a última vez foi em millis() = {1}, em que valor de millis() será a próxima?", p1, p1 * T), p1 * T + p1, "ms", $"{p1 * T} + {p1} = {p1 * T + p1} ms.");
             }
             case Difficulty.Medium:
             {
                 int T = Ex.Int(r, 2, 12);
                 int n1 = T * 1000 / p1, n2 = T * 1000 / p2;
-                return Ex.Num(L.F("Dois LEDs piscam sem bloquear: o A inverte a cada {0} ms e o B a cada {1} ms. Quantas inversões acontecem, somando os dois, em {2} segundos?", p1, p2, T), n1 + n2, "inversões", $"A: {T * 1000} / {p1} → {n1}; B: {T * 1000} / {p2} → {n2}; total {n1 + n2} (divisões inteiras).", 0.1);
+                return Ex.Num(L.F("Dois LEDs piscam sem bloquear: o A inverte a cada {0} ms e o B a cada {1} ms. Quantas inversões acontecem, somando os dois, em {2} segundos?", p1, p2, T), n1 + n2, "inversões", L.F("A: {0} / {1} → {2}; B: {3} / {4} → {5}; total {6} (divisões inteiras).", T * 1000, p1, n1, T * 1000, p2, n2, n1 + n2), 0.1);
             }
             case Difficulty.Hard:
             {
                 int g = Gcd(p1, p2), lcm = p1 / g * p2;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Duas tarefas rodam a cada {0} ms e a cada {1} ms, começando juntas em 0. Depois de quantos ms elas coincidem pela primeira vez?", p1, p2), lcm, "ms", $"É o mínimo múltiplo comum (MMC): mdc({p1}, {p2}) = {g}; MMC = {p1}·{p2} / {g} = {lcm} ms.", 0.1);
+                    return Ex.Num(L.F("Duas tarefas rodam a cada {0} ms e a cada {1} ms, começando juntas em 0. Depois de quantos ms elas coincidem pela primeira vez?", p1, p2), lcm, "ms", L.F("É o mínimo múltiplo comum (MMC): mdc({0}, {1}) = {2}; MMC = {3}·{4} / {5} = {6} ms.", p1, p2, g, p1, p2, g, lcm), 0.1);
                 int T = Ex.Int(r, 1, 3) * lcm / 1000 + 1;
                 int coinc = (T * 1000) / lcm + 1;
-                return Ex.Num(L.F("Duas tarefas rodam a cada {0} ms e a cada {1} ms, ambas já em 0 ms. Quantas vezes elas rodam no MESMO instante entre 0 e {2} ms (incluindo o 0)?", p1, p2, T * 1000), coinc, "vezes", $"Coincidem a cada MMC = {lcm} ms: 0, {lcm}, {2 * lcm}, ... até {T * 1000}: {T * 1000} / {lcm} = {(T * 1000) / lcm} → {coinc} vezes contando o 0.", 0.1);
+                return Ex.Num(L.F("Duas tarefas rodam a cada {0} ms e a cada {1} ms, ambas já em 0 ms. Quantas vezes elas rodam no MESMO instante entre 0 e {2} ms (incluindo o 0)?", p1, p2, T * 1000), coinc, "vezes", L.F("Coincidem a cada MMC = {0} ms: 0, {1}, {2}, ... até {3}: {4} / {5} = {6} → {7} vezes contando o 0.", lcm, lcm, 2 * lcm, T * 1000, T * 1000, lcm, (T * 1000) / lcm, coinc), 0.1);
             }
             default:
             {
@@ -270,17 +270,17 @@ public sealed class Ard13Rampa : IExerciseGenerator
         switch (d)
         {
             case Difficulty.Easy:
-                return Ex.Num(L.F("Uma rampa aumenta o PWM em {0} a cada passo, de 0 até {1} (ou mais). Quantos passos são necessários?", step, target), steps, "passos", $"{target} / {step} = {P.N(target / (double)step)} → {steps} passos.", 0.1);
+                return Ex.Num(L.F("Uma rampa aumenta o PWM em {0} a cada passo, de 0 até {1} (ou mais). Quantos passos são necessários?", step, target), steps, "passos", L.F("{0} / {1} = {2} → {3} passos.", target, step, P.N(target / (double)step), steps), 0.1);
             case Difficulty.Medium:
-                return Ex.Num(L.F("A rampa soma {0} ao PWM a cada {1} ms, de 0 até {2} (ou mais). Quanto tempo leva a partida, em ms?", step, dl, target), steps * dl, "ms", $"⌈{target} / {step}⌉ = {steps} passos·{dl} ms = {steps * dl} ms.", 0.1);
+                return Ex.Num(L.F("A rampa soma {0} ao PWM a cada {1} ms, de 0 até {2} (ou mais). Quanto tempo leva a partida, em ms?", step, dl, target), steps * dl, "ms", L.F("⌈{0} / {1}⌉ = {2} passos·{3} ms = {4} ms.", target, step, steps, dl, steps * dl), 0.1);
             case Difficulty.Hard:
             {
                 double time = Ex.Pick(r, 0.5, 1.0, 2.0, 3.0) * 1000;
                 double rate = target / time * 1000;
                 if (r.Next(2) == 0)
-                    return Ex.Num(L.F("Um motor deve ir de 0 a {0} (PWM) em {1} s, com aceleração constante. Quantas unidades de PWM por segundo?", target, P.N(time / 1000, 1)), rate, "PWM/s", $"{target} / {P.N(time / 1000, 1)} = {P.N(rate)} unidades/s.");
+                    return Ex.Num(L.F("Um motor deve ir de 0 a {0} (PWM) em {1} s, com aceleração constante. Quantas unidades de PWM por segundo?", target, P.N(time / 1000, 1)), rate, "PWM/s", L.F("{0} / {1} = {2} unidades/s.", target, P.N(time / 1000, 1), P.N(rate)));
                 double perStep = rate * dl / 1000;
-                return Ex.Num(L.F("Um motor deve ir de 0 a {0} (PWM) em {1} s, com aceleração constante, e o programa atualiza o PWM a cada {2} ms. Quanto somar a cada atualização?", target, P.N(time / 1000, 1), dl), perStep, "", $"Taxa = {target} / {P.N(time / 1000, 1)} = {P.N(rate)} PWM/s; por atualização: {P.N(rate)}·{dl}/1000 = {P.N(perStep, 3)}.");
+                return Ex.Num(L.F("Um motor deve ir de 0 a {0} (PWM) em {1} s, com aceleração constante, e o programa atualiza o PWM a cada {2} ms. Quanto somar a cada atualização?", target, P.N(time / 1000, 1), dl), perStep, "", L.F("Taxa = {0} / {1} = {2} PWM/s; por atualização: {3}·{4}/1000 = {5}.", target, P.N(time / 1000, 1), P.N(rate), P.N(rate), dl, P.N(perStep, 3)));
             }
             default:
             {
@@ -308,13 +308,13 @@ public sealed class Ard14Protocolo : IExerciseGenerator
             case Difficulty.Easy:
             {
                 int baud = Ex.Pick(r, 1200, 2400, 4800, 9600, 19200, 38400, 115200), secs = Ex.Int(r, 2, 20);
-                return Ex.Num(L.F("A {0} baud (8N1: 10 bits por byte), quantos bytes a serial envia em {1} segundos?", baud, secs), baud / 10.0 * secs, "bytes", $"{baud} / 10 = {baud / 10} bytes/s; {baud / 10}·{secs} = {baud / 10 * secs} bytes.");
+                return Ex.Num(L.F("A {0} baud (8N1: 10 bits por byte), quantos bytes a serial envia em {1} segundos?", baud, secs), baud / 10.0 * secs, "bytes", L.F("{0} / 10 = {1} bytes/s; {2}·{3} = {4} bytes.", baud, baud / 10, baud / 10, secs, baud / 10 * secs));
             }
             case Difficulty.Medium:
             {
                 int baud = Ex.Pick(r, 9600, 19200, 115200), len = Ex.Int(r, 4, 30);
                 double ms = (len + 1) * 10000.0 / baud;
-                return Ex.Num(L.F("Um comando de {0} caracteres é enviado com println a {1} baud (println adiciona 1 byte de quebra de linha; 10 bits por byte). Quanto tempo leva, em ms?", len, baud), ms, "ms", $"({len} + 1) bytes·10 bits = {(len + 1) * 10} bits; {(len + 1) * 10} / {baud} bits/s = {P.N(ms / 1000, 5)} s = {P.N(ms, 3)} ms.");
+                return Ex.Num(L.F("Um comando de {0} caracteres é enviado com println a {1} baud (println adiciona 1 byte de quebra de linha; 10 bits por byte). Quanto tempo leva, em ms?", len, baud), ms, "ms", L.F("({0} + 1) bytes·10 bits = {1} bits; {2} / {3} bits/s = {4} s = {5} ms.", len, (len + 1) * 10, (len + 1) * 10, baud, P.N(ms / 1000, 5), P.N(ms, 3)));
             }
             case Difficulty.Hard:
             {

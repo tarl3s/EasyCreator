@@ -40,6 +40,19 @@ public static class ExerciseTests
         return fails;
     }
 
+    static readonly string[] PtMarkers = { " com ", " não ", "ção", " então ", " é " };
+    static string? PtMarker(string? s)
+    {
+        if (string.IsNullOrEmpty(s)) return null;
+        s = System.Text.RegularExpressions.Regex.Replace(s, "```.*?```|`[^`\n]*`", " ", System.Text.RegularExpressions.RegexOptions.Singleline); // code and sample output may be Portuguese
+        foreach (var m in PtMarkers)
+        {
+            int i = s.IndexOf(m, StringComparison.OrdinalIgnoreCase);
+            if (i >= 0) return s.Substring(Math.Max(0, i - 25), Math.Min(s.Length - Math.Max(0, i - 25), 60));
+        }
+        return null;
+    }
+
     static void CheckLesson(Track t, Lesson lesson, IExerciseGenerator g, Difficulty d, string lang, Action<string, bool, string> check)
     {
         L.Set(lang, save: false);
@@ -54,6 +67,11 @@ public static class ExerciseTests
             prompts.Add(ex.Key);
             if (ex.Prompt.Trim().Length == 0) { check($"{id} seed {seed}: has a prompt", false, ""); continue; }
             if (ex.Prompt.Contains("NaN") || ex.Prompt.Contains("∞") || ex.Prompt.Contains("Infinity")) check($"{id} seed {seed}: prompt numbers", false, ex.Prompt);
+            if (lang == "en")
+            {
+                var ptHit = PtMarker(ex.Prompt) ?? PtMarker(ex.Explanation);
+                if (ptHit != null) check($"{id} seed {seed}: no Portuguese in English text", false, ptHit);
+            }
             if (ex.IsCode)
             {
                 if (lang == "pt" && seed < RunSeeds) CheckCode(t, ex, $"{id} seed {seed}", check);

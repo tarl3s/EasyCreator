@@ -215,5 +215,7 @@
   "`n << k` multiplica por 2^k e `n >> k` divide por 2^k (inteiro). `n & 1` isola o último bit: 1 para ímpar, 0 para par.": "`n << k` multiplies by 2^k and `n >> k` divides by 2^k (integer). `n & 1` isolates the last bit: 1 for odd, 0 for even.",
   "`p + k` aponta k elementos adiante (não k bytes). `*p++` lê o valor e depois avança o ponteiro. A diferença de dois ponteiros do mesmo vetor é o número de elementos entre eles.": "`p + k` points k elements ahead (not k bytes). `*p++` reads the value and then advances the pointer. The difference of two pointers into the same array is the number of elements between them.",
   "depois a letra e a letra seguinte": "then the letter and the next letter",
-  "depois o código numérico da letra e a letra minúscula (sem `tolower`)": "then the letter's numeric code and the lowercase letter (without `tolower`)"
+  "depois o código numérico da letra e a letra minúscula (sem `tolower`)": "then the letter's numeric code and the lowercase letter (without `tolower`)",
+  "a / b (inteira)": "a / b (integer division)",
+  "a / b com casas decimais": "a / b with decimal places"
 }
