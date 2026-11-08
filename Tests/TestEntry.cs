@@ -23,6 +23,7 @@ public static partial class TestEntry
             Application.Current.Shutdown(arduinoFailures == 0 ? 0 : 1);
             return true;
         }
+        if (ExerciseTests.TryDump(args)) { Application.Current.Shutdown(0); return true; }
         if (ExerciseTests.TryRun(args, out int exerciseFailures))
         {
             Application.Current.Shutdown(exerciseFailures == 0 ? 0 : 1);

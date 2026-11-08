@@ -127,3 +127,28 @@ public static class Ex
         Prompt = prompt, Starter = starter, Solution = solution, Tests = tests, Explanation = explanation,
     };
 }
+
+/// <summary>An independent check of number answers: solves an exercise from its Portuguese prompt text alone. Verifiers
+/// are written without reading the generators (only sample prompts), so a wrong formula in either shows up in the tests
+/// as a mismatch. Return null for a prompt the verifier doesn't recognise (the test counts that as a failure).</summary>
+public interface IExerciseVerifier
+{
+    double? Solve(string prompt);
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class VerifiesAttribute : Attribute
+{
+    public VerifiesAttribute(params string[] lessonIds) => LessonIds = lessonIds;
+    public string[] LessonIds { get; }
+}
+
+public static class VerifierRegistry
+{
+    static Dictionary<string, IExerciseVerifier>? _byLesson;
+
+    public static IReadOnlyDictionary<string, IExerciseVerifier> ByLesson => _byLesson ??= typeof(VerifierRegistry).Assembly.GetTypes()
+        .Where(t => !t.IsAbstract && typeof(IExerciseVerifier).IsAssignableFrom(t) && t.GetCustomAttribute<VerifiesAttribute>() != null)
+        .SelectMany(t => { var v = (IExerciseVerifier)Activator.CreateInstance(t)!; return t.GetCustomAttribute<VerifiesAttribute>()!.LessonIds.Select(id => (id, v)); })
+        .ToDictionary(p => p.id, p => p.v);
+}

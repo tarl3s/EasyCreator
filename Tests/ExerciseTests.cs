@@ -83,6 +83,7 @@ public static class ExerciseTests
             {
                 case "number":
                     check($"{id} seed {seed}: answer is a finite number", Question.TryNum(q.Answer, out var a) && double.IsFinite(a), q.Answer);
+                    if (lang == "pt") Verify(lesson, ex, a, $"{id} seed {seed}", check);
                     break;
                 case "choice":
                     check($"{id} seed {seed}: choice answer", int.TryParse(q.Answer, out var i) && i >= 0 && i < q.Options.Count
@@ -99,6 +100,45 @@ public static class ExerciseTests
         // Varied: most draws give a different text (Genius can be a smaller family, but still varies).
         check($"{id}: varied ({prompts.Count} different of {Seeds})", prompts.Count >= Seeds * 2 / 3, "");
         if (lang != "pt") check($"{id}: translated", L.Missing.Count == 0, string.Join(" | ", L.Missing.Take(3)));
+    }
+
+    /// <summary>The independent verifier (Tests/Verifiers) must solve the prompt and agree with the generator's answer.</summary>
+    static void Verify(Lesson lesson, Exercise ex, double answer, string id, Action<string, bool, string> check)
+    {
+        if (!VerifierRegistry.ByLesson.TryGetValue(lesson.Id, out var v)) { check($"{id}: has a verifier", false, ""); return; }
+        double? got;
+        try { got = v.Solve(ex.Prompt); }
+        catch (Exception e) { check($"{id}: verifier solves it", false, e.Message + " | " + ex.Prompt); return; }
+        if (got == null) { check($"{id}: verifier solves it", false, ex.Prompt); return; }
+        double tol = Math.Max(ex.Question!.Tolerance, 1) / 100;
+        bool ok = Math.Abs(got.Value - answer) <= Math.Max(Math.Abs(answer) * tol, 1e-9);
+        check($"{id}: answer verified", ok, $"generator {answer:G6} vs verifier {got.Value:G6} | {ex.Prompt}");
+    }
+
+    /// <summary>--dump-exercises area: sample Portuguese prompts and units (no answers, no explanations) for writing
+    /// verifiers without reading the generators.</summary>
+    public static bool TryDump(string[] args)
+    {
+        int at = Array.IndexOf(args, "--dump-exercises");
+        if (at < 0) return false;
+        string? area = at + 1 < args.Length && !args[at + 1].StartsWith("--") ? args[at + 1] : null;
+        L.Set("pt", save: false);
+        var sb = new System.Text.StringBuilder();
+        foreach (var t in ContentStore.Tracks.Where(t => area == null || t.Area == area))
+            foreach (var lesson in t.Lessons)
+            {
+                if (!ExerciseRegistry.ByLesson.TryGetValue(lesson.Id, out var g)) continue;
+                sb.AppendLine($"### {lesson.Id} — {lesson.Title}");
+                foreach (var d in Enum.GetValues<Difficulty>())
+                    for (int seed = 0; seed < 40; seed++)
+                    {
+                        var ex = g.Make(lesson, d, new Random(seed));
+                        if (ex.Question?.Kind != "number") continue;
+                        sb.AppendLine($"[{d}] ({ex.Question.Unit}) {ex.Prompt.Replace("\n", " ")}");
+                    }
+            }
+        File.WriteAllText(Path.Combine(Path.GetTempPath(), "easycreator_exercise_prompts.txt"), sb.ToString());
+        return true;
     }
 
     static ILanguageRunner? BuiltIn(Track t) => RunnerRegistry.For(t.Language).FirstOrDefault(r => !r.IsExternal);
